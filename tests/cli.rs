@@ -19,8 +19,12 @@ fn fixture(name: &str) -> PathBuf {
         .join(name)
 }
 
-/// A configuration folder of its own (user mode, `--config`) and a work
-/// folder with a copy of the plugin.
+/// A configuration folder of its own and a work folder with a copy of the
+/// plugin. The folder holds a `Config.ini` and an `assets/` tree, so the
+/// command line takes it as a portable installation (R-D06-01): every base
+/// it indexes is inside it, and the game bases of a developer's checkout
+/// (`assets/bases/jeux` of the repository, read as the shipped bases in user
+/// mode) never reach the tests.
 struct Env {
     root: PathBuf,
     cfg: PathBuf,
@@ -32,7 +36,8 @@ impl Env {
         let root = std::env::temp_dir().join(format!("ximod-cli-{tag}-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&root);
         let cfg = root.join("cfg");
-        std::fs::create_dir_all(&cfg).unwrap();
+        std::fs::create_dir_all(cfg.join("assets").join("bases").join("jeux")).unwrap();
+        std::fs::create_dir_all(cfg.join("assets").join("bases").join("mods")).unwrap();
         std::fs::write(
             cfg.join("Config.ini"),
             "[General]\nLocale=fra\n[Translation]\nSourceLanguage=eng\nTargetLanguage=fra\n",
@@ -76,7 +81,7 @@ impl Env {
 
     fn mod_dict(&self) -> PathBuf {
         self.cfg
-            .join("data/bases/mods/Skyrim")
+            .join("assets/bases/mods/Skyrim")
             .join("skyrim_dialogue_ENG-FRA.ximdb")
     }
 }

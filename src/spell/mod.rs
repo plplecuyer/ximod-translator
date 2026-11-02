@@ -129,14 +129,78 @@ pub fn resolve_for_language<'a>(iso3: &str, dicts: &'a [DictInfo]) -> Option<&'a
             return Some(d);
         }
     }
-    // 2) Base-language match: fr_FR / fr-CA → "fr".
-    for d in dicts {
-        let base = d.base();
-        if keys.contains(&base) {
-            return Some(d);
-        }
+    // 2) Base-language match: fr_FR / fr-CA → "fr". Several regional
+    //    dictionaries may share a base (en_AU, en_GB, en_US…): prefer the
+    //    region of `preferred_region`, then the region that repeats the
+    //    language (fr_FR, de_DE), then a bare code (ar), then the first one
+    //    in alphabetical order, so the choice never depends on the folder's
+    //    reading order.
+    let mut candidates: Vec<&DictInfo> =
+        dicts.iter().filter(|d| keys.contains(&d.base())).collect();
+    if candidates.is_empty() {
+        return None;
     }
-    None
+    candidates.sort_by_key(|d| d.code.to_lowercase());
+    let base = candidates[0].base();
+    let region_of = |d: &DictInfo| -> String {
+        let lower = d.code.to_lowercase();
+        lower
+            .split(['_', '-'])
+            .nth(1)
+            .map(|r| r.to_uppercase())
+            .unwrap_or_default()
+    };
+    if let Some(pref) = preferred_region(&base)
+        && let Some(d) = candidates.iter().find(|d| region_of(d) == pref)
+    {
+        return Some(d);
+    }
+    if let Some(d) = candidates
+        .iter()
+        .find(|d| region_of(d) == base.to_uppercase())
+    {
+        return Some(d);
+    }
+    if let Some(d) = candidates.iter().find(|d| region_of(d).is_empty()) {
+        return Some(d);
+    }
+    candidates.first().copied()
+}
+
+/// The regional dictionary to prefer when a language has several
+/// (`en` → `en_US`, `pt` → `pt_BR`, `sv` → `sv_SE`…). Languages whose usual
+/// dictionary repeats the language code (fr_FR, de_DE, it_IT…) need no entry.
+fn preferred_region(base: &str) -> Option<&'static str> {
+    Some(match base {
+        "en" => "US",
+        "pt" => "BR",
+        "sv" => "SE",
+        "da" => "DK",
+        "cs" => "CZ",
+        "el" => "GR",
+        "ko" => "KR",
+        "ja" => "JP",
+        "zh" => "CN",
+        "uk" => "UA",
+        "be" => "BY",
+        "sr" => "RS",
+        "bs" => "BA",
+        "sl" => "SI",
+        "et" => "EE",
+        "nb" | "nn" | "no" => "NO",
+        "ca" | "eu" | "gl" | "an" => "ES",
+        "ga" => "IE",
+        "cy" | "gd" => "GB",
+        "ar" => "SA",
+        "fa" => "IR",
+        "he" => "IL",
+        "hi" | "bn" | "ta" | "te" | "mr" | "gu" | "pa" => "IN",
+        "vi" => "VN",
+        "ms" => "MY",
+        "sw" => "KE",
+        "af" => "ZA",
+        _ => return None,
+    })
 }
 
 /// A ready-to-use spell checker for one language.
@@ -432,5 +496,52 @@ mod tests {
         assert_eq!(resolve_for_language("eng", &dicts).unwrap().code, "en_US");
         // Unknown language → none.
         assert!(resolve_for_language("zzz", &dicts).is_none());
+    }
+
+    /// The full Hunspell set of the repository (several regions per language,
+    /// read in any order): the preferred region wins, then the region that
+    /// repeats the language, then a bare code.
+    #[test]
+    fn resolve_among_regional_variants() {
+        let info = |c: &str| DictInfo {
+            code: c.into(),
+            aff: "".into(),
+            dic: "".into(),
+        };
+        let dicts: Vec<DictInfo> = [
+            "en_ZA",
+            "en_AU",
+            "en_GB",
+            "en_US",
+            "en_CA",
+            "de_AT_frami",
+            "de_CH_frami",
+            "de_DE_frami",
+            "es_MX",
+            "es_ES",
+            "es_AR",
+            "pt_PT",
+            "pt_BR",
+            "ar",
+            "sv_SE",
+            "sv_FI",
+            "ca",
+            "ca-valencia",
+            "nb_NO",
+            "fr_FR",
+            "fr",
+        ]
+        .into_iter()
+        .map(info)
+        .collect();
+        let pick = |l: &str| resolve_for_language(l, &dicts).map(|d| d.code.as_str());
+        assert_eq!(pick("eng"), Some("en_US"));
+        assert_eq!(pick("deu"), Some("de_DE_frami"));
+        assert_eq!(pick("spa"), Some("es_ES"));
+        assert_eq!(pick("por"), Some("pt_BR"));
+        assert_eq!(pick("ara"), Some("ar"));
+        assert_eq!(pick("swe"), Some("sv_SE"));
+        // An exact code still wins over everything.
+        assert_eq!(pick("fr"), Some("fr"));
     }
 }

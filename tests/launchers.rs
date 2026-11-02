@@ -14,7 +14,11 @@ fn fixture(name: &str) -> PathBuf {
 }
 
 /// Copy a launcher fixture into `dst`, replacing `__GAMES__` / `__PREFIX__`.
+/// The paths are written with forward slashes: the fixtures are JSON and
+/// YAML, where a Windows backslash would be an escape character, and the
+/// launchers themselves write their paths that way on Windows.
 fn instantiate(src: &Path, dst: &Path, games: &Path, prefix: &Path) {
+    let slashes = |p: &Path| p.display().to_string().replace('\\', "/");
     for entry in std::fs::read_dir(src).unwrap().flatten() {
         let p = entry.path();
         let out = dst.join(entry.file_name());
@@ -24,8 +28,8 @@ fn instantiate(src: &Path, dst: &Path, games: &Path, prefix: &Path) {
         } else {
             let text = std::fs::read_to_string(&p)
                 .unwrap()
-                .replace("__GAMES__", &games.display().to_string())
-                .replace("__PREFIX__", &prefix.display().to_string());
+                .replace("__GAMES__", &slashes(games))
+                .replace("__PREFIX__", &slashes(prefix));
             std::fs::write(&out, text).unwrap();
         }
     }
@@ -60,8 +64,12 @@ fn heroic_finds_gog_and_epic_games_and_skips_the_rest() {
         ]
     );
     assert_eq!(
-        found[1].data_dir,
-        games.join("Skyrim Special Edition").join("Data")
+        found[1].data_dir.canonicalize().unwrap(),
+        games
+            .join("Skyrim Special Edition")
+            .join("Data")
+            .canonicalize()
+            .unwrap()
     );
     let _ = std::fs::remove_dir_all(&tmp);
 }

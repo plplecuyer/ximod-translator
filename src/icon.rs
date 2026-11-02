@@ -54,7 +54,7 @@ pub fn get_icon_path() -> Option<PathBuf> {
             return Some(png_path);
         }
         // Check Resources folder in app bundle
-        if let Some(resources) = exe_dir.parent().and_then(|p| Some(p.join("Resources"))) {
+        if let Some(resources) = exe_dir.parent().map(|p| p.join("Resources")) {
             let png_path = resources.join("ximod-translator.png");
             if png_path.exists() {
                 return Some(png_path);

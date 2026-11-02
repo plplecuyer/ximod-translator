@@ -73,7 +73,13 @@ fn no_user_text_in_the_code() {
     let french = Regex::new(r#""[^"\n]*([«»]|[éèêàçùÉÈ][a-z])[^"\n]*""#).unwrap();
     let mut found = Vec::new();
     for f in &files {
-        let rel = f.strip_prefix(root).unwrap().display().to_string();
+        // Forward slashes on every system, for the suffix test below.
+        let rel = f
+            .strip_prefix(root)
+            .unwrap()
+            .display()
+            .to_string()
+            .replace('\\', "/");
         let code = code_of(&std::fs::read_to_string(f).unwrap());
         for (n, line) in code.lines().enumerate() {
             if line.contains("tracing::") || line.contains("log.push") {

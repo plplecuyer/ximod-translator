@@ -25,6 +25,24 @@ version étiquetée devient le corps de la page de version (S-02).
   d'accueil Win32, mesure de l'écran — et sur la lecture des bases GOG
   Galaxy / Lutris (fonctionnalité `gog-galaxy`) ; conditions réécrites en
   chaînes de `let`, références non mutables.
+- Correcteur orthographique : avec le jeu complet des dictionnaires Hunspell
+  (plusieurs régions par langue : en_AU, en_CA, en_GB, en_US…), la langue
+  cible prenait le premier dictionnaire lu dans le dossier, donc l'anglais
+  d'Australie pour « eng ». Le choix suit désormais une région préférée par
+  langue (en → US, pt → BR, sv → SE…), puis la région qui répète la langue
+  (fr_FR, de_DE), puis un code nu, dans un ordre qui ne dépend plus du
+  système de fichiers (test `spell_dict` de la CI Linux).
+- Tests de la ligne de commande (`tests/cli.rs`) : ils tournaient en mode
+  utilisateur et indexaient donc, comme bases livrées, les bases vanilla du
+  dépôt de travail (`assets/bases/jeux`) quand il y en a — trois tests
+  échouaient sur un poste de développement avec une base Skyrim. Chaque
+  test a désormais son dossier portable (Config.ini + assets/bases vides).
+- macOS : Clippy 1.99 (`bind_instead_of_map`) sur la recherche de l'icône
+  dans le bundle. Windows : le test du cache des noms comparait un chemin
+  trouvé sans tenir compte de la casse du système de fichiers ; le test des
+  lanceurs (Heroic) écrivait des chemins à barres obliques inverses dans
+  des fichiers JSON ; le test des textes codés en dur comparait un chemin
+  relatif avec un suffixe à barres obliques.
 
 ### Modifié
 - Dépendances mises à jour (`cargo update` du 29/10/2026, compatibles

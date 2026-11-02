@@ -118,10 +118,11 @@ mod tests {
         assert!(name.ends_with("_eng.json"));
         assert!(cache_path(Path::new("/nowhere/Skyrim.esm"), "eng").is_none());
         let dir = p.parent().unwrap();
-        assert_eq!(
-            find_master("SKYRIM_DIALOGUE.ESP", dir, &[]),
-            Some(p.clone())
-        );
+        // Compared through `canonicalize`: on Windows the file system is
+        // case-insensitive, so the upper-case name is found as is and the
+        // returned path differs from `p` in case and separators only.
+        let found = find_master("SKYRIM_DIALOGUE.ESP", dir, &[]).expect("found");
+        assert_eq!(found.canonicalize().unwrap(), p.canonicalize().unwrap());
         assert!(find_master("Skyrim.esm", dir, &[]).is_none());
     }
 }
