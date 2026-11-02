@@ -1,0 +1,683 @@
+{
+ "format": 1,
+ "source": "eng",
+ "target": "fra",
+ "groups": [
+  {
+   "name": "Armures",
+   "terms": [
+    {
+     "src": "Bandana",
+     "dst": "Bandana",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Shield",
+     "dst": "Bouclier",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Armor",
+     "dst": "Armure",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Boots",
+     "dst": "Bottes",
+     "class": "noun",
+     "gender": "fp"
+    },
+    {
+     "src": "Gauntlets",
+     "dst": "Gantelets",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Helmet",
+     "dst": "Casque",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Bracers",
+     "dst": "Brassards",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Hood",
+     "dst": "Capuche",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Cuirass",
+     "dst": "Cuirasse",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Mantle",
+     "dst": "Manteau",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Coif",
+     "dst": "Coiffe",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Cape",
+     "dst": "Cape",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Shoulder Cape",
+     "dst": "Cape d'épaule",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Greaves",
+     "dst": "Grèves",
+     "class": "noun",
+     "gender": "fp"
+    },
+    {
+     "src": "Target Shield",
+     "dst": "Targe",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Gloves",
+     "dst": "Gants",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Robe",
+     "dst": "Robe",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Mask",
+     "dst": "Masque",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Helm",
+     "dst": "Heaume",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Headdress",
+     "dst": "Coiffe",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Buckler",
+     "dst": "Bouclier",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Round Shield",
+     "dst": "Rondache",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Body Shield",
+     "dst": "Bouclier intégral",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Kite Shield",
+     "dst": "Bouclier ovoïde",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Targe",
+     "dst": "Targe",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Heavy Boots",
+     "dst": "Solerets",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Light Gauntlets",
+     "dst": "Brassards",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Heavy Armor",
+     "dst": "Cuirasse",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Heavy Helmet",
+     "dst": "Heaume",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Heavy Cuirass",
+     "dst": "Cuirasse",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Light Cuirass",
+     "dst": "Armure",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Heavy Bracers",
+     "dst": "Gantelets",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Heavy Gauntlets",
+     "dst": "Gantelets",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Heavy Mail",
+     "dst": "Cuirasse en mailles",
+     "class": "noun",
+     "gender": "f"
+    }
+   ]
+  },
+  {
+   "name": "Couleurs",
+   "terms": [
+    {
+     "src": "Black",
+     "class": "color",
+     "forms": {
+      "m": "noir",
+      "f": "noire",
+      "mp": "noirs",
+      "fp": "noires"
+     }
+    },
+    {
+     "src": "White",
+     "class": "color",
+     "forms": {
+      "m": "blanc",
+      "f": "blanche",
+      "mp": "blancs",
+      "fp": "blanches"
+     }
+    },
+    {
+     "src": "Blue",
+     "class": "color",
+     "forms": {
+      "m": "bleu",
+      "f": "bleue",
+      "mp": "bleus",
+      "fp": "bleues"
+     }
+    },
+    {
+     "src": "Green",
+     "class": "color",
+     "forms": {
+      "m": "vert",
+      "f": "verte",
+      "mp": "verts",
+      "fp": "vertes"
+     }
+    },
+    {
+     "src": "Red",
+     "class": "color",
+     "forms": {
+      "m": "rouge",
+      "f": "rouge",
+      "mp": "rouges",
+      "fp": "rouges"
+     }
+    },
+    {
+     "src": "Yellow",
+     "class": "color",
+     "forms": {
+      "m": "jaune",
+      "f": "jaune",
+      "mp": "jaunes",
+      "fp": "jaunes"
+     }
+    }
+   ]
+  },
+  {
+   "name": "Modificateurs",
+   "terms": [
+    {
+     "src": "Tied",
+     "class": "adj",
+     "forms": {
+      "m": "noué",
+      "f": "nouée",
+      "mp": "noués",
+      "fp": "nouées"
+     }
+    },
+    {
+     "src": "Engraved",
+     "class": "adj",
+     "forms": {
+      "m": "gravé",
+      "f": "gravée",
+      "mp": "gravés",
+      "fp": "gravées"
+     }
+    },
+    {
+     "src": "Reinforced",
+     "class": "adj",
+     "forms": {
+      "m": "renforcé",
+      "f": "renforcée",
+      "mp": "renforcés",
+      "fp": "renforcées"
+     }
+    },
+    {
+     "src": "Armored",
+     "class": "adj",
+     "forms": {
+      "m": "renforcé",
+      "f": "renforcée",
+      "mp": "renforcés",
+      "fp": "renforcées"
+     }
+    },
+    {
+     "src": "Padded",
+     "class": "adj",
+     "forms": {
+      "m": "molletonné",
+      "f": "molletonnée",
+      "mp": "molletonnés",
+      "fp": "molletonnées"
+     }
+    },
+    {
+     "src": "Light",
+     "class": "adj"
+    },
+    {
+     "src": "Heavy",
+     "class": "adj",
+     "forms": {
+      "m": "renforcé",
+      "f": "renforcée",
+      "mp": "renforcés",
+      "fp": "renforcées"
+     }
+    },
+    {
+     "src": "Unarmored",
+     "dst": "d'apparat",
+     "class": "bound"
+    },
+    {
+     "src": "Primitive",
+     "class": "adj",
+     "forms": {
+      "m": "primitif",
+      "f": "primitive",
+      "mp": "primitifs",
+      "fp": "primitives"
+     }
+    },
+    {
+     "src": "Painted",
+     "class": "adj",
+     "forms": {
+      "m": "peint",
+      "f": "peinte",
+      "mp": "peints",
+      "fp": "peintes"
+     }
+    },
+    {
+     "src": "Spiked",
+     "dst": "à pointes",
+     "class": "bound"
+    },
+    {
+     "src": "Splinted",
+     "dst": "à lamelles",
+     "class": "bound"
+    }
+   ]
+  },
+  {
+   "name": "Titres et métiers",
+   "terms": [
+    {
+     "src": "Paladin",
+     "dst": "de paladin",
+     "class": "origin"
+    },
+    {
+     "src": "Snow Bear",
+     "dst": "de l'ours des neiges",
+     "class": "origin"
+    },
+    {
+     "src": "Hedge Knight",
+     "dst": "de chevalier errant",
+     "class": "origin"
+    },
+    {
+     "src": "Barbarian",
+     "dst": "de barbare",
+     "class": "origin"
+    },
+    {
+     "src": "Mercenary",
+     "dst": "de mercenaire",
+     "class": "origin"
+    },
+    {
+     "src": "Seadog",
+     "dst": "de loup de mer",
+     "class": "origin"
+    },
+    {
+     "src": "Stormlord",
+     "dst": "de seigneur sombrage",
+     "class": "origin"
+    },
+    {
+     "src": "Hero",
+     "dst": "de héros",
+     "class": "origin"
+    },
+    {
+     "src": "Hunter",
+     "dst": "de chasseur",
+     "class": "origin"
+    },
+    {
+     "src": "Ranger",
+     "dst": "d'éclaireur",
+     "class": "origin"
+    },
+    {
+     "src": "Daedric Lord",
+     "dst": "de seigneur daedra",
+     "class": "origin"
+    },
+    {
+     "src": "Witchplate",
+     "dst": "de sorcier",
+     "class": "origin"
+    },
+    {
+     "src": "Imperial Knight",
+     "dst": "de chevalier impérial",
+     "class": "origin"
+    },
+    {
+     "src": "Dragon Knight",
+     "dst": "de chevalier-dragon",
+     "class": "origin"
+    },
+    {
+     "src": "Trollsbane",
+     "dst": "de tueur de trolls",
+     "class": "origin"
+    },
+    {
+     "src": "Redguard Knight",
+     "dst": "de chevalier rougegarde",
+     "class": "origin"
+    },
+    {
+     "src": "Shaman",
+     "dst": "de chaman",
+     "class": "origin"
+    },
+    {
+     "src": "Warchief",
+     "dst": "de chef de guerre",
+     "class": "origin"
+    },
+    {
+     "src": "Mage",
+     "dst": "de mage",
+     "class": "origin"
+    },
+    {
+     "src": "Heroic",
+     "dst": "de héros",
+     "class": "origin"
+    }
+   ]
+  },
+  {
+   "name": "Lieux et factions",
+   "terms": [
+    {
+     "src": "Falkreath",
+     "dst": "d'Épervine",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Apotheus",
+     "dst": "d'Apothéus",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Tribunal",
+     "dst": "du Tribunal",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Jorrvaskr",
+     "dst": "de Jorrvaskr",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Wild Hunt",
+     "dst": "de la Chasse sauvage",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Skyforge",
+     "dst": "de la Forgeciel",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Vvardenfell",
+     "dst": "de Vvardenfell",
+     "class": "origin",
+     "case": true
+    }
+   ]
+  },
+  {
+   "name": "Matériaux",
+   "terms": [
+    {
+     "src": "Ringmail",
+     "dst": "en anneaux",
+     "class": "material"
+    },
+    {
+     "src": "Fur",
+     "dst": "en fourrure",
+     "class": "material"
+    },
+    {
+     "src": "Dragonhide",
+     "dst": "en peau de dragon",
+     "class": "material"
+    },
+    {
+     "src": "Boiled Chitin",
+     "dst": "en chitine bouillie",
+     "class": "material"
+    },
+    {
+     "src": "Glacial Crystal",
+     "dst": "en cristal glacial",
+     "class": "material"
+    },
+    {
+     "src": "Mail",
+     "dst": "en mailles",
+     "class": "material"
+    },
+    {
+     "src": "Ebony",
+     "dst": "en ébonite",
+     "class": "material"
+    },
+    {
+     "src": "Orichalcum",
+     "dst": "en orichalque",
+     "class": "material"
+    },
+    {
+     "src": "Iron",
+     "dst": "en fer",
+     "class": "material"
+    },
+    {
+     "src": "Hide",
+     "dst": "en peau",
+     "class": "material"
+    },
+    {
+     "src": "Glass",
+     "dst": "en verre",
+     "class": "material"
+    },
+    {
+     "src": "Steel",
+     "dst": "en acier",
+     "class": "material"
+    },
+    {
+     "src": "Silver",
+     "dst": "en argent",
+     "class": "material"
+    },
+    {
+     "src": "Gold",
+     "dst": "en or",
+     "class": "material"
+    },
+    {
+     "src": "Bronze",
+     "dst": "en bronze",
+     "class": "material"
+    }
+   ]
+  },
+  {
+   "name": "Races et peuples",
+   "terms": [
+    {
+     "src": "Bosmer",
+     "class": "people",
+     "forms": {
+      "m": "bosmer",
+      "f": "bosmer",
+      "mp": "bosmer",
+      "fp": "bosmer"
+     }
+    },
+    {
+     "src": "Nord",
+     "class": "people",
+     "forms": {
+      "m": "nordique",
+      "f": "nordique",
+      "mp": "nordiques",
+      "fp": "nordiques"
+     }
+    },
+    {
+     "src": "Dwarven",
+     "class": "people",
+     "forms": {
+      "m": "dwemer",
+      "f": "dwemer",
+      "mp": "dwemer",
+      "fp": "dwemer"
+     }
+    },
+    {
+     "src": "Nordic",
+     "class": "people",
+     "forms": {
+      "m": "nordique",
+      "f": "nordique",
+      "mp": "nordiques",
+      "fp": "nordiques"
+     }
+    },
+    {
+     "src": "Imperial",
+     "class": "people",
+     "forms": {
+      "m": "impérial",
+      "f": "impériale",
+      "mp": "impériaux",
+      "fp": "impériales"
+     }
+    }
+   ]
+  },
+  {
+   "name": "Origines IA",
+   "terms": [
+    {
+     "src": "of Ysgramor",
+     "dst": "d'Ysgramor",
+     "class": "origin",
+     "case": true
+    }
+   ]
+  }
+ ]
+}

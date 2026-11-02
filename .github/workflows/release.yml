@@ -1,0 +1,135 @@
+# Livraison (S-02, R-S02-02/03/05) : à chaque étiquette v*, binaires release
+# pour Windows x64, Linux x64 et macOS (arm64 et x86_64), archives, bundle
+# .dmg, installateur Inno Setup, et page de version dont le corps est la
+# section correspondante de CHANGELOG.md.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+env:
+  CARGO_TERM_COLOR: always
+  APP_NAME: XIMOD Translator
+  BIN_NAME: ximod-translator
+
+jobs:
+  version:
+    name: Étiquette = version de Cargo.toml
+    runs-on: ubuntu-22.04
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: v
+        run: |
+          bash packaging/check-version.sh "${GITHUB_REF_NAME}"
+          echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: ${{ matrix.name }}
+    needs: version
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: windows-x86_64
+            os: windows-latest
+            target: x86_64-pc-windows-msvc
+          - name: linux-x86_64
+            os: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+          - name: macos-arm64
+            os: macos-14
+            target: aarch64-apple-darwin
+          - name: macos-x86_64
+            os: macos-13
+            target: x86_64-apple-darwin
+    runs-on: ${{ matrix.os }}
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+      - name: Dépendances système (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libxkbcommon-dev libwayland-dev libasound2-dev libssl-dev pkg-config
+      - name: Build release
+        run: cargo build --release --locked -p ximod-translator --features gog-galaxy --target ${{ matrix.target }}
+      # Les deux binaires du paquet (D-91) : la ligne de commande répond.
+      - name: ximod-cli --version
+        shell: bash
+        run: |
+          "target/${{ matrix.target }}/release/ximod-cli" --version
+          "target/${{ matrix.target }}/release/ximod-cli" --help > /dev/null
+
+      # ---- staging commun : exécutable + assets livrés + documents ----
+      - name: Staging (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: bash packaging/stage.sh "target/${{ matrix.target }}/release" dist/stage
+      - name: Staging (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: bash packaging/stage.sh "target/${{ matrix.target }}/release" dist/stage .exe
+
+      # ---- Windows : ZIP + installateur Inno Setup ----
+      - name: Archive ZIP (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist/out | Out-Null
+          Compress-Archive -Path dist/stage/* -DestinationPath "dist/out/XIMOD-Translator-$env:VERSION-windows-x86_64.zip"
+      - name: Inno Setup
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          choco install innosetup --no-progress -y
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DAppVersion=$env:VERSION" "/DStageDir=$(Resolve-Path dist/stage)" "/DOutDir=$(Resolve-Path dist/out)" packaging/windows/installer.iss
+
+      # ---- Linux : tar.gz ----
+      - name: Archive tar.gz (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p dist/out
+          cp packaging/linux/ximod-translator.desktop dist/stage/
+          tar -C dist -czf "dist/out/XIMOD-Translator-${VERSION}-linux-x86_64.tar.gz" --transform "s,^stage,XIMOD-Translator-${VERSION}," stage
+
+      # ---- macOS : bundle .app + .dmg (non signé, R-S02 : documenté) ----
+      - name: Bundle .app et .dmg (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p dist/out
+          bash packaging/macos/bundle.sh dist/stage "dist/app" "$VERSION"
+          hdiutil create -volname "XIMOD Translator" -srcfolder dist/app -ov -format UDZO "dist/out/XIMOD-Translator-${VERSION}-${{ matrix.name }}.dmg"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}
+          path: dist/out/*
+          if-no-files-found: error
+
+  publish:
+    name: Page de version
+    needs: [version, build]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: Notes de version depuis CHANGELOG.md
+        run: bash packaging/changelog-section.sh "${{ needs.version.outputs.version }}" > notes.md
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: XIMOD Translator ${{ needs.version.outputs.version }}
+          body_path: notes.md
+          files: artifacts/*

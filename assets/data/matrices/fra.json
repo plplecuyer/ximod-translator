@@ -1,0 +1,71 @@
+{
+  "format": 1,
+  "matrices": [
+    {
+      "name": "Typographie française",
+      "rules": [
+        {
+          "find": "([^\\s!?;:])[  ]?([!?;])(\\s|$|[»\"'’)\\]…!?])",
+          "replace": "$1 $2$3",
+          "mode": "regex",
+          "case": false,
+          "whole": false,
+          "inverse": {
+            "find": " ([!?;])",
+            "replace": "$1"
+          }
+        },
+        {
+          "find": "([^\\s\\d:])[  ]?:(\\s|$)",
+          "replace": "$1 :$2",
+          "mode": "regex",
+          "case": false,
+          "whole": false,
+          "inverse": {
+            "find": " :",
+            "replace": ":"
+          }
+        },
+        {
+          "find": "...",
+          "replace": "…",
+          "mode": "normal",
+          "case": false,
+          "whole": false
+        }
+      ]
+    },
+    {
+      "name": "Guillemets français « »",
+      "rules": [
+        {
+          "find": "(^|[^=\\w])\"([^\"<>\\n]+)\"",
+          "replace": "$1« $2 »",
+          "mode": "regex",
+          "case": false,
+          "whole": false,
+          "inverse": {
+            "find": "«[  ]?([^»]*?)[  ]?»",
+            "replace": "\"$1\""
+          }
+        }
+      ]
+    },
+    {
+      "name": "Apostrophes typographiques",
+      "rules": [
+        {
+          "find": "(\\w)'(\\w)",
+          "replace": "$1’$2",
+          "mode": "regex",
+          "case": false,
+          "whole": false,
+          "inverse": {
+            "find": "(\\w)’(\\w)",
+            "replace": "$1'$2"
+          }
+        }
+      ]
+    }
+  ]
+}

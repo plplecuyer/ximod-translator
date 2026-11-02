@@ -1,0 +1,24 @@
+{
+  "Fallout4": [
+    "DLCRobot",
+    "DLCworkshop01",
+    "DLCCoast",
+    "DLCworkshop02",
+    "DLCworkshop03",
+    "DLCNukaWorld"
+  ],
+  "Fallout76": [],
+  "Skyrim": [
+    "Dawnguard",
+    "HearthFires",
+    "Dragonborn"
+  ],
+  "SkyrimSE": [
+    "Dawnguard",
+    "HearthFires",
+    "Dragonborn"
+  ],
+  "Starfield": [
+    "ShatteredSpace"
+  ]
+}

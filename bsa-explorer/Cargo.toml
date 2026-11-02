@@ -1,0 +1,58 @@
+[package]
+name = "bsa-explorer"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97"
+authors = ["XIMOD Team"]
+description = "Standalone browser/extractor for Bethesda archives (.bsa/.ba2) — future XIMOD Translator tool"
+license = "MIT"
+
+[dependencies]
+# GUI (same stack/version as XIMOD Translator & ESM Explorer, for a painless
+# later integration as a tool inside XIMOD Translator).
+eframe = { version = "0.29", default-features = false, features = ["default_fonts", "glow", "wayland", "x11"] }
+egui_extras = { version = "0.29" }
+
+# BSA/BA2 reading & extraction (pure Rust, 0BSD). Same library as ESM Explorer.
+# Handles every variant (BSA 103/104/105, BA2 GNRL, BA2 DX10 textures) and, on
+# extraction, reconstructs the .dds header for DX10 textures.
+ba2 = "3"
+
+# Decode preview images (PNG/JPG/BMP/TGA) to RGBA for display.
+image = { version = "0.25", default-features = false, features = ["png", "jpeg", "bmp", "tga"] }
+
+# Decode DDS textures (BC1..BC7 / uncompressed) to RGBA for preview.
+image_dds = { version = "0.7", default-features = false, features = ["ddsfile", "image"] }
+ddsfile = "0.5"
+
+# Memory-map archives so multi-gigabyte files (e.g. Starfield*.ba2) open
+# instantly and stay paged on demand instead of being read fully into RAM.
+memmap2 = "0.9"
+
+# Audio playback of decoded voice/sound previews (WAV out of the decoder).
+rodio = "0.20"
+
+# Pure-Rust Wwise Vorbis (.wem) decoding, built in — no external tool needed:
+# ww2ogg rebuilds a standard Ogg (codebooks bundled), lewton decodes it to PCM.
+ww2ogg = "0.1"
+lewton = "0.10"
+
+# Native file/folder dialogs (Open…, Extract to…).
+rfd = "0.15"
+
+# Error handling.
+anyhow = "1.0"
+
+# Windows-only: native WMA decoding via Media Foundation (full-quality Skyrim
+# xWMA voices that ffmpeg's wmav2 mis-decodes). Not built on Linux/macOS.
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.58", features = [
+    "Win32_Foundation",
+    "Win32_System_Com",
+    "Win32_Media_MediaFoundation",
+    "Win32_Media_Audio",
+] }
+
+[lib]
+name = "bsa_explorer"
+path = "src/lib.rs"

@@ -1,0 +1,38 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://qconsulting.ca/fo3/ModConfig5.0.xsd">
+  <moduleName>Riverwood Home</moduleName>
+  <moduleImage path="fomod\cover.png" />
+  <installSteps order="Explicit">
+    <installStep name="Main files">
+      <optionalFileGroups order="Explicit">
+        <group name="Version" type="SelectExactlyOne">
+          <plugins order="Explicit">
+            <plugin name="Full version">
+              <description>Everything: house, shop, garden and smithy.</description>
+              <image path="fomod\full.png" />
+              <files><file source="RiverwoodHome.esp" destination="RiverwoodHome.esp" priority="0" /></files>
+              <typeDescriptor><type name="Recommended" /></typeDescriptor>
+            </plugin>
+            <plugin name="Lite version">
+              <description>House only, no shop.</description>
+              <files><file source="RiverwoodHomeLite.esp" destination="RiverwoodHomeLite.esp" priority="0" /></files>
+              <typeDescriptor><type name="Optional" /></typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+      </optionalFileGroups>
+    </installStep>
+    <installStep name="Options">
+      <optionalFileGroups order="Explicit">
+        <group name="Extras" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="Map marker">
+              <description>Adds a map marker for fast travel.</description>
+              <flags><flag name="marker">On</flag></flags>
+              <typeDescriptor><type name="Optional" /></typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+      </optionalFileGroups>
+    </installStep>
+  </installSteps>
+</config>

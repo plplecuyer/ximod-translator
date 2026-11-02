@@ -1,0 +1,31 @@
+{
+  "format": 1,
+  "game": "SkyrimSE",
+  "from": "eng",
+  "to": "fra",
+  "out": "out/",
+  "stopOnError": false,
+  "jobs": [
+    {
+      "file": "mods/Apocalypse - Magic of Skyrim.esp",
+      "steps": [
+        "apply",
+        { "assist": { "derive": true } },
+        "check",
+        { "export": { "output": "dsd", "statuses": ["validated", "pending"] } },
+        { "export": { "output": "override", "statuses": ["validated", "pending"] } },
+        "manifest",
+        { "package": { "version": "9.45", "author": "Patrice" } }
+      ]
+    },
+    {
+      "files": "mods/patches/*.esp",
+      "steps": [
+        "apply",
+        "check",
+        { "export": { "output": "dsd" } },
+        "manifest"
+      ]
+    }
+  ]
+}

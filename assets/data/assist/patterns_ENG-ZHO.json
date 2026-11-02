@@ -1,0 +1,11 @@
+{
+ "format": 1,
+ "source": "eng",
+ "target": "zho",
+ "composition": {
+  "order": [],
+  "joiner": "",
+  "maxLen": 60
+ },
+ "patterns": []
+}

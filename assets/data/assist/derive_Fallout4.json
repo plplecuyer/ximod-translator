@@ -1,0 +1,28 @@
+{
+ "format": 1,
+ "game": "Fallout4",
+ "rules": [
+  {
+   "id": "recipe",
+   "target": "COBJ:FULL",
+   "src": "%A%",
+   "parent": [
+    "ALCH:FULL",
+    "WEAP:FULL",
+    "ARMO:FULL"
+   ],
+   "dst": "%A%",
+   "comment": "Recette ou fabrication portant le nom de son produit."
+  },
+  {
+   "id": "holotape",
+   "target": "NOTE:FULL",
+   "src": "%A% Holotape",
+   "parent": "TERM:FULL",
+   "dst": {
+    "fra": "Holobande - %A%"
+   },
+   "enabled": false
+  }
+ ]
+}

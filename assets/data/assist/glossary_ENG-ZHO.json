@@ -1,0 +1,222 @@
+{
+ "format": 1,
+ "source": "eng",
+ "target": "zho",
+ "groups": [
+  {
+   "name": "材料",
+   "terms": [
+    {
+     "src": "Iron",
+     "dst": "铁制",
+     "class": "material"
+    },
+    {
+     "src": "Steel",
+     "dst": "钢制",
+     "class": "material"
+    },
+    {
+     "src": "Ebony",
+     "dst": "黑檀",
+     "class": "material"
+    },
+    {
+     "src": "Glass",
+     "dst": "玻璃",
+     "class": "material"
+    },
+    {
+     "src": "Silver",
+     "dst": "银制",
+     "class": "material"
+    },
+    {
+     "src": "Bronze",
+     "dst": "青铜",
+     "class": "material"
+    },
+    {
+     "src": "Dragonbone",
+     "dst": "龙骨",
+     "class": "material"
+    },
+    {
+     "src": "Dragon Bone",
+     "dst": "龙骨",
+     "class": "material"
+    }
+   ]
+  },
+  {
+   "name": "种族与派系",
+   "terms": [
+    {
+     "src": "Nord",
+     "dst": "诺德",
+     "class": "adj"
+    },
+    {
+     "src": "Nordic",
+     "dst": "诺德",
+     "class": "adj"
+    },
+    {
+     "src": "Elven",
+     "dst": "精灵",
+     "class": "adj"
+    },
+    {
+     "src": "Dwarven",
+     "dst": "矮人",
+     "class": "adj"
+    },
+    {
+     "src": "Orcish",
+     "dst": "兽人",
+     "class": "adj"
+    },
+    {
+     "src": "Daedric",
+     "dst": "魔族",
+     "class": "adj"
+    },
+    {
+     "src": "Imperial",
+     "dst": "帝国",
+     "class": "adj"
+    },
+    {
+     "src": "Eastern",
+     "dst": "东境",
+     "class": "adj"
+    },
+    {
+     "src": "Dawnguard",
+     "dst": "黎明守卫",
+     "class": "adj"
+    },
+    {
+     "src": "Elite",
+     "dst": "精英",
+     "class": "adj"
+    }
+   ]
+  },
+  {
+   "name": "武器",
+   "terms": [
+    {
+     "src": "Sword",
+     "dst": "剑",
+     "class": "noun"
+    },
+    {
+     "src": "Greatsword",
+     "dst": "巨剑",
+     "class": "noun"
+    },
+    {
+     "src": "Dagger",
+     "dst": "匕首",
+     "class": "noun"
+    },
+    {
+     "src": "War Axe",
+     "dst": "战斧",
+     "class": "noun"
+    },
+    {
+     "src": "Battleaxe",
+     "dst": "巨斧",
+     "class": "noun"
+    },
+    {
+     "src": "Battle Axe",
+     "dst": "巨斧",
+     "class": "noun"
+    },
+    {
+     "src": "Warhammer",
+     "dst": "战锤",
+     "class": "noun"
+    },
+    {
+     "src": "Mace",
+     "dst": "钉锤",
+     "class": "noun"
+    },
+    {
+     "src": "Bow",
+     "dst": "弓",
+     "class": "noun"
+    },
+    {
+     "src": "Katana",
+     "dst": "武士刀",
+     "class": "noun"
+    },
+    {
+     "src": "Wakizashi",
+     "dst": "胁差",
+     "class": "noun"
+    },
+    {
+     "src": "Tanto",
+     "dst": "短刀",
+     "class": "noun"
+    },
+    {
+     "src": "Dai-Katana",
+     "dst": "大刀",
+     "class": "noun"
+    },
+    {
+     "src": "Quarterstaff",
+     "dst": "长棍",
+     "class": "noun"
+    },
+    {
+     "src": "Scimitar",
+     "dst": "弯刀",
+     "class": "noun"
+    },
+    {
+     "src": "Staff",
+     "dst": "法杖",
+     "class": "noun"
+    },
+    {
+     "src": "Knife",
+     "dst": "小刀",
+     "class": "noun"
+    },
+    {
+     "src": "Club",
+     "dst": "棍棒",
+     "class": "noun"
+    },
+    {
+     "src": "Hand Axe",
+     "dst": "双头手斧",
+     "class": "noun"
+    },
+    {
+     "src": "War Maul",
+     "dst": "战争双头锤",
+     "class": "noun"
+    },
+    {
+     "src": "Nodachi",
+     "dst": "野太刀",
+     "class": "noun"
+    },
+    {
+     "src": "Zatoichi",
+     "dst": "座头市刀",
+     "class": "noun"
+    }
+   ]
+  }
+ ]
+}

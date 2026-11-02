@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "pages": [
+    { "id": "utf-8", "languages": [] },
+    { "id": "windows-1252", "languages": ["eng", "fra", "deu", "spa", "ita", "por", "nld", "dan", "swe", "nob", "nor", "nno", "fin", "isl", "cat", "glg", "eus", "gle", "roh", "afr", "ind", "msa", "swa", "fao"] },
+    { "id": "windows-1250", "languages": ["pol", "ces", "slk", "hun", "slv", "hrv", "ron", "bos", "sqi"] },
+    { "id": "windows-1251", "languages": ["rus", "ukr", "bul", "bel", "srp", "mkd", "kaz", "kir", "tgk", "mon", "tat", "bak"] },
+    { "id": "windows-1253", "languages": ["ell"] },
+    { "id": "windows-1254", "languages": ["tur", "aze"] },
+    { "id": "windows-1255", "languages": ["heb", "yid"] },
+    { "id": "windows-1256", "languages": ["ara", "fas", "urd", "pus", "kur"] },
+    { "id": "windows-1257", "languages": ["lit", "lav", "est"] },
+    { "id": "windows-1258", "languages": ["vie"] },
+    { "id": "windows-874", "languages": ["tha"] },
+    { "id": "shift_jis", "languages": ["jpn"] },
+    { "id": "gbk", "languages": ["zho", "cmn", "zhs"] },
+    { "id": "euc-kr", "languages": ["kor"] },
+    { "id": "big5", "languages": ["zht", "yue"] }
+  ]
+}

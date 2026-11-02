@@ -1,0 +1,137 @@
+[package]
+name = "ximod-translator"
+version = "0.3.1"
+edition = "2024"
+rust-version = "1.97"
+authors = ["XIMOD Team"]
+description = "Cross-platform mod translation tool for Bethesda games (Skyrim, Fallout, Starfield, Oblivion…)"
+license = "MIT"
+repository = "https://github.com/ximod/ximod-translator"
+keywords = ["translation", "modding", "skyrim", "fallout", "starfield"]
+categories = ["gui", "games"]
+build = "build.rs"
+
+[workspace]
+members = ["ximod-games", "ximod-fomod", "esm-explorer", "bsa-explorer", "swf-explorer"]
+
+[features]
+default = []
+# Optional GOG Galaxy detection via its SQLite database. Pulls in rusqlite with a
+# bundled libsqlite3 (heavier build), so it is off by default.
+gog-galaxy = ["dep:rusqlite"]
+
+[dependencies]
+# Explorateurs embarqués, ouverts depuis le menu « Outils » (un seul programme).
+ximod-games = { path = "ximod-games" }
+ximod-fomod = { path = "ximod-fomod" }
+esm-explorer = { path = "esm-explorer" }
+bsa-explorer = { path = "bsa-explorer" }
+swf-explorer = { path = "swf-explorer" }
+
+# GUI framework (glow backend: most stable on Windows)
+eframe = { version = "0.29", default-features = false, features = ["default_fonts", "glow", "wayland", "x11"] }
+egui_extras = { version = "0.29", features = ["image", "file", "svg"] }
+image = { version = "0.25", default-features = false, features = ["png", "ico"] }
+
+# XML reading (writing is done by hand to control each dialect's exact layout)
+quick-xml = "0.37"
+
+# Serialization (pivot JSON, DSD, reference data)
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# ESP/ESM: zlib decompression of compressed records
+flate2 = "1.0"
+# Identity of a plugin in its mod dictionary (B-12)
+crc32fast = "1.5"
+# Code pages of the older games (D-09): the Encoding Standard, pure Rust
+encoding_rs = "0.8"
+
+# Internationalization (same stack as XIMOD Architect)
+fluent = "0.16"
+fluent-bundle = "0.15"
+unic-langid = "0.9"
+
+# File dialogs
+rfd = "0.15"
+
+# Utilities
+dirs = "5.0"
+thiserror = "2.0"
+anyhow = "1.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+spellbook = "0.4"
+ba2 = "3"
+# Memory-map plugins on load so huge masters (e.g. 1.35 GB Starfield.esm) don't
+# get read fully into RAM before extraction.
+memmap2 = "0.9"
+
+# Optional: GOG Galaxy SQLite database reader (feature "gog-galaxy").
+rusqlite = { version = "0.32", features = ["bundled"], optional = true }
+lingua = "1.8"
+zip = { version = "2", default-features = false, features = ["deflate"] }
+arboard = { version = "3", default-features = false }
+regex = "1"
+egui-phosphor = "0.7"
+
+# Online translation (D-01 / D-02): blocking HTTP client with rustls (as in
+# XIMOD Architect), API keys in the system keyring.
+ureq = { version = "2", default-features = false, features = ["tls", "json"] }
+keyring = { version = "3", features = ["apple-native", "windows-native", "sync-secret-service", "crypto-rust"] }
+similar = { version = "3", features = ["unicode"] }
+# Normalized matching of the dictionaries (B-19): NFKC.
+unicode-normalization = "0.1"
+
+# Platform-specific dependencies for the native transparent splash screen.
+[target.'cfg(target_os = "windows")'.dependencies]
+windows-sys = { version = "0.59", features = [
+    "Win32_Foundation",
+    "Win32_Graphics_Gdi",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_System_LibraryLoader",
+] }
+# Windows registry access for game detection (Steam / GOG install paths).
+winreg = "0.52"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+x11 = { version = "2.21", features = ["xlib"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc = "0.2"
+cocoa = "0.26"
+
+# Windows resource embedding (application icon)
+[target.'cfg(target_os = "windows")'.build-dependencies]
+winres = "0.1"
+# Pas utilisé directement : épingle cc pour tout le projet. cc 1.9.0 (PR #2033)
+# passe à lib.exe les objets relatifs en chemin absolu, ce qui casse le build
+# de directxtex 1.3.0 (`.object("Ole32.lib")` → LNK1181). À retirer quand une
+# version de cc corrigée sera publiée.
+cc = "=1.8.0"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[profile.dev]
+opt-level = 0
+debug = true
+
+[[bin]]
+name = "ximod-translator"
+path = "src/main.rs"
+
+# La ligne de commande (D-06, décision D-91) : un exécutable console, la
+# même bibliothèque.
+[[bin]]
+name = "ximod-cli"
+path = "src/bin/cli/main.rs"
+
+# Les dépendances (dont les 75 modèles de Lingua) sans symboles de débogage :
+# le dossier target reste raisonnable et l'édition de liens plus rapide.
+[profile.dev.package."*"]
+debug = false

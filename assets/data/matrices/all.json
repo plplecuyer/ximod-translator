@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "matrices": [
+    {
+      "name": "Espaces superflus",
+      "rules": [
+        {
+          "find": " {2,}",
+          "replace": " ",
+          "mode": "regex",
+          "case": false,
+          "whole": false
+        }
+      ]
+    }
+  ]
+}

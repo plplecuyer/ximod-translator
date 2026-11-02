@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A mod's strings -->
+<strings lang="en">
+  <string id="greet">Fish &amp; chips</string>
+  <string id="warn">Value &lt; 10</string>
+  <menu>
+    <item id="m1" label="Open &quot;map&quot;" key="M"/>
+    <item id="m2" label="Close"/>
+  </menu>
+</strings>

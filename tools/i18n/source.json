@@ -1,0 +1,4654 @@
+{
+ "app-title": {
+  "en": "XIMOD Translator",
+  "fr": "XIMOD Translator"
+ },
+ "app-version": {
+  "en": "version { $version }",
+  "fr": "version { $version }"
+ },
+ "menu-open": {
+  "en": "Open…",
+  "fr": "Ouvrir…"
+ },
+ "menu-open-archive": {
+  "en": "Open an archive (BSA/BA2)…",
+  "fr": "Ouvrir une archive (BSA/BA2)…"
+ },
+ "menu-export": {
+  "en": "Export translation…",
+  "fr": "Exporter la traduction…"
+ },
+ "export-title": {
+  "en": "Export translation",
+  "fr": "Exporter la traduction"
+ },
+ "export-lines-group": {
+  "en": "Exported lines",
+  "fr": "Lignes exportées"
+ },
+ "export-rule-hint": {
+  "en": "Only lines with the Validated status are exported; the others keep the source text.",
+  "fr": "Seules les lignes au statut Validé sont exportées ; les autres conservent le texte source."
+ },
+ "export-include-label": {
+  "en": "Also include:",
+  "fr": "Inclure aussi :"
+ },
+ "export-to-review": {
+  "en": "(to review)",
+  "fr": "(à relire)"
+ },
+ "export-include-warning": {
+  "en": "These lines have not been reviewed: they will go into the game as they are.",
+  "fr": "Ces lignes n'ont pas été relues : elles partiront telles quelles en jeu."
+ },
+ "export-count": {
+  "en": "{ $total } lines will be exported ({ $validated } validated + { $others }).",
+  "fr": "{ $total } lignes seront exportées ({ $validated } validées + { $others })."
+ },
+ "export-count-validated": {
+  "en": "{ $validated } lines will be exported (validated).",
+  "fr": "{ $validated } lignes seront exportées (validées)."
+ },
+ "btn-export": {
+  "en": "Export",
+  "fr": "Exporter"
+ },
+ "export-override-title": {
+  "en": "Localized plugin ({ $game })",
+  "fr": "Plugin localisé ({ $game })"
+ },
+ "export-override-hint": {
+  "en": "The source plugin is localized (texts in STRINGS). The patch will be written delocalized: plain texts, \"localized\" flag removed, translated records only.",
+  "fr": "Le plugin source est localisé (textes dans les STRINGS). Le patch sera écrit délocalisé : textes en clair, drapeau « localisé » retiré, enregistrements traduits seuls."
+ },
+ "export-override-plain": {
+  "en": "Override patch",
+  "fr": "Patch d'override"
+ },
+ "export-override-counts": {
+  "en": "Unresolved ids: { $unresolved } — Records in the patch: { $records }",
+  "fr": "Identifiants non résolus : { $unresolved } — Enregistrements dans le patch : { $records }"
+ },
+ "export-override-unresolved-hint": {
+  "en": "Fields whose id no STRINGS file resolves will be written empty; the list is in the export report.",
+  "fr": "Les champs dont l'identifiant n'est résolu par aucun fichier STRINGS seront écrits vides ; la liste figure dans le rapport d'export."
+ },
+ "export-override-esl-check": {
+  "en": "Flag the patch as ESL (light) when possible",
+  "fr": "Marquer le patch comme ESL (léger) si possible"
+ },
+ "export-override-delocalized": {
+  "en": "delocalized patch ({ $count } records)",
+  "fr": "patch délocalisé ({ $count } enregistrements)"
+ },
+ "export-override-unresolved": {
+  "en": "{ $count } unresolved id(s)",
+  "fr": "{ $count } identifiant(s) non résolu(s)"
+ },
+ "export-override-esl": {
+  "en": "ESL flag set",
+  "fr": "drapeau ESL posé"
+ },
+ "btn-undo": {
+  "en": "Undo",
+  "fr": "Annuler"
+ },
+ "btn-redo": {
+  "en": "Redo",
+  "fr": "Rétablir"
+ },
+ "undo-tip": {
+  "en": "Undo: { $op } ({ $count } lines) — Ctrl+Z",
+  "fr": "Annuler : { $op } ({ $count } lignes) — Ctrl+Z"
+ },
+ "redo-tip": {
+  "en": "Redo: { $op } ({ $count } lines) — Ctrl+Y",
+  "fr": "Rétablir : { $op } ({ $count } lignes) — Ctrl+Y"
+ },
+ "undo-none": {
+  "en": "Nothing to undo",
+  "fr": "Rien à annuler"
+ },
+ "redo-none": {
+  "en": "Nothing to redo",
+  "fr": "Rien à rétablir"
+ },
+ "op-edit": {
+  "en": "Typing",
+  "fr": "Saisie"
+ },
+ "op-status": {
+  "en": "Status { $name }",
+  "fr": "Statut { $name }"
+ },
+ "op-apply-base": {
+  "en": "Application of the base { $name }",
+  "fr": "Application de la base { $name }"
+ },
+ "op-retranslate": {
+  "en": "Automatic re-translation",
+  "fr": "Re-traduction automatique"
+ },
+ "op-propagate": {
+  "en": "Propagation to duplicates",
+  "fr": "Propagation aux doublons"
+ },
+ "settings-backups": {
+  "en": "Backups",
+  "fr": "Sauvegardes"
+ },
+ "settings-autosave": {
+  "en": "Automatically save the work in progress",
+  "fr": "Sauvegarde automatique du travail en cours"
+ },
+ "settings-autosave-every": {
+  "en": "Every",
+  "fr": "Toutes les"
+ },
+ "settings-autosave-minutes": {
+  "en": "minutes",
+  "fr": "minutes"
+ },
+ "settings-backup-copies": {
+  "en": "Timestamped copies kept per mod dictionary:",
+  "fr": "Copies horodatées conservées par dictionnaire de mod :"
+ },
+ "settings-autosave-dir": {
+  "en": "Rescue folder",
+  "fr": "Dossier de secours"
+ },
+ "backup-resume-title": {
+  "en": "Resume your work?",
+  "fr": "Reprendre le travail ?"
+ },
+ "backup-resume-intro": {
+  "en": "XIMOD Translator did not close normally. An automatic save exists:",
+  "fr": "XIMOD Translator ne s'est pas fermé normalement. Une sauvegarde automatique existe :"
+ },
+ "backup-resume-hint": {
+  "en": "Resume reopens these files with the saved translations. Ignore keeps the saves in the rescue folder for 30 days.",
+  "fr": "Reprendre rouvre ces fichiers avec les traductions sauvegardées. Ignorer conserve les sauvegardes dans le dossier de secours pendant 30 jours."
+ },
+ "backup-col-file": {
+  "en": "File",
+  "fr": "Fichier"
+ },
+ "backup-col-saved": {
+  "en": "Saved on",
+  "fr": "Sauvegardé le"
+ },
+ "backup-col-modified": {
+  "en": "Modified lines",
+  "fr": "Lignes modifiées"
+ },
+ "backup-source-missing-short": {
+  "en": "original file not found",
+  "fr": "fichier d'origine introuvable"
+ },
+ "backup-resume-source-missing": {
+  "en": "The original file cannot be found: { $path }. The save is kept.",
+  "fr": "Le fichier d'origine est introuvable : { $path }. La sauvegarde est conservée."
+ },
+ "backup-resumed": {
+  "en": "{ $file }: { $count } lines resumed",
+  "fr": "{ $file } : { $count } lignes reprises"
+ },
+ "backup-resume-unmatched": {
+  "en": "{ $count } lines without a match (the file changed)",
+  "fr": "{ $count } lignes sans correspondance (le fichier a changé)"
+ },
+ "backup-autosaved": {
+  "en": "Automatic save { $time }",
+  "fr": "Sauvegarde automatique { $time }"
+ },
+ "backup-autosave-failed": {
+  "en": "Automatic save failed for { $file }",
+  "fr": "Sauvegarde automatique impossible pour { $file }"
+ },
+ "backup-quota": {
+  "en": "The rescue folder exceeds { $size }; the oldest saves were removed.",
+  "fr": "Le dossier de secours dépasse { $size } ; les sauvegardes les plus anciennes ont été supprimées."
+ },
+ "btn-ignore": {
+  "en": "Ignore",
+  "fr": "Ignorer"
+ },
+ "btn-resume": {
+  "en": "Resume",
+  "fr": "Reprendre"
+ },
+ "op-resume": {
+  "en": "Resumption of the automatic save",
+  "fr": "Reprise de la sauvegarde automatique"
+ },
+ "settings-undo": {
+  "en": "Undo",
+  "fr": "Annulation"
+ },
+ "settings-undo-depth": {
+  "en": "Operations kept",
+  "fr": "Opérations conservées"
+ },
+ "settings-undo-hint": {
+  "en": "Number of undoable operations per file (10 to 1,000). Beyond it, the oldest is dropped.",
+  "fr": "Nombre d'opérations annulables par fichier (10 à 1 000). Au-delà, la plus ancienne est abandonnée."
+ },
+ "status-export-lines": {
+  "en": "{ $count } lines",
+  "fr": "{ $count } lignes"
+ },
+ "menu-save": {
+  "en": "Save as…",
+  "fr": "Enregistrer sous…"
+ },
+ "status-no-doc": {
+  "en": "No active document.",
+  "fr": "Aucun document actif."
+ },
+ "status-export-needs-plugin": {
+  "en": "This output mode needs a plugin (esp/esm), not a memory.",
+  "fr": "Ce mode de sortie requiert un plugin (esp/esm), pas une base."
+ },
+ "status-export-read-error": {
+  "en": "Could not re-read the source plugin",
+  "fr": "Impossible de relire le plugin source"
+ },
+ "status-export-error": {
+  "en": "Export failed",
+  "fr": "Échec de l'export"
+ },
+ "status-export-ok": {
+  "en": "Translation exported",
+  "fr": "Traduction exportée"
+ },
+ "status-export-no-strings": {
+  "en": "No translated strings to export.",
+  "fr": "Aucune chaîne traduite à exporter."
+ },
+ "status-export-strings-ok": {
+  "en": "STRINGS files exported",
+  "fr": "Fichiers STRINGS exportés"
+ },
+ "status-export-strings-hybrid": {
+  "en": "{ \" \" }(hybrid, plugin context)",
+  "fr": "{ \" \" }(hybride, contexte plugin)"
+ },
+ "status-hybrid-needs-plugin": {
+  "en": "Hybrid mode needs a loaded plugin (record/field context); use Strings mode to edit STRINGS files on their own.",
+  "fr": "Le mode hybride requiert un plugin chargé (contexte enregistrements/champs) ; utilisez le mode Strings pour éditer des fichiers STRINGS seuls."
+ },
+ "status-export-dsd-ok": {
+  "en": "DSD exported — entries",
+  "fr": "DSD exporté — entrées"
+ },
+ "status-auto-translated": {
+  "en": "auto-translated (validated)",
+  "fr": "auto-traduites (validées)"
+ },
+ "status-bases-reloaded": {
+  "en": "Databases reloaded",
+  "fr": "Bases rechargées"
+ },
+ "status-bases-compiled": {
+  "en": "Game bases compiled",
+  "fr": "Bases des jeux compilées"
+ },
+ "status-bases-compile-error": {
+  "en": "Game base compilation failed",
+  "fr": "Échec de la compilation des bases"
+ },
+ "menu-status-colors": {
+  "en": "Status colors…",
+  "fr": "Couleurs des statuts…"
+ },
+ "menu-dictview-stripe": {
+  "en": "Dictionary viewer stripe color…",
+  "fr": "Couleur du zébrage du visualiseur…"
+ },
+ "status-colors-title": {
+  "en": "Status colors",
+  "fr": "Couleurs des statuts"
+ },
+ "status-colors-hint": {
+  "en": "Click a color to change it.",
+  "fr": "Cliquez sur une couleur pour la modifier."
+ },
+ "status-colors-click": {
+  "en": "Edit this color…",
+  "fr": "Modifier cette couleur…"
+ },
+ "status-colors-reset": {
+  "en": "Reset colors",
+  "fr": "Réinitialiser les couleurs"
+ },
+ "status-to-translate": {
+  "en": "To translate",
+  "fr": "À traduire"
+ },
+ "status-validated": {
+  "en": "Validated",
+  "fr": "Validé"
+ },
+ "status-pending": {
+  "en": "Pending",
+  "fr": "En attente"
+ },
+ "status-by-similarity": {
+  "en": "By similarity",
+  "fr": "Traduit par similarité"
+ },
+ "status-modified": {
+  "en": "Modified proposal",
+  "fr": "Proposition modifiée"
+ },
+ "status-custom": {
+  "en": "Custom",
+  "fr": "Personnalisé"
+ },
+ "status-ignored": {
+  "en": "Ignored",
+  "fr": "Ignoré"
+ },
+ "picker-title": {
+  "en": "Select a color",
+  "fr": "Sélectionner une couleur"
+ },
+ "picker-index-tab": {
+  "en": "Index color",
+  "fr": "Couleur de l'index"
+ },
+ "picker-true-tab": {
+  "en": "True colors",
+  "fr": "Couleurs vraies"
+ },
+ "picker-aci-label": {
+  "en": "AutoCAD Color Index (ACI):",
+  "fr": "Index des couleurs AutoCAD (ACI) :"
+ },
+ "picker-color-field": {
+  "en": "Color:",
+  "fr": "Couleur :"
+ },
+ "picker-hue": {
+  "en": "Hue",
+  "fr": "Teinte"
+ },
+ "picker-sat": {
+  "en": "Saturation",
+  "fr": "Saturation"
+ },
+ "picker-lum": {
+  "en": "Luminance",
+  "fr": "Luminance"
+ },
+ "picker-stored-rgb": {
+  "en": "True colors stored as RGB value:",
+  "fr": "Couleurs vraies stockées en tant que valeur RVB :"
+ },
+ "picker-red": {
+  "en": "Red",
+  "fr": "Rouge"
+ },
+ "picker-green": {
+  "en": "Green",
+  "fr": "Vert"
+ },
+ "picker-blue": {
+  "en": "Blue",
+  "fr": "Bleu"
+ },
+ "picker-rgb-input": {
+  "en": "RGB Color:",
+  "fr": "RVB Couleur :"
+ },
+ "filter-status": {
+  "en": "Statuses:",
+  "fr": "Statuts :"
+ },
+ "filter-record": {
+  "en": "GRUP:",
+  "fr": "GRUP :"
+ },
+ "filter-field": {
+  "en": "Field:",
+  "fr": "Champ :"
+ },
+ "filter-chars": {
+  "en": "Characters:",
+  "fr": "Caractères :"
+ },
+ "filter-all": {
+  "en": "All",
+  "fr": "Tous"
+ },
+ "filter-reset": {
+  "en": "Reset",
+  "fr": "Réinitialiser"
+ },
+ "filter-unique": {
+  "en": "Unique",
+  "fr": "Uniques"
+ },
+ "filter-unique-hint": {
+  "en": "Show only one row per distinct source; translating a unique line automatically fills all its duplicates.",
+  "fr": "N'afficher qu'une ligne par source distincte ; traduire une ligne unique remplit automatiquement tous ses doublons."
+ },
+ "counter-shown": {
+  "en": "shown",
+  "fr": "affichées"
+ },
+ "counter-unique": {
+  "en": "unique",
+  "fr": "uniques"
+ },
+ "counter-remaining": {
+  "en": "to translate",
+  "fr": "à traduire"
+ },
+ "counter-translated": {
+  "en": "translated",
+  "fr": "traduites"
+ },
+ "menu-spell": {
+  "en": "Spell checker…",
+  "fr": "Correcteur orthographique…"
+ },
+ "menu-reload-bases": {
+  "en": "Reload translation databases",
+  "fr": "Recharger les bases de traduction"
+ },
+ "menu-compile-bases": {
+  "en": "Compile game bases ( XIMOD base)",
+  "fr": "Compiler les bases des jeux ( base XIMOD)"
+ },
+ "tool-esm": {
+  "en": "ESP/ESM/ESL Explorer",
+  "fr": "Explorateur ESP/ESM/ESL"
+ },
+ "tool-bsa": {
+  "en": "BSA/BA2 Explorer",
+  "fr": "Explorateur BSA/BA2"
+ },
+ "tool-swf": {
+  "en": "SWF Explorer",
+  "fr": "Explorateur SWF"
+ },
+ "menu-tools-data": {
+  "en": "Data",
+  "fr": "Données"
+ },
+ "fields-menu": {
+  "en": "Translatable fields per game…",
+  "fr": "Champs traduisibles par jeu…"
+ },
+ "fields-title": {
+  "en": "Translatable fields per game",
+  "fr": "Champs traduisibles par jeu"
+ },
+ "fields-game": {
+  "en": "Game:",
+  "fr": "Jeu :"
+ },
+ "fields-file": {
+  "en": "File:",
+  "fr": "Fichier :"
+ },
+ "fields-src-user": {
+  "en": "user file",
+  "fr": "fichier utilisateur"
+ },
+ "fields-src-shipped": {
+  "en": "shipped version",
+  "fr": "version livrée"
+ },
+ "fields-src-builtin": {
+  "en": "built-in version",
+  "fr": "version intégrée"
+ },
+ "fields-inherits": {
+  "en": "Inherits the fields of { $game }: greyed rows come from the parent; editing a row makes it this game's own entry.",
+  "fr": "Hérite des champs de { $game } : les lignes grisées viennent du parent, modifier une ligne en fait une entrée propre à ce jeu."
+ },
+ "fields-filter-hint": {
+  "en": "filter (signature, rule, comment)…",
+  "fr": "filtrer (signature, règle, commentaire)…"
+ },
+ "fields-col-sig": {
+  "en": "Signature",
+  "fr": "Signature"
+ },
+ "fields-col-mode": {
+  "en": "Translatable",
+  "fr": "Traduisible"
+ },
+ "fields-col-nonempty": {
+  "en": "Non-empty",
+  "fr": "Non vide"
+ },
+ "fields-col-max": {
+  "en": "Max chars",
+  "fr": "Max car."
+ },
+ "fields-col-newline": {
+  "en": "Line break",
+  "fr": "Retour ligne"
+ },
+ "fields-col-rule": {
+  "en": "Rule",
+  "fr": "Règle"
+ },
+ "fields-col-comment": {
+  "en": "Comment",
+  "fr": "Commentaire"
+ },
+ "fields-mode-translate": {
+  "en": "Yes",
+  "fr": "Oui"
+ },
+ "fields-mode-locked": {
+  "en": "Locked",
+  "fr": "Verrouillé"
+ },
+ "fields-mode-ignore": {
+  "en": "No",
+  "fr": "Non"
+ },
+ "fields-yes": {
+  "en": "Yes",
+  "fr": "Oui"
+ },
+ "fields-no": {
+  "en": "No",
+  "fr": "Non"
+ },
+ "fields-key-sig": {
+  "en": "Signature",
+  "fr": "Signature"
+ },
+ "fields-key-edid": {
+  "en": "EDID pattern",
+  "fr": "Motif d'EDID"
+ },
+ "fields-key-value": {
+  "en": "Text pattern",
+  "fr": "Motif de texte"
+ },
+ "fields-edit-key": {
+  "en": "Key:",
+  "fr": "Clé :"
+ },
+ "fields-max-bytes": {
+  "en": "Max bytes",
+  "fr": "Max octets"
+ },
+ "fields-rule-none": {
+  "en": "(none)",
+  "fr": "(aucune)"
+ },
+ "fields-rule-field": {
+  "en": "Field",
+  "fr": "Champ"
+ },
+ "fields-rule-value": {
+  "en": "Value",
+  "fr": "Valeur"
+ },
+ "fields-rule-edid-prefix": {
+  "en": "EDID starts with \"{ $value }\"",
+  "fr": "EDID commence par « { $value } »"
+ },
+ "fields-rule-edid-glob": {
+  "en": "EDID matches { $value }",
+  "fr": "EDID correspond à { $value }"
+ },
+ "fields-rule-field-eq": {
+  "en": "{ $field } = { $value }",
+  "fr": "{ $field } = { $value }"
+ },
+ "fields-rule-field-ne": {
+  "en": "{ $field } ≠ { $value }",
+  "fr": "{ $field } ≠ { $value }"
+ },
+ "fields-rule-value-prefix": {
+  "en": "text starts with \"{ $value }\"",
+  "fr": "texte commence par « { $value } »"
+ },
+ "fields-inherited-from": {
+  "en": "inherited from { $game }",
+  "fr": "hérité de { $game }"
+ },
+ "fields-select-hint": {
+  "en": "Select a row to edit it, or click Add.",
+  "fr": "Sélectionnez une ligne pour la modifier, ou cliquez sur Ajouter."
+ },
+ "fields-add": {
+  "en": "Add",
+  "fr": "Ajouter"
+ },
+ "fields-remove": {
+  "en": "Remove",
+  "fr": "Supprimer"
+ },
+ "fields-restore": {
+  "en": "Restore shipped version",
+  "fr": "Restaurer la version livrée"
+ },
+ "fields-restore-hint": {
+  "en": "Deletes this game's user file; the shipped version is used again.",
+  "fr": "Supprime le fichier utilisateur de ce jeu ; la version livrée est de nouveau utilisée."
+ },
+ "fields-restored": {
+  "en": "Shipped version restored.",
+  "fr": "Version livrée restaurée."
+ },
+ "fields-valid": {
+  "en": "Valid file — { $count } signatures",
+  "fr": "Fichier valide — { $count } signatures"
+ },
+ "fields-invalid": {
+  "en": "Line { $line }: { $reason }",
+  "fr": "Ligne { $line } : { $reason }"
+ },
+ "fields-applies-next-load": {
+  "en": "Saved. Changes apply at the next load of a file.",
+  "fr": "Enregistré. Les modifications s'appliquent au prochain chargement d'un fichier."
+ },
+ "fields-footer": {
+  "en": "Changes apply at the next load of a file. An invalid file is never saved; the shipped version is used as a fallback.",
+  "fr": "Les modifications s'appliquent au prochain chargement d'un fichier. Un fichier invalide n'est jamais enregistré ; la version livrée est utilisée en secours."
+ },
+ "fields-fallback": {
+  "en": "The fields file of { $game } is invalid ({ $path }); the shipped version is used.",
+  "fr": "Le fichier des champs de { $game } est invalide ({ $path }) ; la version livrée est utilisée."
+ },
+ "fields-err-missing-key": {
+  "en": "a signature, an EDID pattern or a text pattern is required",
+  "fr": "signature, motif d'EDID ou motif de texte requis"
+ },
+ "fields-err-several-keys": {
+  "en": "one key per line (signature, EDID or text)",
+  "fr": "une seule clé par ligne (signature, EDID ou texte)"
+ },
+ "fields-err-bad-sig": {
+  "en": "invalid signature \"{ $text }\" (AAAA:BBBB expected)",
+  "fr": "signature « { $text } » invalide (format AAAA:BBBB)"
+ },
+ "fields-err-empty-pattern": {
+  "en": "empty pattern",
+  "fr": "motif vide"
+ },
+ "fields-err-zero-max": {
+  "en": "maximum ≥ 1 expected",
+  "fr": "maximum ≥ 1 attendu"
+ },
+ "fields-err-rule-on-pattern": {
+  "en": "a context rule only applies to a signature",
+  "fr": "une règle contextuelle ne s'applique qu'à une signature"
+ },
+ "fields-err-bad-rule": {
+  "en": "incomplete rule (value, and a 4-letter field for fieldEquals / fieldNotEquals)",
+  "fr": "règle incomplète (valeur, et champ de 4 lettres pour fieldEquals / fieldNotEquals)"
+ },
+ "fields-err-duplicate": {
+  "en": "duplicate \"{ $text }\"",
+  "fr": "doublon « { $text } »"
+ },
+ "tool-back": {
+  "en": "Back to translator",
+  "fr": "Revenir au traducteur"
+ },
+ "menu-dict": {
+  "en": "Dictionaries",
+  "fr": "Dictionnaires"
+ },
+ "dict-eet-ximdb": {
+  "en": "Convert an EET to ximdb",
+  "fr": "Convertir un EET vers ximdb"
+ },
+ "dict-sst-ximdb": {
+  "en": "Convert an SST to ximdb",
+  "fr": "Convertir un SST vers ximdb"
+ },
+ "dict-ximdb-eet": {
+  "en": "Convert a ximdb to EET",
+  "fr": "Convertir un ximdb vers EET"
+ },
+ "dict-ximdb-sst": {
+  "en": "Convert a ximdb to SST",
+  "fr": "Convertir un ximdb vers SST"
+ },
+ "dict-from-game": {
+  "en": "Build a dictionary from a game…",
+  "fr": "Créer un dictionnaire à partir d'un jeu…"
+ },
+ "dict-from-mod": {
+  "en": "Build a dictionary from a mod…",
+  "fr": "Créer un dictionnaire à partir d'un mod…"
+ },
+ "dict-from-strings": {
+  "en": "Build a dictionary from the game STRINGS…",
+  "fr": "Créer un dictionnaire à partir des STRINGS du jeu…"
+ },
+ "dict-from-plugins": {
+  "en": "Build a dictionary from a pair of plugins…",
+  "fr": "Créer un dictionnaire à partir d'une paire de plugins…"
+ },
+ "dict-from-locres": {
+  "en": "Build a dictionary from a pair of locres files (CSV/JSON)…",
+  "fr": "Créer un dictionnaire à partir d'une paire de fichiers locres (CSV/JSON)…"
+ },
+ "dict-locres-src-label": {
+  "en": "Source-language file (UEExtractor CSV or FModel JSON):",
+  "fr": "Fichier langue source (CSV UEExtractor ou JSON FModel) :"
+ },
+ "dict-locres-tgt-label": {
+  "en": "Target-language file (UEExtractor CSV or FModel JSON):",
+  "fr": "Fichier langue cible (CSV UEExtractor ou JSON FModel) :"
+ },
+ "dict-locres-hint": {
+  "en": "Two locres files (one language each, same format); paired by key. The game is the one in the \"Game\" selector.",
+  "fr": "Deux fichiers locres (une langue chacun, même format) ; appariés par clé. Le jeu est celui du sélecteur « Jeu »."
+ },
+ "dict-csv-missing": {
+  "en": "Provide both files (source and target) — existing files, same format.",
+  "fr": "Indiquez les deux fichiers (source et cible) — fichiers existants, même format."
+ },
+ "dict-import-game-xt": {
+  "en": "Import a game dictionary (xTranslator: vocabulary.txt + STRINGS)…",
+  "fr": "Importer un dictionnaire de jeu (xTranslator : vocabulary.txt + STRINGS)…"
+ },
+ "dict-export-game-strings": {
+  "en": "Export a game dictionary to STRINGS…",
+  "fr": "Exporter un dictionnaire de jeu vers STRINGS…"
+ },
+ "dict-xt-pick-vocab": {
+  "en": "Pick the vocabulary.txt file (Data/<Game>)",
+  "fr": "Choisir le fichier vocabulary.txt (Data/<Jeu>)"
+ },
+ "dict-xt-pick-strings-dir": {
+  "en": "Pick the game STRINGS folder (source + target)",
+  "fr": "Choisir le dossier des STRINGS du jeu (source + cible)"
+ },
+ "dict-xt-no-vocab": {
+  "en": "No \"STRINGS=\" entry in this vocabulary.txt.",
+  "fr": "Aucune entrée « STRINGS= » dans ce vocabulary.txt."
+ },
+ "dict-xt-pick-ximdb": {
+  "en": "Pick the game dictionary (.ximdb) to export",
+  "fr": "Choisir le dictionnaire de jeu (.ximdb) à exporter"
+ },
+ "dict-xt-pick-src-strings-dir": {
+  "en": "Pick the source STRINGS folder (source language)",
+  "fr": "Choisir le dossier des STRINGS source (langue source)"
+ },
+ "dict-xt-pick-out-dir": {
+  "en": "Pick the output folder for the translated STRINGS",
+  "fr": "Choisir le dossier de sortie des STRINGS traduits"
+ },
+ "dict-xt-no-src-strings": {
+  "en": "No source-language STRINGS file found.",
+  "fr": "Aucun fichier STRINGS en langue source trouvé."
+ },
+ "dict-import-title": {
+  "en": "Import a game dictionary",
+  "fr": "Importer un dictionnaire de jeu"
+ },
+ "dict-import-game": {
+  "en": "Detected game:",
+  "fr": "Jeu détecté :"
+ },
+ "dict-import-bases": {
+  "en": "Bases (present/listed):",
+  "fr": "Bases (présentes/listées) :"
+ },
+ "dict-import-langs": {
+  "en": "Languages:",
+  "fr": "Langues :"
+ },
+ "dict-import-ok": {
+  "en": "Import",
+  "fr": "Importer"
+ },
+ "games-detect": {
+  "en": "Detect installed games…",
+  "fr": "Détecter les jeux installés…"
+ },
+ "games-add-manual": {
+  "en": "Add a game…",
+  "fr": "Ajouter un jeu…"
+ },
+ "games-title": {
+  "en": "Detected games",
+  "fr": "Jeux détectés"
+ },
+ "games-save": {
+  "en": "Save",
+  "fr": "Enregistrer"
+ },
+ "games-found": {
+  "en": "game(s) detected",
+  "fr": "jeu(x) détecté(s)"
+ },
+ "games-none": {
+  "en": "No game detected.",
+  "fr": "Aucun jeu détecté."
+ },
+ "games-saved": {
+  "en": "game(s) saved",
+  "fr": "jeu(x) enregistré(s)"
+ },
+ "games-pick-folder": {
+  "en": "Pick the game's install folder",
+  "fr": "Choisir le dossier d'installation du jeu"
+ },
+ "games-unrecognized": {
+  "en": "No game recognized in this folder (master file missing).",
+  "fr": "Aucun jeu reconnu dans ce dossier (fichier maître absent)."
+ },
+ "games-detecting": {
+  "en": "Detecting games…",
+  "fr": "Détection des jeux…"
+ },
+ "games-step-steam": {
+  "en": "Scanning Steam…",
+  "fr": "Recherche Steam…"
+ },
+ "games-step-gog": {
+  "en": "Scanning GOG (registry)…",
+  "fr": "Recherche GOG (registre)…"
+ },
+ "games-step-gog-galaxy": {
+  "en": "Scanning GOG Galaxy…",
+  "fr": "Recherche GOG Galaxy…"
+ },
+ "games-step-epic": {
+  "en": "Scanning Epic Games…",
+  "fr": "Recherche Epic Games…"
+ },
+ "games-step-xbox": {
+  "en": "Scanning Xbox Game Pass…",
+  "fr": "Recherche Xbox Game Pass…"
+ },
+ "games-step-scan": {
+  "en": "Scanning folders…",
+  "fr": "Balayage des dossiers…"
+ },
+ "dict-unit": {
+  "en": "Single file…",
+  "fr": "Unitaire…"
+ },
+ "dict-batch": {
+  "en": "Batch…",
+  "fr": "Par lot…"
+ },
+ "dict-done": {
+  "en": "Conversion done",
+  "fr": "Conversion terminée"
+ },
+ "dict-error": {
+  "en": "Conversion error",
+  "fr": "Erreur de conversion"
+ },
+ "dict-entries": {
+  "en": "entries",
+  "fr": "entrées"
+ },
+ "dict-files": {
+  "en": "file(s)",
+  "fr": "fichier(s)"
+ },
+ "dict-errors": {
+  "en": "error(s)",
+  "fr": "erreur(s)"
+ },
+ "dict-empty": {
+  "en": "No translated entries found.",
+  "fr": "Aucune entrée traduite trouvée."
+ },
+ "dict-pick-src-strings": {
+  "en": "Pick source STRINGS files (source language)",
+  "fr": "Choisir les fichiers STRINGS source (langue source)"
+ },
+ "dict-pick-tgt-strings": {
+  "en": "Pick target STRINGS files (target language)",
+  "fr": "Choisir les fichiers STRINGS cible (langue cible)"
+ },
+ "dict-pick-src-plugin": {
+  "en": "Pick the source plugin (source language)",
+  "fr": "Choisir le plugin source (langue source)"
+ },
+ "dict-pick-tgt-plugin": {
+  "en": "Pick the target plugin (translated language)",
+  "fr": "Choisir le plugin cible (langue traduite)"
+ },
+ "dict-plugin-src-label": {
+  "en": "Source plugin (source language):",
+  "fr": "Plugin source (langue source) :"
+ },
+ "dict-plugin-tgt-label": {
+  "en": "Target plugin (translated language):",
+  "fr": "Plugin cible (langue traduite) :"
+ },
+ "dict-plugin-langs": {
+  "en": "Languages (from Settings):",
+  "fr": "Langues (via Paramètres) :"
+ },
+ "dict-plugin-create": {
+  "en": "Build dictionary",
+  "fr": "Créer le dictionnaire"
+ },
+ "dict-plugin-missing": {
+  "en": "Provide both plugins (source and target) — existing files.",
+  "fr": "Indiquez les deux plugins (source et cible) — fichiers existants."
+ },
+ "dict-plugin-name-mismatch": {
+  "en": "Both plugins must have the same file name (ignoring the language code). Check your selection.",
+  "fr": "Les deux plugins doivent porter le même nom de fichier (hors code de langue). Vérifiez votre sélection."
+ },
+ "alert-title": {
+  "en": "Warning",
+  "fr": "Avertissement"
+ },
+ "dict-confirm-title": {
+  "en": "Confirm the game",
+  "fr": "Confirmation du jeu"
+ },
+ "dict-confirm-game": {
+  "en": "Is this really a dictionary for { $game }?",
+  "fr": "S'agit-il bien d'un dictionnaire pour { $game } ?"
+ },
+ "btn-validate": {
+  "en": "Validate",
+  "fr": "Valider"
+ },
+ "dict-view": {
+  "en": "View a dictionary…",
+  "fr": "Visualiser un dictionnaire…"
+ },
+ "dict-view-title": {
+  "en": "Dictionary viewer",
+  "fr": "Visualiseur de dictionnaire"
+ },
+ "dict-view-open": {
+  "en": "Open…",
+  "fr": "Ouvrir…"
+ },
+ "dict-view-empty": {
+  "en": "Open a dictionary (.ximdb) with the \"Open…\" button, or drop one onto this window.",
+  "fr": "Ouvrez un dictionnaire (.ximdb) avec le bouton « Ouvrir… » ou glissez-le dans cette fenêtre."
+ },
+ "dict-view-drop": {
+  "en": "Drop the .ximdb file here",
+  "fr": "Déposez le fichier .ximdb ici"
+ },
+ "dict-view-filter": {
+  "en": "Filter:",
+  "fr": "Filtre :"
+ },
+ "dict-view-source": {
+  "en": "Source",
+  "fr": "Source"
+ },
+ "dict-view-trans": {
+  "en": "Translation",
+  "fr": "Traduction"
+ },
+ "dict-conv-title": {
+  "en": "Convert to ximdb",
+  "fr": "Conversion vers ximdb"
+ },
+ "dict-conv-game": {
+  "en": "Game:",
+  "fr": "Jeu :"
+ },
+ "dict-conv-kind": {
+  "en": "Destination:",
+  "fr": "Destination :"
+ },
+ "dict-conv-jeux": {
+  "en": "Game (assets/bases/jeux)",
+  "fr": "Jeu (assets/bases/jeux)"
+ },
+ "dict-conv-mods": {
+  "en": "Mod (assets/bases/mods/<game>)",
+  "fr": "Mod (assets/bases/mods/<jeu>)"
+ },
+ "dict-conv-ok": {
+  "en": "Convert",
+  "fr": "Convertir"
+ },
+ "dict-conv-cancel": {
+  "en": "Cancel",
+  "fr": "Annuler"
+ },
+ "dict-conv-batch-info": {
+  "en": "Files to convert:",
+  "fr": "Fichiers à convertir :"
+ },
+ "dict-conv-none": {
+  "en": "No file to convert in this folder.",
+  "fr": "Aucun fichier à convertir dans ce dossier."
+ },
+ "dict-conv-hint": {
+  "en": "The destination <game> folder is derived from the source file's folder (Bases Persos/<game> or UserDictionaries/<game>); mod name and languages from the file name.",
+  "fr": "Le dossier <jeu> de destination est déduit du dossier du fichier source (Bases Persos/<jeu> ou UserDictionaries/<jeu>) ; nom du mod et langues déduits du nom du fichier."
+ },
+ "dict-conv-preview": {
+  "en": "Example:",
+  "fr": "Exemple :"
+ },
+ "spell-title": {
+  "en": "Spell checker",
+  "fr": "Correcteur orthographique"
+ },
+ "spell-dict": {
+  "en": "Dictionary:",
+  "fr": "Dictionnaire :"
+ },
+ "spell-recheck": {
+  "en": "Recheck",
+  "fr": "Revérifier"
+ },
+ "spell-reload": {
+  "en": "Reload",
+  "fr": "Recharger"
+ },
+ "spell-none": {
+  "en": "No dictionary for the target language.",
+  "fr": "Aucun dictionnaire pour la langue cible."
+ },
+ "spell-none-hint": {
+  "en": "Drop an .aff/.dic pair (e.g. en_US.aff / en_US.dic) into: { $dir }",
+  "fr": "Placez une paire de fichiers .aff/.dic (par ex. fr_FR.aff / fr_FR.dic) dans : { $dir }"
+ },
+ "spell-no-dict": {
+  "en": "No dictionary loaded.",
+  "fr": "Aucun dictionnaire chargé."
+ },
+ "spell-clean": {
+  "en": "No spelling issues found.",
+  "fr": "Aucune faute détectée."
+ },
+ "spell-issues": {
+  "en": "issue(s)",
+  "fr": "faute(s)"
+ },
+ "spell-ignore": {
+  "en": "Ignore",
+  "fr": "Ignorer"
+ },
+ "spell-add": {
+  "en": "＋ Dictionary",
+  "fr": "＋ Dictionnaire"
+ },
+ "archive-title": {
+  "en": "Archive navigator",
+  "fr": "Navigateur d'archives"
+ },
+ "archive-entries": {
+  "en": "entries",
+  "fr": "entrées"
+ },
+ "archive-translatable-only": {
+  "en": "Translatable only",
+  "fr": "Traduisibles seulement"
+ },
+ "archive-open-in-translator": {
+  "en": "Open in translator",
+  "fr": "Ouvrir dans le traducteur"
+ },
+ "archive-open-plugin": {
+  "en": "Open associated plugin",
+  "fr": "Ouvrir le plugin associé"
+ },
+ "archive-open-plugin-hint": {
+  "en": "Opens the plugin (.esp/.esm/.esl) next to this archive and resolves its STRINGS from the archive.",
+  "fr": "Ouvre le plugin (.esp/.esm/.esl) voisin de cette archive et résout ses STRINGS depuis l'archive."
+ },
+ "archive-no-plugin": {
+  "en": "No associated plugin found next to the archive.",
+  "fr": "Aucun plugin associé trouvé à côté de l'archive."
+ },
+ "archive-extract": {
+  "en": "Extract…",
+  "fr": "Extraire…"
+ },
+ "archive-extracted": {
+  "en": "Extracted",
+  "fr": "Extrait"
+ },
+ "archive-col-path": {
+  "en": "Path",
+  "fr": "Chemin"
+ },
+ "archive-col-size": {
+  "en": "Size",
+  "fr": "Taille"
+ },
+ "archive-open-error": {
+  "en": "Failed to open archive",
+  "fr": "Erreur d'ouverture de l'archive"
+ },
+ "archive-extract-error": {
+  "en": "Extraction failed",
+  "fr": "Erreur d'extraction"
+ },
+ "dialog-translations-plugins": {
+  "en": "Translations & plugins",
+  "fr": "Traductions et plugins"
+ },
+ "dialog-strings-files": {
+  "en": "STRINGS files",
+  "fr": "Fichiers STRINGS"
+ },
+ "dialog-all-files": {
+  "en": "All files",
+  "fr": "Tous les fichiers"
+ },
+ "dialog-databases": {
+  "en": "Translation databases",
+  "fr": "Bases de traduction"
+ },
+ "dialog-plugin": {
+  "en": "Plugin",
+  "fr": "Plugin"
+ },
+ "dialog-archives": {
+  "en": "Bethesda archives (BSA/BA2)",
+  "fr": "Archives Bethesda (BSA/BA2)"
+ },
+ "dialog-sst": {
+  "en": "SST (xTranslator)",
+  "fr": "SST (xTranslator)"
+ },
+ "dialog-eet": {
+  "en": "EET (ESP-ESM Translator)",
+  "fr": "EET (ESP-ESM Translator)"
+ },
+ "dialog-dsd-json": {
+  "en": "DSD (JSON)",
+  "fr": "DSD (JSON)"
+ },
+ "dialog-pivot-json": {
+  "en": "Pivot / DSD JSON",
+  "fr": "Pivot / DSD JSON"
+ },
+ "dialog-csv": {
+  "en": "CSV",
+  "fr": "CSV"
+ },
+ "dialog-xml": {
+  "en": "XML (native / .eet.xml / .sst.xml)",
+  "fr": "XML (natif / .eet.xml / .sst.xml)"
+ },
+ "dialog-strings-format": {
+  "en": "STRINGS",
+  "fr": "STRINGS"
+ },
+ "book-preview": {
+  "en": "📖 Book preview",
+  "fr": "📖 Aperçu du livre"
+ },
+ "book-title": {
+  "en": "Book preview",
+  "fr": "Aperçu du livre"
+ },
+ "book-source": {
+  "en": "Source",
+  "fr": "Source"
+ },
+ "book-translation": {
+  "en": "Translation",
+  "fr": "Traduction"
+ },
+ "book-game-fonts": {
+  "en": "Game fonts",
+  "fr": "Polices du jeu"
+ },
+ "toolbar-game": {
+  "en": "Game:",
+  "fr": "Jeu :"
+ },
+ "toolbar-game-all": {
+  "en": "(All games)",
+  "fr": "(Tous les jeux)"
+ },
+ "toolbar-source": {
+  "en": "Source:",
+  "fr": "Source :"
+ },
+ "toolbar-output": {
+  "en": "Output:",
+  "fr": "Sortie :"
+ },
+ "toolbar-scope-doc": {
+  "en": "Settings of { $file }",
+  "fr": "Réglages de { $file }"
+ },
+ "toolbar-scope-default": {
+  "en": "Settings of the next file",
+  "fr": "Réglages du prochain fichier"
+ },
+ "tab-badge": {
+  "en": "{ $game } · { $src }{ $dst } · { $mode }",
+  "fr": "{ $game } · { $src }{ $dst } · { $mode }"
+ },
+ "doc-reload-title": {
+  "en": "Change the document's game",
+  "fr": "Changer le jeu du document"
+ },
+ "doc-reload-as-game": {
+  "en": "Reload { $file } as { $game }? Translations will be kept by matching.",
+  "fr": "Recharger { $file } en tant que { $game } ? Les traductions seront conservées par appariement."
+ },
+ "dict-stack-status": {
+  "en": "Dictionaries: { $list } — { $count } lines pre-filled",
+  "fr": "Dictionnaires : { $list } — { $count } lignes pré-remplies"
+ },
+ "dict-stack-none": {
+  "en": "none",
+  "fr": "aucun"
+ },
+ "dict-stack-game-files": {
+  "en": "{ $n } file(s)",
+  "fr": "{ $n } fichier(s)"
+ },
+ "dict-use-personal": {
+  "en": "Use my personal dictionary",
+  "fr": "Utiliser mon dictionnaire personnel"
+ },
+ "toolbar-filter": {
+  "en": "Filter:",
+  "fr": "Filtre :"
+ },
+ "hint-open-file": {
+  "en": "Open a translation database (.sst, .eet, .dsd, .xml) or a plugin (.esp/.esm/.esl).",
+  "fr": "Ouvrez une base de traduction (.sst, .eet, .dsd, .xml) ou un plugin (.esp/.esm/.esl)."
+ },
+ "warn-dsd-skyrim-only": {
+  "en": "DSD applies to Skyrim SE/AE only.",
+  "fr": "Le DSD ne concerne que Skyrim SE/AE."
+ },
+ "about-tagline": {
+  "en": "Cross-platform mod translation tool for Bethesda games.",
+  "fr": "Outil de traduction de mods multiplateforme pour les jeux Bethesda."
+ },
+ "settings-language": {
+  "en": "Interface language:",
+  "fr": "Langue de l'interface :"
+ },
+ "settings-save": {
+  "en": "Save",
+  "fr": "Enregistrer"
+ },
+ "settings-tab-recent": {
+  "en": "Recent files",
+  "fr": "Fichiers récents"
+ },
+ "settings-tab-advanced": {
+  "en": "Advanced",
+  "fr": "Avancé"
+ },
+ "settings-config-location": {
+  "en": "Configuration location",
+  "fr": "Emplacement de la configuration"
+ },
+ "settings-open-folder": {
+  "en": "Open folder",
+  "fr": "Ouvrir le dossier"
+ },
+ "config-mode-user": {
+  "en": "Per user (recommended) — { $path }",
+  "fr": "Par utilisateur (recommandé) — { $path }"
+ },
+ "config-mode-portable": {
+  "en": "Portable — Config.ini next to the executable (writable folder required)",
+  "fr": "Portable — Config.ini à côté de l'exécutable (dossier inscriptible requis)"
+ },
+ "config-mode-current": {
+  "en": "Current location: { $path }",
+  "fr": "Emplacement actuel : { $path }"
+ },
+ "config-mode-restart": {
+  "en": "Changing the mode copies the configuration and takes effect at the next start.",
+  "fr": "Le changement de mode copie la configuration et prend effet au prochain démarrage."
+ },
+ "config-mode-not-writable": {
+  "en": "Cannot write to { $path }. Choose the per-user mode or install the application in a writable folder.",
+  "fr": "Impossible d'écrire dans { $path }. Choisissez le mode par utilisateur ou installez l'application dans un dossier inscriptible."
+ },
+ "config-mode-failed": {
+  "en": "Copying the configuration failed; nothing was removed.",
+  "fr": "La copie de la configuration a échoué ; rien n'a été supprimé."
+ },
+ "settings-country-name": {
+  "en": "Country name",
+  "fr": "Nom du pays"
+ },
+ "settings-pick-country": {
+  "en": "Pick a country",
+  "fr": "Choisir un pays"
+ },
+ "settings-font-size": {
+  "en": "Font size:",
+  "fr": "Taille de police :"
+ },
+ "settings-max-recent": {
+  "en": "Max recent files:",
+  "fr": "Fichiers récents max :"
+ },
+ "settings-window-width": {
+  "en": "Window width:",
+  "fr": "Largeur de fenêtre :"
+ },
+ "settings-window-height": {
+  "en": "Window height:",
+  "fr": "Hauteur de fenêtre :"
+ },
+ "settings-bases": {
+  "en": "Translation database folders",
+  "fr": "Dossiers des bases de traduction"
+ },
+ "settings-bases-hint": {
+  "en": "Leave empty to use the default folders (assets/bases/jeux and assets/bases/mods).",
+  "fr": "Laisser vide pour utiliser les dossiers par défaut (assets/bases/jeux et assets/bases/mods)."
+ },
+ "settings-game-bases": {
+  "en": "Game bases:",
+  "fr": "Bases des jeux :"
+ },
+ "settings-mod-bases": {
+  "en": "Mod translations:",
+  "fr": "Traductions de mods :"
+ },
+ "settings-browse": {
+  "en": "Browse…",
+  "fr": "Parcourir…"
+ },
+ "settings-tools": {
+  "en": "External tools",
+  "fr": "Outils externes"
+ },
+ "settings-tools-hint": {
+  "en": "Root folder paths. Empty = matching conversions disabled.",
+  "fr": "Chemins des dossiers racine. Vide = conversions correspondantes désactivées."
+ },
+ "settings-eet-dir": {
+  "en": "ESP-ESM Translator:",
+  "fr": "ESP-ESM Translator :"
+ },
+ "settings-xtranslator-dir": {
+  "en": "xTranslator:",
+  "fr": "xTranslator :"
+ },
+ "settings-no-recent": {
+  "en": "No recent files.",
+  "fr": "Aucun fichier récent."
+ },
+ "status-settings-saved": {
+  "en": "Settings saved",
+  "fr": "Paramètres enregistrés"
+ },
+ "flags-none": {
+  "en": "No matching country.",
+  "fr": "Aucun pays correspondant."
+ },
+ "menu-needs-game": {
+  "en": "Select a game in the toolbar first.",
+  "fr": "Sélectionnez d'abord un jeu dans la barre d'outils."
+ },
+ "alert-needs-game": {
+  "en": "Select a game in the toolbar (\"Game\" list) before opening a file.",
+  "fr": "Sélectionnez d'abord un jeu dans la barre d'outils (liste « Jeu ») avant d'ouvrir un fichier."
+ },
+ "dict-conv-not-in-game-folder": {
+  "en": "Pick a dictionary located under assets/bases/mods/<game>: the <game> folder decides the destination.",
+  "fr": "Choisissez un dictionnaire situé dans assets/bases/mods/<jeu> : le dossier <jeu> détermine la destination."
+ },
+ "col-st": {
+  "en": "St",
+  "fr": "St"
+ },
+ "col-grup": {
+  "en": "GRUP",
+  "fr": "GRUP"
+ },
+ "col-grup-tes3": {
+  "en": "Record",
+  "fr": "Enreg."
+ },
+ "col-field": {
+  "en": "Field",
+  "fr": "Champ"
+ },
+ "col-edid": {
+  "en": "EDID",
+  "fr": "EDID"
+ },
+ "col-edid-tes3": {
+  "en": "ID",
+  "fr": "ID"
+ },
+ "col-source": {
+  "en": "Source",
+  "fr": "Source"
+ },
+ "col-trans": {
+  "en": "Translation",
+  "fr": "Traduction"
+ },
+ "toolbar-target-btn": {
+  "en": "Target",
+  "fr": "Cible"
+ },
+ "toolbar-target-tip": {
+  "en": "Pick the country: its official languages fill the Target list.",
+  "fr": "Choisir le pays : ses langues officielles remplissent la liste Cible."
+ },
+ "alert-needs-languages": {
+  "en": "Choose the source language (\"Source\" list) and the target language (\"Target\" button) in the toolbar first.",
+  "fr": "Choisissez d'abord la langue source (liste « Source ») et la langue cible (bouton « Cible ») dans la barre d'outils."
+ },
+ "alert-output-missing": {
+  "en": "No output selected: choose the output mode (\"Output\" list) before exporting.",
+  "fr": "Aucune sortie sélectionnée : choisissez le mode de sortie (liste « Sortie ») avant d'exporter."
+ },
+ "confirm-output-title": {
+  "en": "Output",
+  "fr": "Sortie"
+ },
+ "confirm-output-body": {
+  "en": "The selected output is \"{ $mode }\". Is it the right one?",
+  "fr": "La sortie sélectionnée est « { $mode } ». Est-ce la bonne sortie ?"
+ },
+ "dict-stack-no-target": {
+  "en": "No target language: pick a country with the Target button to apply the dictionaries.",
+  "fr": "Aucune langue cible : choisissez un pays avec le bouton Cible pour appliquer les dictionnaires."
+ },
+ "status-source-set": {
+  "en": "source language: { $lang }",
+  "fr": "langue source : { $lang }"
+ },
+ "status-country-no-language": {
+  "en": "No known official language for this country.",
+  "fr": "Aucune langue officielle connue pour ce pays."
+ },
+ "status-country-languages": {
+  "en": "Official languages of the country: { $langs } — pick one in the Target list.",
+  "fr": "Langues officielles du pays : { $langs } — choisissez-en une dans la liste Cible."
+ },
+ "fields-mode-unused": {
+  "en": "Never shown in game",
+  "fr": "Jamais affiché en jeu"
+ },
+ "filter-unused": {
+  "en": "Never shown in game",
+  "fr": "Jamais affichées en jeu"
+ },
+ "filter-unused-hint": {
+  "en": "Also show the lines the game never displays (plugin header, editor-only names): in red, not translatable. The list is in Tools  Data  Translatable fields per game.",
+  "fr": "Afficher aussi les lignes que le jeu n'affiche jamais (en-tête du plugin, noms réservés à l'éditeur) : en rouge, non traduisibles. La liste est dans Outils  Données  Champs traduisibles par jeu."
+ },
+ "grid-unused-tip": {
+  "en": "Never shown in game: this line needs no translation (field mode \"unused\", Tools  Data  Translatable fields per game).",
+  "fr": "Jamais affichée en jeu : cette ligne n'a pas à être traduite (mode « unused » du champ, Outils  Données  Champs traduisibles par jeu)."
+ },
+ "confirm-output-full-plugin-hint": {
+  "en": "A full plugin rewrites the original mod. To publish a translation of someone else's mod, prefer \"Override patch\": an override plugin that leaves the original untouched and follows its updates.",
+  "fr": "Le plugin complet réécrit le mod d'origine. Pour publier la traduction d'un mod dont vous n'êtes pas l'auteur, préférez « Patch override » : un plugin de surcharge qui laisse l'original intact et le suit dans ses mises à jour."
+ },
+ "fomod-menu": {
+  "en": "Translate a FOMOD…",
+  "fr": "Traduire un FOMOD…"
+ },
+ "fomod-menu-tip": {
+  "en": "Translates the texts of a mod's FOMOD installer (fomod/info.xml and ModuleConfig.xml).",
+  "fr": "Traduit les textes de l'installateur FOMOD d'un mod (fomod/info.xml et ModuleConfig.xml)."
+ },
+ "fomod-title": {
+  "en": "Translate a FOMOD",
+  "fr": "Traduire un FOMOD"
+ },
+ "fomod-open-folder": {
+  "en": "Open a folder…",
+  "fr": "Ouvrir un dossier…"
+ },
+ "fomod-no-folder": {
+  "en": "No folder open: choose the mod folder or its fomod sub-folder.",
+  "fr": "Aucun dossier ouvert : choisissez le dossier du mod ou son sous-dossier fomod."
+ },
+ "fomod-empty": {
+  "en": "Open a mod folder holding a FOMOD installer (fomod/info.xml, fomod/ModuleConfig.xml).",
+  "fr": "Ouvrez le dossier d'un mod contenant un installateur FOMOD (fomod/info.xml, fomod/ModuleConfig.xml)."
+ },
+ "fomod-loaded": {
+  "en": "{ $n } text(s) to translate.",
+  "fr": "{ $n } texte(s) à traduire."
+ },
+ "fomod-open-error": {
+  "en": "Cannot open the folder",
+  "fr": "Impossible d'ouvrir le dossier"
+ },
+ "fomod-save": {
+  "en": "Save",
+  "fr": "Enregistrer"
+ },
+ "fomod-save-tip": {
+  "en": "Replaces the source texts by your translations in info.xml and ModuleConfig.xml; the originals are kept as .bak (Ctrl+S).",
+  "fr": "Remplace les textes source par vos traductions dans info.xml et ModuleConfig.xml ; les fichiers d'origine sont conservés en .bak (Ctrl+S)."
+ },
+ "fomod-saved": {
+  "en": "Saved: { $files } (originals kept as .bak).",
+  "fr": "Enregistré : { $files } (originaux conservés en .bak)."
+ },
+ "fomod-save-error": {
+  "en": "Save error",
+  "fr": "Erreur d'enregistrement"
+ },
+ "fomod-nothing-to-save": {
+  "en": "No translation typed.",
+  "fr": "Aucune traduction saisie."
+ },
+ "fomod-revert": {
+  "en": "Discard changes",
+  "fr": "Annuler les modifications"
+ },
+ "fomod-revert-tip": {
+  "en": "Back to the translations as saved.",
+  "fr": "Revient aux traductions telles qu'enregistrées."
+ },
+ "fomod-google": {
+  "en": "Translate the line online",
+  "fr": "Traduire la ligne en ligne"
+ },
+ "fomod-google-tip": {
+  "en": "Opens Google Translate in the browser with the current line; paste the result into the field (Ctrl+G).",
+  "fr": "Ouvre Google Traduction dans le navigateur avec le texte de la ligne en cours ; copiez le résultat dans le champ (Ctrl+G)."
+ },
+ "fomod-target": {
+  "en": "to:",
+  "fr": "vers :"
+ },
+ "fomod-copy-list": {
+  "en": "Copy the source list",
+  "fr": "Copier la liste des sources"
+ },
+ "fomod-copy-list-tip": {
+  "en": "Copies every text as a numbered list, to paste into an AI (\"translate this list, keeping the numbers\").",
+  "fr": "Copie tous les textes sous forme de liste numérotée, à coller dans une IA (« traduis cette liste en français, en gardant les numéros »)."
+ },
+ "fomod-paste-list": {
+  "en": "Paste translations…",
+  "fr": "Coller des traductions…"
+ },
+ "fomod-paste-list-tip": {
+  "en": "Paste the AI's answer (numbered list) to fill the fields at once.",
+  "fr": "Colle la réponse de l'IA (liste numérotée) pour remplir les champs d'un coup."
+ },
+ "fomod-paste-hint": {
+  "en": "Paste the translated numbered list here (\"1. …\", one entry per number), then Apply.",
+  "fr": "Collez ici la liste numérotée traduite (« 1. … », une entrée par numéro), puis Appliquer."
+ },
+ "fomod-paste-apply": {
+  "en": "Apply",
+  "fr": "Appliquer"
+ },
+ "fomod-pasted": {
+  "en": "{ $n } translation(s) applied.",
+  "fr": "{ $n } traduction(s) appliquée(s)."
+ },
+ "fomod-copied": {
+  "en": "{ $num } text(s) copied as a numbered list.",
+  "fr": "{ $num } texte(s) copié(s) en liste numérotée."
+ },
+ "fomod-col-element": {
+  "en": "Element",
+  "fr": "Élément"
+ },
+ "fomod-col-source": {
+  "en": "Source",
+  "fr": "Source"
+ },
+ "fomod-col-trans": {
+  "en": "Translation",
+  "fr": "Traduction"
+ },
+ "fomod-clear-tip": {
+  "en": "Clear the translation",
+  "fr": "Effacer la traduction"
+ },
+ "fomod-confirm-title": {
+  "en": "Unsaved translations",
+  "fr": "Traductions non enregistrées"
+ },
+ "fomod-confirm-body": {
+  "en": "Some translations are not saved. Close anyway?",
+  "fr": "Des traductions n'ont pas été enregistrées. Fermer quand même ?"
+ },
+ "fomod-kind-name": {
+  "en": "Name",
+  "fr": "Nom"
+ },
+ "fomod-kind-description": {
+  "en": "Description",
+  "fr": "Description"
+ },
+ "fomod-kind-module": {
+  "en": "Module name",
+  "fr": "Nom du module"
+ },
+ "fomod-kind-step": {
+  "en": "Step › name",
+  "fr": "Étape › nom"
+ },
+ "fomod-kind-group": {
+  "en": "Group › name",
+  "fr": "Groupe › nom"
+ },
+ "fomod-kind-plugin": {
+  "en": "Option › name",
+  "fr": "Option › nom"
+ },
+ "fomod-kind-plugin-desc": {
+  "en": "Option › description",
+  "fr": "Option › description"
+ },
+ "pack-menu": {
+  "en": "Package a translation…",
+  "fr": "Empaqueter une traduction…"
+ },
+ "pack-menu-tip": {
+  "en": "Builds the folder and zip archive Mod Organizer 2 and Vortex install, for the game.",
+  "fr": "Construit le dossier et l'archive zip qu'installent Mod Organizer 2 et Vortex, selon le jeu."
+ },
+ "pack-title": {
+  "en": "Package a translation",
+  "fr": "Empaqueter une traduction"
+ },
+ "pack-game": {
+  "en": "Game:",
+  "fr": "Jeu :"
+ },
+ "pack-mod-name": {
+  "en": "Mod name:",
+  "fr": "Nom du mod :"
+ },
+ "pack-mod-name-hint": {
+  "en": "as published",
+  "fr": "tel que publié"
+ },
+ "pack-version": {
+  "en": "Version:",
+  "fr": "Version :"
+ },
+ "pack-author": {
+  "en": "Translator:",
+  "fr": "Traducteur :"
+ },
+ "pack-lang": {
+  "en": "Language:",
+  "fr": "Langue :"
+ },
+ "pack-website": {
+  "en": "Website:",
+  "fr": "Site web :"
+ },
+ "pack-out-dir": {
+  "en": "Output folder:",
+  "fr": "Dossier de sortie :"
+ },
+ "pack-files": {
+  "en": "Files to package",
+  "fr": "Fichiers à empaqueter"
+ },
+ "pack-add-files": {
+  "en": "Add files…",
+  "fr": "Ajouter des fichiers…"
+ },
+ "pack-dsd-plugin": {
+  "en": "Plugin targeted by the DSD:",
+  "fr": "Plugin visé par le DSD :"
+ },
+ "pack-with-info": {
+  "en": "Generate fomod/info.xml (name, author, version, description)",
+  "fr": "Générer fomod/info.xml (nom, auteur, version, description)"
+ },
+ "pack-description": {
+  "en": "Description:",
+  "fr": "Description :"
+ },
+ "pack-description-hint": {
+  "en": "empty: \"<language> translation of <mod>\"",
+  "fr": "laissé vide : « Traduction <langue> de <mod> »"
+ },
+ "pack-default-description": {
+  "en": "{ $lang } translation of { $mod }.",
+  "fr": "Traduction { $lang } de { $mod }."
+ },
+ "pack-preview": {
+  "en": "Preview of \"{ $name }\"",
+  "fr": "Aperçu de « { $name } »"
+ },
+ "pack-unknown": {
+  "en": "{ $file }: unknown place for this game, file left out.",
+  "fr": "{ $file } : emplacement inconnu pour ce jeu, fichier laissé de côté."
+ },
+ "pack-build": {
+  "en": "Create the folder and the archive",
+  "fr": "Créer le dossier et l'archive"
+ },
+ "pack-done": {
+  "en": "Created: { $folder } and { $zip }.",
+  "fr": "Créé : { $folder } et { $zip }."
+ },
+ "pack-error": {
+  "en": "Packaging error",
+  "fr": "Erreur d'empaquetage"
+ },
+ "pack-open-folder": {
+  "en": "Open the folder",
+  "fr": "Ouvrir le dossier"
+ },
+ "pack-note-plugin-override": {
+  "en": "Plugin at the root (Data folder): an override patch loads after the original mod and must stay below it in the load order.",
+  "fr": "Plugin à la racine (dossier Data) : un patch override se charge après le mod d'origine ; il doit rester en dessous de lui dans l'ordre de chargement."
+ },
+ "pack-note-strings": {
+  "en": "STRINGS in Strings/: they replace the ones in the mod's archive; keep the exact file names, language included.",
+  "fr": "STRINGS dans Strings/ : ils remplacent ceux de l'archive du mod ; conservez les noms de fichiers exacts, langue comprise."
+ },
+ "pack-note-starfield-loose": {
+  "en": "Starfield only loads loose files when StarfieldCustom.ini has [Archive] bInvalidateOlderFiles=1 and sResourceDataDirsFinal=: say so on the page.",
+  "fr": "Starfield ne charge les fichiers libres que si StarfieldCustom.ini contient [Archive] bInvalidateOlderFiles=1 et sResourceDataDirsFinal= : indiquez-le dans la description de la page."
+ },
+ "pack-note-dsd": {
+  "en": "DSD: the folder bears the exact name of the targeted plugin (MyMod.esp); needs SKSE and Dynamic String Distributor.",
+  "fr": "DSD : le dossier porte le nom exact du plugin visé (MonMod.esp) ; nécessite SKSE et Dynamic String Distributor."
+ },
+ "pack-note-archive": {
+  "en": "BSA / BA2 archive at the root: it must bear the name of the plugin that loads it.",
+  "fr": "Archive BSA / BA2 à la racine : elle doit porter le nom du plugin qui la charge."
+ },
+ "pack-note-morrowind": {
+  "en": "Morrowind: files relative to Data Files; the translated plugin replaces the original, to enable in the launcher or the manager.",
+  "fr": "Morrowind : fichiers relatifs à Data Files ; le plugin traduit remplace l'original, à activer dans le lanceur ou le gestionnaire."
+ },
+ "pack-note-or-mods": {
+  "en": "Oblivion Remastered: PAK / UCAS / UTOC under OblivionRemastered/Content/Paks/~mods/; the three files go together.",
+  "fr": "Oblivion Remastered : PAK / UCAS / UTOC sous OblivionRemastered/Content/Paks/~mods/ ; les trois fichiers vont ensemble."
+ },
+ "pack-note-or-plugin": {
+  "en": "Oblivion Remastered: plugin under OblivionRemastered/Content/Dev/ObvData/Data/, to add to Plugins.txt.",
+  "fr": "Oblivion Remastered : plugin sous OblivionRemastered/Content/Dev/ObvData/Data/, à ajouter à Plugins.txt."
+ },
+ "status-keys-done": {
+  "en": "{ $n } line(s)  { $status }",
+  "fr": "{ $n } ligne(s)  { $status }"
+ },
+ "status-keys-skipped": {
+  "en": "; { $k } without translation skipped",
+  "fr": " ; { $k } sans traduction ignorée(s)"
+ },
+ "status-keys-no-selection": {
+  "en": "No line selected: click a row of the grid (Shift / Ctrl to select several).",
+  "fr": "Aucune ligne sélectionnée : cliquez une ligne de la grille (Maj / Ctrl pour en sélectionner plusieurs)."
+ },
+ "status-keys-last-line": {
+  "en": "Last line of the view.",
+  "fr": "Dernière ligne de la vue."
+ },
+ "status-keys-first-line": {
+  "en": "First line of the view.",
+  "fr": "Première ligne de la vue."
+ },
+ "ctx-edit": {
+  "en": "Edit…",
+  "fr": "Modifier…"
+ },
+ "ctx-copy-source": {
+  "en": "Copy the source",
+  "fr": "Copier la source"
+ },
+ "ctx-copy-trans": {
+  "en": "Copy the translation",
+  "fr": "Copier la traduction"
+ },
+ "ctx-paste-one": {
+  "en": "Paste into the cell",
+  "fr": "Coller dans la cellule"
+ },
+ "ctx-paste-many": {
+  "en": "Paste into the {n} selected lines",
+  "fr": "Coller dans les {n} lignes sélectionnées"
+ },
+ "ctx-paste-disabled": {
+  "en": "The clipboard holds no text.",
+  "fr": "Le presse-papiers ne contient pas de texte."
+ },
+ "ctx-trans-eq-source": {
+  "en": "Translation = source",
+  "fr": "Traduction = source"
+ },
+ "ctx-status-one": {
+  "en": "Status of the line",
+  "fr": "Statut de la ligne"
+ },
+ "ctx-status-many": {
+  "en": "Status of the selection ({n} lines)",
+  "fr": "Statut de la sélection ({n} lignes)"
+ },
+ "ctx-validate-next": {
+  "en": "Validate then next",
+  "fr": "Valider puis suivante"
+ },
+ "ctx-filter-record": {
+  "en": "Filter on this record ({formid})",
+  "fr": "Filtrer sur cet enregistrement ({formid})"
+ },
+ "ctx-filter-source": {
+  "en": "Filter on this source",
+  "fr": "Filtrer sur cette source"
+ },
+ "ctx-book": {
+  "en": "Book preview",
+  "fr": "Aperçu de livre"
+ },
+ "ctx-book-disabled": {
+  "en": "Only book fields (BOOK) have a preview.",
+  "fr": "Seuls les champs de livre (BOOK) ont un aperçu."
+ },
+ "ctx-paste-done": {
+  "en": "{ $n } line(s) pasted.",
+  "fr": "{ $n } ligne(s) collée(s)."
+ },
+ "ctx-eq-done": {
+  "en": "{ $n } line(s): translation = source.",
+  "fr": "{ $n } ligne(s) : traduction = source."
+ },
+ "key-enter": {
+  "en": "Enter",
+  "fr": "Entrée"
+ },
+ "filter-chip-record": {
+  "en": "Record",
+  "fr": "Enregistrement"
+ },
+ "filter-chip-source": {
+  "en": "Source",
+  "fr": "Source"
+ },
+ "filter-chip-tip": {
+  "en": "Filter set from the row menu; click to remove it.",
+  "fr": "Filtre posé depuis le menu de la ligne ; cliquer pour le retirer."
+ },
+ "edit-title": {
+  "en": "Edit — { $file } — line { $n } / { $total }",
+  "fr": "Édition — { $file } — ligne { $n } / { $total }"
+ },
+ "edit-source": {
+  "en": "Source ({ $lang })",
+  "fr": "Source ({ $lang })"
+ },
+ "edit-trans": {
+  "en": "Translation ({ $lang })",
+  "fr": "Traduction ({ $lang })"
+ },
+ "edit-prev": {
+  "en": "Previous",
+  "fr": "Précédent"
+ },
+ "edit-next": {
+  "en": "Next",
+  "fr": "Suivant"
+ },
+ "edit-tab-record": {
+  "en": "Record",
+  "fr": "Enregistrement"
+ },
+ "edit-tab-aliases": {
+  "en": "Aliases and numbers",
+  "fr": "Alias et nombres"
+ },
+ "edit-hint": {
+  "en": "Ctrl+Enter: validate then next · Esc closes the window; the text is kept.",
+  "fr": "Ctrl+Entrée : valider puis suivante · Échap ferme la fenêtre ; la saisie est conservée."
+ },
+ "edit-no-newline": {
+  "en": "This field does not allow line breaks.",
+  "fr": "Ce champ n'admet pas de retour à la ligne."
+ },
+ "edit-record-empty": {
+  "en": "No other translatable field in this record.",
+  "fr": "Aucun autre champ traduisible dans cet enregistrement."
+ },
+ "edit-record-no-id": {
+  "en": "Line without a record id: no context.",
+  "fr": "Ligne sans identifiant d'enregistrement : pas de contexte."
+ },
+ "edit-not-in-view": {
+  "en": "Line outside the filtered view.",
+  "fr": "Ligne hors de la vue filtrée."
+ },
+ "edit-unused": {
+  "en": "Line never shown in game: read-only.",
+  "fr": "Ligne jamais affichée en jeu : non modifiable."
+ },
+ "edit-menu-open": {
+  "en": "Edit window",
+  "fr": "Fenêtre d'édition"
+ },
+ "edit-nav-keys": {
+  "en": "Alt+Left · Alt+Right",
+  "fr": "Alt+Gauche · Alt+Droite"
+ },
+ "key-ctrl-down": {
+  "en": "Ctrl+Down",
+  "fr": "Ctrl+Bas"
+ },
+ "len-counter": {
+  "en": "{ $chars } / { $max } chars · { $bytes } bytes · line break: { $newline }",
+  "fr": "{ $chars } / { $max } car. · { $bytes } octets · retour à la ligne : { $newline }"
+ },
+ "len-counter-nolimit": {
+  "en": "{ $chars } chars · { $bytes } bytes",
+  "fr": "{ $chars } car. · { $bytes } octets"
+ },
+ "len-counter-newline": {
+  "en": "{ $chars } chars · { $bytes } bytes · line break: { $newline }",
+  "fr": "{ $chars } car. · { $bytes } octets · retour à la ligne : { $newline }"
+ },
+ "len-newline-yes": {
+  "en": "allowed",
+  "fr": "autorisé"
+ },
+ "len-newline-no": {
+  "en": "not allowed",
+  "fr": "non admis"
+ },
+ "len-over-tip": {
+  "en": "{ $chars } / { $max } characters ({ $bytes } bytes) — field { $field } limit exceeded",
+  "fr": "{ $chars } / { $max } caractères ({ $bytes } octets) — limite du champ { $field } dépassée"
+ },
+ "len-newline-tip": {
+  "en": "[!] line break in a single-line field ({ $field })",
+  "fr": "[!] retour à la ligne dans un champ mono-ligne ({ $field })"
+ },
+ "menu-close-doc": {
+  "en": "Close document",
+  "fr": "Fermer le document"
+ },
+ "manual-missing": {
+  "en": "The manual was not found: it is expected in the Manuals folder next to the application (XIMOD_Translator_Manual_GBR.pdf or .docx).",
+  "fr": "Le manuel n'a pas été trouvé : il est attendu dans le dossier Manuals, à côté de l'application (XIMOD_Translator_Manuel_FRA.pdf ou .docx)."
+ },
+ "manual-opened": {
+  "en": "Manual opened: { $file }",
+  "fr": "Manuel ouvert : { $file }"
+ },
+ "statusbar-modified": {
+  "en": "Modified",
+  "fr": "Modifié"
+ },
+ "settings-toasts": {
+  "en": "Transient notifications",
+  "fr": "Notifications éphémères"
+ },
+ "settings-toasts-hint": {
+  "en": "Outcomes (save, export, errors…) show for a few seconds at the top right, besides the status bar; errors stay until closed.",
+  "fr": "Les résultats (enregistrement, export, erreurs…) apparaissent quelques secondes en haut à droite, en plus de la barre d'état ; les erreurs restent jusqu'à leur fermeture."
+ },
+ "filter-clear-tip": {
+  "en": "Clear the filter",
+  "fr": "Effacer le filtre"
+ },
+ "btn-click-again": {
+  "en": "Click again to clear",
+  "fr": "Cliquer à nouveau pour effacer"
+ },
+ "close-doc-title": {
+  "en": "Close document",
+  "fr": "Fermer le document"
+ },
+ "close-doc-unsaved": {
+  "en": "\"{ $file }\" has unsaved changes.",
+  "fr": "« { $file } » a des modifications non enregistrées."
+ },
+ "exit-title": {
+  "en": "Quit",
+  "fr": "Quitter"
+ },
+ "exit-unsaved": {
+  "en": "Unsaved documents: { $names }",
+  "fr": "Documents non enregistrés : { $names }"
+ },
+ "btn-close-discard": {
+  "en": "Close without saving",
+  "fr": "Fermer sans enregistrer"
+ },
+ "btn-quit-discard": {
+  "en": "Quit without saving",
+  "fr": "Quitter sans enregistrer"
+ },
+ "ftr-job-extract": {
+  "en": "Extracting { $file }…",
+  "fr": "Extraction de { $file }…"
+ },
+ "ftr-job-package": {
+  "en": "Packaging { $file }…",
+  "fr": "Empaquetage de { $file }…"
+ },
+ "ftr-online": {
+  "en": "Translate online",
+  "fr": "Traduire en ligne"
+ },
+ "ftr-online-hint": {
+  "en": "Opens the source text in the online translator (Ctrl+G); paste the result into the target.",
+  "fr": "Ouvre le texte source dans le traducteur en ligne (Ctrl+G) ; collez le résultat dans la cible."
+ },
+ "ftr-package-done": {
+  "en": "Package written: { $path } ({ $num } files)",
+  "fr": "Paquet écrit : { $path } ({ $num } fichiers)"
+ },
+ "op-fix": {
+  "en": "{ $name }",
+  "fr": "{ $name }"
+ },
+ "alias-ok": {
+  "en": "Aliases and numbers: consistent.",
+  "fr": "Alias et nombres : conformes."
+ },
+ "alias-none": {
+  "en": "Aliases and tags: none in the source. Numbers: none.",
+  "fr": "Alias et balises : aucun dans la source. Nombres : aucun."
+ },
+ "alias-missing": {
+  "en": "{ $tag } missing from the translation",
+  "fr": "{ $tag } absent de la traduction"
+ },
+ "alias-unknown": {
+  "en": "{ $tag } missing from the source",
+  "fr": "{ $tag } absent de la source"
+ },
+ "alias-number-missing": {
+  "en": "Number { $n } missing from the translation",
+  "fr": "Nombre { $n } absent de la traduction"
+ },
+ "alias-number-unknown": {
+  "en": "Number { $n } missing from the source",
+  "fr": "Nombre { $n } absent de la source"
+ },
+ "alias-order": {
+  "en": "Tag order differs from the source",
+  "fr": "Ordre des balises différent de la source"
+ },
+ "alias-fix": {
+  "en": "Restore aliases",
+  "fr": "Rétablir les alias"
+ },
+ "alias-fix-numbers": {
+  "en": "Restore numbers",
+  "fr": "Rétablir les nombres"
+ },
+ "filter-in": {
+  "en": "In:",
+  "fr": "Dans :"
+ },
+ "filter-in-all": {
+  "en": "All",
+  "fr": "Tout"
+ },
+ "filter-in-source": {
+  "en": "Source",
+  "fr": "Source"
+ },
+ "filter-in-trans": {
+  "en": "Translation",
+  "fr": "Traduction"
+ },
+ "filter-in-id": {
+  "en": "EDID or FormID",
+  "fr": "EDID ou FormID"
+ },
+ "filter-in-sig": {
+  "en": "Signature",
+  "fr": "Signature"
+ },
+ "filter-hint-regex": {
+  "en": "expression…",
+  "fr": "expression…"
+ },
+ "filter-regex-tip": {
+  "en": "Regular expression (Rust syntax; (?-i) to match case)",
+  "fr": "Expression régulière (syntaxe Rust ; (?-i) pour respecter la casse)"
+ },
+ "filter-regex-error": {
+  "en": "Invalid expression: { $error }",
+  "fr": "Expression invalide : { $error }"
+ },
+ "menu-replace": {
+  "en": "Find and replace…",
+  "fr": "Rechercher et remplacer…"
+ },
+ "op-replace": {
+  "en": "Replacement",
+  "fr": "Remplacement"
+ },
+ "op-replace-arg": {
+  "en": "replacement",
+  "fr": "remplacement"
+ },
+ "replace-title": {
+  "en": "Find and replace — { $file }",
+  "fr": "Rechercher et remplacer — { $file }"
+ },
+ "replace-find": {
+  "en": "Find:",
+  "fr": "Rechercher :"
+ },
+ "replace-with": {
+  "en": "Replace:",
+  "fr": "Remplacer :"
+ },
+ "replace-scope": {
+  "en": "Scope:",
+  "fr": "Portée :"
+ },
+ "replace-scope-document": {
+  "en": "Whole document",
+  "fr": "Tout le document"
+ },
+ "replace-scope-view": {
+  "en": "Filtered view",
+  "fr": "Vue filtrée"
+ },
+ "replace-scope-selection": {
+  "en": "Selection",
+  "fr": "Sélection"
+ },
+ "replace-options": {
+  "en": "Options",
+  "fr": "Options"
+ },
+ "replace-case": {
+  "en": "Match case",
+  "fr": "Respecter la casse"
+ },
+ "replace-whole": {
+  "en": "Whole word",
+  "fr": "Mot entier"
+ },
+ "replace-mode": {
+  "en": "Mode:",
+  "fr": "Mode :"
+ },
+ "replace-mode-normal": {
+  "en": "Normal",
+  "fr": "Normal"
+ },
+ "replace-mode-extended": {
+  "en": "Extended",
+  "fr": "Étendu"
+ },
+ "replace-mode-regex": {
+  "en": "Regex",
+  "fr": "Regex"
+ },
+ "replace-mode-hint": {
+  "en": "extended: \\n \\r \\t \\\\ interpreted · regex: Rust syntax, $1…$9 and ${\"{\"}name{\"}\"} in the replacement",
+  "fr": "étendu : \\n \\r \\t \\\\ interprétés · regex : syntaxe Rust, $1…$9 et ${\"{\"}nom{\"}\"} dans le remplacement"
+ },
+ "replace-type-hint": {
+  "en": "Type a pattern: the preview follows your typing.",
+  "fr": "Saisissez un motif : l'aperçu se met à jour à la frappe."
+ },
+ "replace-preview": {
+  "en": "Preview: { $n } occurrences in { $m } lines — first: \"{ $before }\"  \"{ $after }\"",
+  "fr": "Aperçu : { $n } occurrences dans { $m } lignes — première : « { $before } »  « { $after } »"
+ },
+ "replace-none": {
+  "en": "No occurrence.",
+  "fr": "Aucune occurrence."
+ },
+ "replace-readonly": {
+  "en": "Only the translation can be replaced on a plugin.",
+  "fr": "Seule la traduction peut être remplacée sur un plugin."
+ },
+ "replace-next": {
+  "en": "Next",
+  "fr": "Suivant"
+ },
+ "replace-prev": {
+  "en": "Previous",
+  "fr": "Précédent"
+ },
+ "replace-one": {
+  "en": "Replace",
+  "fr": "Remplacer"
+ },
+ "replace-all": {
+  "en": "Replace all",
+  "fr": "Tout remplacer"
+ },
+ "replace-done": {
+  "en": "{ $n } lines replaced, { $pending } set Pending",
+  "fr": "{ $n } lignes remplacées, { $pending } passées En attente"
+ },
+ "replace-rules-apply": {
+  "en": "Apply a rules file…",
+  "fr": "Appliquer un fichier de règles…"
+ },
+ "replace-rule-save": {
+  "en": "Save as rule…",
+  "fr": "Enregistrer comme règle…"
+ },
+ "replace-rules-done": {
+  "en": "Rules applied: { $rules } rules, { $n } replacements",
+  "fr": "Règles appliquées : { $rules } règles, { $n } remplacements"
+ },
+ "replace-rule-line": {
+  "en": "\"{ $find }\"  \"{ $replace }\": { $n }",
+  "fr": "« { $find } »  « { $replace } » : { $n }"
+ },
+ "replace-rules-error": {
+  "en": "Unreadable rules file: { $error }",
+  "fr": "Fichier de règles illisible : { $error }"
+ },
+ "replace-rules-invalid": {
+  "en": "Rule \"{ $find }\" invalid: { $error }",
+  "fr": "Règle « { $find } » invalide : { $error }"
+ },
+ "replace-rule-saved": {
+  "en": "Rule added to { $file } ({ $n } rules)",
+  "fr": "Règle ajoutée à { $file } ({ $n } règles)"
+ },
+ "opt-special-chars": {
+  "en": "Show special characters",
+  "fr": "Afficher les caractères spéciaux"
+ },
+ "menu-quality": {
+  "en": "Quality checks…",
+  "fr": "Vérifications qualité…"
+ },
+ "quality-title": {
+  "en": "Quality checks — { $file }",
+  "fr": "Vérifications qualité — { $file }"
+ },
+ "quality-checks": {
+  "en": "Checks",
+  "fr": "Vérifications"
+ },
+ "quality-check-aliases": {
+  "en": "Aliases (<Alias…> tags)",
+  "fr": "Alias (balises <Alias…>)"
+ },
+ "quality-check-numbers": {
+  "en": "Numbers",
+  "fr": "Nombres"
+ },
+ "quality-check-length": {
+  "en": "Field maximum length",
+  "fr": "Longueur maximale du champ"
+ },
+ "quality-check-newline": {
+  "en": "Forbidden line break",
+  "fr": "Retour à la ligne interdit"
+ },
+ "quality-check-punct": {
+  "en": "Different final punctuation",
+  "fr": "Ponctuation finale différente"
+ },
+ "quality-check-capitals": {
+  "en": "Capital after a period",
+  "fr": "Majuscule après un point"
+ },
+ "quality-check-spaces": {
+  "en": "Double or edge spaces",
+  "fr": "Espaces doubles ou en bordure"
+ },
+ "quality-check-encoding": {
+  "en": "Characters outside Windows-1252",
+  "fr": "Caractères hors Windows-1252"
+ },
+ "quality-check-inconsistent": {
+  "en": "Different translations of one source",
+  "fr": "Traductions différentes d'une même source"
+ },
+ "quality-short-aliases": {
+  "en": "Aliases",
+  "fr": "Alias"
+ },
+ "quality-short-numbers": {
+  "en": "Numbers",
+  "fr": "Nombres"
+ },
+ "quality-short-length": {
+  "en": "Length",
+  "fr": "Longueur"
+ },
+ "quality-short-newline": {
+  "en": "Line break",
+  "fr": "Retour à la ligne"
+ },
+ "quality-short-punct": {
+  "en": "Punctuation",
+  "fr": "Ponctuation"
+ },
+ "quality-short-capitals": {
+  "en": "Capital",
+  "fr": "Majuscule"
+ },
+ "quality-short-spaces": {
+  "en": "Spaces",
+  "fr": "Espaces"
+ },
+ "quality-short-encoding": {
+  "en": "Encoding",
+  "fr": "Encodage"
+ },
+ "quality-short-inconsistent": {
+  "en": "Inconsistency",
+  "fr": "Incohérence"
+ },
+ "quality-hint": {
+  "en": "Ignored, unused and untranslated lines are not checked.",
+  "fr": "Les lignes ignorées, inutilisées ou sans traduction ne sont pas vérifiées."
+ },
+ "quality-run": {
+  "en": "Check",
+  "fr": "Vérifier"
+ },
+ "quality-not-run": {
+  "en": "No check run yet.",
+  "fr": "Aucune vérification lancée."
+ },
+ "quality-result": {
+  "en": "{ $anomalies } anomaly(ies) on { $lines } line(s)",
+  "fr": "{ $anomalies } anomalie(s) sur { $lines } ligne(s)"
+ },
+ "quality-none": {
+  "en": "No anomaly on { $lines } checked line(s)",
+  "fr": "Aucune anomalie sur { $lines } ligne(s) vérifiée(s)"
+ },
+ "quality-col-line": {
+  "en": "Line",
+  "fr": "Ligne"
+ },
+ "quality-col-edid": {
+  "en": "EDID / source",
+  "fr": "EDID / source"
+ },
+ "quality-col-check": {
+  "en": "Check",
+  "fr": "Vérification"
+ },
+ "quality-col-detail": {
+  "en": "Detail",
+  "fr": "Détail"
+ },
+ "quality-table-hint": {
+  "en": "Double-click or Enter: open the line; Ctrl+click / Shift+click: multiple selection; click a header: sort.",
+  "fr": "Double-clic ou Entrée : ouvrir la ligne ; Ctrl+clic / Maj+clic : sélection multiple ; clic sur un en-tête : tri."
+ },
+ "quality-fix-aliases": {
+  "en": "Fix aliases",
+  "fr": "Réparer les alias"
+ },
+ "quality-fix-numbers": {
+  "en": "Fix numbers",
+  "fr": "Réparer les nombres"
+ },
+ "quality-unify": {
+  "en": "Unify on the most frequent",
+  "fr": "Unifier sur la plus fréquente"
+ },
+ "quality-unified": {
+  "en": "{ $n } line(s) unified",
+  "fr": "{ $n } ligne(s) unifiée(s)"
+ },
+ "quality-detail-length": {
+  "en": "{ $chars } characters for { $max } at most ({ $bytes } bytes)",
+  "fr": "{ $chars } caractères pour { $max } au plus ({ $bytes } octets)"
+ },
+ "quality-detail-punct": {
+  "en": "Source “{ $source }”, translation “{ $trans }”",
+  "fr": "Source « { $source } », traduction « { $trans } »"
+ },
+ "quality-detail-capital": {
+  "en": "Lower case after “{ $punct }”",
+  "fr": "Minuscule après « { $punct } »"
+ },
+ "quality-detail-double-space": {
+  "en": "Consecutive spaces",
+  "fr": "Espaces consécutives"
+ },
+ "quality-detail-edge-space": {
+  "en": "Space at the start or the end of the text",
+  "fr": "Espace en début ou en fin de texte"
+ },
+ "quality-detail-encoding": {
+  "en": "Characters that cannot be written: { $chars }",
+  "fr": "Caractères non représentables : { $chars }"
+ },
+ "quality-detail-inconsistent": {
+  "en": "{ $count } lines, variants: { $variants }",
+  "fr": "{ $count } lignes, variantes : { $variants }"
+ },
+ "filter-anomalies": {
+  "en": "Anomalies",
+  "fr": "Anomalies"
+ },
+ "filter-anomalies-tip": {
+  "en": "Only the lines flagged by the last quality check (F12).",
+  "fr": "Seules les lignes signalées par la dernière vérification qualité (F12)."
+ },
+ "dict-save-mod": {
+  "en": "Save the mod dictionary",
+  "fr": "Enregistrer le dictionnaire du mod"
+ },
+ "dict-save-mod-tip": {
+  "en": "Writes the working memory of the active document now: all its translated or ignored lines, with their status.",
+  "fr": "Écrit maintenant la mémoire de travail du document actif : toutes ses lignes traduites ou ignorées, avec leur statut."
+ },
+ "dict-mod-written": {
+  "en": "Mod dictionary written: { $n } line(s)  { $file }",
+  "fr": "Dictionnaire du mod écrit : { $n } ligne(s)  { $file }"
+ },
+ "dict-mod-nothing": {
+  "en": "Mod dictionary: no translated or ignored line to write.",
+  "fr": "Dictionnaire du mod : aucune ligne traduite ni ignorée à écrire."
+ },
+ "settings-mod-dict-auto": {
+  "en": "Write the mod dictionary at each save and export",
+  "fr": "Écrire le dictionnaire du mod à chaque enregistrement et export"
+ },
+ "settings-mod-dict-auto-tip": {
+  "en": "The mod's working memory (all translated or ignored lines, with their status) is rewritten in the mod dictionaries folder; when the mod is reopened it is applied first and each line gets its status back.",
+  "fr": "La mémoire de travail du mod (toutes les lignes traduites ou ignorées, avec leur statut) est réécrite dans le dossier des dictionnaires de mod ; à la réouverture du mod, elle est appliquée en premier et chaque ligne retrouve son statut."
+ },
+ "dicts-menu": {
+  "en": "Manage dictionaries…",
+  "fr": "Gérer les dictionnaires…"
+ },
+ "dicts-title": {
+  "en": "Dictionaries — { $game } — { $source }  { $target }",
+  "fr": "Dictionnaires — { $game } — { $source }  { $target }"
+ },
+ "dicts-document": {
+  "en": "Document: { $file }",
+  "fr": "Document : { $file }"
+ },
+ "dicts-hint": {
+  "en": "The active dictionaries, in priority order: the first one that knows the line wins.",
+  "fr": "Les dictionnaires actifs, dans l'ordre de priorité : le premier qui connaît la ligne l'emporte."
+ },
+ "dicts-role-mod": {
+  "en": "Mod",
+  "fr": "Mod"
+ },
+ "dicts-role-personal": {
+  "en": "Personal",
+  "fr": "Personnel"
+ },
+ "dicts-role-textonly": {
+  "en": "Text only",
+  "fr": "Texte seul"
+ },
+ "dicts-role-game": {
+  "en": "Game",
+  "fr": "Jeu"
+ },
+ "dicts-role-external": {
+  "en": "External",
+  "fr": "Externes"
+ },
+ "dicts-role-backups": {
+  "en": "Backups",
+  "fr": "Sauvegardes"
+ },
+ "dicts-empty-group": {
+  "en": "(none)",
+  "fr": "(aucun)"
+ },
+ "dicts-lines": {
+  "en": "{ $n } lines",
+  "fr": "{ $n } lignes"
+ },
+ "dicts-added": {
+  "en": "added",
+  "fr": "ajouté"
+ },
+ "dicts-folder": {
+  "en": "added folder: { $path }",
+  "fr": "dossier ajouté : { $path }"
+ },
+ "dicts-up": {
+  "en": "Move up",
+  "fr": "Monter"
+ },
+ "dicts-down": {
+  "en": "Move down",
+  "fr": "Descendre"
+ },
+ "dicts-add-file": {
+  "en": "Add a file…",
+  "fr": "Ajouter un fichier…"
+ },
+ "dicts-add-dir": {
+  "en": "Add a folder…",
+  "fr": "Ajouter un dossier…"
+ },
+ "dicts-remove": {
+  "en": "Remove",
+  "fr": "Retirer"
+ },
+ "dicts-remove-tip": {
+  "en": "Only added files and folders can be removed; those of the XIMOD folders are unchecked.",
+  "fr": "Seuls les fichiers et dossiers ajoutés se retirent ; ceux des dossiers XIMOD se décochent."
+ },
+ "dicts-view": {
+  "en": "View…",
+  "fr": "Visualiser…"
+ },
+ "dicts-reset": {
+  "en": "Reset the order",
+  "fr": "Réinitialiser l'ordre"
+ },
+ "dicts-reset-tip": {
+  "en": "Back to the initial order, everything checked but the backups; additions are forgotten.",
+  "fr": "Revenir à l'ordre initial, tout coché sauf les sauvegardes ; les ajouts sont oubliés."
+ },
+ "dicts-reset-done": {
+  "en": "Initial order restored (not saved).",
+  "fr": "Ordre initial rétabli (non enregistré)."
+ },
+ "dicts-detail": {
+  "en": "{ $file } — { $role } · { $lines } lines · format { $v } · modified { $date } · { $used } lines of { $doc } come from this dictionary",
+  "fr": "{ $file } — { $role } · { $lines } lignes · format { $v } · modifié le { $date } · { $used } lignes de { $doc } viennent de ce dictionnaire"
+ },
+ "dicts-apply": {
+  "en": "Apply to the document",
+  "fr": "Appliquer au document"
+ },
+ "dicts-apply-hint": {
+  "en": "replays the stack on the empty lines (undoable)",
+  "fr": "rejoue la pile sur les lignes vides (annulable)"
+ },
+ "dicts-applied": {
+  "en": "Dictionaries applied: { $n } line(s) pre-filled",
+  "fr": "Dictionnaires appliqués : { $n } ligne(s) pré-remplie(s)"
+ },
+ "dicts-saved": {
+  "en": "Dictionaries saved for this game and language pair.",
+  "fr": "Dictionnaires enregistrés pour ce jeu et cette paire de langues."
+ },
+ "dicts-added-file": {
+  "en": "{ $n } dictionary(ies) added from { $path }",
+  "fr": "{ $n } dictionnaire(s) ajouté(s) depuis { $path }"
+ },
+ "dicts-added-dir": {
+  "en": "{ $n } dictionary(ies) added from { $path }",
+  "fr": "{ $n } dictionnaire(s) ajouté(s) depuis { $path }"
+ },
+ "dicts-not-target": {
+  "en": "{ $file } declares the language { $lang }, not { $target }: ignored.",
+  "fr": "{ $file } déclare la langue { $lang }, pas { $target } : ignoré."
+ },
+ "dicts-unsaved-title": {
+  "en": "Dictionaries changed",
+  "fr": "Dictionnaires modifiés"
+ },
+ "dicts-unsaved": {
+  "en": "The dictionary tree changed. Save before closing?",
+  "fr": "L'arbre des dictionnaires a changé. Enregistrer avant de fermer ?"
+ },
+ "dicts-discard": {
+  "en": "Discard the changes",
+  "fr": "Ignorer les changements"
+ },
+ "origin-tip": {
+  "en": "{ $status } — { $file }, { $level }",
+  "fr": "{ $status } — { $file }, { $level }"
+ },
+ "origin-level-exact": {
+  "en": "record and text identical",
+  "fr": "enregistrement et texte identiques"
+ },
+ "origin-level-text": {
+  "en": "same text",
+  "fr": "même texte"
+ },
+ "origin-level-textonly": {
+  "en": "text only",
+  "fr": "texte seul"
+ },
+ "origin-level-fuzzy": {
+  "en": "approximate ({ $score } %)",
+  "fr": "approchant ({ $score } %)"
+ },
+ "origin-level-old": {
+  "en": "old data",
+  "fr": "ancienne donnée"
+ },
+ "edit-origin": {
+  "en": "Origin: { $file }, { $level }",
+  "fr": "Provenance : { $file }, { $level }"
+ },
+ "dict-from-text-pairs": {
+  "en": "Create a text-only dictionary from a file of pairs…",
+  "fr": "Créer un dictionnaire texte seul à partir d'un fichier de paires…"
+ },
+ "dict-from-text-pairs-tip": {
+  "en": "A UTF-8 text file, one “source<TAB>translation” pair per line; empty lines and lines starting with # are skipped.",
+  "fr": "Un fichier texte UTF-8, une paire « source<TAB>traduction » par ligne ; les lignes vides et celles qui commencent par # sont ignorées."
+ },
+ "dialog-text-pairs": {
+  "en": "Pairs file (tab-separated text)",
+  "fr": "Fichier de paires (texte tabulé)"
+ },
+ "dict-text-pairs-empty": {
+  "en": "No “source<TAB>translation” pair in this file.",
+  "fr": "Aucune paire « source<TAB>traduction » dans ce fichier."
+ },
+ "dict-text-pairs-read": {
+  "en": "{ $n } pair(s) read — confirm the destination game.",
+  "fr": "{ $n } paire(s) lue(s) — confirmez le jeu de destination."
+ },
+ "ctx-add-personal": {
+  "en": "Add to my personal dictionary",
+  "fr": "Ajouter à mon dictionnaire personnel"
+ },
+ "key-ctrl-m": {
+  "en": "Ctrl+M",
+  "fr": "Ctrl+M"
+ },
+ "personal-title": {
+  "en": "My personal dictionary",
+  "fr": "Mon dictionnaire personnel"
+ },
+ "personal-nothing": {
+  "en": "No translated line in the selection: nothing to add.",
+  "fr": "Aucune ligne traduite dans la sélection : rien à ajouter."
+ },
+ "personal-added": {
+  "en": "{ $n } pair(s) added to my personal dictionary ({ $replaced } replaced)",
+  "fr": "{ $n } paire(s) ajoutée(s) à mon dictionnaire personnel ({ $replaced } remplacée(s))"
+ },
+ "personal-kept": {
+  "en": "{ $n } kept",
+  "fr": "{ $n } conservée(s)"
+ },
+ "personal-exists-title": {
+  "en": "Pairs already known",
+  "fr": "Paires déjà connues"
+ },
+ "personal-exists": {
+  "en": "{ $n } pair(s) are already in my personal dictionary with another translation. Replace them?",
+  "fr": "{ $n } paire(s) sont déjà dans mon dictionnaire personnel avec une autre traduction. Les remplacer ?"
+ },
+ "personal-replace": {
+  "en": "Replace",
+  "fr": "Remplacer"
+ },
+ "personal-keep": {
+  "en": "Keep",
+  "fr": "Conserver"
+ },
+ "personal-remember": {
+  "en": "Remember this choice for the session",
+  "fr": "Se souvenir de ce choix pour la session"
+ },
+ "personal-many": {
+  "en": "Add { $n } pairs to my personal dictionary?",
+  "fr": "Ajouter { $n } paires à mon dictionnaire personnel ?"
+ },
+ "personal-autofilled": {
+  "en": "{ $n } pair(s) added to my personal dictionary",
+  "fr": "{ $n } paire(s) ajoutée(s) à mon dictionnaire personnel"
+ },
+ "settings-personal-autofill": {
+  "en": "Fill my personal dictionary at each save (Validated and Custom lines)",
+  "fr": "Alimenter mon dictionnaire personnel à chaque enregistrement (lignes Validé et Personnalisé)"
+ },
+ "settings-personal-keep-field": {
+  "en": "Ctrl+M keeps the field (REC:FLD) of the added pairs",
+  "fr": "Ctrl+M conserve le champ (REC:FLD) des paires ajoutées"
+ },
+ "settings-personal-keep-field-tip": {
+  "en": "Unchecked, pairs are text-only: the terminology applies to any field. Checked, each pair keeps its record and field.",
+  "fr": "Décochée, les paires sont en texte seul : la terminologie vaut pour tout champ. Cochée, chaque paire garde son enregistrement et son champ."
+ },
+ "dict-editor-menu-personal": {
+  "en": "My personal dictionary…",
+  "fr": "Mon dictionnaire personnel…"
+ },
+ "dict-editor-menu-file": {
+  "en": "Edit a dictionary…",
+  "fr": "Modifier un dictionnaire…"
+ },
+ "dicts-edit": {
+  "en": "Edit…",
+  "fr": "Modifier…"
+ },
+ "dict-editor-title": {
+  "en": "Edit a dictionary — { $file }",
+  "fr": "Modifier un dictionnaire — { $file }"
+ },
+ "dict-editor-readonly": {
+  "en": "Dictionary shipped with the program: read-only, Save as… for a copy.",
+  "fr": "Dictionnaire fourni avec le logiciel : lecture seule, Enregistrer sous… pour une copie."
+ },
+ "dict-editor-count": {
+  "en": "{ $shown } / { $total } pairs",
+  "fr": "{ $shown } / { $total } paires"
+ },
+ "dict-editor-col-source": {
+  "en": "Source",
+  "fr": "Source"
+ },
+ "dict-editor-col-trans": {
+  "en": "Translation",
+  "fr": "Traduction"
+ },
+ "dict-editor-col-field": {
+  "en": "Field",
+  "fr": "Champ"
+ },
+ "dict-editor-col-status": {
+  "en": "Status",
+  "fr": "Statut"
+ },
+ "dict-editor-source": {
+  "en": "Source:",
+  "fr": "Source :"
+ },
+ "dict-editor-field": {
+  "en": "Field:",
+  "fr": "Champ :"
+ },
+ "dict-editor-field-hint": {
+  "en": "(empty = text only)",
+  "fr": "(vide = texte seul)"
+ },
+ "dict-editor-trans": {
+  "en": "Translation:",
+  "fr": "Traduction :"
+ },
+ "dict-editor-add": {
+  "en": "Add",
+  "fr": "Ajouter"
+ },
+ "dict-editor-replace": {
+  "en": "Replace",
+  "fr": "Remplacer"
+ },
+ "dict-editor-delete": {
+  "en": "Delete",
+  "fr": "Supprimer"
+ },
+ "dict-editor-new": {
+  "en": "New…",
+  "fr": "Nouveau…"
+ },
+ "dict-editor-save-as": {
+  "en": "Save as…",
+  "fr": "Enregistrer sous…"
+ },
+ "dict-editor-added": {
+  "en": "Pair added.",
+  "fr": "Paire ajoutée."
+ },
+ "dict-editor-replaced": {
+  "en": "Pair replaced.",
+  "fr": "Paire remplacée."
+ },
+ "dict-editor-same": {
+  "en": "This pair already exists, identical.",
+  "fr": "Cette paire existe déjà, identique."
+ },
+ "dict-editor-deleted": {
+  "en": "Pair deleted.",
+  "fr": "Paire supprimée."
+ },
+ "dict-editor-incomplete": {
+  "en": "Source and translation are required; the field is REC:FLD or empty.",
+  "fr": "Source et traduction sont requises ; le champ s'écrit REC:FLD ou reste vide."
+ },
+ "dict-editor-saved": {
+  "en": "{ $file } saved: { $n } pairs",
+  "fr": "{ $file } enregistré : { $n } paires"
+ },
+ "dict-editor-hint": {
+  "en": "Enter: Add, or Replace the selected pair; Del: delete; Ctrl+M from the grid or the edit window adds the line's pair.",
+  "fr": "Entrée : Ajouter, ou Remplacer la paire sélectionnée ; Suppr : supprimer ; Ctrl+M depuis la grille ou la fenêtre d'édition ajoute la paire de la ligne."
+ },
+ "dict-editor-unsaved-title": {
+  "en": "Dictionary changed",
+  "fr": "Dictionnaire modifié"
+ },
+ "dict-editor-unsaved": {
+  "en": "The dictionary changed. Save before closing?",
+  "fr": "Le dictionnaire a changé. Enregistrer avant de fermer ?"
+ },
+ "menu-apply-dicts": {
+  "en": "Apply the dictionaries…",
+  "fr": "Appliquer les dictionnaires…"
+ },
+ "ctx-apply-dicts": {
+  "en": "Apply the dictionaries to the selection…",
+  "fr": "Appliquer les dictionnaires à la sélection…"
+ },
+ "apply-title": {
+  "en": "Apply the dictionaries — { $file }",
+  "fr": "Appliquer les dictionnaires — { $file }"
+ },
+ "apply-source-stack": {
+  "en": "The active stack ({ $list })",
+  "fr": "La pile active ({ $list })"
+ },
+ "apply-source-file": {
+  "en": "File:",
+  "fr": "Fichier :"
+ },
+ "apply-scope-doc": {
+  "en": "Whole document ({ $n } lines)",
+  "fr": "Tout le document ({ $n } lignes)"
+ },
+ "apply-scope-view": {
+  "en": "Filtered view ({ $n } lines)",
+  "fr": "Vue filtrée ({ $n } lignes)"
+ },
+ "apply-scope-selection": {
+  "en": "Selection ({ $n } lines)",
+  "fr": "Sélection ({ $n } lignes)"
+ },
+ "apply-reset": {
+  "en": "Reset first (empty the translations of the scope)",
+  "fr": "Réinitialiser d'abord (vider les traductions de la portée)"
+ },
+ "apply-overwrite": {
+  "en": "Overwrite",
+  "fr": "Écraser"
+ },
+ "apply-over-none": {
+  "en": "Nothing: empty lines only",
+  "fr": "Rien : lignes vides seulement"
+ },
+ "apply-over-keep-validated": {
+  "en": "Everything but Validated and Custom",
+  "fr": "Tout sauf Validé et Personnalisé"
+ },
+ "apply-over-keep-pending": {
+  "en": "Everything but Pending",
+  "fr": "Tout sauf En attente"
+ },
+ "apply-over-pending-only": {
+  "en": "Pending only",
+  "fr": "En attente seulement"
+ },
+ "apply-over-all": {
+  "en": "Everything",
+  "fr": "Tout"
+ },
+ "apply-matching": {
+  "en": "Matching",
+  "fr": "Appariement"
+ },
+ "apply-mode-strict": {
+  "en": "Strict: record, field, FormID, EDID and text identical  Validated (then same text of the field  By similarity)",
+  "fr": "Strict : enregistrement, champ, FormID, EDID et texte identiques  Validé (puis même texte du champ  Traduit par similarité)"
+ },
+ "apply-mode-relax": {
+  "en": "Relax: same field and same text  By similarity",
+  "fr": "Relax : même champ et même texte  Traduit par similarité"
+ },
+ "apply-mode-textonly": {
+  "en": "Text only: same text, any field  By similarity",
+  "fr": "Texte seul : même texte, tout champ  Traduit par similarité"
+ },
+ "apply-mode-formid": {
+  "en": "FormID only: same record and field, text changed  Pending",
+  "fr": "FormID seul : même enregistrement et champ, texte changé  En attente"
+ },
+ "apply-preview": {
+  "en": "Preview: { $n } lines would receive a translation ({ $detail }), { $over } overwritten",
+  "fr": "Aperçu : { $n } lignes recevraient une traduction ({ $detail }), { $over } écrasée(s)"
+ },
+ "apply-preview-computing": {
+  "en": "Computing the preview…",
+  "fr": "Aperçu en cours…"
+ },
+ "apply-detail-exact": {
+  "en": "{ $n } strict",
+  "fr": "{ $n } strict"
+ },
+ "apply-detail-text": {
+  "en": "{ $n } relax",
+  "fr": "{ $n } relax"
+ },
+ "apply-detail-textonly": {
+  "en": "{ $n } text only",
+  "fr": "{ $n } texte seul"
+ },
+ "apply-detail-formid": {
+  "en": "{ $n } FormID",
+  "fr": "{ $n } FormID"
+ },
+ "apply-detail-emptied": {
+  "en": "{ $n } emptied",
+  "fr": "{ $n } vidée(s)"
+ },
+ "apply-button": {
+  "en": "Apply",
+  "fr": "Appliquer"
+ },
+ "apply-done": {
+  "en": "Dictionaries applied: { $n } lines ({ $detail }), { $over } overwritten",
+  "fr": "Dictionnaires appliqués : { $n } lignes ({ $detail }), { $over } écrasée(s)"
+ },
+ "op-apply-dicts": {
+  "en": "dictionaries applied ({ $n } lines)",
+  "fr": "application des dictionnaires ({ $n } lignes)"
+ },
+ "origin-level-formid": {
+  "en": "same record, text changed",
+  "fr": "même enregistrement, texte changé"
+ },
+ "apply-detail-old": {
+  "en": "{ $n } old data",
+  "fr": "{ $n } ancienne(s) donnée(s)"
+ },
+ "update-menu": {
+  "en": "Mod update…",
+  "fr": "Mise à jour du mod…"
+ },
+ "update-title": {
+  "en": "Mod update — { $doc } and { $dict }",
+  "fr": "Mise à jour du mod — { $doc } et { $dict }"
+ },
+ "update-summary": {
+  "en": "Dictionary written on { $date } from { $doc } ({ $old } lines). Open file: { $new } lines.",
+  "fr": "Dictionnaire écrit le { $date } à partir de { $doc } ({ $old } lignes). Fichier ouvert : { $new } lignes."
+ },
+ "update-counts": {
+  "en": "{ $added } added · { $removed } removed (kept) · { $changed } changed (same record, text changed) · { $same } unchanged",
+  "fr": "{ $added } ajoutées · { $removed } supprimées (conservées) · { $changed } modifiées (même enregistrement, texte changé) · { $same } inchangées"
+ },
+ "update-tab-added": {
+  "en": "Added ({ $n })",
+  "fr": "Ajoutées ({ $n })"
+ },
+ "update-tab-removed": {
+  "en": "Removed ({ $n })",
+  "fr": "Supprimées ({ $n })"
+ },
+ "update-tab-changed": {
+  "en": "Changed ({ $n })",
+  "fr": "Modifiées ({ $n })"
+ },
+ "update-col-edid": {
+  "en": "EDID",
+  "fr": "EDID"
+ },
+ "update-col-field": {
+  "en": "Field",
+  "fr": "Champ"
+ },
+ "update-col-source": {
+  "en": "Source",
+  "fr": "Source"
+ },
+ "update-col-trans": {
+  "en": "Translation",
+  "fr": "Traduction"
+ },
+ "update-col-date": {
+  "en": "Gone on",
+  "fr": "Disparue le"
+ },
+ "update-col-old-source": {
+  "en": "Old source",
+  "fr": "Ancienne source"
+ },
+ "update-col-new-source": {
+  "en": "New source",
+  "fr": "Nouvelle source"
+ },
+ "update-col-old-trans": {
+  "en": "Old translation",
+  "fr": "Ancienne traduction"
+ },
+ "update-pending-write": {
+  "en": "at the next write",
+  "fr": "à la prochaine écriture"
+ },
+ "update-hint": {
+  "en": "Changed lines receive the old translation as Pending; removed ones stay in the dictionary (old data) and feed the matching. Double-click: open the line.",
+  "fr": "Les lignes modifiées reçoivent l'ancienne traduction au statut En attente ; les supprimées restent dans le dictionnaire (anciennes données) et nourrissent l'appariement. Double-clic : ouvrir la ligne."
+ },
+ "update-take": {
+  "en": "Take the { $n } old translations",
+  "fr": "Reprendre les { $n } anciennes traductions"
+ },
+ "update-taken": {
+  "en": "{ $n } old translation(s) taken as Pending",
+  "fr": "{ $n } ancienne(s) traduction(s) reprise(s) en En attente"
+ },
+ "update-kept": {
+  "en": "{ $n } already translated line(s) kept",
+  "fr": "{ $n } ligne(s) déjà traduite(s) conservée(s)"
+ },
+ "update-forget": {
+  "en": "Forget the removed…",
+  "fr": "Oublier les supprimées…"
+ },
+ "update-forget-title": {
+  "en": "Old data",
+  "fr": "Anciennes données"
+ },
+ "update-forget-confirm": {
+  "en": "Permanently delete { $n } old line(s) from the mod dictionary?",
+  "fr": "Supprimer définitivement { $n } ancienne(s) ligne(s) du dictionnaire du mod ?"
+ },
+ "update-forgotten": {
+  "en": "Old data removed from the mod dictionary.",
+  "fr": "Anciennes données supprimées du dictionnaire du mod."
+ },
+ "update-no-dict": {
+  "en": "This document has no mod dictionary yet. Write it now?",
+  "fr": "Ce document n'a pas encore de dictionnaire de mod. L'écrire maintenant ?"
+ },
+ "status-changed-lines": {
+  "en": "{ $n } line(s) changed since the mod dictionary — Dictionaries  Mod update…",
+  "fr": "{ $n } ligne(s) ont changé depuis le dictionnaire du mod — Dictionnaires  Mise à jour du mod…"
+ },
+ "op-update-take": {
+  "en": "old translations taken ({ $n } lines)",
+  "fr": "reprise des anciennes traductions ({ $n } lignes)"
+ },
+ "settings-old-data-months": {
+  "en": "Keep the old data of the mod dictionaries (months, 0 = forever):",
+  "fr": "Conserver les anciennes données des dictionnaires de mod (mois, 0 = toujours) :"
+ },
+ "dict-editor-old": {
+  "en": "Old data ({ $n })",
+  "fr": "Anciennes données ({ $n })"
+ },
+ "dict-editor-restore": {
+  "en": "Put back among the current rows",
+  "fr": "Remettre en ligne courante"
+ },
+ "dict-editor-restored": {
+  "en": "Old row put back among the current rows.",
+  "fr": "Ancienne ligne remise parmi les lignes courantes."
+ },
+ "dicts-old": {
+  "en": "{ $n } old",
+  "fr": "{ $n } anciennes"
+ },
+ "edit-tab-vocab": {
+  "en": "Vocabulary",
+  "fr": "Vocabulaire"
+ },
+ "vocab-title": {
+  "en": "Close suggestions (word heuristic, threshold { $pct } %)",
+  "fr": "Suggestions proches (heuristique par mots, seuil { $pct } %)"
+ },
+ "vocab-none": {
+  "en": "No suggestion above the threshold.",
+  "fr": "Aucune suggestion au-dessus du seuil."
+ },
+ "vocab-use": {
+  "en": "Use",
+  "fr": "Utiliser"
+ },
+ "vocab-used": {
+  "en": "Suggestion taken, status Pending: adapt it, then validate.",
+  "fr": "Suggestion reprise, statut En attente : adaptez puis validez."
+ },
+ "vocab-indexing": {
+  "en": "Word index in progress ({ $pct } %)…",
+  "fr": "Index des mots en cours ({ $pct } %)…"
+ },
+ "vocab-old": {
+  "en": "(old)",
+  "fr": "(anciennes)"
+ },
+ "settings-fuzzy-threshold": {
+  "en": "Word heuristic threshold (differing words admitted, %):",
+  "fr": "Seuil de l'heuristique par mots (mots différents admis, %) :"
+ },
+ "apply-mode-fuzzy": {
+  "en": "Approximate: word heuristic, threshold { $pct } %  By similarity",
+  "fr": "Approchant : heuristique par mots, seuil { $pct } %  Traduit par similarité"
+ },
+ "apply-fuzzy-detail": {
+  "en": "{ $hi } at 90 % and above, { $mid } from 80 to 89 %, { $lo } below 80 %",
+  "fr": "{ $hi } à 90 % et plus, { $mid } de 80 à 89 %, { $lo } sous 80 %"
+ },
+ "instant-done": {
+  "en": "{ $n } fragment(s) translated, { $unknown } unknown word(s){ $list }",
+  "fr": "{ $n } fragment(s) traduit(s), { $unknown } mot(s) inconnu(s){ $list }"
+ },
+ "instant-none": {
+  "en": "No known fragment in \"{ $text }\".",
+  "fr": "Aucun fragment connu dans « { $text } »."
+ },
+ "instant-replace-title": {
+  "en": "Instant translation",
+  "fr": "Traduction instantanée"
+ },
+ "instant-replace-confirm": {
+  "en": "Replace the current translation with the instant translation?",
+  "fr": "Remplacer la traduction actuelle par la traduction instantanée ?"
+ },
+ "instant-replace": {
+  "en": "Replace",
+  "fr": "Remplacer"
+ },
+ "instant-no-more": {
+  "en": "Do not ask again during this session",
+  "fr": "Ne plus demander pendant cette session"
+ },
+ "instant-label": {
+  "en": "Instant translation",
+  "fr": "Traduction instantanée"
+ },
+ "vocab-fragments": {
+  "en": "Known fragments: { $list }",
+  "fr": "Fragments connus : { $list }"
+ },
+ "vocab-fragments-none": {
+  "en": "No known fragment in this line.",
+  "fr": "Aucun fragment connu dans cette ligne."
+ },
+ "vocab-shortcuts": {
+  "en": "F9: translate the source selection (or the whole source) · Ctrl+F9: in two parts, at the cursor",
+  "fr": "F9 : traduire la sélection de la source (ou toute la source) · Ctrl+F9 : en deux temps, au curseur"
+ },
+ "ctx-propagate": {
+  "en": "Apply to every line with the same source…",
+  "fr": "Appliquer à toutes les lignes de même source…"
+ },
+ "key-ctrl-f6": {
+  "en": "Ctrl+F6",
+  "fr": "Ctrl+F6"
+ },
+ "propagate-title": {
+  "en": "Propagate \"{ $text }\" — { $n } other line(s) with the same source",
+  "fr": "Propager « { $text } » — { $n } autre(s) ligne(s) de même source"
+ },
+ "propagate-title-many": {
+  "en": "Propagate { $groups } sources — { $n } other line(s)",
+  "fr": "Propager { $groups } sources — { $n } autre(s) ligne(s)"
+ },
+ "propagate-none": {
+  "en": "No other line has this source.",
+  "fr": "Aucune autre ligne n'a cette source."
+ },
+ "propagate-apply": {
+  "en": "Apply to the { $n } checked lines",
+  "fr": "Appliquer aux { $n } lignes cochées"
+ },
+ "propagate-done": {
+  "en": "Propagation: { $n } line(s) received the translation and the status.",
+  "fr": "Propagation : { $n } ligne(s) ont reçu la traduction et le statut."
+ },
+ "propagate-origin": {
+  "en": "Origin:",
+  "fr": "Origine :"
+ },
+ "propagate-col-apply": {
+  "en": "Apply",
+  "fr": "Appliquer"
+ },
+ "propagate-col-trans": {
+  "en": "Current translation",
+  "fr": "Traduction actuelle"
+ },
+ "propagate-col-status": {
+  "en": "Status",
+  "fr": "Statut"
+ },
+ "propagate-check-all": {
+  "en": "Check all",
+  "fr": "Tout cocher"
+ },
+ "propagate-check-none": {
+  "en": "Uncheck all",
+  "fr": "Tout décocher"
+ },
+ "settings-propose-propagation": {
+  "en": "Propose the propagation to the lines of the same source after a validation",
+  "fr": "Proposer la propagation aux lignes de même source après validation"
+ },
+ "settings-propose-propagation-hint": {
+  "en": "After F5 or Ctrl+ on a line with differing duplicates, the propagation dialog opens; Escape closes it without doing anything.",
+  "fr": "Après F5 ou Ctrl+ sur une ligne qui a des doublons différents, le dialogue de propagation s'ouvre ; Échap le ferme sans rien faire."
+ },
+ "menu-dialogues": {
+  "en": "Dialogues…",
+  "fr": "Dialogues…"
+ },
+ "dialog-title": {
+  "en": "Dialogues — { $doc } ({ $game })",
+  "fr": "Dialogues — { $doc } ({ $game })"
+ },
+ "dialog-none": {
+  "en": "No dialogue in this document.",
+  "fr": "Aucun dialogue dans ce document."
+ },
+ "dialog-no-quest": {
+  "en": "No quest",
+  "fr": "Sans quête"
+ },
+ "dialog-scene": {
+  "en": "Scene { $name } ({ $n } phases)",
+  "fr": "Scène { $name } ({ $n } phases)"
+ },
+ "dialog-phase": {
+  "en": "Phase { $n } — { $actor }",
+  "fr": "Phase { $n } — { $actor }"
+ },
+ "dialog-counts": {
+  "en": "{ $done } / { $total }",
+  "fr": "{ $done } / { $total }"
+ },
+ "dialog-replies": {
+  "en": "{ $n } replies",
+  "fr": "{ $n } répliques"
+ },
+ "dialog-responses-n": {
+  "en": "{ $n } responses",
+  "fr": "{ $n } réponses"
+ },
+ "dialog-status": {
+  "en": "{ $lines } replies · { $done } translated · { $unvoiced } unvoiced · { $npcs } NPCs · filter: { $filter }",
+  "fr": "{ $lines } répliques · { $done } traduites · { $unvoiced } non doublées · { $npcs } PNJ · filtre : { $filter }"
+ },
+ "dialog-filter-none": {
+  "en": "none",
+  "fr": "aucun"
+ },
+ "dialog-player": {
+  "en": "The player:",
+  "fr": "Le joueur :"
+ },
+ "dialog-responses": {
+  "en": "Responses:",
+  "fr": "Réponses :"
+ },
+ "dialog-conditions": {
+  "en": "Conditions:",
+  "fr": "Conditions :"
+ },
+ "dialog-voice": {
+  "en": "Voice:",
+  "fr": "Voix :"
+ },
+ "dialog-response": {
+  "en": "{ $n } · { $emotion }",
+  "fr": "{ $n } · { $emotion }"
+ },
+ "dialog-prev": {
+  "en": "Previous",
+  "fr": "Précédente"
+ },
+ "dialog-next": {
+  "en": "Next",
+  "fr": "Suivante"
+ },
+ "dialog-open": {
+  "en": "Open in the editor",
+  "fr": "Ouvrir dans l'éditeur"
+ },
+ "dialog-follow": {
+  "en": "Follow the grid",
+  "fr": "Suivre la grille"
+ },
+ "dialog-unvoiced-only": {
+  "en": "Unvoiced",
+  "fr": "Non doublées"
+ },
+ "dialog-indexing": {
+  "en": "Reading the context of { $file } ({ $pct } %)…",
+  "fr": "Lecture du contexte de { $file } ({ $pct } %)…"
+ },
+ "dialog-master-indexing": {
+  "en": "Name index of { $master } ({ $pct } %)…",
+  "fr": "Index des noms de { $master } ({ $pct } %)…"
+ },
+ "dialog-search-hint": {
+  "en": "Search the replies…",
+  "fr": "Rechercher dans les répliques…"
+ },
+ "dialog-quest-all": {
+  "en": "All quests",
+  "fr": "Toutes les quêtes"
+ },
+ "dialog-npc-all": {
+  "en": "All NPCs",
+  "fr": "Tous les PNJ"
+ },
+ "dialog-npc-item": {
+  "en": "{ $name } · { $n }",
+  "fr": "{ $name } · { $n }"
+ },
+ "dialog-info-head": {
+  "en": "INFO { $formid } · { $topic } · reply { $n } / { $total }",
+  "fr": "INFO { $formid } · { $topic } · réplique { $n } / { $total }"
+ },
+ "dialog-quest-line": {
+  "en": "Quest: { $quest } · { $topic } · Listener: { $target }",
+  "fr": "Quête : { $quest } · { $topic } · Interlocuteur : { $target }"
+ },
+ "dialog-target-player": {
+  "en": "the player",
+  "fr": "le joueur"
+ },
+ "dialog-before": {
+  "en": "Before:",
+  "fr": "Avant :"
+ },
+ "dialog-after": {
+  "en": "After:",
+  "fr": "Après :"
+ },
+ "dialog-note": {
+  "en": "Note:",
+  "fr": "Note :"
+ },
+ "dialog-no-conditions": {
+  "en": "none",
+  "fr": "aucune"
+ },
+ "dialog-shared": {
+  "en": "Responses shared with { $formid }.",
+  "fr": "Réponses partagées avec { $formid }."
+ },
+ "dialog-nav-hint": {
+  "en": "Ctrl+Alt+Left / Ctrl+Alt+Right: previous / next reply · Enter: editor",
+  "fr": "Ctrl+Alt+Gauche / Ctrl+Alt+Droite : réplique précédente / suivante · Entrée : éditeur"
+ },
+ "dialog-tab-not-dialogue": {
+  "en": "This line does not belong to a dialogue.",
+  "fr": "Cette ligne n'appartient pas à un dialogue."
+ },
+ "dialog-tab-topic": {
+  "en": "Topic { $edid } · { $quest } · { $n } replies",
+  "fr": "Sujet { $edid } · { $quest } · { $n } répliques"
+ },
+ "edit-tab-dialogue": {
+  "en": "Dialogue",
+  "fr": "Dialogue"
+ },
+ "dialog-cat-topic": {
+  "en": "Topic",
+  "fr": "Sujet"
+ },
+ "dialog-cat-favor": {
+  "en": "Favor",
+  "fr": "Faveur"
+ },
+ "dialog-cat-scene": {
+  "en": "Scene",
+  "fr": "Scène"
+ },
+ "dialog-cat-combat": {
+  "en": "Combat",
+  "fr": "Combat"
+ },
+ "dialog-cat-favors": {
+  "en": "Favors",
+  "fr": "Faveurs"
+ },
+ "dialog-cat-detection": {
+  "en": "Detection",
+  "fr": "Détection"
+ },
+ "dialog-cat-service": {
+  "en": "Service",
+  "fr": "Service"
+ },
+ "dialog-cat-misc": {
+  "en": "Misc",
+  "fr": "Divers"
+ },
+ "dialog-cat-player": {
+  "en": "Player",
+  "fr": "Joueur"
+ },
+ "dialog-cat-command": {
+  "en": "Command",
+  "fr": "Ordre"
+ },
+ "dialog-cat-conversation": {
+  "en": "Conversation",
+  "fr": "Conversation"
+ },
+ "dialog-cat-persuasion": {
+  "en": "Persuasion",
+  "fr": "Persuasion"
+ },
+ "dialog-cat-radio": {
+  "en": "Radio",
+  "fr": "Radio"
+ },
+ "dialog-cat-voice": {
+  "en": "Voice",
+  "fr": "Voix"
+ },
+ "dialog-cat-greeting": {
+  "en": "Greeting",
+  "fr": "Salutation"
+ },
+ "dialog-cat-journal": {
+  "en": "Journal",
+  "fr": "Journal"
+ },
+ "emotion-neutral": {
+  "en": "Neutral",
+  "fr": "Neutre"
+ },
+ "emotion-anger": {
+  "en": "Anger",
+  "fr": "Colère"
+ },
+ "emotion-disgust": {
+  "en": "Disgust",
+  "fr": "Dégoût"
+ },
+ "emotion-fear": {
+  "en": "Fear",
+  "fr": "Peur"
+ },
+ "emotion-sad": {
+  "en": "Sad",
+  "fr": "Tristesse"
+ },
+ "emotion-happy": {
+  "en": "Happy",
+  "fr": "Joie"
+ },
+ "emotion-surprise": {
+  "en": "Surprise",
+  "fr": "Surprise"
+ },
+ "emotion-puzzled": {
+  "en": "Puzzled",
+  "fr": "Perplexité"
+ },
+ "speaker-line": {
+  "en": "Speaker: { $name } ({ $gender }{ $voice }) — { $origin }",
+  "fr": "Locuteur : { $name } ({ $gender }{ $voice }) — { $origin }"
+ },
+ "speaker-unknown": {
+  "en": "undetermined speaker",
+  "fr": "locuteur indéterminé"
+ },
+ "speaker-alias": {
+  "en": "alias \"{ $name }\"",
+  "fr": "alias « { $name } »"
+ },
+ "speaker-voice": {
+  "en": "voice { $name }",
+  "fr": "voix { $name }"
+ },
+ "speaker-faction": {
+  "en": "faction { $name }",
+  "fr": "faction { $name }"
+ },
+ "speaker-race": {
+  "en": "race { $name }",
+  "fr": "race { $name }"
+ },
+ "gender-m": {
+  "en": "male",
+  "fr": "homme"
+ },
+ "gender-f": {
+  "en": "female",
+  "fr": "femme"
+ },
+ "gender-unknown": {
+  "en": "?",
+  "fr": "?"
+ },
+ "speaker-origin-anam": {
+  "en": "ANAM",
+  "fr": "ANAM"
+ },
+ "speaker-origin-scene": {
+  "en": "scene",
+  "fr": "scène"
+ },
+ "speaker-origin-condition": {
+  "en": "condition",
+  "fr": "condition"
+ },
+ "speaker-origin-none": {
+  "en": "—",
+  "fr": "—"
+ },
+ "cond-and": {
+  "en": "and",
+  "fr": "et"
+ },
+ "cond-or": {
+  "en": "or",
+  "fr": "ou"
+ },
+ "cond-sex-male": {
+  "en": "a man",
+  "fr": "un homme"
+ },
+ "cond-sex-female": {
+  "en": "a woman",
+  "fr": "une femme"
+ },
+ "cond-subject-speaker": {
+  "en": "the speaker",
+  "fr": "le locuteur"
+ },
+ "cond-subject-target": {
+  "en": "the listener",
+  "fr": "l'interlocuteur"
+ },
+ "cond-on-target": {
+  "en": "on the listener:",
+  "fr": "sur l'interlocuteur :"
+ },
+ "cond-on-ref": {
+  "en": "on { $ref }:",
+  "fr": "sur { $ref } :"
+ },
+ "cond-on-combat-target": {
+  "en": "on the combat target:",
+  "fr": "sur la cible de combat :"
+ },
+ "cond-on-linked-ref": {
+  "en": "on the linked reference:",
+  "fr": "sur la référence liée :"
+ },
+ "cond-on-alias": {
+  "en": "on alias #{ $n }:",
+  "fr": "sur l'alias #{ $n } :"
+ },
+ "cond-on-other": {
+  "en": "on another target:",
+  "fr": "sur une autre cible :"
+ },
+ "cond-global-value": {
+  "en": "the global value { $name }",
+  "fr": "la valeur globale { $name }"
+ },
+ "cond-generic": {
+  "en": "{ $fn }({ $params }) { $op } { $value }",
+  "fr": "{ $fn }({ $params }) { $op } { $value }"
+ },
+ "cond-unknown-fn": {
+  "en": "Function #{ $index }",
+  "fr": "Fonction #{ $index }"
+ },
+ "cond-GetIsID": {
+  "en": "if { $subject } is { $p1 }",
+  "fr": "si { $subject } est { $p1 }"
+ },
+ "cond-GetIsID-not": {
+  "en": "if { $subject } is not { $p1 }",
+  "fr": "si { $subject } n'est pas { $p1 }"
+ },
+ "cond-GetIsSex": {
+  "en": "if { $subject } is { $p1 }",
+  "fr": "si { $subject } est { $p1 }"
+ },
+ "cond-GetIsSex-not": {
+  "en": "if { $subject } is not { $p1 }",
+  "fr": "si { $subject } n'est pas { $p1 }"
+ },
+ "cond-GetPCIsSex": {
+  "en": "if the player is { $p1 }",
+  "fr": "si le joueur est { $p1 }"
+ },
+ "cond-GetPCIsSex-not": {
+  "en": "if the player is not { $p1 }",
+  "fr": "si le joueur n'est pas { $p1 }"
+ },
+ "cond-GetStage": {
+  "en": "if quest { $p1 } is at stage { $op } { $value }",
+  "fr": "si la quête { $p1 } est à l'étape { $op } { $value }"
+ },
+ "cond-GetStageDone": {
+  "en": "if stage { $p2 } of quest { $p1 } is done",
+  "fr": "si l'étape { $p2 } de la quête { $p1 } est faite"
+ },
+ "cond-GetStageDone-not": {
+  "en": "if stage { $p2 } of quest { $p1 } is not done",
+  "fr": "si l'étape { $p2 } de la quête { $p1 } n'est pas faite"
+ },
+ "cond-GetQuestCompleted": {
+  "en": "if quest { $p1 } is completed",
+  "fr": "si la quête { $p1 } est terminée"
+ },
+ "cond-GetQuestCompleted-not": {
+  "en": "if quest { $p1 } is not completed",
+  "fr": "si la quête { $p1 } n'est pas terminée"
+ },
+ "cond-GetQuestRunning": {
+  "en": "if quest { $p1 } is running",
+  "fr": "si la quête { $p1 } est en cours"
+ },
+ "cond-GetQuestRunning-not": {
+  "en": "if quest { $p1 } is not running",
+  "fr": "si la quête { $p1 } n'est pas en cours"
+ },
+ "cond-GetIsAliasRef": {
+  "en": "if { $subject } is the alias \"{ $p1 }\"",
+  "fr": "si { $subject } est l'alias « { $p1 } »"
+ },
+ "cond-GetIsAliasRef-not": {
+  "en": "if { $subject } is not the alias \"{ $p1 }\"",
+  "fr": "si { $subject } n'est pas l'alias « { $p1 } »"
+ },
+ "cond-GetIsVoiceType": {
+  "en": "if { $subject } has the voice { $p1 }",
+  "fr": "si { $subject } a la voix { $p1 }"
+ },
+ "cond-GetIsVoiceType-not": {
+  "en": "if { $subject } does not have the voice { $p1 }",
+  "fr": "si { $subject } n'a pas la voix { $p1 }"
+ },
+ "cond-GetInFaction": {
+  "en": "if { $subject } is in faction { $p1 }",
+  "fr": "si { $subject } est de la faction { $p1 }"
+ },
+ "cond-GetInFaction-not": {
+  "en": "if { $subject } is not in faction { $p1 }",
+  "fr": "si { $subject } n'est pas de la faction { $p1 }"
+ },
+ "cond-GetFactionRank": {
+  "en": "if the rank of { $subject } in { $p1 } is { $op } { $value }",
+  "fr": "si le rang de { $subject } dans { $p1 } est { $op } { $value }"
+ },
+ "cond-GetIsRace": {
+  "en": "if { $subject } is of race { $p1 }",
+  "fr": "si { $subject } est de race { $p1 }"
+ },
+ "cond-GetIsRace-not": {
+  "en": "if { $subject } is not of race { $p1 }",
+  "fr": "si { $subject } n'est pas de race { $p1 }"
+ },
+ "cond-GetIsClass": {
+  "en": "if { $subject } is of class { $p1 }",
+  "fr": "si { $subject } est de classe { $p1 }"
+ },
+ "cond-GetIsClass-not": {
+  "en": "if { $subject } is not of class { $p1 }",
+  "fr": "si { $subject } n'est pas de classe { $p1 }"
+ },
+ "cond-GetRelationshipRank": {
+  "en": "if the relationship of { $subject } with { $p1 } is { $op } { $value }",
+  "fr": "si la relation de { $subject } avec { $p1 } est { $op } { $value }"
+ },
+ "cond-GetGlobalValue": {
+  "en": "if the global value { $p1 } is { $op } { $value }",
+  "fr": "si la valeur globale { $p1 } est { $op } { $value }"
+ },
+ "cond-GetDead": {
+  "en": "if { $subject } is dead",
+  "fr": "si { $subject } est mort"
+ },
+ "cond-GetDead-not": {
+  "en": "if { $subject } is alive",
+  "fr": "si { $subject } est vivant"
+ },
+ "cond-GetLevel": {
+  "en": "if the level of { $subject } is { $op } { $value }",
+  "fr": "si le niveau de { $subject } est { $op } { $value }"
+ },
+ "cond-GetActorValue": {
+  "en": "if { $p1 } of { $subject } is { $op } { $value }",
+  "fr": "si { $p1 } de { $subject } est { $op } { $value }"
+ },
+ "cond-GetItemCount": {
+  "en": "if { $subject } carries { $op } { $value } × { $p1 }",
+  "fr": "si { $subject } possède { $op } { $value } × { $p1 }"
+ },
+ "cond-GetEquipped": {
+  "en": "if { $subject } has { $p1 } equipped",
+  "fr": "si { $subject } a équipé { $p1 }"
+ },
+ "cond-GetEquipped-not": {
+  "en": "if { $subject } does not have { $p1 } equipped",
+  "fr": "si { $subject } n'a pas équipé { $p1 }"
+ },
+ "cond-HasKeyword": {
+  "en": "if { $subject } has the keyword { $p1 }",
+  "fr": "si { $subject } a le mot-clé { $p1 }"
+ },
+ "cond-HasKeyword-not": {
+  "en": "if { $subject } does not have the keyword { $p1 }",
+  "fr": "si { $subject } n'a pas le mot-clé { $p1 }"
+ },
+ "cond-WornHasKeyword": {
+  "en": "if { $subject } wears an item with the keyword { $p1 }",
+  "fr": "si { $subject } porte un objet au mot-clé { $p1 }"
+ },
+ "cond-WornHasKeyword-not": {
+  "en": "if { $subject } wears no item with the keyword { $p1 }",
+  "fr": "si { $subject } ne porte aucun objet au mot-clé { $p1 }"
+ },
+ "cond-GetInCurrentLoc": {
+  "en": "if { $subject } is in the location { $p1 }",
+  "fr": "si { $subject } est dans le lieu { $p1 }"
+ },
+ "cond-GetInCurrentLoc-not": {
+  "en": "if { $subject } is not in the location { $p1 }",
+  "fr": "si { $subject } n'est pas dans le lieu { $p1 }"
+ },
+ "cond-GetIsEditorLocation": {
+  "en": "if the editor location of { $subject } is { $p1 }",
+  "fr": "si le lieu d'édition de { $subject } est { $p1 }"
+ },
+ "cond-GetIsEditorLocation-not": {
+  "en": "if the editor location of { $subject } is not { $p1 }",
+  "fr": "si le lieu d'édition de { $subject } n'est pas { $p1 }"
+ },
+ "cond-GetInCell": {
+  "en": "if { $subject } is in the cell { $p1 }",
+  "fr": "si { $subject } est dans la cellule { $p1 }"
+ },
+ "cond-GetInCell-not": {
+  "en": "if { $subject } is not in the cell { $p1 }",
+  "fr": "si { $subject } n'est pas dans la cellule { $p1 }"
+ },
+ "cond-GetInWorldspace": {
+  "en": "if { $subject } is in the worldspace { $p1 }",
+  "fr": "si { $subject } est dans le monde { $p1 }"
+ },
+ "cond-GetInWorldspace-not": {
+  "en": "if { $subject } is not in the worldspace { $p1 }",
+  "fr": "si { $subject } n'est pas dans le monde { $p1 }"
+ },
+ "cond-GetDistance": {
+  "en": "if the distance to { $p1 } is { $op } { $value }",
+  "fr": "si la distance à { $p1 } est { $op } { $value }"
+ },
+ "cond-GetRandomPercent": {
+  "en": "if a random roll is { $op } { $value }",
+  "fr": "si un tirage aléatoire est { $op } { $value }"
+ },
+ "cond-GetCurrentTime": {
+  "en": "if the time is { $op } { $value }",
+  "fr": "si l'heure est { $op } { $value }"
+ },
+ "cond-GetDayOfWeek": {
+  "en": "if the day of the week is { $op } { $value }",
+  "fr": "si le jour de la semaine est { $op } { $value }"
+ },
+ "cond-IsInCombat": {
+  "en": "if { $subject } is in combat",
+  "fr": "si { $subject } est en combat"
+ },
+ "cond-IsInCombat-not": {
+  "en": "if { $subject } is not in combat",
+  "fr": "si { $subject } n'est pas en combat"
+ },
+ "cond-IsSneaking": {
+  "en": "if { $subject } is sneaking",
+  "fr": "si { $subject } est accroupi"
+ },
+ "cond-IsSneaking-not": {
+  "en": "if { $subject } is not sneaking",
+  "fr": "si { $subject } n'est pas accroupi"
+ },
+ "cond-IsWeaponOut": {
+  "en": "if { $subject } has a weapon drawn",
+  "fr": "si { $subject } a son arme sortie"
+ },
+ "cond-IsWeaponOut-not": {
+  "en": "if { $subject } has no weapon drawn",
+  "fr": "si { $subject } a son arme rangée"
+ },
+ "cond-GetSleeping": {
+  "en": "if { $subject } is asleep",
+  "fr": "si { $subject } dort"
+ },
+ "cond-GetSleeping-not": {
+  "en": "if { $subject } is not asleep",
+  "fr": "si { $subject } ne dort pas"
+ },
+ "cond-IsChild": {
+  "en": "if { $subject } is a child",
+  "fr": "si { $subject } est un enfant"
+ },
+ "cond-IsChild-not": {
+  "en": "if { $subject } is not a child",
+  "fr": "si { $subject } n'est pas un enfant"
+ },
+ "cond-GetIsPlayableRace": {
+  "en": "if { $subject } is of a playable race",
+  "fr": "si { $subject } est d'une race jouable"
+ },
+ "cond-GetIsPlayableRace-not": {
+  "en": "if { $subject } is not of a playable race",
+  "fr": "si { $subject } n'est pas d'une race jouable"
+ },
+ "cond-GetVMQuestVariable": {
+  "en": "if the variable { $p2 } of quest { $p1 } is { $op } { $value }",
+  "fr": "si la variable { $p2 } de la quête { $p1 } est { $op } { $value }"
+ },
+ "cond-GetVMScriptVariable": {
+  "en": "if the script variable { $p2 } of { $p1 } is { $op } { $value }",
+  "fr": "si la variable de script { $p2 } de { $p1 } est { $op } { $value }"
+ },
+ "cond-GetIsCurrentPackage": {
+  "en": "if { $subject } runs the package { $p1 }",
+  "fr": "si { $subject } suit le paquet { $p1 }"
+ },
+ "cond-GetIsCurrentPackage-not": {
+  "en": "if { $subject } does not run the package { $p1 }",
+  "fr": "si { $subject } ne suit pas le paquet { $p1 }"
+ },
+ "cond-GetCrimeGold": {
+  "en": "if the bounty of { $subject } with { $p1 } is { $op } { $value }",
+  "fr": "si la prime de { $subject } auprès de { $p1 } est { $op } { $value }"
+ },
+ "cond-IsBribedbyPlayer": {
+  "en": "if { $subject } was bribed by the player",
+  "fr": "si { $subject } a été soudoyé par le joueur"
+ },
+ "cond-IsBribedbyPlayer-not": {
+  "en": "if { $subject } was not bribed by the player",
+  "fr": "si { $subject } n'a pas été soudoyé par le joueur"
+ },
+ "cond-IsIntimidatedbyPlayer": {
+  "en": "if { $subject } was intimidated by the player",
+  "fr": "si { $subject } a été intimidé par le joueur"
+ },
+ "cond-IsIntimidatedbyPlayer-not": {
+  "en": "if { $subject } was not intimidated by the player",
+  "fr": "si { $subject } n'a pas été intimidé par le joueur"
+ },
+ "cond-GetTalkedToPC": {
+  "en": "if { $subject } has talked to the player",
+  "fr": "si { $subject } a déjà parlé au joueur"
+ },
+ "cond-GetTalkedToPC-not": {
+  "en": "if { $subject } has never talked to the player",
+  "fr": "si { $subject } n'a jamais parlé au joueur"
+ },
+ "cond-GetIsCreature": {
+  "en": "if { $subject } is a creature",
+  "fr": "si { $subject } est une créature"
+ },
+ "cond-GetIsCreature-not": {
+  "en": "if { $subject } is not a creature",
+  "fr": "si { $subject } n'est pas une créature"
+ },
+ "cond-HasPerk": {
+  "en": "if { $subject } has the perk { $p1 }",
+  "fr": "si { $subject } a l'aptitude { $p1 }"
+ },
+ "cond-HasPerk-not": {
+  "en": "if { $subject } does not have the perk { $p1 }",
+  "fr": "si { $subject } n'a pas l'aptitude { $p1 }"
+ },
+ "cond-HasSpell": {
+  "en": "if { $subject } knows the spell { $p1 }",
+  "fr": "si { $subject } connaît le sort { $p1 }"
+ },
+ "cond-HasSpell-not": {
+  "en": "if { $subject } does not know the spell { $p1 }",
+  "fr": "si { $subject } ne connaît pas le sort { $p1 }"
+ },
+ "cond-HasMagicEffect": {
+  "en": "if { $subject } is under the effect { $p1 }",
+  "fr": "si { $subject } subit l'effet { $p1 }"
+ },
+ "cond-HasMagicEffect-not": {
+  "en": "if { $subject } is not under the effect { $p1 }",
+  "fr": "si { $subject } ne subit pas l'effet { $p1 }"
+ },
+ "cond-IsInList": {
+  "en": "if { $subject } is in the list { $p1 }",
+  "fr": "si { $subject } est dans la liste { $p1 }"
+ },
+ "cond-IsInList-not": {
+  "en": "if { $subject } is not in the list { $p1 }",
+  "fr": "si { $subject } n'est pas dans la liste { $p1 }"
+ },
+ "cond-GetIsReference": {
+  "en": "if { $subject } is the reference { $p1 }",
+  "fr": "si { $subject } est la référence { $p1 }"
+ },
+ "cond-GetIsReference-not": {
+  "en": "if { $subject } is not the reference { $p1 }",
+  "fr": "si { $subject } n'est pas la référence { $p1 }"
+ },
+ "cond-IsInInterior": {
+  "en": "if { $subject } is indoors",
+  "fr": "si { $subject } est à l'intérieur"
+ },
+ "cond-IsInInterior-not": {
+  "en": "if { $subject } is outdoors",
+  "fr": "si { $subject } est à l'extérieur"
+ },
+ "cond-GetIsCrimeFaction": {
+  "en": "if the crime faction is { $p1 }",
+  "fr": "si la faction de crime est { $p1 }"
+ },
+ "cond-GetIsCrimeFaction-not": {
+  "en": "if the crime faction is not { $p1 }",
+  "fr": "si la faction de crime n'est pas { $p1 }"
+ },
+ "cond-GetObjectiveCompleted": {
+  "en": "if objective { $p2 } of quest { $p1 } is completed",
+  "fr": "si l'objectif { $p2 } de la quête { $p1 } est accompli"
+ },
+ "cond-GetObjectiveCompleted-not": {
+  "en": "if objective { $p2 } of quest { $p1 } is not completed",
+  "fr": "si l'objectif { $p2 } de la quête { $p1 } n'est pas accompli"
+ },
+ "cond-GetObjectiveDisplayed": {
+  "en": "if objective { $p2 } of quest { $p1 } is displayed",
+  "fr": "si l'objectif { $p2 } de la quête { $p1 } est affiché"
+ },
+ "cond-GetObjectiveDisplayed-not": {
+  "en": "if objective { $p2 } of quest { $p1 } is not displayed",
+  "fr": "si l'objectif { $p2 } de la quête { $p1 } n'est pas affiché"
+ },
+ "cond-IsInDialogueWithPlayer": {
+  "en": "if { $subject } is talking with the player",
+  "fr": "si { $subject } parle avec le joueur"
+ },
+ "cond-IsInDialogueWithPlayer-not": {
+  "en": "if { $subject } is not talking with the player",
+  "fr": "si { $subject } ne parle pas avec le joueur"
+ },
+ "cond-IsRaining": {
+  "en": "if it rains",
+  "fr": "s'il pleut"
+ },
+ "cond-IsRaining-not": {
+  "en": "if it does not rain",
+  "fr": "s'il ne pleut pas"
+ },
+ "cond-IsSnowing": {
+  "en": "if it snows",
+  "fr": "s'il neige"
+ },
+ "cond-IsSnowing-not": {
+  "en": "if it does not snow",
+  "fr": "s'il ne neige pas"
+ },
+ "cond-GetGold": {
+  "en": "if the gold of { $subject } is { $op } { $value }",
+  "fr": "si l'or de { $subject } est { $op } { $value }"
+ },
+ "cond-SameSex": {
+  "en": "if { $subject } is of the same sex as { $p1 }",
+  "fr": "si { $subject } est du même sexe que { $p1 }"
+ },
+ "cond-SameSex-not": {
+  "en": "if { $subject } is not of the same sex as { $p1 }",
+  "fr": "si { $subject } n'est pas du même sexe que { $p1 }"
+ },
+ "cond-SameRace": {
+  "en": "if { $subject } is of the same race as { $p1 }",
+  "fr": "si { $subject } est de la même race que { $p1 }"
+ },
+ "cond-SameRace-not": {
+  "en": "if { $subject } is not of the same race as { $p1 }",
+  "fr": "si { $subject } n'est pas de la même race que { $p1 }"
+ },
+ "cond-SameFaction": {
+  "en": "if { $subject } is of the same faction as { $p1 }",
+  "fr": "si { $subject } est de la même faction que { $p1 }"
+ },
+ "cond-SameFaction-not": {
+  "en": "if { $subject } is not of the same faction as { $p1 }",
+  "fr": "si { $subject } n'est pas de la même faction que { $p1 }"
+ },
+ "cond-GetIsAlignment": {
+  "en": "if { $subject } is of alignment { $p1 }",
+  "fr": "si { $subject } est d'alignement { $p1 }"
+ },
+ "cond-GetIsAlignment-not": {
+  "en": "if { $subject } is not of alignment { $p1 }",
+  "fr": "si { $subject } n'est pas d'alignement { $p1 }"
+ },
+ "dialog-pick": {
+  "en": "Pick a reply in the tree.",
+  "fr": "Choisissez une réplique dans l'arbre."
+ },
+ "dialog-filter-grid": {
+  "en": "Filter the grid on this NPC",
+  "fr": "Filtrer la grille sur ce PNJ"
+ },
+ "dialog-filter-grid-tip": {
+  "en": "The grid shows only this speaker's replies; Reset removes the filter.",
+  "fr": "La grille ne montre que les répliques de ce locuteur ; Réinitialiser retire le filtre."
+ },
+ "gender-m-short": {
+  "en": "m",
+  "fr": "h"
+ },
+ "gender-f-short": {
+  "en": "f",
+  "fr": "f"
+ },
+ "dialog-target-scene": {
+  "en": "the other actor of the scene",
+  "fr": "l'autre acteur de la scène"
+ },
+ "dialog-untranslated": {
+  "en": "to translate",
+  "fr": "à traduire"
+ },
+ "dialog-response-of": {
+  "en": "response { $n } / { $total }",
+  "fr": "réponse { $n } / { $total }"
+ },
+ "voice-not-mapped": {
+  "en": "not searched",
+  "fr": "non recherchée"
+ },
+ "speaker-line-unknown": {
+  "en": "{ $name }",
+  "fr": "{ $name }"
+ },
+ "ctx-filter-speaker": {
+  "en": "Filter on this NPC",
+  "fr": "Filtrer sur ce PNJ"
+ },
+ "filter-chip-speaker": {
+  "en": "NPC: {name}",
+  "fr": "PNJ : {name}"
+ },
+ "filter-speaker-none": {
+  "en": "No speaker resolved for this line.",
+  "fr": "Aucun locuteur résolu pour cette ligne."
+ },
+ "col-comment": {
+  "en": "Comment",
+  "fr": "Commentaire"
+ },
+ "menu-show-comment": {
+  "en": "Show the Comment column",
+  "fr": "Afficher la colonne Commentaire"
+ },
+ "menu-export-generated-comments": {
+  "en": "Also export the generated comments (EET, XML)",
+  "fr": "Exporter aussi les commentaires générés (EET, XML)"
+ },
+ "filter-in-comment": {
+  "en": "Comment",
+  "fr": "Commentaire"
+ },
+ "comment-model": {
+  "en": "model: { $path }",
+  "fr": "modèle : { $path }"
+ },
+ "comment-master": {
+  "en": "master: { $file }",
+  "fr": "maître : { $file }"
+ },
+ "comment-quest": {
+  "en": "quest { $name }",
+  "fr": "quête { $name }"
+ },
+ "comment-journal": {
+  "en": "journal entry, stage { $n }",
+  "fr": "entrée de journal, étape { $n }"
+ },
+ "comment-objective": {
+  "en": "objective { $n }",
+  "fr": "objectif { $n }"
+ },
+ "comment-voiced": {
+  "en": "voice ✔",
+  "fr": "voix ✔"
+ },
+ "comment-unvoiced": {
+  "en": "voice ✘",
+  "fr": "voix ✘"
+ },
+ "edit-comment-label": {
+  "en": "Comment:",
+  "fr": "Commentaire :"
+ },
+ "open-filter-text": {
+  "en": "Text files (MCM, INI, JSON…)",
+  "fr": "Fichiers texte (MCM, INI, JSON…)"
+ },
+ "text-which-format": {
+  "en": "Which format for { $file }?",
+  "fr": "Quel format pour { $file } ?"
+ },
+ "text-format-matches": {
+  "en": "{ $n } lines recognised out of { $total }",
+  "fr": "{ $n } lignes reconnues sur { $total }"
+ },
+ "text-no-format": {
+  "en": "No text format is defined.",
+  "fr": "Aucun format texte n'est défini."
+ },
+ "text-status": {
+  "en": "{ $format } file: { $keys } keys · { $done } translated · target: { $target }",
+  "fr": "Fichier { $format } : { $keys } clés · { $done } traduites · cible : { $target }"
+ },
+ "text-target-found": {
+  "en": "{ $file } (existing, { $n } keys taken)",
+  "fr": "{ $file } (existant, { $n } clés reprises)"
+ },
+ "text-target-foreign": {
+  "en": "{ $n } keys missing from the source ignored",
+  "fr": "{ $n } clés absentes de la source ignorées"
+ },
+ "text-target-none": {
+  "en": "{ $file } (to create)",
+  "fr": "{ $file } (à créer)"
+ },
+ "text-target-unnamed": {
+  "en": "the file itself (no language in the name)",
+  "fr": "le fichier lui-même (pas de langue dans le nom)"
+ },
+ "text-untranslated-copy": {
+  "en": "Untranslated lines: keep the source",
+  "fr": "Lignes non traduites : reprendre la source"
+ },
+ "text-source-unsaved": {
+  "en": "Save or close the document before changing the source file.",
+  "fr": "Enregistrez ou fermez le document avant de changer de fichier source."
+ },
+ "status-text-saved": {
+  "en": "Saved: { $file } ({ $n } lines)",
+  "fr": "Enregistré : { $file } ({ $n } lignes)"
+ },
+ "status-export-text-ok": {
+  "en": "Exported: { $file }",
+  "fr": "Exporté : { $file }"
+ },
+ "status-export-needs-text": {
+  "en": "This output mode is for text files only (MCM, INI, JSON…).",
+  "fr": "Ce mode de sortie est réservé aux fichiers texte (MCM, INI, JSON…)."
+ },
+ "status-text-only-text": {
+  "en": "A text file exports as “Text file”: choose that output.",
+  "fr": "Un fichier texte s'exporte en « Fichier texte » : choisissez cette sortie."
+ },
+ "menu-open-interface": {
+  "en": "Open the mod's interface files",
+  "fr": "Ouvrir les fichiers d'interface du mod"
+ },
+ "menu-open-interface-none": {
+  "en": "No interface file found next to the plugin.",
+  "fr": "Aucun fichier d'interface trouvé à côté du plugin."
+ },
+ "interface-found": {
+  "en": "Interface file found: { $file } — File ▸ Open the mod's interface files",
+  "fr": "Fichier d'interface trouvé : { $file } — Fichier ▸ Ouvrir les fichiers d'interface du mod"
+ },
+ "output-text": {
+  "en": "Text file",
+  "fr": "Fichier texte"
+ },
+ "tab-badge-text": {
+  "en": "{ $format } · { $enc } · { $src }→{ $dst }",
+  "fr": "{ $format } · { $enc } · { $src }→{ $dst }"
+ },
+ "col-format": {
+  "en": "Format",
+  "fr": "Format"
+ },
+ "col-key": {
+  "en": "Key",
+  "fr": "Clé"
+ },
+ "origin-level-target-file": {
+  "en": "target file",
+  "fr": "fichier cible"
+ },
+ "formats-menu": {
+  "en": "Text formats…",
+  "fr": "Formats texte…"
+ },
+ "formats-title": {
+  "en": "Text formats",
+  "fr": "Formats texte"
+ },
+ "formats-list": {
+  "en": "Formats",
+  "fr": "Formats"
+ },
+ "formats-new": {
+  "en": "New",
+  "fr": "Nouveau"
+ },
+ "formats-new-name": {
+  "en": "New format",
+  "fr": "Nouveau format"
+ },
+ "formats-duplicate": {
+  "en": "Duplicate",
+  "fr": "Dupliquer"
+ },
+ "formats-delete": {
+  "en": "Delete",
+  "fr": "Supprimer"
+ },
+ "formats-test": {
+  "en": "Try on a file…",
+  "fr": "Essai sur un fichier…"
+ },
+ "formats-builtin-hint": {
+  "en": "Shipped format: read-only. Duplicate it to adapt it.",
+  "fr": "Format fourni : en lecture seule. Dupliquer pour l'adapter."
+ },
+ "formats-name": {
+  "en": "Name",
+  "fr": "Nom"
+ },
+ "formats-id": {
+  "en": "Identifier",
+  "fr": "Identifiant"
+ },
+ "formats-patterns": {
+  "en": "Name patterns (one per line)",
+  "fr": "Motifs de nom (un par ligne)"
+ },
+ "formats-encoding": {
+  "en": "Encoding",
+  "fr": "Encodage"
+ },
+ "formats-newline": {
+  "en": "Line endings",
+  "fr": "Fins de ligne"
+ },
+ "formats-line": {
+  "en": "Line expression",
+  "fr": "Expression de ligne"
+ },
+ "formats-escape": {
+  "en": "Escaping",
+  "fr": "Échappement"
+ },
+ "formats-lang-in-name": {
+  "en": "Language in the name",
+  "fr": "Langue dans le nom"
+ },
+ "formats-skip-empty": {
+  "en": "Skip empty values",
+  "fr": "Ignorer les valeurs vides"
+ },
+ "formats-line-hint": {
+  "en": "The expression applies to each line and must name the groups key and value (?P<key>…) (?P<value>…); the value is replaced in place when writing, the rest of the line is kept.",
+  "fr": "L'expression s'applique à chaque ligne et doit nommer les groupes key et value (?P<key>…) (?P<value>…) ; la valeur est remplacée en place à l'écriture, le reste de la ligne est conservé."
+ },
+ "formats-regex-invalid": {
+  "en": "Invalid regular expression: { $err }",
+  "fr": "Expression régulière invalide : { $err }"
+ },
+ "formats-regex-groups": {
+  "en": "The expression must name the groups key and value.",
+  "fr": "L'expression doit nommer les groupes key et value."
+ },
+ "formats-saved": {
+  "en": "Formats saved.",
+  "fr": "Formats enregistrés."
+ },
+ "voice-ok": {
+  "en": "{ $n } · { $type } · { $file } ({ $where })",
+  "fr": "{ $n } · { $type } · { $file } ({ $where })"
+ },
+ "voice-missing": {
+  "en": "{ $n } · no voice file",
+  "fr": "{ $n } · aucun fichier voix"
+ },
+ "voice-lip-only": {
+  "en": "{ $n } · lips only ({ $file })",
+  "fr": "{ $n } · lèvres seulement ({ $file })"
+ },
+ "voice-where-loose": {
+  "en": "loose",
+  "fr": "libre"
+ },
+ "voice-where-archive": {
+  "en": "{ $archive }",
+  "fr": "{ $archive }"
+ },
+ "voice-none-for-mod": {
+  "en": "No voice file for this mod (neither Sound/Voice/{ $plugin } nor an archive).",
+  "fr": "Aucun fichier voix pour ce mod (ni Sound/Voice/{ $plugin }, ni archive)."
+ },
+ "voice-unresolved-starfield": {
+  "en": "unresolved (Starfield: { $n } .wem files)",
+  "fr": "non résolu (Starfield : { $n } fichiers .wem)"
+ },
+ "dialog-refresh": {
+  "en": "Refresh",
+  "fr": "Rafraîchir"
+ },
+ "dialog-refresh-tip": {
+  "en": "Re-read the mod's voice files (Sound/Voice folder and archives).",
+  "fr": "Relire les fichiers voix du mod (dossier Sound/Voice et archives)."
+ },
+ "dialog-copy-unvoiced": {
+  "en": "Copy the list of unvoiced replies",
+  "fr": "Copier la liste des non doublées"
+ },
+ "dialog-open-folder": {
+  "en": "Open the folder",
+  "fr": "Ouvrir le dossier"
+ },
+ "dialog-copied": {
+  "en": "{ $n } replies copied to the clipboard.",
+  "fr": "{ $n } répliques copiées dans le presse-papiers."
+ },
+ "settings-tab-online": {
+  "en": "Online",
+  "fr": "En ligne"
+ },
+ "online-services": {
+  "en": "Services",
+  "fr": "Services"
+ },
+ "online-default-service": {
+  "en": "Default service:",
+  "fr": "Service par défaut :"
+ },
+ "online-key": {
+  "en": "API key:",
+  "fr": "Clé d'API :"
+ },
+ "online-show": {
+  "en": "Show",
+  "fr": "Afficher"
+ },
+ "online-hide": {
+  "en": "Hide",
+  "fr": "Masquer"
+ },
+ "online-endpoint": {
+  "en": "Endpoint:",
+  "fr": "Point d'accès :"
+ },
+ "online-formality": {
+  "en": "Formality:",
+  "fr": "Formalité :"
+ },
+ "online-region": {
+  "en": "Region:",
+  "fr": "Région :"
+ },
+ "online-model": {
+  "en": "Model:",
+  "fr": "Modèle :"
+ },
+ "online-test": {
+  "en": "Test…",
+  "fr": "Tester…"
+ },
+ "online-test-ok": {
+  "en": "The service answers.",
+  "fr": "Le service répond."
+ },
+ "online-test-usage": {
+  "en": "{ $used } characters used out of { $limit } this month.",
+  "fr": "{ $used } caractères utilisés sur { $limit } ce mois."
+ },
+ "online-test-control": {
+  "en": "The service answers: “{ $text }”",
+  "fr": "Le service répond : « { $text } »"
+ },
+ "online-test-model-unlisted": {
+  "en": "the model { $model } is not in the server's list",
+  "fr": "le modèle { $model } n'est pas dans la liste du serveur"
+ },
+ "online-test-fail": {
+  "en": "Failed: { $code } { $message }",
+  "fr": "Échec : { $code } { $message }"
+ },
+ "online-openai-hint": {
+  "en": "Any compatible server (LM Studio, Ollama, vLLM…): local endpoint, key optional. The prompt is in assets/data/online/prompt.txt.",
+  "fr": "Tout serveur compatible (LM Studio, Ollama, vLLM…) : point d'accès local, clé facultative. La consigne est dans assets/data/online/prompt.txt."
+ },
+ "online-google-hint": {
+  "en": "API key of a Google Cloud project with the Cloud Translation API enabled.",
+  "fr": "Clé d'API d'un projet Google Cloud où l'API Cloud Translation est activée."
+ },
+ "online-key-keyring": {
+  "en": "key stored in the system keyring",
+  "fr": "clé rangée dans le trousseau du système"
+ },
+ "online-key-file": {
+  "en": "key stored in secrets.json (no keyring)",
+  "fr": "clé rangée dans secrets.json (pas de trousseau)"
+ },
+ "online-key-none": {
+  "en": "no key",
+  "fr": "pas de clé"
+ },
+ "online-key-optional": {
+  "en": "no key (optional for a local server)",
+  "fr": "pas de clé (facultative pour un serveur local)"
+ },
+ "online-guards": {
+  "en": "Guards",
+  "fr": "Garde-fous"
+ },
+ "online-max-chars": {
+  "en": "Characters per request:",
+  "fr": "Caractères par requête :"
+ },
+ "online-max-lines": {
+  "en": "Lines per batch:",
+  "fr": "Lignes par lot :"
+ },
+ "online-max-rpm": {
+  "en": "Requests per minute:",
+  "fr": "Requêtes par minute :"
+ },
+ "online-warn-session": {
+  "en": "Warn beyond:",
+  "fr": "Avertir au-delà de :"
+ },
+ "online-warn-session-unit": {
+  "en": "characters per session (0: never)",
+  "fr": "caractères par session (0 : jamais)"
+ },
+ "online-protect-tags": {
+  "en": "Protect aliases, tags and placeholders (<a_A>)",
+  "fr": "Protéger les alias, balises et gabarits (<a_A>)"
+ },
+ "online-protect-numbers": {
+  "en": "Protect numbers (<n_A>)",
+  "fr": "Protéger les nombres (<n_A>)"
+ },
+ "online-protect-newlines": {
+  "en": "Protect line breaks",
+  "fr": "Protéger les sauts de ligne"
+ },
+ "online-network": {
+  "en": "Network",
+  "fr": "Réseau"
+ },
+ "online-proxy": {
+  "en": "Proxy:",
+  "fr": "Proxy :"
+ },
+ "online-timeout": {
+  "en": "Timeout (s):",
+  "fr": "Délai d'attente (s) :"
+ },
+ "online-clear-cache": {
+  "en": "Clear the cache",
+  "fr": "Vider le cache"
+ },
+ "online-cache-cleared": {
+  "en": "Cache cleared ({ $n } files).",
+  "fr": "Cache vidé ({ $n } fichiers)."
+ },
+ "online-settings-hint": {
+  "en": "Nothing is sent without an explicit action (Translate online); each service has its terms and prices. Keys are never written to Config.ini.",
+  "fr": "Rien n'est envoyé sans une action explicite (Traduire en ligne) ; chaque service a ses conditions et ses tarifs. Les clés ne sont jamais écrites dans Config.ini."
+ },
+ "menu-online-line": {
+  "en": "Translate online",
+  "fr": "Traduire en ligne"
+ },
+ "menu-online-batch": {
+  "en": "Translate online…",
+  "fr": "Traduire en ligne…"
+ },
+ "edit-online": {
+  "en": "Online",
+  "fr": "En ligne"
+ },
+ "key-ctrl-g": {
+  "en": "Ctrl+G",
+  "fr": "Ctrl+G"
+ },
+ "online-title": {
+  "en": "Translate online",
+  "fr": "Traduire en ligne"
+ },
+ "online-no-service": {
+  "en": "No online service configured: the text opens in the browser. Settings ▸ Online.",
+  "fr": "Aucun service en ligne configuré : le texte s'ouvre dans le navigateur. Paramètres ▸ En ligne."
+ },
+ "online-busy": {
+  "en": "An online translation is running.",
+  "fr": "Une traduction en ligne est en cours."
+ },
+ "online-nothing": {
+  "en": "Nothing to send.",
+  "fr": "Rien à envoyer."
+ },
+ "online-scope": {
+  "en": "Scope:",
+  "fr": "Portée :"
+ },
+ "online-scope-line": {
+  "en": "Current line",
+  "fr": "Ligne courante"
+ },
+ "online-scope-selection": {
+  "en": "Selection ({ $n } lines)",
+  "fr": "Sélection ({ $n } lignes)"
+ },
+ "online-scope-view": {
+  "en": "Filtered view ({ $n } lines)",
+  "fr": "Vue filtrée ({ $n } lignes)"
+ },
+ "online-only-untranslated": {
+  "en": "Only the lines to translate (translated lines are not sent again)",
+  "fr": "Seulement les lignes à traduire (les lignes traduites ne sont pas renvoyées)"
+ },
+ "online-service": {
+  "en": "Service:",
+  "fr": "Service :"
+ },
+ "online-estimate-title": {
+  "en": "What will be sent",
+  "fr": "Ce qui sera envoyé"
+ },
+ "online-estimate": {
+  "en": "{ $lines } lines ({ $unique } distinct sources) · { $chars } characters · { $requests } requests (batch of { $batch } lines, { $max } characters)",
+  "fr": "{ $lines } lignes ({ $unique } sources distinctes) · { $chars } caractères · { $requests } requêtes (lot de { $batch } lignes, { $max } caractères)"
+ },
+ "online-protected": {
+  "en": "Protected: { $tags } aliases / tags, { $numbers } numbers, { $newlines } line breaks.",
+  "fr": "Protégés : { $tags } alias / balises, { $numbers } nombres, { $newlines } sauts de ligne."
+ },
+ "online-session": {
+  "en": "Session counter: { $chars } characters already sent (threshold { $limit }).",
+  "fr": "Compteur de session : { $chars } caractères déjà envoyés (seuil { $limit })."
+ },
+ "online-status-hint": {
+  "en": "Received lines become Pending, provenance “online (service)”; one undoable operation.",
+  "fr": "Les lignes reçues passent au statut En attente, provenance « en ligne (service) » ; une seule opération annulable."
+ },
+ "online-cached": {
+  "en": "{ $n } lines served by the cache.",
+  "fr": "{ $n } lignes servies par le cache."
+ },
+ "online-progress": {
+  "en": "{ $done } / { $total } requests · { $lines } lines received",
+  "fr": "{ $done } / { $total } requêtes · { $lines } lignes reçues"
+ },
+ "online-done": {
+  "en": "{ $lines } lines received, { $refused } refused",
+  "fr": "{ $lines } lignes reçues, { $refused } refusées"
+ },
+ "online-stopped": {
+  "en": "Stopped after { $done } requests.",
+  "fr": "Arrêté après { $done } requêtes."
+ },
+ "online-stopped-line": {
+  "en": "not sent (stopped)",
+  "fr": "non envoyée (arrêt)"
+ },
+ "online-refused-token": {
+  "en": "protected token lost — line unchanged",
+  "fr": "jeton protégé perdu — ligne non modifiée"
+ },
+ "online-refused-error": {
+  "en": "error { $code }: { $message } — line unchanged",
+  "fr": "erreur { $code } : { $message } — ligne non modifiée"
+ },
+ "online-empty-answer": {
+  "en": "empty answer — line unchanged",
+  "fr": "réponse vide — ligne non modifiée"
+ },
+ "online-unchanged-answer": {
+  "en": "answer identical to the source — line unchanged",
+  "fr": "réponse identique à la source — ligne non modifiée"
+ },
+ "online-line-too-long": {
+  "en": "line too long for the service — not sent",
+  "fr": "ligne trop longue pour le service — non envoyée"
+ },
+ "online-translate": {
+  "en": "Translate",
+  "fr": "Traduire"
+ },
+ "online-stop": {
+  "en": "Stop",
+  "fr": "Arrêter"
+ },
+ "online-overwrite-confirm": {
+  "en": "{ $n } validated or custom lines would be replaced. Continue?",
+  "fr": "{ $n } lignes validées ou personnalisées seraient remplacées. Continuer ?"
+ },
+ "online-session-over": {
+  "en": "{ $chars } characters sent this session, beyond the threshold. Send this batch ({ $n } characters)?",
+  "fr": "{ $chars } caractères envoyés cette session, au-delà du seuil. Envoyer ce lot ({ $n } caractères) ?"
+ },
+ "origin-level-online": {
+  "en": "online",
+  "fr": "en ligne"
+ },
+ "op-online": {
+  "en": "Online translation ({ $name })",
+  "fr": "Traduction en ligne ({ $name })"
+ },
+ "online-sending": {
+  "en": "Online translation in progress…",
+  "fr": "Traduction en ligne en cours…"
+ },
+ "undo-done": {
+  "en": "{ $count } lines undone{ $more ->\n    [yes] {\", \"}{ $hidden }{\" of them outside the filter\"}",
+  "fr": "{ $count } lignes annulées{ $more ->\n    [yes] {\", dont \"}{ $hidden }{\" hors du filtre\"}"
+ },
+ "alias-fixed": {
+  "en": "{ $n } tag(s) restored{ $appended ->\n    [yes] , { $m } appended at the end",
+  "fr": "{ $n } balise(s) rétablie(s){ $appended ->\n    [yes] , { $m } ajoutée(s) en fin de texte"
+ },
+ "alias-fixed-numbers": {
+  "en": "{ $n } number(s) restored{ $appended ->\n    [yes] , { $m } appended at the end",
+  "fr": "{ $n } nombre(s) rétabli(s){ $appended ->\n    [yes] , { $m } ajouté(s) en fin de texte"
+ }
+}

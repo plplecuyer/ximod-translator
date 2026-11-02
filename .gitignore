@@ -1,0 +1,35 @@
+# ---- Compilation ------------------------------------------------------------
+/target
+**/*.rs.bk
+
+# ---- Mode portable : ce que l'application écrit à côté de l'exécutable ------
+# (Config.ini à la racine = mode portable, § 2.5 du manuel ; rien de tout cela
+# n'est du code source.)
+Config.ini
+/autosave/
+/cache/
+/data/
+/dict/
+/logs/
+/*.exe
+/*.pdb
+
+# ---- Bases de dictionnaires : jamais de base vanilla ni de mod sur le dépôt
+# (D-06 ; les dossiers existent avec leur README, l'application y écrit)
+/assets/bases/jeux/*
+/assets/bases/mods/*
+!/assets/bases/jeux/README.md
+!/assets/bases/mods/README.md
+
+# ---- Archives de travail du commanditaire (outils tiers, mods, ressources) --
+/Archives/
+
+# ---- Fichiers temporaires des systèmes et des éditeurs ----------------------
+Thumbs.db
+.DS_Store
+desktop.ini
+*.swp
+*~
+/.vs/
+/.vscode/
+/.idea/

@@ -1,0 +1,37 @@
+{
+ "format": 1,
+ "family": "fallout3",
+ "categories": {
+  "0": "dialog-cat-topic",
+  "1": "dialog-cat-conversation",
+  "2": "dialog-cat-combat",
+  "3": "dialog-cat-persuasion",
+  "4": "dialog-cat-detection",
+  "5": "dialog-cat-service",
+  "6": "dialog-cat-misc",
+  "7": "dialog-cat-radio"
+ },
+ "sceneCategory": -1,
+ "subtypes": {},
+ "emotions": [
+  "emotion-neutral",
+  "emotion-anger",
+  "emotion-disgust",
+  "emotion-fear",
+  "emotion-sad",
+  "emotion-happy",
+  "emotion-surprise",
+  "emotion-puzzled"
+ ],
+ "questLink": "QSTI",
+ "voice": {
+  "root": "Sound/Voice",
+  "extensions": [
+   "ogg",
+   "mp3",
+   "lip"
+  ],
+  "naming": "formid-suffix",
+  "folders": "voice-type"
+ }
+}

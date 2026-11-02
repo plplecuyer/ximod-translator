@@ -1,0 +1,185 @@
+{
+  "format": 2,
+  "formats": [
+    {
+      "id": "mcm",
+      "name": "MCM / translate",
+      "kind": "line",
+      "builtin": true,
+      "patterns": [
+        "Interface/Translations/*_*.txt",
+        "translate_*.txt"
+      ],
+      "encoding": "utf-16le",
+      "newline": "keep",
+      "line": "^(?P<key>\\$[^\\t]+)\\t(?P<value>.*)$",
+      "escape": "none",
+      "skip_empty": false,
+      "lang_in_name": "suffix"
+    },
+    {
+      "id": "ini",
+      "name": "INI",
+      "kind": "line",
+      "builtin": true,
+      "patterns": [
+        "*.ini"
+      ],
+      "encoding": "auto",
+      "newline": "keep",
+      "line": "^(?P<key>[^=;#\\[]+?)\\s*=\\s*(?P<value>.*)$",
+      "escape": "none",
+      "skip_empty": true,
+      "lang_in_name": "suffix"
+    },
+    {
+      "id": "json",
+      "name": "JSON plat",
+      "kind": "line",
+      "builtin": true,
+      "patterns": [
+        "*.json"
+      ],
+      "encoding": "auto",
+      "newline": "keep",
+      "line": "^\\s*\"(?P<key>[^\"]+)\"\\s*:\\s*\"(?P<value>(?:[^\"\\\\]|\\\\.)*)\"\\s*,?\\s*$",
+      "escape": "json",
+      "skip_empty": false,
+      "lang_in_name": "suffix"
+    },
+    {
+      "id": "csv",
+      "name": "CSV clé;valeur",
+      "kind": "line",
+      "builtin": true,
+      "patterns": [
+        "*.csv"
+      ],
+      "encoding": "auto",
+      "newline": "keep",
+      "line": "^(?P<key>[^;]+);(?P<value>.*)$",
+      "escape": "none",
+      "skip_empty": true,
+      "lang_in_name": "suffix"
+    },
+    {
+      "id": "mcm-helper",
+      "name": "MCM Helper (config.json)",
+      "builtin": true,
+      "kind": "json",
+      "patterns": [
+        "MCM/Config/*/config.json"
+      ],
+      "encoding": "auto",
+      "newline": "keep",
+      "lang_in_name": "suffix",
+      "fields": {
+        "text": {
+          "by": "path",
+          "value": "$..text | $..help | $..pageDisplayName | $..options[*]"
+        },
+        "id": {
+          "by": "property",
+          "value": "id",
+          "else": "auto"
+        },
+        "record": {
+          "by": "fixed",
+          "value": "MCM"
+        },
+        "field": {
+          "by": "property-name"
+        },
+        "exclude": {
+          "by": "regex",
+          "value": "^\\$"
+        },
+        "translation": {
+          "by": "copy"
+        }
+      }
+    },
+    {
+      "id": "skse-strings",
+      "name": "JSON SKSE (tableau id / text)",
+      "builtin": true,
+      "kind": "json",
+      "patterns": [],
+      "encoding": "auto",
+      "newline": "keep",
+      "lang_in_name": "suffix",
+      "fields": {
+        "text": {
+          "by": "path",
+          "value": "$[*].text | $..strings[*].text"
+        },
+        "id": {
+          "by": "property",
+          "value": "id",
+          "else": "auto"
+        },
+        "field": {
+          "by": "property-name"
+        },
+        "translation": {
+          "by": "copy"
+        }
+      }
+    },
+    {
+      "id": "xml-text",
+      "name": "XML (textes et attributs)",
+      "builtin": true,
+      "kind": "xml",
+      "patterns": [
+        "*.xml"
+      ],
+      "encoding": "auto",
+      "newline": "keep",
+      "lang_in_name": "suffix",
+      "fields": {
+        "text": {
+          "by": "path",
+          "value": "//*/text()"
+        },
+        "id": {
+          "by": "property",
+          "value": "id",
+          "else": "auto"
+        },
+        "field": {
+          "by": "property-name"
+        },
+        "translation": {
+          "by": "copy"
+        }
+      }
+    },
+    {
+      "id": "csv-table",
+      "name": "CSV à colonnes (id, source, traduction)",
+      "builtin": true,
+      "kind": "csv",
+      "patterns": [
+        "*.csv"
+      ],
+      "encoding": "auto",
+      "newline": "keep",
+      "lang_in_name": "none",
+      "fields": {
+        "text": {
+          "by": "column",
+          "value": "2"
+        },
+        "id": {
+          "by": "column",
+          "value": "1"
+        },
+        "translation": {
+          "by": "column",
+          "value": "3"
+        }
+      }
+    }
+  ]
+}

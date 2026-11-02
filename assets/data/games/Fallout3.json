@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "id": "Fallout3",
+  "name": "Fallout 3",
+  "engine": "tes4",
+  "pluginExtensions": [
+    "esp",
+    "esm"
+  ],
+  "masters": [
+    "Fallout3.esm"
+  ],
+  "formVersions": [
+    2,
+    15
+  ],
+  "headerLen": 24,
+  "utf8": false,
+  "localizedStrings": false,
+  "stringsDir": "Strings",
+  "stringsLangStyle": "name",
+  "archiveExtension": "bsa",
+  "locksLocKeys": false,
+  "outputModes": [
+    "overridePatch",
+    "fullPlugin"
+  ],
+  "fieldsFile": "fallout3"
+}

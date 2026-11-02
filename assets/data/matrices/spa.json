@@ -1,0 +1,48 @@
+{
+  "format": 1,
+  "matrices": [
+    {
+      "name": "Comillas angulares « »",
+      "rules": [
+        {
+          "find": "(^|[^=\\w])\"([^\"<>\\n]+)\"",
+          "replace": "$1«$2»",
+          "mode": "regex",
+          "case": false,
+          "whole": false,
+          "inverse": {
+            "find": "«([^»]*)»",
+            "replace": "\"$1\""
+          }
+        }
+      ]
+    },
+    {
+      "name": "Signos de apertura ¿ ¡",
+      "rules": [
+        {
+          "find": "(^|[.!?…]\\s+|\\n)([^¿¡.!?…\\n][^.!?…\\n]*\\?)",
+          "replace": "$1¿$2",
+          "mode": "regex",
+          "case": false,
+          "whole": false,
+          "inverse": {
+            "find": "¿",
+            "replace": ""
+          }
+        },
+        {
+          "find": "(^|[.!?…]\\s+|\\n)([^¿¡.!?…\\n][^.!?…\\n]*!)",
+          "replace": "$1¡$2",
+          "mode": "regex",
+          "case": false,
+          "whole": false,
+          "inverse": {
+            "find": "¡",
+            "replace": ""
+          }
+        }
+      ]
+    }
+  ]
+}

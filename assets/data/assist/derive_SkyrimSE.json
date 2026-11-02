@@ -1,0 +1,178 @@
+{
+ "format": 1,
+ "game": "SkyrimSE",
+ "rules": [
+  {
+   "id": "scroll",
+   "target": "SCRL:FULL",
+   "src": "Scroll of %A%",
+   "parent": [
+    "SPEL:FULL",
+    "MGEF:FULL"
+   ],
+   "dst": {
+    "fra": "Parchemin - %A%"
+   },
+   "strip": {
+    "fra": [
+     "Invocation - ",
+     "Invocation : "
+    ]
+   }
+  },
+  {
+   "id": "tome",
+   "target": "BOOK:FULL",
+   "src": "Spell Tome: %A%",
+   "parent": "SPEL:FULL",
+   "ref": "teaches",
+   "dst": {
+    "fra": "Livre de sort - %A%"
+   },
+   "strip": {
+    "fra": [
+     "Invocation - ",
+     "Invocation : "
+    ]
+   }
+  },
+  {
+   "id": "potion",
+   "target": "ALCH:FULL",
+   "src": "%G% Potion of %A%",
+   "parent": "MGEF:FULL",
+   "vars": {
+    "G": [
+     "glossary:adjective"
+    ]
+   },
+   "gender": {
+    "fra": "f"
+   },
+   "dst": {
+    "fra": "Potion de %A:low% - %G:cap%"
+   }
+  },
+  {
+   "id": "poison",
+   "target": "ALCH:FULL",
+   "src": "%G% Poison of %A%",
+   "parent": "MGEF:FULL",
+   "vars": {
+    "G": [
+     "glossary:adjective"
+    ]
+   },
+   "gender": {
+    "fra": "m"
+   },
+   "dst": {
+    "fra": "Poison de %A:low% - %G:cap%"
+   }
+  },
+  {
+   "id": "draught",
+   "target": "ALCH:FULL",
+   "src": "%G% Draught of %A%",
+   "parent": "MGEF:FULL",
+   "vars": {
+    "G": [
+     "glossary:adjective"
+    ]
+   },
+   "gender": {
+    "fra": "f"
+   },
+   "dst": {
+    "fra": "Breuvage de %A:low% - %G:cap%"
+   }
+  },
+  {
+   "id": "elixir",
+   "target": "ALCH:FULL",
+   "src": "%G% Elixir of %A%",
+   "parent": "MGEF:FULL",
+   "vars": {
+    "G": [
+     "glossary:adjective"
+    ]
+   },
+   "gender": {
+    "fra": "f"
+   },
+   "dst": {
+    "fra": "Élixir de %A:low% - %G:cap%"
+   }
+  },
+  {
+   "id": "wax",
+   "target": "ALCH:FULL",
+   "src": "%G% Wax of %A%",
+   "parent": "MGEF:FULL",
+   "vars": {
+    "G": [
+     "glossary:adjective"
+    ]
+   },
+   "gender": {
+    "fra": "f"
+   },
+   "dst": {
+    "fra": "Cire de %A:low% - %G:cap%"
+   }
+  },
+  {
+   "id": "potion-plain",
+   "target": "ALCH:FULL",
+   "src": "Potion of %A%",
+   "parent": "MGEF:FULL",
+   "dst": {
+    "fra": "Potion de %A:low%"
+   }
+  },
+  {
+   "id": "poison-plain",
+   "target": "ALCH:FULL",
+   "src": "Poison of %A%",
+   "parent": "MGEF:FULL",
+   "dst": {
+    "fra": "Poison de %A:low%"
+   }
+  },
+  {
+   "id": "enchanted",
+   "target": "WEAP:FULL",
+   "src": "%B% of %A%",
+   "parent": "ENCH:FULL",
+   "vars": {
+    "B": [
+     "glossary",
+     "bases"
+    ]
+   },
+   "dst": {
+    "fra": "%B% de %A:low%"
+   },
+   "enabled": false,
+   "comment": "Arme enchantée : « Iron Sword of Fire » ; à activer selon le mod."
+  },
+  {
+   "id": "recipe",
+   "target": "COBJ:FULL",
+   "src": "%A%",
+   "parent": [
+    "ARMO:FULL",
+    "WEAP:FULL"
+   ],
+   "dst": "%A%"
+  },
+  {
+   "id": "rank",
+   "target": "FACT:MNAM",
+   "src": "%A%",
+   "parent": "NPC_:FULL",
+   "dst": "%A%",
+   "enabled": false
+  }
+ ]
+}

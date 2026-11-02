@@ -1,0 +1,703 @@
+{
+ "format": 1,
+ "source": "eng",
+ "target": "fra",
+ "groups": [
+  {
+   "name": "Matériaux",
+   "terms": [
+    {
+     "src": "Iron",
+     "dst": "en fer",
+     "class": "material"
+    },
+    {
+     "src": "Steel",
+     "dst": "en acier",
+     "class": "material"
+    },
+    {
+     "src": "Silver",
+     "dst": "en argent",
+     "class": "material"
+    },
+    {
+     "src": "Ebony",
+     "dst": "en ébonite",
+     "class": "material"
+    },
+    {
+     "src": "Glass",
+     "dst": "en verre",
+     "class": "material"
+    },
+    {
+     "src": "Wooden",
+     "dst": "en bois",
+     "class": "material"
+    },
+    {
+     "src": "Dragonsteel",
+     "dst": "en acier draconique",
+     "class": "material"
+    },
+    {
+     "src": "Dragonbone",
+     "dst": "en os de dragon",
+     "class": "material"
+    }
+   ]
+  },
+  {
+   "name": "Armes",
+   "terms": [
+    {
+     "src": "Sword",
+     "dst": "Épée",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Greatsword",
+     "dst": "Espadon",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Longsword",
+     "dst": "Épée longue",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Dagger",
+     "dst": "Dague",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Katana",
+     "dst": "Katana",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Wakizashi",
+     "dst": "Wakizashi",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Tanto",
+     "dst": "Tanto",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Nodachi",
+     "dst": "Nodachi",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Daito",
+     "dst": "Daito",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Dadao",
+     "dst": "Dadao",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Changdao",
+     "dst": "Changdao",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Ninjato",
+     "dst": "Ninjato",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Scimitar",
+     "dst": "Cimeterre",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Saber",
+     "dst": "Sabre",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Cutlass",
+     "dst": "Coutelas",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Claymore",
+     "dst": "Claymore",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Broadsword",
+     "dst": "Épée large",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Battleaxe",
+     "dst": "Hache d'armes",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "War Axe",
+     "dst": "Hache",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Double Axe",
+     "dst": "Hache double",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Great Axe",
+     "dst": "Grande hache",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Axestaff",
+     "dst": "Bâton-hache",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Halberd",
+     "dst": "Hallebarde",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Quarterstaff",
+     "dst": "Bâton de guerre",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Battle Staff",
+     "dst": "Bâton de combat",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Staff",
+     "dst": "Bâton",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Club",
+     "dst": "Gourdin",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Mace",
+     "dst": "Masse",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Hammer",
+     "dst": "Marteau",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Warhammer",
+     "dst": "Marteau",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "War Pick",
+     "dst": "Pic de guerre",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Spear",
+     "dst": "Lance",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Bow",
+     "dst": "Arc",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "War Bow",
+     "dst": "Arc de guerre",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Composite Bow",
+     "dst": "Arc composite",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Recurve Bow",
+     "dst": "Arc courbe",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Blade",
+     "dst": "Lame",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Great Blade",
+     "dst": "Grande lame",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Knife",
+     "dst": "Couteau",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Scythe",
+     "dst": "Faux",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Maul",
+     "dst": "Masse d'armes",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Anlace",
+     "dst": "Poignard",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Cleaver",
+     "dst": "Fendoir",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Razor",
+     "dst": "Rasoir",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Ice Blade",
+     "dst": "Lame glacée",
+     "class": "noun",
+     "gender": "f"
+    }
+   ]
+  },
+  {
+   "name": "Modificateurs",
+   "terms": [
+    {
+     "src": "Daedric",
+     "class": "people",
+     "forms": {
+      "m": "daedrique",
+      "f": "daedrique",
+      "mp": "daedriques",
+      "fp": "daedriques"
+     }
+    },
+    {
+     "src": "Elven",
+     "class": "people",
+     "forms": {
+      "m": "elfique",
+      "f": "elfique",
+      "mp": "elfiques",
+      "fp": "elfiques"
+     }
+    },
+    {
+     "src": "Orcish",
+     "class": "people",
+     "forms": {
+      "m": "orque",
+      "f": "orque",
+      "mp": "orques",
+      "fp": "orques"
+     }
+    },
+    {
+     "src": "Dwarven",
+     "class": "people",
+     "forms": {
+      "m": "dwemer",
+      "f": "dwemer",
+      "mp": "dwemer",
+      "fp": "dwemer"
+     }
+    },
+    {
+     "src": "Dwemer",
+     "class": "people",
+     "forms": {
+      "m": "dwemer",
+      "f": "dwemer",
+      "mp": "dwemer",
+      "fp": "dwemer"
+     }
+    },
+    {
+     "src": "Nordic",
+     "class": "people",
+     "forms": {
+      "m": "nordique",
+      "f": "nordique",
+      "mp": "nordiques",
+      "fp": "nordiques"
+     }
+    },
+    {
+     "src": "Imperial",
+     "class": "people",
+     "forms": {
+      "m": "impérial",
+      "f": "impériale",
+      "mp": "impériaux",
+      "fp": "impériales"
+     }
+    },
+    {
+     "src": "Colovian",
+     "class": "people",
+     "forms": {
+      "m": "colovien",
+      "f": "colovienne",
+      "mp": "coloviens",
+      "fp": "coloviennes"
+     }
+    },
+    {
+     "src": "Antique",
+     "class": "adj",
+     "forms": {
+      "m": "antique",
+      "f": "antique",
+      "mp": "antiques",
+      "fp": "antiques"
+     }
+    },
+    {
+     "src": "Honed",
+     "class": "adj",
+     "forms": {
+      "m": "affûté",
+      "f": "affûtée",
+      "mp": "affûtés",
+      "fp": "affûtées"
+     }
+    },
+    {
+     "src": "Ornate",
+     "class": "adj",
+     "forms": {
+      "m": "orné",
+      "f": "ornée",
+      "mp": "ornés",
+      "fp": "ornées"
+     }
+    },
+    {
+     "src": "Eastern",
+     "class": "adj",
+     "forms": {
+      "m": "oriental",
+      "f": "orientale",
+      "mp": "orientaux",
+      "fp": "orientales"
+     }
+    },
+    {
+     "src": "Wicked",
+     "class": "adj",
+     "forms": {
+      "m": "maléfique",
+      "f": "maléfique",
+      "mp": "maléfiques",
+      "fp": "maléfiques"
+     }
+    },
+    {
+     "src": "Noble",
+     "class": "adj",
+     "forms": {
+      "m": "noble",
+      "f": "noble",
+      "mp": "nobles",
+      "fp": "nobles"
+     }
+    },
+    {
+     "src": "Falmer",
+     "class": "people",
+     "forms": {
+      "m": "falmer",
+      "f": "falmer",
+      "mp": "falmer",
+      "fp": "falmer"
+     }
+    },
+    {
+     "src": "Ayleid",
+     "class": "people",
+     "forms": {
+      "m": "ayléide",
+      "f": "ayléide",
+      "mp": "ayléides",
+      "fp": "ayléides"
+     }
+    },
+    {
+     "src": "Ceremonial",
+     "class": "adj",
+     "forms": {
+      "m": "cérémoniel",
+      "f": "cérémonielle",
+      "mp": "cérémoniels",
+      "fp": "cérémonielles"
+     }
+    },
+    {
+     "src": "Black",
+     "class": "adj",
+     "forms": {
+      "m": "noir",
+      "f": "noire",
+      "mp": "noirs",
+      "fp": "noires"
+     }
+    },
+    {
+     "src": "White",
+     "class": "adj",
+     "forms": {
+      "m": "blanc",
+      "f": "blanche",
+      "mp": "blancs",
+      "fp": "blanches"
+     }
+    }
+   ]
+  },
+  {
+   "name": "Origines",
+   "terms": [
+    {
+     "src": "Wolf",
+     "dst": "du Loup",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Crow",
+     "dst": "du Corbeau",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Sorrow",
+     "dst": "du Chagrin",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Hawk",
+     "dst": "du Faucon",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Seeker",
+     "dst": "de quêteur",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Justiciar",
+     "dst": "de Justiciar",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Phoenix",
+     "dst": "du Phénix",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Nightingale",
+     "dst": "de Rossignol",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Falkreath",
+     "dst": "d'Épervine",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Riders",
+     "dst": "de cavalier",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Executioner",
+     "dst": "du Bourreau",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Skull",
+     "dst": "du Crâne",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Mammoth",
+     "dst": "en défense de mammouth",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Molag Bal",
+     "dst": "de Molag Bal",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Sithis",
+     "dst": "de Sithis",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Malacath",
+     "dst": "de Malacath",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Azura",
+     "dst": "d'Azura",
+     "class": "origin",
+     "case": true
+    }
+   ]
+  },
+  {
+   "name": "Personnes",
+   "terms": [
+    {
+     "src": "Monarch",
+     "dst": "Monarque",
+     "class": "noun",
+     "gender": "m",
+     "case": true
+    },
+    {
+     "src": "Duke",
+     "dst": "Duc",
+     "class": "noun",
+     "gender": "m",
+     "case": true
+    },
+    {
+     "src": "Captain",
+     "dst": "Capitaine",
+     "class": "noun",
+     "gender": "m",
+     "case": true
+    },
+    {
+     "src": "Guardian",
+     "dst": "Gardien",
+     "class": "noun",
+     "gender": "m",
+     "case": true
+    },
+    {
+     "src": "Housecarl",
+     "dst": "huscarl",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Knight",
+     "dst": "chevalier",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Soldier",
+     "dst": "soldat",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Regent",
+     "dst": "Régent",
+     "class": "noun",
+     "gender": "m",
+     "case": true
+    },
+    {
+     "src": "Armsman",
+     "dst": "armurier",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Orgnum",
+     "dst": "Orgnum",
+     "case": true
+    },
+    {
+     "src": "Aevar Stone-Singer",
+     "dst": "Aevar Chantepierre",
+     "case": true
+    }
+   ]
+  }
+ ]
+}

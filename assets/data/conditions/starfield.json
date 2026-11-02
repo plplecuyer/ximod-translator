@@ -1,0 +1,3021 @@
+{
+"format": 1,
+"family": "starfield",
+"indexOffset": 0,
+"enums": {
+"Sex": {
+"0": "cond-sex-male",
+"1": "cond-sex-female"
+},
+"Axis": {
+"0": "X",
+"1": "Y",
+"2": "Z"
+},
+"CastingSource": {
+"0": "Left",
+"1": "Right",
+"2": "Voice",
+"3": "Instant"
+},
+"Alignment": {
+"0": "Good",
+"1": "Neutral",
+"2": "Evil",
+"3": "VeryGood",
+"4": "VeryEvil"
+},
+"CrimeType": {
+"0": "Steal",
+"1": "Pickpocket",
+"2": "Trespass",
+"3": "Attack",
+"4": "Murder",
+"5": "EscapeJail",
+"6": "WerewolfTransformation"
+}
+},
+"functions": [
+{
+"index": 0,
+"name": "GetWantBlocking"
+},
+{
+"index": 1,
+"name": "GetDistance",
+"params": [
+"ObjectReference"
+],
+"phrase": "GetDistance"
+},
+{
+"index": 5,
+"name": "GetLocked"
+},
+{
+"index": 6,
+"name": "GetPos",
+"params": [
+"Axis"
+]
+},
+{
+"index": 8,
+"name": "GetAngle",
+"params": [
+"Axis"
+]
+},
+{
+"index": 10,
+"name": "GetStartingPos",
+"params": [
+"Axis"
+]
+},
+{
+"index": 11,
+"name": "GetStartingAngle",
+"params": [
+"Axis"
+]
+},
+{
+"index": 12,
+"name": "GetSecondsPassed"
+},
+{
+"index": 14,
+"name": "GetValue"
+},
+{
+"index": 18,
+"name": "GetCurrentTime",
+"phrase": "GetCurrentTime"
+},
+{
+"index": 24,
+"name": "GetScale"
+},
+{
+"index": 25,
+"name": "IsMoving"
+},
+{
+"index": 26,
+"name": "IsTurning"
+},
+{
+"index": 27,
+"name": "GetLineOfSight",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 32,
+"name": "GetInSameCell",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 35,
+"name": "GetDisabled"
+},
+{
+"index": 36,
+"name": "MenuPaused"
+},
+{
+"index": 38,
+"name": "GetCameraShipSize"
+},
+{
+"index": 39,
+"name": "GetDisease"
+},
+{
+"index": 41,
+"name": "GetClothingValue"
+},
+{
+"index": 42,
+"name": "SameFaction",
+"params": [
+"Actor"
+],
+"phrase": "SameFaction"
+},
+{
+"index": 43,
+"name": "SameRace",
+"params": [
+"Actor"
+],
+"phrase": "SameRace"
+},
+{
+"index": 44,
+"name": "SameSex",
+"params": [
+"Actor"
+],
+"phrase": "SameSex"
+},
+{
+"index": 45,
+"name": "GetDetected",
+"params": [
+"Actor"
+]
+},
+{
+"index": 46,
+"name": "GetDead",
+"phrase": "GetDead"
+},
+{
+"index": 47,
+"name": "GetItemCount",
+"params": [
+"Form"
+],
+"phrase": "GetItemCount"
+},
+{
+"index": 48,
+"name": "GetGold",
+"phrase": "GetGold"
+},
+{
+"index": 49,
+"name": "GetSleeping",
+"phrase": "GetSleeping"
+},
+{
+"index": 50,
+"name": "GetTalkedToPC",
+"phrase": "GetTalkedToPC"
+},
+{
+"index": 56,
+"name": "GetQuestRunning",
+"params": [
+"Quest"
+],
+"phrase": "GetQuestRunning"
+},
+{
+"index": 58,
+"name": "GetStage",
+"params": [
+"Quest"
+],
+"phrase": "GetStage"
+},
+{
+"index": 59,
+"name": "GetStageDone",
+"params": [
+"Quest",
+"Int"
+],
+"phrase": "GetStageDone"
+},
+{
+"index": 60,
+"name": "GetFactionRankDifference",
+"params": [
+"Faction",
+"Actor"
+]
+},
+{
+"index": 61,
+"name": "GetAlarmed"
+},
+{
+"index": 62,
+"name": "IsRaining",
+"phrase": "IsRaining"
+},
+{
+"index": 63,
+"name": "GetAttacked"
+},
+{
+"index": 64,
+"name": "GetIsCreature",
+"phrase": "GetIsCreature"
+},
+{
+"index": 65,
+"name": "GetLockLevel"
+},
+{
+"index": 66,
+"name": "GetShouldAttack",
+"params": [
+"Actor"
+]
+},
+{
+"index": 67,
+"name": "GetInCell",
+"params": [
+"Cell"
+],
+"phrase": "GetInCell"
+},
+{
+"index": 68,
+"name": "GetIsClass",
+"params": [
+"Class"
+],
+"phrase": "GetIsClass"
+},
+{
+"index": 69,
+"name": "GetIsRace",
+"params": [
+"Race"
+],
+"phrase": "GetIsRace"
+},
+{
+"index": 70,
+"name": "GetIsSex",
+"params": [
+"Sex"
+],
+"phrase": "GetIsSex"
+},
+{
+"index": 71,
+"name": "GetInFaction",
+"params": [
+"Faction"
+],
+"phrase": "GetInFaction"
+},
+{
+"index": 72,
+"name": "GetIsID",
+"params": [
+"Actor"
+],
+"phrase": "GetIsID"
+},
+{
+"index": 73,
+"name": "GetFactionRank",
+"params": [
+"Faction"
+],
+"phrase": "GetFactionRank"
+},
+{
+"index": 74,
+"name": "GetGlobalValue",
+"params": [
+"Global"
+],
+"phrase": "GetGlobalValue"
+},
+{
+"index": 75,
+"name": "IsSnowing",
+"phrase": "IsSnowing"
+},
+{
+"index": 77,
+"name": "GetRandomPercent",
+"phrase": "GetRandomPercent"
+},
+{
+"index": 79,
+"name": "WouldBeStealing"
+},
+{
+"index": 80,
+"name": "GetLevel",
+"phrase": "GetLevel"
+},
+{
+"index": 81,
+"name": "IsRotating"
+},
+{
+"index": 84,
+"name": "GetDeadCount",
+"params": [
+"Actor"
+]
+},
+{
+"index": 91,
+"name": "GetIsAlerted"
+},
+{
+"index": 98,
+"name": "GetPlayerControlsDisabled",
+"params": [
+"Int",
+"Int",
+"Int",
+"Int",
+"Int",
+"Int",
+"Int"
+]
+},
+{
+"index": 99,
+"name": "GetHeadingAngle",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 101,
+"name": "IsWeaponMagicOut"
+},
+{
+"index": 102,
+"name": "IsTorchOut"
+},
+{
+"index": 103,
+"name": "IsShieldOut"
+},
+{
+"index": 106,
+"name": "IsFacingUp"
+},
+{
+"index": 107,
+"name": "GetKnockedState"
+},
+{
+"index": 108,
+"name": "GetWeaponAnimType"
+},
+{
+"index": 109,
+"name": "IsWeaponSkillType",
+"params": [
+"ActorValue"
+]
+},
+{
+"index": 110,
+"name": "GetDistanceFromCelestialBody"
+},
+{
+"index": 111,
+"name": "IsWaiting"
+},
+{
+"index": 112,
+"name": "IsIdlePlaying"
+},
+{
+"index": 116,
+"name": "IsIntimidatedbyPlayer",
+"phrase": "IsIntimidatedbyPlayer"
+},
+{
+"index": 117,
+"name": "IsPlayerInRegion",
+"params": [
+"Region"
+]
+},
+{
+"index": 118,
+"name": "GetActorAggroRadiusViolated"
+},
+{
+"index": 122,
+"name": "GetCrime",
+"params": [
+"Actor",
+"CrimeType"
+]
+},
+{
+"index": 123,
+"name": "IsGreetingPlayer"
+},
+{
+"index": 125,
+"name": "IsGuard"
+},
+{
+"index": 128,
+"name": "GetStaminaPercentage"
+},
+{
+"index": 129,
+"name": "HasBeenRead"
+},
+{
+"index": 130,
+"name": "GetDying"
+},
+{
+"index": 131,
+"name": "GetSceneActionPercent"
+},
+{
+"index": 132,
+"name": "WouldRefuseCommand"
+},
+{
+"index": 133,
+"name": "SameFactionAsPC"
+},
+{
+"index": 134,
+"name": "SameRaceAsPC"
+},
+{
+"index": 135,
+"name": "SameSexAsPC"
+},
+{
+"index": 136,
+"name": "GetIsReference",
+"params": [
+"ObjectReference"
+],
+"phrase": "GetIsReference"
+},
+{
+"index": 141,
+"name": "IsTalking"
+},
+{
+"index": 142,
+"name": "GetComponentCount"
+},
+{
+"index": 143,
+"name": "GetCurrentAIProcedure"
+},
+{
+"index": 144,
+"name": "GetTrespassWarningLevel"
+},
+{
+"index": 145,
+"name": "IsTrespassing"
+},
+{
+"index": 146,
+"name": "IsInMyOwnedCell"
+},
+{
+"index": 147,
+"name": "GetWindSpeed"
+},
+{
+"index": 148,
+"name": "GetCurrentWeatherPercent"
+},
+{
+"index": 149,
+"name": "GetIsCurrentWeather",
+"params": [
+"Weather"
+]
+},
+{
+"index": 150,
+"name": "IsContinuingPackagePCNear"
+},
+{
+"index": 152,
+"name": "GetIsCrimeFaction",
+"params": [
+"Faction"
+],
+"phrase": "GetIsCrimeFaction"
+},
+{
+"index": 153,
+"name": "CanHaveFlames"
+},
+{
+"index": 154,
+"name": "HasFlames"
+},
+{
+"index": 157,
+"name": "GetOpenState"
+},
+{
+"index": 159,
+"name": "GetSitting"
+},
+{
+"index": 161,
+"name": "GetIsCurrentPackage",
+"params": [
+"Package"
+],
+"phrase": "GetIsCurrentPackage"
+},
+{
+"index": 162,
+"name": "IsCurrentFurnitureRef",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 163,
+"name": "IsCurrentFurnitureObj",
+"params": [
+"Furniture"
+]
+},
+{
+"index": 170,
+"name": "GetDayOfWeek",
+"phrase": "GetDayOfWeek"
+},
+{
+"index": 172,
+"name": "GetTalkedToPCParam",
+"params": [
+"Actor"
+]
+},
+{
+"index": 175,
+"name": "IsPCSleeping"
+},
+{
+"index": 176,
+"name": "IsPCAMurderer"
+},
+{
+"index": 180,
+"name": "HasSameEditorLocationAsRef"
+},
+{
+"index": 181,
+"name": "HasSameEditorLocationAsRefAlias"
+},
+{
+"index": 182,
+"name": "GetEquipped",
+"params": [
+"Form"
+],
+"phrase": "GetEquipped"
+},
+{
+"index": 185,
+"name": "IsSwimming"
+},
+{
+"index": 190,
+"name": "GetAmountSoldStolen"
+},
+{
+"index": 192,
+"name": "GetIgnoreCrime"
+},
+{
+"index": 193,
+"name": "GetPCExpelled",
+"params": [
+"Faction"
+]
+},
+{
+"index": 195,
+"name": "GetPCFactionMurder",
+"params": [
+"Faction"
+]
+},
+{
+"index": 197,
+"name": "GetPCEnemyofFaction",
+"params": [
+"Faction"
+]
+},
+{
+"index": 199,
+"name": "GetPCFactionAttack",
+"params": [
+"Faction"
+]
+},
+{
+"index": 203,
+"name": "GetDestroyed"
+},
+{
+"index": 214,
+"name": "HasMagicEffect",
+"params": [
+"MagicEffect"
+],
+"phrase": "HasMagicEffect"
+},
+{
+"index": 215,
+"name": "GetDefaultOpen"
+},
+{
+"index": 223,
+"name": "IsSpellTarget",
+"params": [
+"Spell"
+]
+},
+{
+"index": 224,
+"name": "GetVATSMode"
+},
+{
+"index": 225,
+"name": "GetPersuasionNumber"
+},
+{
+"index": 226,
+"name": "GetVampireFeed"
+},
+{
+"index": 227,
+"name": "GetCannibal"
+},
+{
+"index": 228,
+"name": "GetIsClassDefault",
+"params": [
+"Class"
+]
+},
+{
+"index": 229,
+"name": "GetClassDefaultMatch"
+},
+{
+"index": 230,
+"name": "GetInCellParam",
+"params": [
+"Cell",
+"ObjectReference"
+]
+},
+{
+"index": 231,
+"name": "GetPlayerDialogueInput"
+},
+{
+"index": 235,
+"name": "GetVatsTargetHeight"
+},
+{
+"index": 237,
+"name": "GetIsGhost"
+},
+{
+"index": 242,
+"name": "GetUnconscious"
+},
+{
+"index": 244,
+"name": "GetRestrained"
+},
+{
+"index": 246,
+"name": "GetIsUsedItem",
+"params": [
+"Form"
+]
+},
+{
+"index": 247,
+"name": "GetIsUsedItemType",
+"params": [
+"FormType"
+]
+},
+{
+"index": 248,
+"name": "IsScenePlaying",
+"params": [
+"Scene"
+]
+},
+{
+"index": 249,
+"name": "IsInDialogueWithPlayer",
+"phrase": "IsInDialogueWithPlayer"
+},
+{
+"index": 250,
+"name": "GetLocationExplored"
+},
+{
+"index": 254,
+"name": "GetIsPlayableRace",
+"phrase": "GetIsPlayableRace"
+},
+{
+"index": 255,
+"name": "GetOffersServicesNow"
+},
+{
+"index": 258,
+"name": "HasAssociationType",
+"params": [
+"Actor",
+"AssociationType"
+]
+},
+{
+"index": 259,
+"name": "HasFamilyRelationship",
+"params": [
+"Actor"
+]
+},
+{
+"index": 261,
+"name": "HasParentRelationship",
+"params": [
+"Actor"
+]
+},
+{
+"index": 262,
+"name": "IsWarningAbout",
+"params": [
+"FormList"
+]
+},
+{
+"index": 263,
+"name": "IsWeaponOut",
+"phrase": "IsWeaponOut"
+},
+{
+"index": 264,
+"name": "HasSpell",
+"params": [
+"Spell"
+],
+"phrase": "HasSpell"
+},
+{
+"index": 265,
+"name": "IsTimePassing"
+},
+{
+"index": 266,
+"name": "IsPleasant"
+},
+{
+"index": 267,
+"name": "IsCloudy"
+},
+{
+"index": 274,
+"name": "IsSmallBump"
+},
+{
+"index": 276,
+"name": "AnimAction_EffectHasKeyword"
+},
+{
+"index": 277,
+"name": "GetBaseValue"
+},
+{
+"index": 278,
+"name": "IsOwner",
+"params": [
+"Owner"
+]
+},
+{
+"index": 280,
+"name": "IsCellOwner",
+"params": [
+"Cell",
+"Owner"
+]
+},
+{
+"index": 282,
+"name": "IsHorseStolen"
+},
+{
+"index": 285,
+"name": "IsLeftUp"
+},
+{
+"index": 286,
+"name": "IsSneaking",
+"phrase": "IsSneaking"
+},
+{
+"index": 287,
+"name": "IsRunning"
+},
+{
+"index": 288,
+"name": "GetFriendHit"
+},
+{
+"index": 289,
+"name": "IsInCombat",
+"phrase": "IsInCombat"
+},
+{
+"index": 300,
+"name": "IsInInterior",
+"phrase": "IsInInterior"
+},
+{
+"index": 304,
+"name": "IsWaterObject"
+},
+{
+"index": 305,
+"name": "GetPlayerAction"
+},
+{
+"index": 306,
+"name": "IsActorUsingATorch"
+},
+{
+"index": 309,
+"name": "IsXBox"
+},
+{
+"index": 310,
+"name": "GetInWorldspace",
+"params": [
+"Worldspace"
+],
+"phrase": "GetInWorldspace"
+},
+{
+"index": 312,
+"name": "GetPCMiscStat",
+"params": [
+"MiscStat"
+]
+},
+{
+"index": 313,
+"name": "GetPairedAnimation"
+},
+{
+"index": 314,
+"name": "IsActorAVictim"
+},
+{
+"index": 315,
+"name": "GetTotalPersuasionNumber"
+},
+{
+"index": 318,
+"name": "GetIdleDoneOnce"
+},
+{
+"index": 320,
+"name": "GetNoRumors"
+},
+{
+"index": 323,
+"name": "GetCombatState"
+},
+{
+"index": 325,
+"name": "GetWithinPackageLocation",
+"params": [
+"Int"
+]
+},
+{
+"index": 327,
+"name": "IsRidingMount"
+},
+{
+"index": 329,
+"name": "IsFleeing"
+},
+{
+"index": 332,
+"name": "IsInDangerousWater"
+},
+{
+"index": 338,
+"name": "GetIgnoreFriendlyHits"
+},
+{
+"index": 339,
+"name": "IsPlayersLastRiddenMount"
+},
+{
+"index": 353,
+"name": "IsActor"
+},
+{
+"index": 354,
+"name": "IsEssential"
+},
+{
+"index": 358,
+"name": "IsPlayerMovingIntoNewSpace"
+},
+{
+"index": 359,
+"name": "GetIsCurrentLocation"
+},
+{
+"index": 360,
+"name": "GetIsCurrentLocationAlias"
+},
+{
+"index": 361,
+"name": "GetTimeDead"
+},
+{
+"index": 362,
+"name": "HasLinkedRef",
+"params": [
+"Keyword"
+]
+},
+{
+"index": 365,
+"name": "IsChild",
+"phrase": "IsChild"
+},
+{
+"index": 366,
+"name": "GetStolenItemValueNoCrime",
+"params": [
+"Faction"
+]
+},
+{
+"index": 367,
+"name": "GetLastPlayerAction"
+},
+{
+"index": 368,
+"name": "IsPlayerActionActive",
+"params": [
+"Int"
+]
+},
+{
+"index": 370,
+"name": "IsTalkingActivatorActor",
+"params": [
+"Actor"
+]
+},
+{
+"index": 372,
+"name": "IsInList",
+"params": [
+"FormList"
+],
+"phrase": "IsInList"
+},
+{
+"index": 373,
+"name": "GetStolenItemValue",
+"params": [
+"Faction"
+]
+},
+{
+"index": 375,
+"name": "GetCrimeGoldViolent",
+"params": [
+"Faction"
+]
+},
+{
+"index": 376,
+"name": "GetCrimeGoldNonviolent",
+"params": [
+"Faction"
+]
+},
+{
+"index": 378,
+"name": "IsOwnedBy"
+},
+{
+"index": 380,
+"name": "GetCommandDistance"
+},
+{
+"index": 381,
+"name": "GetCommandLocationDistance"
+},
+{
+"index": 390,
+"name": "GetHitLocation"
+},
+{
+"index": 391,
+"name": "IsPC1stPerson"
+},
+{
+"index": 396,
+"name": "GetCauseofDeath"
+},
+{
+"index": 398,
+"name": "IsWeaponInList",
+"params": [
+"FormList"
+]
+},
+{
+"index": 402,
+"name": "IsBribedbyPlayer",
+"phrase": "IsBribedbyPlayer"
+},
+{
+"index": 403,
+"name": "GetRelationshipRank",
+"params": [
+"ObjectReference"
+],
+"phrase": "GetRelationshipRank"
+},
+{
+"index": 406,
+"name": "GetStrongestEnemyHasKeyword"
+},
+{
+"index": 407,
+"name": "GetVATSValue",
+"params": [
+"Int",
+"Int"
+]
+},
+{
+"index": 408,
+"name": "IsKiller",
+"params": [
+"Actor"
+]
+},
+{
+"index": 409,
+"name": "IsPlayerInShipTargetingMode"
+},
+{
+"index": 410,
+"name": "GetFactionCombatReaction",
+"params": [
+"Faction",
+"Faction"
+]
+},
+{
+"index": 411,
+"name": "IsShipTargetInShipTargetingMode"
+},
+{
+"index": 414,
+"name": "Exists",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 415,
+"name": "GetGroupMemberCount"
+},
+{
+"index": 416,
+"name": "GetGroupTargetCount"
+},
+{
+"index": 426,
+"name": "GetIsVoiceType",
+"params": [
+"VoiceType"
+],
+"phrase": "GetIsVoiceType"
+},
+{
+"index": 427,
+"name": "GetPlantedExplosive"
+},
+{
+"index": 429,
+"name": "IsScenePackageRunning"
+},
+{
+"index": 430,
+"name": "GetHealthPercentage"
+},
+{
+"index": 431,
+"name": "GetActiveBoostDuration"
+},
+{
+"index": 432,
+"name": "GetIsObjectType",
+"params": [
+"ObjectType"
+]
+},
+{
+"index": 434,
+"name": "PlayerVisualDetection"
+},
+{
+"index": 435,
+"name": "PlayerAudioDetection"
+},
+{
+"index": 437,
+"name": "GetIsCreatureType",
+"params": [
+"Int"
+]
+},
+{
+"index": 438,
+"name": "HasKey"
+},
+{
+"index": 439,
+"name": "IsFurnitureEntryType",
+"params": [
+"FurnitureEntry"
+]
+},
+{
+"index": 444,
+"name": "GetInCurrentLocationFormList"
+},
+{
+"index": 445,
+"name": "GetInZone",
+"params": [
+"Location"
+]
+},
+{
+"index": 446,
+"name": "GetVelocity",
+"params": [
+"Axis"
+]
+},
+{
+"index": 447,
+"name": "GetGraphVariableFloat",
+"params": [
+"String"
+]
+},
+{
+"index": 448,
+"name": "HasPerk",
+"params": [
+"Perk"
+],
+"phrase": "HasPerk"
+},
+{
+"index": 449,
+"name": "GetFactionRelation",
+"params": [
+"Actor"
+]
+},
+{
+"index": 450,
+"name": "IsLastIdlePlayed",
+"params": [
+"Idle"
+]
+},
+{
+"index": 453,
+"name": "GetPlayerTeammate"
+},
+{
+"index": 454,
+"name": "GetPlayerTeammateCount"
+},
+{
+"index": 458,
+"name": "GetActorCrimePlayerEnemy"
+},
+{
+"index": 459,
+"name": "GetCrimeGold",
+"params": [
+"Faction"
+],
+"phrase": "GetCrimeGold"
+},
+{
+"index": 463,
+"name": "IsPlayerGrabbedRef",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 465,
+"name": "GetKeywordItemCount",
+"params": [
+"Keyword"
+]
+},
+{
+"index": 470,
+"name": "GetDestructionStage"
+},
+{
+"index": 473,
+"name": "GetIsAlignment",
+"params": [
+"Alignment"
+],
+"phrase": "GetIsAlignment"
+},
+{
+"index": 476,
+"name": "IsProtected"
+},
+{
+"index": 477,
+"name": "GetThreatRatio",
+"params": [
+"Actor"
+]
+},
+{
+"index": 479,
+"name": "GetIsUsedItemEquipType",
+"params": [
+"EquipType"
+]
+},
+{
+"index": 483,
+"name": "GetPlayerActivated"
+},
+{
+"index": 485,
+"name": "GetFullyEnabledActorsInHigh"
+},
+{
+"index": 487,
+"name": "IsCarryable"
+},
+{
+"index": 488,
+"name": "GetConcussed"
+},
+{
+"index": 490,
+"name": "GetBiomeScanPercent"
+},
+{
+"index": 491,
+"name": "GetMapMarkerVisible"
+},
+{
+"index": 493,
+"name": "PlayerKnows",
+"params": [
+"Form"
+]
+},
+{
+"index": 494,
+"name": "GetPermanentValue"
+},
+{
+"index": 495,
+"name": "EPMagic_EffectIsDetrimental"
+},
+{
+"index": 497,
+"name": "CanPayCrimeGold",
+"params": [
+"Faction"
+]
+},
+{
+"index": 499,
+"name": "GetDaysInJail"
+},
+{
+"index": 500,
+"name": "EPAlchemyGetMakingPoison"
+},
+{
+"index": 501,
+"name": "EPAlchemyEffectHasKeyword",
+"params": [
+"Keyword"
+]
+},
+{
+"index": 503,
+"name": "GetAllowWorldInteractions"
+},
+{
+"index": 507,
+"name": "GetPerkRank"
+},
+{
+"index": 508,
+"name": "GetLastHitCritical"
+},
+{
+"index": 511,
+"name": "LastCrippledCondition"
+},
+{
+"index": 512,
+"name": "HasSharedPowerGrid"
+},
+{
+"index": 513,
+"name": "IsCombatTarget",
+"params": [
+"Actor"
+]
+},
+{
+"index": 515,
+"name": "GetVATSRightAreaFree",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 516,
+"name": "GetVATSLeftAreaFree",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 517,
+"name": "GetVATSBackAreaFree",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 518,
+"name": "GetVATSFrontAreaFree",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 519,
+"name": "GetIsLockBroken"
+},
+{
+"index": 521,
+"name": "IsWindowsPC"
+},
+{
+"index": 522,
+"name": "GetVATSRightTargetVisible",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 523,
+"name": "GetVATSLeftTargetVisible",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 524,
+"name": "GetVATSBackTargetVisible",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 525,
+"name": "GetVATSFrontTargetVisible",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 528,
+"name": "IsInCriticalStage",
+"params": [
+"CriticalStage"
+]
+},
+{
+"index": 530,
+"name": "GetXPForNextLevel"
+},
+{
+"index": 533,
+"name": "GetInfamy",
+"params": [
+"Faction"
+]
+},
+{
+"index": 534,
+"name": "GetInfamyViolent",
+"params": [
+"Faction"
+]
+},
+{
+"index": 535,
+"name": "GetInfamyNonViolent",
+"params": [
+"Faction"
+]
+},
+{
+"index": 536,
+"name": "GetTypeCommandPerforming"
+},
+{
+"index": 543,
+"name": "GetQuestCompleted",
+"params": [
+"Quest"
+],
+"phrase": "GetQuestCompleted"
+},
+{
+"index": 544,
+"name": "GetSpeechChallengeSuccessScene"
+},
+{
+"index": 547,
+"name": "IsGoreDisabled"
+},
+{
+"index": 550,
+"name": "IsSceneActionComplete",
+"params": [
+"Scene",
+"Int"
+]
+},
+{
+"index": 554,
+"name": "GetActorsInHigh"
+},
+{
+"index": 555,
+"name": "HasLoaded3D"
+},
+{
+"index": 560,
+"name": "HasKeyword",
+"params": [
+"Keyword"
+],
+"phrase": "HasKeyword"
+},
+{
+"index": 561,
+"name": "HasRefType",
+"params": [
+"RefType"
+]
+},
+{
+"index": 562,
+"name": "LocationHasKeyword",
+"params": [
+"Keyword"
+]
+},
+{
+"index": 563,
+"name": "LocationHasRefType",
+"params": [
+"RefType"
+]
+},
+{
+"index": 565,
+"name": "GetIsEditorLocation",
+"params": [
+"Location"
+],
+"phrase": "GetIsEditorLocation"
+},
+{
+"index": 566,
+"name": "GetIsAliasRef",
+"params": [
+"Alias"
+],
+"phrase": "GetIsAliasRef"
+},
+{
+"index": 567,
+"name": "GetIsEditorLocationAlias"
+},
+{
+"index": 568,
+"name": "IsSprinting"
+},
+{
+"index": 569,
+"name": "IsBlocking"
+},
+{
+"index": 570,
+"name": "HasEquippedSpell",
+"params": [
+"CastingSource"
+]
+},
+{
+"index": 571,
+"name": "GetCurrentCastingType",
+"params": [
+"CastingSource"
+]
+},
+{
+"index": 572,
+"name": "GetCurrentDeliveryType",
+"params": [
+"CastingSource"
+]
+},
+{
+"index": 574,
+"name": "GetAttackState"
+},
+{
+"index": 576,
+"name": "GetEventData",
+"params": [
+"EventFunction",
+"EventMember",
+"Form"
+]
+},
+{
+"index": 577,
+"name": "IsCloserToAThanB",
+"params": [
+"ObjectReference",
+"ObjectReference"
+]
+},
+{
+"index": 578,
+"name": "LevelMinusPCLevel"
+},
+{
+"index": 580,
+"name": "IsBleedingOut"
+},
+{
+"index": 584,
+"name": "GetRelativeAngle",
+"params": [
+"ObjectReference",
+"Axis"
+]
+},
+{
+"index": 589,
+"name": "GetMovementDirection"
+},
+{
+"index": 590,
+"name": "IsInScene"
+},
+{
+"index": 591,
+"name": "GetRefTypeDeadCount",
+"params": [
+"Location",
+"RefType"
+]
+},
+{
+"index": 592,
+"name": "GetRefTypeAliveCount",
+"params": [
+"Location",
+"RefType"
+]
+},
+{
+"index": 594,
+"name": "GetIsFlying"
+},
+{
+"index": 595,
+"name": "IsCurrentSpell",
+"params": [
+"Spell",
+"CastingSource"
+]
+},
+{
+"index": 596,
+"name": "SpellHasKeyword",
+"params": [
+"CastingSource",
+"Keyword"
+]
+},
+{
+"index": 597,
+"name": "GetEquippedItemType",
+"params": [
+"CastingSource"
+]
+},
+{
+"index": 598,
+"name": "GetLocationAliasExplored"
+},
+{
+"index": 600,
+"name": "GetLocationAliasRefTypeDeadCount"
+},
+{
+"index": 601,
+"name": "GetLocationAliasRefTypeAliveCount"
+},
+{
+"index": 602,
+"name": "IsWardState",
+"params": [
+"WardState"
+]
+},
+{
+"index": 603,
+"name": "IsInSameCurrentLocationAsRef"
+},
+{
+"index": 604,
+"name": "IsInSameCurrentLocationAsAlias"
+},
+{
+"index": 605,
+"name": "LocationAliasIsLocation"
+},
+{
+"index": 606,
+"name": "GetKeywordDataForLocation",
+"params": [
+"Location",
+"Keyword"
+]
+},
+{
+"index": 608,
+"name": "GetKeywordDataForAlias",
+"params": [
+"Alias",
+"Keyword"
+]
+},
+{
+"index": 610,
+"name": "LocationAliasHasKeyword"
+},
+{
+"index": 611,
+"name": "IsNullPackageData",
+"params": [
+"PackageData"
+]
+},
+{
+"index": 612,
+"name": "GetNumericPackageData",
+"params": [
+"PackageData"
+]
+},
+{
+"index": 613,
+"name": "IsPlayerRadioOn"
+},
+{
+"index": 614,
+"name": "GetPlayerRadioFrequency"
+},
+{
+"index": 615,
+"name": "GetHighestRelationshipRank"
+},
+{
+"index": 616,
+"name": "GetLowestRelationshipRank"
+},
+{
+"index": 617,
+"name": "HasAssociationTypeAny",
+"params": [
+"AssociationType"
+]
+},
+{
+"index": 618,
+"name": "HasFamilyRelationshipAny"
+},
+{
+"index": 619,
+"name": "GetPathingTargetOffset",
+"params": [
+"Axis"
+]
+},
+{
+"index": 620,
+"name": "GetPathingTargetAngleOffset",
+"params": [
+"Axis"
+]
+},
+{
+"index": 621,
+"name": "GetPathingTargetSpeed"
+},
+{
+"index": 622,
+"name": "GetPathingTargetSpeedAngle",
+"params": [
+"Axis"
+]
+},
+{
+"index": 623,
+"name": "GetMovementSpeed"
+},
+{
+"index": 624,
+"name": "GetInContainer",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 625,
+"name": "IsLocationLoaded",
+"params": [
+"Location"
+]
+},
+{
+"index": 626,
+"name": "IsLocationAliasLoaded"
+},
+{
+"index": 627,
+"name": "IsDualCasting"
+},
+{
+"index": 629,
+"name": "GetVMQuestVariable",
+"params": [
+"Quest",
+"String"
+],
+"phrase": "GetVMQuestVariable"
+},
+{
+"index": 630,
+"name": "GetCombatAudioDetection"
+},
+{
+"index": 631,
+"name": "GetCombatVisualDetection"
+},
+{
+"index": 632,
+"name": "IsCasting"
+},
+{
+"index": 633,
+"name": "GetFlyingState"
+},
+{
+"index": 635,
+"name": "IsInFavorState"
+},
+{
+"index": 636,
+"name": "HasTwoHandedWeaponEquipped"
+},
+{
+"index": 637,
+"name": "IsFurnitureExitType"
+},
+{
+"index": 638,
+"name": "IsInFriendStatewithPlayer"
+},
+{
+"index": 639,
+"name": "GetWithinDistance",
+"params": [
+"ObjectReference",
+"Float"
+]
+},
+{
+"index": 640,
+"name": "GetValuePercent"
+},
+{
+"index": 641,
+"name": "IsUnique"
+},
+{
+"index": 642,
+"name": "GetLastBumpDirection"
+},
+{
+"index": 644,
+"name": "GetInfoChallangeSuccess"
+},
+{
+"index": 645,
+"name": "GetIsInjured"
+},
+{
+"index": 646,
+"name": "GetIsCrashLandRequest"
+},
+{
+"index": 647,
+"name": "GetIsHastyLandRequest"
+},
+{
+"index": 650,
+"name": "IsLinkedTo",
+"params": [
+"ObjectReference",
+"Keyword"
+]
+},
+{
+"index": 651,
+"name": "GetKeywordDataForCurrentLocation",
+"params": [
+"Keyword"
+]
+},
+{
+"index": 652,
+"name": "GetInSharedCrimeFaction",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 654,
+"name": "GetBribeSuccess"
+},
+{
+"index": 655,
+"name": "GetIntimidateSuccess"
+},
+{
+"index": 656,
+"name": "GetArrestedState"
+},
+{
+"index": 657,
+"name": "GetArrestingActor"
+},
+{
+"index": 659,
+"name": "HasVMScript"
+},
+{
+"index": 660,
+"name": "GetVMScriptVariable",
+"params": [
+"ObjectReference",
+"String"
+],
+"phrase": "GetVMScriptVariable"
+},
+{
+"index": 661,
+"name": "GetWorkshopResourceDamage"
+},
+{
+"index": 664,
+"name": "HasValidRumorTopic"
+},
+{
+"index": 672,
+"name": "IsAttacking"
+},
+{
+"index": 673,
+"name": "IsPowerAttacking"
+},
+{
+"index": 674,
+"name": "IsLastHostileActor"
+},
+{
+"index": 675,
+"name": "GetGraphVariableInt",
+"params": [
+"String"
+]
+},
+{
+"index": 676,
+"name": "GetDockerOrientation"
+},
+{
+"index": 678,
+"name": "ShouldAttackKill",
+"params": [
+"Actor"
+]
+},
+{
+"index": 680,
+"name": "GetActivationHeight"
+},
+{
+"index": 681,
+"name": "SSLPI_ReplacePayloadHasKeyword"
+},
+{
+"index": 682,
+"name": "WornHasKeyword",
+"params": [
+"Keyword"
+],
+"phrase": "WornHasKeyword"
+},
+{
+"index": 683,
+"name": "GetPathingCurrentSpeed"
+},
+{
+"index": 684,
+"name": "GetPathingCurrentSpeedAngle",
+"params": [
+"Axis"
+]
+},
+{
+"index": 691,
+"name": "GetWorkshopObjectCount"
+},
+{
+"index": 693,
+"name": "EPMagic_SpellHasKeyword",
+"params": [
+"Keyword"
+]
+},
+{
+"index": 694,
+"name": "GetNoBleedoutRecovery"
+},
+{
+"index": 696,
+"name": "EPMagic_SpellHasSkill",
+"params": [
+"ActorValue"
+]
+},
+{
+"index": 697,
+"name": "IsAttackType",
+"params": [
+"Keyword"
+]
+},
+{
+"index": 698,
+"name": "IsAllowedToFly"
+},
+{
+"index": 699,
+"name": "HasMagicEffectOrSpellKeyword"
+},
+{
+"index": 700,
+"name": "IsCommandedActor"
+},
+{
+"index": 701,
+"name": "IsStaggered"
+},
+{
+"index": 702,
+"name": "IsRecoiling"
+},
+{
+"index": 703,
+"name": "HasScopeWeaponEquipped"
+},
+{
+"index": 704,
+"name": "IsPathing"
+},
+{
+"index": 705,
+"name": "GetShouldHelp",
+"params": [
+"Actor"
+]
+},
+{
+"index": 706,
+"name": "HasBoundWeaponEquipped",
+"params": [
+"CastingSource"
+]
+},
+{
+"index": 707,
+"name": "GetCombatTargetHasKeyword",
+"params": [
+"Keyword"
+]
+},
+{
+"index": 709,
+"name": "GetCombatGroupMemberCount"
+},
+{
+"index": 710,
+"name": "IsIgnoringCombat"
+},
+{
+"index": 711,
+"name": "GetLightLevel"
+},
+{
+"index": 713,
+"name": "SpellHasCastingPerk",
+"params": [
+"Perk"
+]
+},
+{
+"index": 714,
+"name": "IsBeingRidden"
+},
+{
+"index": 715,
+"name": "IsUndead"
+},
+{
+"index": 716,
+"name": "GetRealHoursPassed"
+},
+{
+"index": 718,
+"name": "IsUnlockedDoor"
+},
+{
+"index": 719,
+"name": "IsHostileToActor",
+"params": [
+"Actor"
+]
+},
+{
+"index": 720,
+"name": "GetTargetHeight",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 721,
+"name": "IsPoison"
+},
+{
+"index": 722,
+"name": "WornApparelHasKeywordCount",
+"params": [
+"Keyword"
+]
+},
+{
+"index": 723,
+"name": "GetItemHealthPercent"
+},
+{
+"index": 724,
+"name": "EffectWasDualCast"
+},
+{
+"index": 725,
+"name": "GetKnockStateEnum"
+},
+{
+"index": 726,
+"name": "DoesNotExist"
+},
+{
+"index": 728,
+"name": "GetSpeechChallengeSuccessGame"
+},
+{
+"index": 729,
+"name": "GetActorStance"
+},
+{
+"index": 730,
+"name": "SpeechScenarioHasKeyword"
+},
+{
+"index": 734,
+"name": "CanProduceForWorkshop"
+},
+{
+"index": 735,
+"name": "CanFlyHere"
+},
+{
+"index": 736,
+"name": "EPIsDamageType"
+},
+{
+"index": 737,
+"name": "IsCurrentSpeechChallengeObject"
+},
+{
+"index": 738,
+"name": "GetActorGunState"
+},
+{
+"index": 739,
+"name": "GetVoiceLineLength"
+},
+{
+"index": 741,
+"name": "ObjectTemplateItem_HasKeyword"
+},
+{
+"index": 742,
+"name": "ObjectTemplateItem_HasUniqueKeyword"
+},
+{
+"index": 743,
+"name": "ObjectTemplateItem_GetLevel"
+},
+{
+"index": 744,
+"name": "MovementIdleMatches"
+},
+{
+"index": 745,
+"name": "GetActionData"
+},
+{
+"index": 746,
+"name": "GetActionDataShort"
+},
+{
+"index": 747,
+"name": "GetActionDataByte"
+},
+{
+"index": 748,
+"name": "GetActionDataFlag"
+},
+{
+"index": 749,
+"name": "ModdedItemHasKeyword"
+},
+{
+"index": 750,
+"name": "GetAngryWithPlayer"
+},
+{
+"index": 751,
+"name": "IsCameraUnderWater"
+},
+{
+"index": 753,
+"name": "IsActorRefOwner"
+},
+{
+"index": 754,
+"name": "HasActorRefOwner"
+},
+{
+"index": 756,
+"name": "GetLoadedAmmoCount"
+},
+{
+"index": 757,
+"name": "IsTimeSpanSunrise"
+},
+{
+"index": 758,
+"name": "IsTimeSpanMorning"
+},
+{
+"index": 759,
+"name": "IsTimeSpanAfternoon"
+},
+{
+"index": 760,
+"name": "IsTimeSpanEvening"
+},
+{
+"index": 761,
+"name": "IsTimeSpanSunset"
+},
+{
+"index": 762,
+"name": "IsTimeSpanNight"
+},
+{
+"index": 763,
+"name": "IsTimeSpanMidnight"
+},
+{
+"index": 764,
+"name": "IsTimeSpanAnyDay"
+},
+{
+"index": 765,
+"name": "IsTimeSpanAnyNight"
+},
+{
+"index": 766,
+"name": "CurrentFurnitureHasKeyword"
+},
+{
+"index": 767,
+"name": "GetWeaponEquipIndex"
+},
+{
+"index": 769,
+"name": "IsOverEncumbered"
+},
+{
+"index": 770,
+"name": "IsPackageRequestingBlockedIdles"
+},
+{
+"index": 771,
+"name": "GetActionDataInt"
+},
+{
+"index": 772,
+"name": "GetVATSRightMinusLeftAreaFree"
+},
+{
+"index": 773,
+"name": "GetInIronSights"
+},
+{
+"index": 774,
+"name": "GetActorStaggerDirection"
+},
+{
+"index": 775,
+"name": "GetActorStaggerMagnitude"
+},
+{
+"index": 776,
+"name": "WornCoversBipedSlot"
+},
+{
+"index": 777,
+"name": "GetInventoryValue"
+},
+{
+"index": 778,
+"name": "IsPlayerInConversation"
+},
+{
+"index": 779,
+"name": "IsInDialogueCamera"
+},
+{
+"index": 780,
+"name": "IsMyDialogueTargetPlayer"
+},
+{
+"index": 781,
+"name": "IsMyDialogueTargetActor"
+},
+{
+"index": 782,
+"name": "GetMyDialogueTargetDistance"
+},
+{
+"index": 783,
+"name": "IsSeatOccupied"
+},
+{
+"index": 784,
+"name": "IsPlayerRiding"
+},
+{
+"index": 785,
+"name": "IsTryingEventCamera"
+},
+{
+"index": 786,
+"name": "UseLeftSideCamera"
+},
+{
+"index": 787,
+"name": "GetNoteType"
+},
+{
+"index": 788,
+"name": "LocationHasPlayerOwnedWorkshop"
+},
+{
+"index": 789,
+"name": "IsStartingAction"
+},
+{
+"index": 790,
+"name": "IsMidAction"
+},
+{
+"index": 791,
+"name": "IsWeaponChargeAttack"
+},
+{
+"index": 792,
+"name": "IsInWorkshopMode"
+},
+{
+"index": 793,
+"name": "IsWeaponChargingHoldAttack"
+},
+{
+"index": 794,
+"name": "IsEncounterAbovePlayerLevel"
+},
+{
+"index": 795,
+"name": "IsMeleeAttacking"
+},
+{
+"index": 796,
+"name": "GetVATSQueuedTargetsUnique"
+},
+{
+"index": 797,
+"name": "GetCurrentLocationExplored"
+},
+{
+"index": 798,
+"name": "IsPowered"
+},
+{
+"index": 799,
+"name": "GetTransmitterDistance"
+},
+{
+"index": 800,
+"name": "GetCameraPlaybackTime"
+},
+{
+"index": 801,
+"name": "IsInWater"
+},
+{
+"index": 802,
+"name": "GetWithinActivateDistance"
+},
+{
+"index": 803,
+"name": "IsUnderWater"
+},
+{
+"index": 804,
+"name": "IsInSameSpace"
+},
+{
+"index": 805,
+"name": "LocationAllowsReset"
+},
+{
+"index": 806,
+"name": "GetVATSBackRightAreaFree"
+},
+{
+"index": 807,
+"name": "GetVATSBackLeftAreaFree"
+},
+{
+"index": 808,
+"name": "GetVATSBackRightTargetVisible"
+},
+{
+"index": 809,
+"name": "GetVATSBackLeftTargetVisible"
+},
+{
+"index": 810,
+"name": "GetVATSTargetLimbVisible"
+},
+{
+"index": 811,
+"name": "IsPlayerListening"
+},
+{
+"index": 812,
+"name": "GetPathingRequestedQuickTurn"
+},
+{
+"index": 813,
+"name": "EPIsCalculatingBaseDamage"
+},
+{
+"index": 814,
+"name": "GetReanimating"
+},
+{
+"index": 815,
+"name": "GetCombatDialogueDataInt"
+},
+{
+"index": 816,
+"name": "IsDocked"
+},
+{
+"index": 817,
+"name": "IsDockedWith"
+},
+{
+"index": 818,
+"name": "GetLastDialogueCameraHasKeyword"
+},
+{
+"index": 819,
+"name": "GetActionDataForm"
+},
+{
+"index": 820,
+"name": "IsInSpace"
+},
+{
+"index": 822,
+"name": "GetSpaceship"
+},
+{
+"index": 823,
+"name": "ShipContainsRef"
+},
+{
+"index": 824,
+"name": "IsInSpaceship"
+},
+{
+"index": 825,
+"name": "ShipHasActorInPilotSeat"
+},
+{
+"index": 826,
+"name": "ActorPackageHasRandomConversationsFlagOn"
+},
+{
+"index": 827,
+"name": "GetActorInShipPilotSeat"
+},
+{
+"index": 828,
+"name": "IsSpaceship"
+},
+{
+"index": 829,
+"name": "GetInAcousticSpace"
+},
+{
+"index": 830,
+"name": "CurrentShipLanded"
+},
+{
+"index": 831,
+"name": "IsDockedAsChild"
+},
+{
+"index": 832,
+"name": "PlayerHailResponse"
+},
+{
+"index": 833,
+"name": "IsHerdLeader"
+},
+{
+"index": 834,
+"name": "HasHerdLeader"
+},
+{
+"index": 836,
+"name": "GetPlayerHomeSpaceShip"
+},
+{
+"index": 837,
+"name": "IsTrueForConditionForm"
+},
+{
+"index": 838,
+"name": "GetNumElementsInRefCollection"
+},
+{
+"index": 839,
+"name": "GetCurrentWeatherHasKeyword"
+},
+{
+"index": 840,
+"name": "IsSnappedTo"
+},
+{
+"index": 841,
+"name": "HasKeywordOnNode"
+},
+{
+"index": 842,
+"name": "HasKeywordOnStacked"
+},
+{
+"index": 843,
+"name": "HasVisualDetection"
+},
+{
+"index": 844,
+"name": "HasSoundDetection"
+},
+{
+"index": 845,
+"name": "IsSuppressed"
+},
+{
+"index": 846,
+"name": "IsSpaceshipEngineDestroyed"
+},
+{
+"index": 847,
+"name": "IsLanded"
+},
+{
+"index": 848,
+"name": "IsSpaceshipShieldsDestroyed"
+},
+{
+"index": 849,
+"name": "IsSpaceshipGravDriveDestroyed"
+},
+{
+"index": 850,
+"name": "GetNumberOfSpaceshipWeaponsDestroyed"
+},
+{
+"index": 851,
+"name": "GetIsCurrentLocationExact"
+},
+{
+"index": 852,
+"name": "GetIsEditorLocationExact"
+},
+{
+"index": 853,
+"name": "IsInThreatBackdown"
+},
+{
+"index": 854,
+"name": "IsInsidePrimitive"
+},
+{
+"index": 855,
+"name": "GetCameraActorCount"
+},
+{
+"index": 856,
+"name": "GetIsCurrentLocationAliasExact"
+},
+{
+"index": 857,
+"name": "IsJailInSystem"
+},
+{
+"index": 858,
+"name": "BodyHasKeyword"
+},
+{
+"index": 859,
+"name": "BiomeHasKeyword"
+},
+{
+"index": 860,
+"name": "SystemHasKeyword"
+},
+{
+"index": 861,
+"name": "GetDistanceFromLocationWithKeyword"
+},
+{
+"index": 862,
+"name": "GetPlanetVisited"
+},
+{
+"index": 863,
+"name": "IsLocalDay"
+},
+{
+"index": 864,
+"name": "SpeechChallengePreviousSceneHasKeyword"
+},
+{
+"index": 865,
+"name": "GetBiomeMaskValue"
+},
+{
+"index": 866,
+"name": "BodyIsType"
+},
+{
+"index": 867,
+"name": "BodyIsAtmosphereType"
+},
+{
+"index": 868,
+"name": "BodyIsTemperatureType"
+},
+{
+"index": 869,
+"name": "GetBodyTemperature"
+},
+{
+"index": 870,
+"name": "GetBodyPressure"
+},
+{
+"index": 871,
+"name": "GetBodyGravity"
+},
+{
+"index": 872,
+"name": "GetBodySurveyPercent"
+},
+{
+"index": 873,
+"name": "IsPlayerLoitering"
+},
+{
+"index": 874,
+"name": "IsResearchComplete"
+},
+{
+"index": 875,
+"name": "BodyIsPlanetTraitKnown"
+},
+{
+"index": 876,
+"name": "HasPerkCategory"
+},
+{
+"index": 877,
+"name": "HasPerkSkillGroup"
+},
+{
+"index": 878,
+"name": "CountAquiredPerkRanksByType"
+},
+{
+"index": 879,
+"name": "IsScanned"
+},
+{
+"index": 880,
+"name": "IsScannableKeywordRevealed"
+},
+{
+"index": 881,
+"name": "IsMyVictim"
+},
+{
+"index": 882,
+"name": "GetResourceScarcity"
+},
+{
+"index": 883,
+"name": "CheckContrabandStatus"
+},
+{
+"index": 886,
+"name": "IsPlayerSpaceFarTravelling"
+},
+{
+"index": 887,
+"name": "IsPlayerSpaceFarTravelDeparture"
+},
+{
+"index": 888,
+"name": "IsPlayerSpaceFarTravelArrival"
+},
+{
+"index": 889,
+"name": "BiomeHasWeather"
+},
+{
+"index": 891,
+"name": "GetSystemSurveyPercent"
+},
+{
+"index": 892,
+"name": "SystemBodyHasKeyword"
+},
+{
+"index": 894,
+"name": "GetShipGroupThreatRatio"
+},
+{
+"index": 895,
+"name": "IsOnGrazingTerrain"
+},
+{
+"index": 896,
+"name": "GetDistanceGalacticParsec"
+},
+{
+"index": 897,
+"name": "GetDistanceGalacticMegaMeter"
+},
+{
+"index": 898,
+"name": "GetShipToShipGroupThreatRatio"
+},
+{
+"index": 899,
+"name": "GetGroupMembersInRadiusCount"
+},
+{
+"index": 900,
+"name": "GetShipPiracyValue"
+},
+{
+"index": 901,
+"name": "GetDistanceFromCelestialBodyAliasParsecs"
+},
+{
+"index": 902,
+"name": "GetDistanceFromCelestialBodyAliasMegaMeters"
+},
+{
+"index": 904,
+"name": "IsInsidePrimitiveTopAndBottom"
+},
+{
+"index": 905,
+"name": "GetPlayerBountyCrimeFaction"
+},
+{
+"index": 906,
+"name": "GetIsFloating"
+},
+{
+"index": 907,
+"name": "LocationOrParentHasKeyword"
+},
+{
+"index": 908,
+"name": "IsCelestialBodyScanned"
+},
+{
+"index": 912,
+"name": "IsActorReactionInCooldown"
+},
+{
+"index": 916,
+"name": "BiomeSupportsCreature"
+},
+{
+"index": 919,
+"name": "EPMagic_SpellHasMagicEffect"
+},
+{
+"index": 921,
+"name": "IsFacingActor"
+},
+{
+"index": 922,
+"name": "IsSameVoiceType"
+},
+{
+"index": 923,
+"name": "GetValueCurrentLocation"
+},
+{
+"index": 924,
+"name": "IsBoostPackActive"
+},
+{
+"index": 925,
+"name": "GetTimeSinceLastBoostPackEnded"
+},
+{
+"index": 926,
+"name": "EPGetLastCombatHitCritical"
+},
+{
+"index": 927,
+"name": "EPGetLastCombatHitKill"
+},
+{
+"index": 928,
+"name": "EPGetLastCombatHitGunBash"
+},
+{
+"index": 929,
+"name": "EPIsLastCombatHitLimbInCategory"
+},
+{
+"index": 930,
+"name": "IsEditorLocationInsidePrimitive"
+},
+{
+"index": 931,
+"name": "GetIsPronoun"
+},
+{
+"index": 932,
+"name": "GetDistanceGalacticLightYears"
+},
+{
+"index": 933,
+"name": "GetDistanceFromCelestialBodyAliasLightyears"
+},
+{
+"index": 934,
+"name": "IsOnPlayerHomeSpaceShip"
+},
+{
+"index": 935,
+"name": "EPMagic_EffectHasKeyword"
+},
+{
+"index": 936,
+"name": "EPMagic_SpellIs"
+},
+{
+"index": 937,
+"name": "IsPlayerSteadyingWeapon"
+},
+{
+"index": 938,
+"name": "ResourceVeinHasKeyword"
+},
+{
+"index": 939,
+"name": "GetLastCombatHitActorConsecutiveHits"
+},
+{
+"index": 940,
+"name": "GetCurrentAndLastWeatherHaveKeyword"
+},
+{
+"index": 941,
+"name": "IsPCEquippedWeaponNthAttack"
+},
+{
+"index": 942,
+"name": "GetWaterDepth"
+},
+{
+"index": 943,
+"name": "AreHostileActorsNear"
+},
+{
+"index": 944,
+"name": "GetPlayerGravityScale"
+},
+{
+"index": 945,
+"name": "IsInSameGroup"
+},
+{
+"index": 946,
+"name": "IsBoostPackHovering"
+},
+{
+"index": 947,
+"name": "GetUsedWeightCapacityConditionFunction"
+},
+{
+"index": 949,
+"name": "BodyHasResource"
+},
+{
+"index": 950,
+"name": "GetPCIsReloading"
+},
+{
+"index": 951,
+"name": "ActorExposedToSky"
+},
+{
+"index": 954,
+"name": "GetQuestStarting"
+},
+{
+"index": 955,
+"name": "BodyHasResourceWithKeyword"
+},
+{
+"index": 957,
+"name": "GetShipReactorClass"
+},
+{
+"index": 958,
+"name": "ShipReactorHasClassKeyword"
+},
+{
+"index": 960,
+"name": "EPIsResistanceActorValue"
+}
+]
+}

@@ -1,0 +1,32 @@
+{
+  "format": 1,
+  "id": "Fallout76",
+  "name": "Fallout 76",
+  "engine": "tes4",
+  "pluginExtensions": [
+    "esp",
+    "esm",
+    "esl"
+  ],
+  "masters": [
+    "SeventySix.esm"
+  ],
+  "formVersions": [
+    182,
+    201
+  ],
+  "headerLen": 24,
+  "utf8": true,
+  "localizedStrings": true,
+  "stringsDir": "Strings",
+  "stringsLangStyle": "name",
+  "archiveExtension": "ba2",
+  "locksLocKeys": false,
+  "outputModes": [
+    "strings",
+    "hybrid",
+    "overridePatch",
+    "fullPlugin"
+  ],
+  "fieldsFile": "fallout76"
+}

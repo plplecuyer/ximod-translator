@@ -1,0 +1,2076 @@
+{
+ "format": 1,
+ "source": "eng",
+ "target": "fra",
+ "groups": [
+  {
+   "name": "Matériaux",
+   "terms": [
+    {
+     "src": "Iron",
+     "dst": "en fer",
+     "class": "material"
+    },
+    {
+     "src": "Steel",
+     "dst": "en acier",
+     "class": "material"
+    },
+    {
+     "src": "Ebony",
+     "dst": "en ébonite",
+     "class": "material"
+    },
+    {
+     "src": "Glass",
+     "dst": "en verre",
+     "class": "material"
+    },
+    {
+     "src": "Dragonbone",
+     "dst": "en os de dragon",
+     "class": "material"
+    },
+    {
+     "src": "Dragon Bone",
+     "dst": "en os de dragon",
+     "class": "material"
+    },
+    {
+     "src": "Dragonscale",
+     "dst": "en écailles de dragon",
+     "class": "material"
+    },
+    {
+     "src": "Dragonhide",
+     "dst": "en peau de dragon",
+     "class": "material"
+    },
+    {
+     "src": "Leather",
+     "dst": "en cuir",
+     "class": "material"
+    },
+    {
+     "src": "Hide",
+     "dst": "en peau",
+     "class": "material"
+    },
+    {
+     "src": "Fur",
+     "dst": "en fourrure",
+     "class": "material"
+    },
+    {
+     "src": "Silver",
+     "dst": "en argent",
+     "class": "material"
+    },
+    {
+     "src": "Gold",
+     "dst": "en or",
+     "class": "material"
+    },
+    {
+     "src": "Bronze",
+     "dst": "en bronze",
+     "class": "material"
+    },
+    {
+     "src": "Chitin",
+     "dst": "en chitine",
+     "class": "material"
+    },
+    {
+     "src": "Boiled Chitin",
+     "dst": "en chitine bouillie",
+     "class": "material"
+    },
+    {
+     "src": "Bonemold",
+     "dst": "en os-moulé",
+     "class": "material"
+    },
+    {
+     "src": "Stalhrim",
+     "dst": "en stalhrim",
+     "class": "material"
+    },
+    {
+     "src": "Orichalcum",
+     "dst": "en orichalque",
+     "class": "material"
+    },
+    {
+     "src": "Moonstone",
+     "dst": "en pierre de lune",
+     "class": "material"
+    },
+    {
+     "src": "Corundum",
+     "dst": "en corindon",
+     "class": "material"
+    },
+    {
+     "src": "Quicksilver",
+     "dst": "en vif-argent",
+     "class": "material"
+    },
+    {
+     "src": "Malachite",
+     "dst": "en malachite",
+     "class": "material"
+    },
+    {
+     "src": "Plate",
+     "dst": "en plates",
+     "class": "material"
+    },
+    {
+     "src": "Mail",
+     "dst": "en mailles",
+     "class": "material"
+    },
+    {
+     "src": "Chainmail",
+     "dst": "en mailles",
+     "class": "material"
+    },
+    {
+     "src": "Scale",
+     "dst": "en écailles",
+     "class": "material"
+    },
+    {
+     "src": "Wood",
+     "dst": "en bois",
+     "class": "material"
+    },
+    {
+     "src": "Wooden",
+     "dst": "en bois",
+     "class": "material"
+    },
+    {
+     "src": "Bone",
+     "dst": "en os",
+     "class": "material"
+    },
+    {
+     "src": "Ebonsteel",
+     "dst": "en ébonite",
+     "class": "material"
+    },
+    {
+     "src": "Glacial Crystal",
+     "dst": "en cristal glacial",
+     "class": "material"
+    },
+    {
+     "src": "Crystal",
+     "dst": "en cristal",
+     "class": "material"
+    },
+    {
+     "src": "Ringmail",
+     "dst": "en anneaux",
+     "class": "material"
+    },
+    {
+     "src": "Cloth",
+     "dst": "en tissu",
+     "class": "material"
+    },
+    {
+     "src": "Linen",
+     "dst": "en lin",
+     "class": "material"
+    },
+    {
+     "src": "Silk",
+     "dst": "en soie",
+     "class": "material"
+    }
+   ]
+  },
+  {
+   "name": "Couleurs",
+   "terms": [
+    {
+     "src": "Black",
+     "class": "color",
+     "forms": {
+      "m": "noir",
+      "f": "noire",
+      "mp": "noirs",
+      "fp": "noires"
+     }
+    },
+    {
+     "src": "White",
+     "class": "color",
+     "forms": {
+      "m": "blanc",
+      "f": "blanche",
+      "mp": "blancs",
+      "fp": "blanches"
+     }
+    },
+    {
+     "src": "Blue",
+     "class": "color",
+     "forms": {
+      "m": "bleu",
+      "f": "bleue",
+      "mp": "bleus",
+      "fp": "bleues"
+     }
+    },
+    {
+     "src": "Green",
+     "class": "color",
+     "forms": {
+      "m": "vert",
+      "f": "verte",
+      "mp": "verts",
+      "fp": "vertes"
+     }
+    },
+    {
+     "src": "Red",
+     "class": "color",
+     "forms": {
+      "m": "rouge",
+      "f": "rouge",
+      "mp": "rouges",
+      "fp": "rouges"
+     }
+    },
+    {
+     "src": "Yellow",
+     "class": "color",
+     "forms": {
+      "m": "jaune",
+      "f": "jaune",
+      "mp": "jaunes",
+      "fp": "jaunes"
+     }
+    },
+    {
+     "src": "Magenta",
+     "class": "color",
+     "forms": {
+      "m": "magenta",
+      "f": "magenta",
+      "mp": "magenta",
+      "fp": "magenta"
+     }
+    },
+    {
+     "src": "Brown",
+     "class": "color",
+     "forms": {
+      "m": "brun",
+      "f": "brune",
+      "mp": "bruns",
+      "fp": "brunes"
+     }
+    },
+    {
+     "src": "Grey",
+     "class": "color",
+     "forms": {
+      "m": "gris",
+      "f": "grise",
+      "mp": "gris",
+      "fp": "grises"
+     }
+    },
+    {
+     "src": "Gray",
+     "class": "color",
+     "forms": {
+      "m": "gris",
+      "f": "grise",
+      "mp": "gris",
+      "fp": "grises"
+     }
+    },
+    {
+     "src": "Dark",
+     "class": "color",
+     "forms": {
+      "m": "sombre",
+      "f": "sombre",
+      "mp": "sombres",
+      "fp": "sombres"
+     }
+    },
+    {
+     "src": "Crimson",
+     "class": "color",
+     "forms": {
+      "m": "écarlate",
+      "f": "écarlate",
+      "mp": "écarlates",
+      "fp": "écarlates"
+     }
+    },
+    {
+     "src": "Dusk",
+     "class": "color",
+     "forms": {
+      "m": "gris",
+      "f": "grise",
+      "mp": "gris",
+      "fp": "grises"
+     }
+    },
+    {
+     "src": "Purple",
+     "class": "color",
+     "forms": {
+      "m": "violet",
+      "f": "violette",
+      "mp": "violets",
+      "fp": "violettes"
+     }
+    },
+    {
+     "src": "Orange",
+     "class": "color",
+     "forms": {
+      "m": "orange",
+      "f": "orange",
+      "mp": "orange",
+      "fp": "orange"
+     }
+    },
+    {
+     "src": "Golden",
+     "class": "color",
+     "forms": {
+      "m": "doré",
+      "f": "dorée",
+      "mp": "dorés",
+      "fp": "dorées"
+     }
+    },
+    {
+     "src": "Silvery",
+     "class": "color",
+     "forms": {
+      "m": "argenté",
+      "f": "argentée",
+      "mp": "argentés",
+      "fp": "argentées"
+     }
+    }
+   ]
+  },
+  {
+   "name": "Races et peuples",
+   "terms": [
+    {
+     "src": "Elven",
+     "class": "people",
+     "forms": {
+      "m": "elfique",
+      "f": "elfique",
+      "mp": "elfiques",
+      "fp": "elfiques"
+     }
+    },
+    {
+     "src": "Nordic",
+     "class": "people",
+     "forms": {
+      "m": "nordique",
+      "f": "nordique",
+      "mp": "nordiques",
+      "fp": "nordiques"
+     }
+    },
+    {
+     "src": "Nord",
+     "class": "people",
+     "forms": {
+      "m": "nordique",
+      "f": "nordique",
+      "mp": "nordiques",
+      "fp": "nordiques"
+     }
+    },
+    {
+     "src": "Dwarven",
+     "class": "people",
+     "forms": {
+      "m": "dwemer",
+      "f": "dwemer",
+      "mp": "dwemer",
+      "fp": "dwemer"
+     }
+    },
+    {
+     "src": "Dwemer",
+     "class": "people",
+     "forms": {
+      "m": "dwemer",
+      "f": "dwemer",
+      "mp": "dwemer",
+      "fp": "dwemer"
+     }
+    },
+    {
+     "src": "Orcish",
+     "class": "people",
+     "forms": {
+      "m": "orque",
+      "f": "orque",
+      "mp": "orques",
+      "fp": "orques"
+     }
+    },
+    {
+     "src": "Daedric",
+     "class": "people",
+     "forms": {
+      "m": "daedrique",
+      "f": "daedrique",
+      "mp": "daedriques",
+      "fp": "daedriques"
+     }
+    },
+    {
+     "src": "Imperial",
+     "class": "people",
+     "forms": {
+      "m": "impérial",
+      "f": "impériale",
+      "mp": "impériaux",
+      "fp": "impériales"
+     }
+    },
+    {
+     "src": "Stormcloak",
+     "class": "people",
+     "forms": {
+      "m": "sombrage",
+      "f": "sombrage",
+      "mp": "sombrage",
+      "fp": "sombrage"
+     }
+    },
+    {
+     "src": "Akaviri",
+     "class": "people",
+     "forms": {
+      "m": "akaviri",
+      "f": "akaviri",
+      "mp": "akaviri",
+      "fp": "akaviri"
+     }
+    },
+    {
+     "src": "Bosmer",
+     "class": "people",
+     "forms": {
+      "m": "bosmer",
+      "f": "bosmer",
+      "mp": "bosmer",
+      "fp": "bosmer"
+     }
+    },
+    {
+     "src": "Altmer",
+     "class": "people",
+     "forms": {
+      "m": "altmer",
+      "f": "altmer",
+      "mp": "altmer",
+      "fp": "altmer"
+     }
+    },
+    {
+     "src": "Dunmer",
+     "class": "people",
+     "forms": {
+      "m": "dunmer",
+      "f": "dunmer",
+      "mp": "dunmer",
+      "fp": "dunmer"
+     }
+    },
+    {
+     "src": "Breton",
+     "class": "people",
+     "forms": {
+      "m": "breton",
+      "f": "bretonne",
+      "mp": "bretons",
+      "fp": "bretonnes"
+     }
+    },
+    {
+     "src": "Redguard",
+     "class": "people",
+     "forms": {
+      "m": "rougegarde",
+      "f": "rougegarde",
+      "mp": "rougegardes",
+      "fp": "rougegardes"
+     }
+    },
+    {
+     "src": "Khajiit",
+     "class": "people",
+     "forms": {
+      "m": "khajiit",
+      "f": "khajiit",
+      "mp": "khajiit",
+      "fp": "khajiit"
+     }
+    },
+    {
+     "src": "Argonian",
+     "class": "people",
+     "forms": {
+      "m": "argonien",
+      "f": "argonienne",
+      "mp": "argoniens",
+      "fp": "argoniennes"
+     }
+    },
+    {
+     "src": "Falmer",
+     "class": "people",
+     "forms": {
+      "m": "falmer",
+      "f": "falmer",
+      "mp": "falmer",
+      "fp": "falmer"
+     }
+    },
+    {
+     "src": "Forsworn",
+     "class": "people",
+     "forms": {
+      "m": "parjure",
+      "f": "parjure",
+      "mp": "parjures",
+      "fp": "parjures"
+     }
+    },
+    {
+     "src": "Ancient",
+     "class": "adj",
+     "forms": {
+      "m": "ancien",
+      "f": "ancienne",
+      "mp": "anciens",
+      "fp": "anciennes"
+     }
+    },
+    {
+     "src": "Atmoran",
+     "class": "people",
+     "forms": {
+      "m": "atmoran",
+      "f": "atmorane",
+      "mp": "atmorans",
+      "fp": "atmoranes"
+     }
+    },
+    {
+     "src": "Ayleid",
+     "class": "people",
+     "forms": {
+      "m": "ayléide",
+      "f": "ayléide",
+      "mp": "ayléides",
+      "fp": "ayléides"
+     }
+    },
+    {
+     "src": "Colovian",
+     "class": "people",
+     "forms": {
+      "m": "colovien",
+      "f": "colovienne",
+      "mp": "coloviens",
+      "fp": "coloviennes"
+     }
+    }
+   ]
+  },
+  {
+   "name": "Titres et métiers",
+   "terms": [
+    {
+     "src": "Knight",
+     "dst": "de chevalier",
+     "class": "origin"
+    },
+    {
+     "src": "Dragon Knight",
+     "dst": "de chevalier-dragon",
+     "class": "origin"
+    },
+    {
+     "src": "Hedge Knight",
+     "dst": "de chevalier errant",
+     "class": "origin"
+    },
+    {
+     "src": "Imperial Knight",
+     "dst": "de chevalier impérial",
+     "class": "origin"
+    },
+    {
+     "src": "Redguard Knight",
+     "dst": "de chevalier rougegarde",
+     "class": "origin"
+    },
+    {
+     "src": "Samurai",
+     "dst": "de samouraï",
+     "class": "origin"
+    },
+    {
+     "src": "Barbarian",
+     "dst": "de barbare",
+     "class": "origin"
+    },
+    {
+     "src": "Hero",
+     "dst": "de héros",
+     "class": "origin"
+    },
+    {
+     "src": "Barbarian Hero",
+     "dst": "de héros barbare",
+     "class": "origin"
+    },
+    {
+     "src": "Heroic",
+     "dst": "de héros",
+     "class": "origin"
+    },
+    {
+     "src": "Mage",
+     "dst": "de mage",
+     "class": "origin"
+    },
+    {
+     "src": "Battlemage",
+     "dst": "de mage de combat",
+     "class": "origin"
+    },
+    {
+     "src": "Hunter",
+     "dst": "de chasseur",
+     "class": "origin"
+    },
+    {
+     "src": "Mercenary",
+     "dst": "de mercenaire",
+     "class": "origin"
+    },
+    {
+     "src": "Paladin",
+     "dst": "de paladin",
+     "class": "origin"
+    },
+    {
+     "src": "Ranger",
+     "dst": "d'éclaireur",
+     "class": "origin"
+    },
+    {
+     "src": "Scout",
+     "dst": "d'éclaireur",
+     "class": "origin"
+    },
+    {
+     "src": "Shaman",
+     "dst": "de chaman",
+     "class": "origin"
+    },
+    {
+     "src": "Spellbinder",
+     "dst": "de maître-sorcier",
+     "class": "origin"
+    },
+    {
+     "src": "Vagabond",
+     "dst": "de vagabond",
+     "class": "origin"
+    },
+    {
+     "src": "Vanguard",
+     "dst": "d'avant-garde",
+     "class": "origin"
+    },
+    {
+     "src": "Warchief",
+     "dst": "de chef de guerre",
+     "class": "origin"
+    },
+    {
+     "src": "Brigand",
+     "dst": "de brigand",
+     "class": "origin"
+    },
+    {
+     "src": "Highwayman",
+     "dst": "de bandit de grand chemin",
+     "class": "origin"
+    },
+    {
+     "src": "Archer",
+     "dst": "d'archer",
+     "class": "origin"
+    },
+    {
+     "src": "Thief",
+     "dst": "de voleur",
+     "class": "origin"
+    },
+    {
+     "src": "Assassin",
+     "dst": "d'assassin",
+     "class": "origin"
+    },
+    {
+     "src": "Guard",
+     "dst": "de garde",
+     "class": "origin"
+    },
+    {
+     "src": "Soldier",
+     "dst": "de soldat",
+     "class": "origin"
+    },
+    {
+     "src": "Warrior",
+     "dst": "de guerrier",
+     "class": "origin"
+    },
+    {
+     "src": "Bandit",
+     "dst": "de bandit",
+     "class": "origin"
+    },
+    {
+     "src": "Necromancer",
+     "dst": "de nécromancien",
+     "class": "origin"
+    },
+    {
+     "src": "Vampire",
+     "dst": "de vampire",
+     "class": "origin"
+    },
+    {
+     "src": "Priest",
+     "dst": "de prêtre",
+     "class": "origin"
+    },
+    {
+     "src": "Officer",
+     "dst": "d'officier",
+     "class": "origin"
+    },
+    {
+     "src": "General",
+     "dst": "de général",
+     "class": "origin"
+    },
+    {
+     "src": "Captain",
+     "dst": "de capitaine",
+     "class": "origin"
+    },
+    {
+     "src": "Jarl",
+     "dst": "de jarl",
+     "class": "origin"
+    },
+    {
+     "src": "Seadog",
+     "dst": "de loup de mer",
+     "class": "origin"
+    },
+    {
+     "src": "Trollsbane",
+     "dst": "de tueur de trolls",
+     "class": "origin"
+    },
+    {
+     "src": "Snow Bear",
+     "dst": "de l'ours des neiges",
+     "class": "origin"
+    },
+    {
+     "src": "Stormlord",
+     "dst": "de seigneur sombrage",
+     "class": "origin"
+    },
+    {
+     "src": "Daedric Lord",
+     "dst": "de seigneur daedra",
+     "class": "origin"
+    },
+    {
+     "src": "Witchplate",
+     "dst": "de sorcier",
+     "class": "origin"
+    },
+    {
+     "src": "Ritual",
+     "dst": "du rituel",
+     "class": "origin"
+    },
+    {
+     "src": "Wolf",
+     "dst": "du Loup",
+     "class": "origin"
+    }
+   ]
+  },
+  {
+   "name": "Lieux et factions",
+   "terms": [
+    {
+     "src": "Tribunal",
+     "dst": "du Tribunal",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Vvardenfell",
+     "dst": "de Vvardenfell",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Falkreath",
+     "dst": "d'Épervine",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Whiterun",
+     "dst": "de Blancherive",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Solitude",
+     "dst": "de Solitude",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Windhelm",
+     "dst": "de Vendeaume",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Riften",
+     "dst": "de Faillaise",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Markarth",
+     "dst": "de Markarth",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Winterhold",
+     "dst": "de Fortdhiver",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Dawnstar",
+     "dst": "d'Aubétoile",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Morthal",
+     "dst": "de Morthal",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Jorrvaskr",
+     "dst": "de Jorrvaskr",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Skyforge",
+     "dst": "de la Forgeciel",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Dawnguard",
+     "dst": "de la Garde de l'aube",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Thalmor",
+     "dst": "du Thalmor",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Ysgramor",
+     "dst": "d'Ysgramor",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Sithis",
+     "dst": "de Sithis",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Boethiah",
+     "dst": "de Boéthia",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Einherjar",
+     "dst": "d'Einherjar",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Apotheus",
+     "dst": "d'Apothéus",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Gildergreen",
+     "dst": "du Vermidor",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Wild Hunt",
+     "dst": "de la Chasse sauvage",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Akatosh",
+     "dst": "d'Akatosh",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Talos",
+     "dst": "de Talos",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Mara",
+     "dst": "de Mara",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Dibella",
+     "dst": "de Dibella",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Arkay",
+     "dst": "d'Arkay",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Kynareth",
+     "dst": "de Kynareth",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Zenithar",
+     "dst": "de Zénithar",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Julianos",
+     "dst": "de Julianos",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Stendarr",
+     "dst": "de Stendarr",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Azura",
+     "dst": "d'Azura",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Molag Bal",
+     "dst": "de Molag Bal",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Mehrunes Dagon",
+     "dst": "de Mehrunes Dagon",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Alduin",
+     "dst": "d'Alduin",
+     "class": "origin",
+     "case": true
+    },
+    {
+     "src": "Silver Hand",
+     "dst": "de la Main d'argent",
+     "class": "origin",
+     "case": true
+    }
+   ]
+  },
+  {
+   "name": "Armures",
+   "terms": [
+    {
+     "src": "Armor",
+     "dst": "Armure",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Armour",
+     "dst": "Armure",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Heavy Armor",
+     "dst": "Cuirasse",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Light Armor",
+     "dst": "Armure",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Cuirass",
+     "dst": "Cuirasse",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Heavy Cuirass",
+     "dst": "Cuirasse",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Light Cuirass",
+     "dst": "Armure",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Boots",
+     "dst": "Bottes",
+     "class": "noun",
+     "gender": "fp"
+    },
+    {
+     "src": "Heavy Boots",
+     "dst": "Solerets",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Light Boots",
+     "dst": "Bottes",
+     "class": "noun",
+     "gender": "fp"
+    },
+    {
+     "src": "Gauntlets",
+     "dst": "Gantelets",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Heavy Gauntlets",
+     "dst": "Gantelets",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Light Gauntlets",
+     "dst": "Brassards",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Bracers",
+     "dst": "Brassards",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Heavy Bracers",
+     "dst": "Gantelets",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Light Bracers",
+     "dst": "Brassards",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Gloves",
+     "dst": "Gants",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Helmet",
+     "dst": "Casque",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Heavy Helmet",
+     "dst": "Heaume",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Light Helmet",
+     "dst": "Casque",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Helm",
+     "dst": "Heaume",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Great Helm",
+     "dst": "Grand heaume",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Heavy Mail",
+     "dst": "Cuirasse en mailles",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Light Mail",
+     "dst": "Armure en mailles",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Hood",
+     "dst": "Capuche",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Robe",
+     "dst": "Robe",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Robes",
+     "dst": "Robe",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Shield",
+     "dst": "Bouclier",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Buckler",
+     "dst": "Bouclier",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Round Shield",
+     "dst": "Rondache",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Kite Shield",
+     "dst": "Bouclier ovoïde",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Body Shield",
+     "dst": "Bouclier intégral",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Target Shield",
+     "dst": "Targe",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Targe",
+     "dst": "Targe",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Aegis",
+     "dst": "Égide",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Mask",
+     "dst": "Masque",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Mantle",
+     "dst": "Manteau",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Cape",
+     "dst": "Cape",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Cloak",
+     "dst": "Cape",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Shoulder Cape",
+     "dst": "Cape d'épaule",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Full Cape",
+     "dst": "Cape",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Shroud",
+     "dst": "Cape",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Coif",
+     "dst": "Coiffe",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Headdress",
+     "dst": "Coiffe",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Cap",
+     "dst": "Coiffe",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Circlet",
+     "dst": "Diadème",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Crown",
+     "dst": "Couronne",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Battlecrown",
+     "dst": "Couronne de guerre",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Greaves",
+     "dst": "Grèves",
+     "class": "noun",
+     "gender": "fp"
+    },
+    {
+     "src": "Vambraces",
+     "dst": "Brassards",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Hauberk",
+     "dst": "Haubert",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Shirt",
+     "dst": "Broigne",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Breastplate",
+     "dst": "Cuirasse",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Harness",
+     "dst": "Harnais",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Barbut",
+     "dst": "Barbut",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Tricorne",
+     "dst": "Tricorne",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Hat",
+     "dst": "Chapeau",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Shoes",
+     "dst": "Chaussures",
+     "class": "noun",
+     "gender": "fp"
+    },
+    {
+     "src": "Amulet",
+     "dst": "Amulette",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Necklace",
+     "dst": "Collier",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Ring",
+     "dst": "Anneau",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Earrings",
+     "dst": "Boucles d'oreilles",
+     "class": "noun",
+     "gender": "fp"
+    },
+    {
+     "src": "Bandana",
+     "dst": "Bandana",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Scarf",
+     "dst": "Écharpe",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Collar",
+     "dst": "Col",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Eyepatch",
+     "dst": "Cache-œil",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Clothes",
+     "dst": "Vêtements",
+     "class": "noun",
+     "gender": "mp"
+    }
+   ]
+  },
+  {
+   "name": "Armes",
+   "terms": [
+    {
+     "src": "Sword",
+     "dst": "Épée",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Greatsword",
+     "dst": "Espadon",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Dagger",
+     "dst": "Dague",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "War Axe",
+     "dst": "Hache de guerre",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Battleaxe",
+     "dst": "Hache de bataille",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Battle Axe",
+     "dst": "Hache de bataille",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Mace",
+     "dst": "Masse",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Warhammer",
+     "dst": "Marteau de guerre",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "War Hammer",
+     "dst": "Marteau de guerre",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Bow",
+     "dst": "Arc",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Arrow",
+     "dst": "Flèche",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Arrows",
+     "dst": "Flèches",
+     "class": "noun",
+     "gender": "fp"
+    },
+    {
+     "src": "Staff",
+     "dst": "Bâton",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Blade",
+     "dst": "Lame",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Spear",
+     "dst": "Lance",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Halberd",
+     "dst": "Hallebarde",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Katana",
+     "dst": "Katana",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Scimitar",
+     "dst": "Cimeterre",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Knife",
+     "dst": "Couteau",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Club",
+     "dst": "Gourdin",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Quarterstaff",
+     "dst": "Bâton de combat",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Crossbow",
+     "dst": "Arbalète",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Bolt",
+     "dst": "Carreau",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Bolts",
+     "dst": "Carreaux",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Longsword",
+     "dst": "Épée longue",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Shortsword",
+     "dst": "Épée courte",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Rapier",
+     "dst": "Rapière",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Saber",
+     "dst": "Sabre",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Claymore",
+     "dst": "Claymore",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Maul",
+     "dst": "Maillet",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Pickaxe",
+     "dst": "Pioche",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Woodcutter's Axe",
+     "dst": "Hache de bûcheron",
+     "class": "noun",
+     "gender": "f"
+    }
+   ]
+  },
+  {
+   "name": "Modificateurs",
+   "terms": [
+    {
+     "src": "Heavy",
+     "class": "adj",
+     "forms": {
+      "m": "renforcé",
+      "f": "renforcée",
+      "mp": "renforcés",
+      "fp": "renforcées"
+     }
+    },
+    {
+     "src": "Light",
+     "class": "adj"
+    },
+    {
+     "src": "Unarmored",
+     "dst": "d'apparat",
+     "class": "bound"
+    },
+    {
+     "src": "Engraved",
+     "class": "adj",
+     "forms": {
+      "m": "gravé",
+      "f": "gravée",
+      "mp": "gravés",
+      "fp": "gravées"
+     }
+    },
+    {
+     "src": "Reinforced",
+     "class": "adj",
+     "forms": {
+      "m": "renforcé",
+      "f": "renforcée",
+      "mp": "renforcés",
+      "fp": "renforcées"
+     }
+    },
+    {
+     "src": "Armored",
+     "class": "adj",
+     "forms": {
+      "m": "renforcé",
+      "f": "renforcée",
+      "mp": "renforcés",
+      "fp": "renforcées"
+     }
+    },
+    {
+     "src": "Padded",
+     "class": "adj",
+     "forms": {
+      "m": "molletonné",
+      "f": "molletonnée",
+      "mp": "molletonnés",
+      "fp": "molletonnées"
+     }
+    },
+    {
+     "src": "Painted",
+     "class": "adj",
+     "forms": {
+      "m": "peint",
+      "f": "peinte",
+      "mp": "peints",
+      "fp": "peintes"
+     }
+    },
+    {
+     "src": "Primitive",
+     "class": "adj",
+     "forms": {
+      "m": "primitif",
+      "f": "primitive",
+      "mp": "primitifs",
+      "fp": "primitives"
+     }
+    },
+    {
+     "src": "Runic",
+     "class": "adj",
+     "forms": {
+      "m": "runique",
+      "f": "runique",
+      "mp": "runiques",
+      "fp": "runiques"
+     }
+    },
+    {
+     "src": "Grand",
+     "class": "adj",
+     "forms": {
+      "m": "grandiose",
+      "f": "grandiose",
+      "mp": "grandioses",
+      "fp": "grandioses"
+     }
+    },
+    {
+     "src": "Stout",
+     "class": "adj",
+     "forms": {
+      "m": "robuste",
+      "f": "robuste",
+      "mp": "robustes",
+      "fp": "robustes"
+     }
+    },
+    {
+     "src": "Closed",
+     "class": "adj",
+     "forms": {
+      "m": "fermé",
+      "f": "fermée",
+      "mp": "fermés",
+      "fp": "fermées"
+     }
+    },
+    {
+     "src": "Tied",
+     "class": "adj",
+     "forms": {
+      "m": "noué",
+      "f": "nouée",
+      "mp": "noués",
+      "fp": "nouées"
+     }
+    },
+    {
+     "src": "Loose",
+     "class": "adj",
+     "forms": {
+      "m": "ample",
+      "f": "ample",
+      "mp": "amples",
+      "fp": "amples"
+     }
+    },
+    {
+     "src": "Tight",
+     "class": "adj",
+     "forms": {
+      "m": "serré",
+      "f": "serrée",
+      "mp": "serrés",
+      "fp": "serrées"
+     }
+    },
+    {
+     "src": "Honed",
+     "class": "adj",
+     "forms": {
+      "m": "affûté",
+      "f": "affûtée",
+      "mp": "affûtés",
+      "fp": "affûtées"
+     }
+    },
+    {
+     "src": "Antique",
+     "class": "adj",
+     "forms": {
+      "m": "antique",
+      "f": "antique",
+      "mp": "antiques",
+      "fp": "antiques"
+     }
+    },
+    {
+     "src": "Enchanted",
+     "class": "adj",
+     "forms": {
+      "m": "enchanté",
+      "f": "enchantée",
+      "mp": "enchantés",
+      "fp": "enchantées"
+     }
+    },
+    {
+     "src": "Rusty",
+     "class": "adj",
+     "forms": {
+      "m": "rouillé",
+      "f": "rouillée",
+      "mp": "rouillés",
+      "fp": "rouillées"
+     }
+    },
+    {
+     "src": "Old",
+     "class": "adj",
+     "forms": {
+      "m": "vieux",
+      "f": "vieille",
+      "mp": "vieux",
+      "fp": "vieilles"
+     }
+    },
+    {
+     "src": "Studded",
+     "class": "adj",
+     "forms": {
+      "m": "clouté",
+      "f": "cloutée",
+      "mp": "cloutés",
+      "fp": "cloutées"
+     }
+    },
+    {
+     "src": "Hardened",
+     "class": "adj",
+     "forms": {
+      "m": "durci",
+      "f": "durcie",
+      "mp": "durcis",
+      "fp": "durcies"
+     }
+    },
+    {
+     "src": "Classic",
+     "class": "adj",
+     "forms": {
+      "m": "classique",
+      "f": "classique",
+      "mp": "classiques",
+      "fp": "classiques"
+     }
+    },
+    {
+     "src": "Spiked",
+     "dst": "à pointes",
+     "class": "bound"
+    },
+    {
+     "src": "Splinted",
+     "dst": "à lamelles",
+     "class": "bound"
+    },
+    {
+     "src": "Horned",
+     "dst": "à cornes",
+     "class": "bound"
+    },
+    {
+     "src": "Claw",
+     "dst": "à griffes",
+     "class": "bound"
+    },
+    {
+     "src": "Veiled",
+     "dst": "à mailles",
+     "class": "bound"
+    },
+    {
+     "src": "Feathered",
+     "dst": "à plumes",
+     "class": "bound"
+    },
+    {
+     "src": "Masked",
+     "dst": "à masque",
+     "class": "bound"
+    },
+    {
+     "src": "Spectacle",
+     "dst": "à lunettes",
+     "class": "bound"
+    }
+   ]
+  },
+  {
+   "name": "Alchimie (degrés)",
+   "terms": [
+    {
+     "src": "Weak",
+     "class": "adj",
+     "forms": {
+      "m": "dilué",
+      "f": "diluée",
+      "mp": "dilués",
+      "fp": "diluées"
+     }
+    },
+    {
+     "src": "Standard",
+     "class": "adj",
+     "forms": {
+      "m": "commun",
+      "f": "commune",
+      "mp": "communs",
+      "fp": "communes"
+     }
+    },
+    {
+     "src": "Quality",
+     "class": "adj",
+     "forms": {
+      "m": "profus",
+      "f": "profuse",
+      "mp": "profus",
+      "fp": "profuses"
+     }
+    },
+    {
+     "src": "Potent",
+     "class": "adj",
+     "forms": {
+      "m": "puissant",
+      "f": "concentrée",
+      "mp": "puissants",
+      "fp": "concentrées"
+     }
+    },
+    {
+     "src": "Malign",
+     "class": "adj",
+     "forms": {
+      "m": "virulent",
+      "f": "virulente",
+      "mp": "virulents",
+      "fp": "virulentes"
+     }
+    },
+    {
+     "src": "Deadly",
+     "class": "adj",
+     "forms": {
+      "m": "mortel",
+      "f": "mortelle",
+      "mp": "mortels",
+      "fp": "mortelles"
+     }
+    },
+    {
+     "src": "Devastating",
+     "class": "adj",
+     "forms": {
+      "m": "mortel",
+      "f": "mortelle",
+      "mp": "mortels",
+      "fp": "mortelles"
+     }
+    },
+    {
+     "src": "Consummate",
+     "class": "adj",
+     "forms": {
+      "m": "suprême",
+      "f": "suprême",
+      "mp": "suprêmes",
+      "fp": "suprêmes"
+     }
+    },
+    {
+     "src": "Extreme",
+     "class": "adj",
+     "forms": {
+      "m": "suprême",
+      "f": "suprême",
+      "mp": "suprêmes",
+      "fp": "suprêmes"
+     }
+    },
+    {
+     "src": "Watered",
+     "class": "adj",
+     "forms": {
+      "m": "dilué",
+      "f": "diluée",
+      "mp": "dilués",
+      "fp": "diluées"
+     }
+    },
+    {
+     "src": "Stable",
+     "class": "adj",
+     "forms": {
+      "m": "commun",
+      "f": "commune",
+      "mp": "communs",
+      "fp": "communes"
+     }
+    },
+    {
+     "src": "Powerful",
+     "class": "adj",
+     "forms": {
+      "m": "profus",
+      "f": "profuse",
+      "mp": "profus",
+      "fp": "profuses"
+     }
+    },
+    {
+     "src": "Plentiful",
+     "class": "adj",
+     "forms": {
+      "m": "concentré",
+      "f": "concentrée",
+      "mp": "concentrés",
+      "fp": "concentrées"
+     }
+    }
+   ]
+  }
+ ]
+}

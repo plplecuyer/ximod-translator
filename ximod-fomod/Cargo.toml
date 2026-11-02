@@ -1,0 +1,18 @@
+[package]
+name = "ximod-fomod"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97"
+description = "FOMOD installer model, lossless XML patching and translation documents shared by XIMOD Architect and XIMOD Translator"
+license = "MIT"
+
+[dependencies]
+quick-xml = "0.37"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+indexmap = { version = "2", features = ["serde"] }
+anyhow = "1.0"
+chrono = "0.4"
+zip = { version = "2", default-features = false, features = ["deflate"] }
+sevenz-rust = "0.6"
+walkdir = "2.5"

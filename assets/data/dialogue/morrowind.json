@@ -1,0 +1,24 @@
+{
+ "format": 1,
+ "family": "morrowind",
+ "categories": {
+  "0": "dialog-cat-topic",
+  "1": "dialog-cat-voice",
+  "2": "dialog-cat-greeting",
+  "3": "dialog-cat-persuasion",
+  "4": "dialog-cat-journal"
+ },
+ "sceneCategory": -1,
+ "subtypes": {},
+ "emotions": [],
+ "questLink": "none",
+ "voice": {
+  "root": "Sound",
+  "extensions": [
+   "mp3",
+   "wav"
+  ],
+  "naming": "snam-path",
+  "folders": "none"
+ }
+}

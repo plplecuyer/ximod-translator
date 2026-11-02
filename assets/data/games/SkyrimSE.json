@@ -1,0 +1,33 @@
+{
+  "format": 1,
+  "id": "SkyrimSE",
+  "name": "The Elder Scrolls V: Skyrim Special Edition",
+  "engine": "tes4",
+  "pluginExtensions": [
+    "esp",
+    "esm",
+    "esl"
+  ],
+  "masters": [
+    "Skyrim.esm"
+  ],
+  "formVersions": [
+    44,
+    44
+  ],
+  "headerLen": 24,
+  "utf8": true,
+  "localizedStrings": true,
+  "stringsDir": "Strings",
+  "stringsLangStyle": "name",
+  "archiveExtension": "bsa",
+  "locksLocKeys": false,
+  "outputModes": [
+    "strings",
+    "hybrid",
+    "overridePatch",
+    "fullPlugin",
+    "dsd"
+  ],
+  "fieldsFile": "skyrimse"
+}

@@ -1,0 +1,362 @@
+game=Morrowind
+TES3:CNAM	00000000		1	-1	to_translate	Caeris
+TES3:SNAM	00000000		1	-1	to_translate	Enjoy!
+NPC_:FNAM	00000000	medyn gilnith	1	-1	to_translate	Medyn Gilnith
+CONT:FNAM	00000000	com_chest_02_ra'zhid	1	-1	to_translate	Chest
+MISC:FNAM	00000000	CS_HabasiBowl	1	-1	to_translate	Habasi's Dwemer Bowl
+MISC:FNAM	00000000	CS_HabasiGoblet	1	-1	to_translate	Habasi's Dwemer Goblet
+MISC:FNAM	00000000	CS_HabasiTube	1	-1	to_translate	Habasi's Dwemer Tube
+CONT:FNAM	00000000	CS_ShisharaCloset	1	-1	to_translate	Closet
+CONT:FNAM	00000000	CS_TG_VanelChest	1	-1	to_translate	Vanel's Small Chest
+ARMO:FNAM	00000000	CS_ShisharaMH	1	-1	to_translate	Redoran Master Helm
+BOOK:FNAM	00000000	CS_DwemerTGReceipt	1	-1	to_translate	Scribbled Receipt
+BOOK:TEXT	00000000	CS_DwemerTGReceipt	1	-1	to_translate	[This scribbled together note serves as a receipt acknowledging the purchase of Ra'Zhid's Special Wares by someone identified only as M. Whoever wrote this has terrible handwriting.]<p>
+BOOK:FNAM	00000000	CS_TG_MockingWrit1	1	-1	to_translate	Honorable Writ of Execution
+BOOK:TEXT	00000000	CS_TG_MockingWrit1	1	-1	to_translate	<DIV ALIGN="CENTER"><FONT COLOR="000000" SIZE="3" FACE="Magic Cards"><BR>\r\nErer Darothril<BR><BR>\r\n<DIV ALIGN="LEFT"><BR><BR>\r\nThe afore-mentioned personage has been marked for honorable execution in accordance to the lawful tradition and practice of the Morag Tong Guild. The Bearer of this non-disputable document has official sanctioned license to kill the afore-mentioned personage.<BR>\r\n<BR>\r\n<DIV ALIGN="CENTER">\r\n<IMG SRC="MoragTong.tga" WIDTH="96" HEIGHT="96"><BR>
+BOOK:FNAM	00000000	CS_TG_MockingWrit2	1	-1	to_translate	Honorable Writ of Execution
+BOOK:TEXT	00000000	CS_TG_MockingWrit2	1	-1	to_translate	[This writ is defaced with crosses, markings, and an odd doodle. Erer Darothril's name has also been crossed out and there's a little annotation that simply says: Nice try]<p>
+BOOK:FNAM	00000000	CS_ShisharaPillow	1	-1	to_translate	Boethiah's Pillow Book
+BOOK:TEXT	00000000	CS_ShisharaPillow	1	-1	to_translate	[No words can describe what you see. Or what you think you see.]<BR>
+BOOK:FNAM	00000000	CS_ShisharaCookbook	1	-1	to_translate	Redoran Cooking Secrets
+BOOK:TEXT	00000000	CS_ShisharaCookbook	1	-1	to_translate	<DIV ALIGN="CENTER"><FONT COLOR="000000" SIZE="3" FACE="Magic Cards"><BR>\r\nRedoran Cooking Secrets<BR><BR>\r\n<DIV ALIGN="LEFT"><BR><BR>\r\nCrab Meat and Scuttle<BR>\r\n<BR>\r\n2 handfuls of scuttle<BR>\r\n4 pinches of wickwheat<BR>\r\n1 large kwama egg<BR>\r\nthe meat of one mudcrab (two portions)<BR>\r\n1 handful of chopped bittergreen<BR>\r\n<BR>\r\nBeat eggs, wickwheat, and scuttle in a large bowl. Slowly stir in crabmeat and bittergreen. Bake covered in a hot over for one half hour to one hour (when a knife comes out clean).<BR>\r\n<BR>\r\nThe Hound and Rat<BR>\r\n<BR>\r\n1 pie crust<BR>\r\n1 pound of ground meat (mixed rat and hound)<BR>\r\na hand and a half of cooked saltrice<BR>\r\n1 handful of scuttle<BR>\r\n1 small kwama egg<BR>\r\na pinch of ash salts<BR>\r\n<BR>\r\nCook the mixed meat in a pan over an open flame. When the meat begins to brown, add the saltrice. Stir for a few moments and add the scuttle and kwama egg. When the kwama egg is fully cooked and the scuttle has melted, pour from the pan into the pie crust. Sprinkle with ash salts and cover the pie crust. Bake for one quarter hour in a hot oven.<BR>\r\n<BR>\r\n
+NPC_:FNAM	00000000	CS_DwemerCourier	1	-1	to_translate	Naril Velni
+CELL:NAME	00000000	Ald-ruhn, Guild of Mages	1	-1	to_translate	Ald-ruhn, Guild of Mages
+CELL:NAME	00000000	Sadrith Mora, Morag Tong Guild	1	-1	to_translate	Sadrith Mora, Morag Tong Guild
+CELL:NAME	00000000	Sadrith Mora, Tel Naga General Quarters	1	-1	to_translate	Sadrith Mora, Tel Naga General Quarters
+CELL:NAME	00000000	Shishara	1	-1	to_translate	Shishara
+DIAL:NAME	00000000	TG_OverduePayments	1	-1	to_translate	TG_OverduePayments
+INFO:NAME	00000000	2789251134413470	1	-1	to_translate	Sugar-Lips Habasi told me that Ra'Zhid at Fatleg's Drop Off in Hla Oad promised to deliver some Dwemer artifacts to the Thieves Guild. Habasi asked me to bring her a Dwemer tube, Dwemer goblet, and Dwemer bowl. Because Fatleg's Drop Off is well protected, Sugar-Lips Habasi suggested I speak with Wadarkhu in the Druegh-jigger's Rest in Gnaar Mok who may be able to help.
+INFO:NAME	00000000	15633210141226129063	1	-1	to_translate	I learned from the Thieves Guild in Gnaar Mok that the artifacts are taken by foot to Pelagiad, to a buyer there. While I could steal from Ra'Zhid directly, it would be risky. Instead, it was suggested that I steal the courier's receipt. I could intimidate the courier, persuade him, or simply pickpocket it from him. The courier is due to pick up the artifacts soon, so he is likely close to Hla Oad, on the road south to Seyda Neen. I could intercept him there.
+INFO:NAME	00000000	1838223376123178093	1	-1	to_translate	The courier provided me with the receipt.
+INFO:NAME	00000000	11780128601323227920	1	-1	to_translate	Ra'Zhid provided me with the shipment of Dwemer artifacts.
+DIAL:NAME	00000000	TG_RedoranCookbook	1	-1	to_translate	TG_RedoranCookbook
+INFO:NAME	00000000	875184162999524879	1	-1	to_translate	Aengoth the Jeweler told me that the Telvanni blackmailing him wants him to steal the book Redoran Cooking Secrets from Llethri Manor. It belongs to Dinara Othrelas, and Aengoth doesn't think it's that valuable, so he says I might be able to persuade her into giving it to me.
+INFO:NAME	00000000	18334289452462115781	1	-1	to_translate	I gave the book "Redoran Cooking Secrets" to Fara.
+INFO:NAME	00000000	1082814960229814156	1	-1	to_translate	Aengoth the Jeweler thanked me for delivering "Redoran Cooking Secrets."
+DIAL:NAME	00000000	TG_DartsJudgement	1	-1	to_translate	TG_DartsJudgement
+INFO:NAME	00000000	2735441372512117148	1	-1	to_translate	Aengoth the Jeweler told me that Eindel, a Bosmer archer in the Llethri Manor, has four Darts of Judgement. Aengoth needs me to steal them.
+INFO:NAME	00000000	23517242932437722238	1	-1	to_translate	Aengoth the Jeweler took the Darts of Judgement from me.
+INFO:NAME	00000000	156086716142487571	1	-1	to_translate	I told Aengoth the Jeweler that the Darts of Judgement were gone and he was disappointed.
+DIAL:NAME	00000000	TG_LootAldruhnMG	1	-1	to_translate	TG_LootAldruhnMG
+INFO:NAME	00000000	274712685139341517	1	-1	to_translate	Aengoth the Jeweler told me that he heard the Guild of Mages in Ald'ruhn is empty and that now would be a good time to fetch Anarenen's Devil Tanto.
+INFO:NAME	00000000	308249613190713647	1	-1	to_translate	Aengoth thanked me for bringing him Anarenen's Devil Tanto.
+DIAL:NAME	00000000	CS_TG_Redoran1	1	-1	to_translate	CS_TG_Redoran1
+INFO:NAME	00000000	2453522779207063924	1	-1	to_translate	Thieves Guild: The Redoran Heist Part I
+INFO:NAME	00000000	13496278932581923001	1	-1	to_translate	It has been a day; I should check on Aengoth the Jeweler.
+INFO:NAME	00000000	591924483327229368	1	-1	to_translate	Aengoth the Jeweler told me that his so-called client actually set him up, as he expected me or someone Aengoth would hire to kill Manis Virmaulese while looting the Ald'ruhn Mages Guild. Aengoth is now being blackmailed by the client, who Aengoth mentions is a Telvanni. Aengoth needs me to retrieve two items from the Redoran for him: a Redoran Master Helm and a book called Redoran Cooking Secrets.
+INFO:NAME	00000000	321805076131221654	1	-1	to_translate	Aengoth the Jeweler thanked me for getting him both the Redoran Master Helm and the Redoran Cooking Secrets book.
+DIAL:NAME	00000000	CS_TG_Redoran2	1	-1	to_translate	CS_TG_Redoran2
+INFO:NAME	00000000	26584641978967547	1	-1	to_translate	Thieves Guild: The Redoran Heist Part II
+INFO:NAME	00000000	27955178491056722861	1	-1	to_translate	Aengoth the Jeweler told me that the Telvanni blackmailing him has increased the pressure, and now Aengoth needs me to retrieve Gandosa Arobar's copy of Boethiah's Pillow Book and powerful darts known as the Darts of Judgement from Garisa Llethri's guard.
+INFO:NAME	00000000	1997830476634223172	1	-1	to_translate	Aengoth the Jeweler thanked me for all my help, and told me to wait a day while he sorts out his business with the Telvanni blackmailing him.
+DIAL:NAME	00000000	CS_TG_Justice	1	-1	to_translate	CS_TG_Justice
+INFO:NAME	00000000	1646311242975832380	1	-1	to_translate	Thieves Guild: A Thief's Lesson in Justice
+INFO:NAME	00000000	2562365441031449	1	-1	to_translate	Aengoth wants me to retrieve the Devil Tanto from Yak gro-Skandar in The Rat in the Pot and plant it at the Telvanni's headquarters, which Yak gro-Skandar will reveal to me. He also needs me to recover each of the stolen Redoran items. Aengoth reminded me these are: the Master Helm, Cookbook, and the Pillow Book. In order to plant the weapon successfully, I will need to do so undetected. Alternatively, I can kill the Telvanni and settle for less of a reward. I am to return the items to Yak gro-Skandar.
+INFO:NAME	00000000	20754201253761655	1	-1	to_translate	Yak gro-Skandar gave me Anarenen's Devil Tanto. Yak gro-Skandar told me that the Telvanni who set up Aengoth the Jeweler is holed up in a Velothi Tower called Shishara. The person in particular was Medyn Gilnith. I need to make sure I plant the Devil Tanto in the perfect place and ensure I do not get caught. If I do, or if this is too hard, Yak gro-Skandar told me to go for Medyn Gilnith, get the Redoran items, and get out. He provided me with a few supplies that might help me and wished me luck.
+INFO:NAME	00000000	16610232082808630069	1	-1	to_translate	I planted Anarenen's Devil Tanto.
+INFO:NAME	00000000	750867682422115479	1	-1	to_translate	I have been caught. Now the only way to get Aengoth out of prison is to kill Medyn Gilnith.
+INFO:NAME	00000000	30117138761847221054	1	-1	to_translate	Yak gro-Skandar thanked me for giving him the items. He will return these to the Redoran and let the Mages Guild know what has happened today.
+INFO:NAME	00000000	29886246302323123035	1	-1	to_translate	Aengoth thanked me for all of my help, and told me to meet him back at the Rat in the Pot for my reward.
+INFO:NAME	00000000	1448237993232321457	1	-1	to_translate	Aengoth provided me with a generous reward of four Darts of Judgement. Aengoth told me that if I ever need more, he can provide me with some from his newfound source. The price is 2000 gold for a set of four. With that, Aengoth told me that he has no more jobs for me, as he believes my skill exceeds the lower tier jobs he has in mind for the future, to avoid getting himself into more trouble.
+INFO:NAME	00000000	18994287282337318290	1	-1	to_translate	Aengoth provided me with a Dart of Judgement as a reward for my help. He said he had intended to give me a full set, but Medyn's death meant using some of the gold to pay off the Mages Guild. He told me that if I ever need more, he can provide me with some from his newfound source. The price is 2000 gold for a set of four. With that, Aengoth told me that he has no more jobs for me, as he believes my skill exceeds the lower tier jobs he has in mind for the future, to avoid getting himself into more trouble.
+DIAL:NAME	00000000	CS_TG_Mocking	1	-1	to_translate	CS_TG_Mocking
+INFO:NAME	00000000	11247187622172222336	1	-1	to_translate	Thieves Guild: The Mocking Writ
+INFO:NAME	00000000	20053209981673217759	1	-1	to_translate	Big Helende wants me to steal the writ against Erer Darothril and find out who ordered it. Helende does not want me to kill the individual, as she has a plan. She believes it was either the Camonna Tong or the Telvanni that did so, and told me to check Nevrila Areloth's house east of the market for the Camonna Tong, and the Council House or Tel Naga for the Telvanni.
+INFO:NAME	00000000	2558519331579830305	1	-1	to_translate	I found out that Vanel Serven ordered the writ against Erer Darothril.
+INFO:NAME	00000000	11403272523214815143	1	-1	to_translate	I found out that Vanel Serven likely ordered the writ against Erer Darothril when he was still alive.
+INFO:NAME	00000000	3041219554222951978	1	-1	to_translate	Big Helende thanked me for returning the writ to her. She has vandalized the writ and wants me to head to Tel Naga and find Vanel Serven's chambers. She wants me to plant the edited document in Vanel Serven's bedroom somewhere to show him we are untouchable. She suggested looking for a chest to put it in.
+INFO:NAME	00000000	282322746454885307	1	-1	to_translate	I planted the vandalized writ in Vanel Serven's personal chest.
+INFO:NAME	00000000	619241331195029284	1	-1	to_translate	Big Helende thanked me for my help and rewarded me with 1500 gold.
+INFO:NAME	00000000	2118413566308347306	1	-1	to_translate	Big Helende was disappointed that I killed the buyer. She provided me with 500 gold.
+INFO:NAME	00000000	265110201551727756	1	-1	to_translate	Big Helende was surprised that the buyer was already dead. She provided me with 1000 gold.
+DIAL:NAME	00000000	CS_TG_Gambit	1	-1	to_translate	CS_TG_Gambit
+INFO:NAME	00000000	309422366837753	1	-1	to_translate	Thieves Guild: The Jeweler's Gambit
+INFO:NAME	00000000	72288452219727375	1	-1	to_translate	It has been a day; I should check on Aengoth the Jeweler.
+INFO:NAME	00000000	7089148693115731951	1	-1	to_translate	Aengoth has been arrested for stealing from the Redoran and the Mages Guild, and also for Manis Virmaulese's murder.
+INFO:NAME	00000000	513676702787430423	1	-1	to_translate	Aengoth has no intention of escaping Fort Buckmoth. Instead, he has an idea to clear his name. He says thanks to his relationship with some of the councilors, the Redoran will agree to drop the charges against Aengoth if all stolen goods are returned. However, the Mages Guild is another matter. He needs me to speak with Skink-in-Tree's-Shade in the Mages Guild in Sadrith Mora and ask for his help with striking a deal with Edwinna Elbert of the Ald'ruhn Mages Guild.
+INFO:NAME	00000000	79089952274173317	1	-1	to_translate	Skink-in-Tree's-Shade told me that he will speak with Edwinna Elbert in exchange for a book called Withershins, which was apparently stolen from the guild by an Imperial. Miles Gloriosus at the Andus Tradehouse in Maar Gan keeps the copy.
+INFO:NAME	00000000	175095766195527392	1	-1	to_translate	Skink-in-Tree's-Shade thanked me for retrieving the book. He told me he has already spoken with Edwinna, but that she wants to meet me before going ahead.
+INFO:NAME	00000000	3050263541537320579	1	-1	to_translate	Edwinna thanked me for meeting her and told me that she will drop all charges against Aengoth so long as the person, who she assumes is a Telvanni, is arrested for the murder instead. She wants me to plant Anarenen's Devil Tanto in their base of operations. She says if it is too hard, she will accept the Telvanni's death, but at a cost negotiable with Aengoth.
+INFO:NAME	00000000	1362810455849117010	1	-1	to_translate	Aengoth thanked me for striking a deal with the Mages Guild, and told me to return to him when I am ready to finish this.
+DIAL:NAME	00000000	Writ against Erer Darothril	1	-1	to_translate	Writ against Erer Darothril
+INFO:NAME	00000000	9767132351896923346	1	-1	to_translate	What writ? There's no writ.
+INFO:NAME	00000000	100044372830529066	1	-1	to_translate	I already gave you the writ.
+INFO:NAME	00000000	797859687819846	1	-1	to_translate	Of course, Grandmaster. Here is the writ.
+INFO:NAME	00000000	103408092186887722	1	-1	to_translate	You want to handle this one yourself, %PCRank? Very well. It's yours.
+INFO:NAME	00000000	1827311592327605540	1	-1	to_translate	I'm not sure how you found out about it, but I'll be handling this one myself.
+INFO:NAME	00000000	20354297901904413720	1	-1	to_translate	I like you, %PCName, but I'm afraid this is business. I can't discuss this with you.
+INFO:NAME	00000000	2777283681348121901	1	-1	to_translate	I will not discuss this with you.
+INFO:ANAM	00000000	1188873753384148	1	-1	to_translate	Sadrith Mora, Morag Tong Guild
+INFO:NAME	00000000	1188873753384148	1	-1	to_translate	Only Dunsalipal would know who was given that writ, Grandmaster.
+INFO:ANAM	00000000	30975165451778529316	1	-1	to_translate	Sadrith Mora, Morag Tong Guild
+INFO:NAME	00000000	30975165451778529316	1	-1	to_translate	You should ask Dunsalipal; he distributes the writs.
+INFO:ANAM	00000000	2215429674150128621	1	-1	to_translate	Sadrith Mora, Morag Tong Guild
+INFO:NAME	00000000	2215429674150128621	1	-1	to_translate	You know we can't discuss this, %PCRank.
+INFO:ANAM	00000000	299368260103256808	1	-1	to_translate	Sadrith Mora, Morag Tong Guild
+INFO:NAME	00000000	299368260103256808	1	-1	to_translate	No one here will discuss this with you.
+INFO:NAME	00000000	861917006293848682	1	-1	to_translate	Thanks for sorting that out.
+INFO:NAME	00000000	1463232722674018583	1	-1	to_translate	I was a bit worried at first, but then Helende told me she was sending you. I have my utmost faith in you, friend.
+INFO:NAME	00000000	17765113501335132330	1	-1	to_translate	It is troubling. Please do not let me down.
+INFO:NAME	00000000	1838327750109028178	1	-1	to_translate	So, you killed him? I take it he caught you trying to pick his pocket. That's a shame. Still, you saved Erer Darothril's life. Please accept this reward. It's less than what I originally planned to give you had you pulled it off, but it's still something. I'm sure you understand. No hard feelings.
+INFO:NAME	00000000	727882941217321565	1	-1	to_translate	I'm impressed, %PCName. You've done an excellent job. Accept this reward, as you've certainly earned it.
+INFO:NAME	00000000	193167027835218080	1	-1	to_translate	Plant the writ in Vanel Serven's chambers in Tel Naga to teach him a lesson.
+INFO:NAME	00000000	1868126318295030425	1	-1	to_translate	Here, take it back. I've written a little note on the writ. Now, go to Tel Naga and find Vanel Serven's chambers. I want you to put this in Vanel Serven's bedroom somewhere. Look for a small chest belonging to him. When he finds it, he'll realize we're untouchable. The Morag Tong will probably offer him compensation, as they can't take the vandalized writ back. If they write up another one, we'll just do it again. But I don't think they will, because they'll have learned that we're untouchable too.
+INFO:NAME	00000000	985021526780210507	1	-1	to_translate	Good work, %PCName. Give that to me and wait a moment.
+INFO:NAME	00000000	268382744286697039	1	-1	to_translate	Hah! So, someone killed Vanel Serven after he ordered the writ? Sounds like he made some enemies. Thanks for getting me the writ too. Please accept this reward. You've earned it.
+INFO:NAME	00000000	10124289251682622065	1	-1	to_translate	So, you got the writ, found out who ordered it, and then killed him? Well, you still saved Erer Darothril's life, but I am a bit disappointed. I didn't want you to kill him. Still, please accept this reward. It's less than what I originally planned to give you had you pulled it off, but it's still something. I'm sure you understand. No hard feelings.
+INFO:NAME	00000000	4588149532913124332	1	-1	to_translate	I'm glad you found out who was behind it. Now, if you could get his writ, that would be excellent.
+INFO:NAME	00000000	28269211591075019135	1	-1	to_translate	Thanks for retrieving the writ, but can you find out who ordered it?
+INFO:NAME	00000000	1974618487154682881	1	-1	to_translate	Grab that writ for me, and find out who is responsible for ordering it.
+INFO:NAME	00000000	171285368195202085	1	-1	to_translate	Also, I need you to find out who ordered the writ. I suggest you subtly ask around about who has been having issues with Erer. I asked Erer, and he doesn't know. My guess is that we are either dealing with the Camonna Tong or the Telvanni. The Camonna Tong normally hang around Nevrila Areloth's house east of the market, and the best places to ask the Telvanni would be either the Council House or Tel Naga. Oh, and when you do find who ordered the writ, don't kill them. I have a much better plan.
+INFO:NAME	00000000	20700286111696118610	1	-1	to_translate	Obviously, we cannot let the Morag Tong carry out their writ against him. Find the assassin chosen to carry out this writ and take it from them. The assassin will be in their guild here in Sadrith Mora. They will only send their best to take him out, so look for their strongest member. Unless you have some sort of connection to the Morag Tong that I don't know of, I doubt they'll just hand it over. Unfortunately, they'll probably be keeping it on their person, so you'll likely need to pick their pocket.
+DIAL:NAME	00000000	Redoran Cooking Secrets	1	-1	to_translate	Redoran Cooking Secrets
+INFO:NAME	00000000	85831923199571288	1	-1	to_translate	I can't talk to you about this until you make amends.
+INFO:NAME	00000000	628147192312228835	1	-1	to_translate	Thank you again for bringing me the book.
+INFO:NAME	00000000	106122359110784378	1	-1	to_translate	Oh, you delivered the book to Fara?
+INFO:NAME	00000000	2663251003075119401	1	-1	to_translate	Well done, %PCRank. And take this, it could come in handy.
+INFO:NAME	00000000	23789260092699431781	1	-1	to_translate	Well, keep looking. I'm sure you can find it.
+INFO:NAME	00000000	17481415447320590	1	-1	to_translate	Have you found Dinara Othrelas' copy of Redoran Cooking Secrets?
+INFO:NAME	00000000	30370280831928023997	1	-1	to_translate	Bring me that cookbook.
+INFO:NAME	00000000	32273253841382532709	1	-1	to_translate	This is the kind of petty affairs you expect between the Telvanni and the Redoran. The Telvanni individual wants Dinara Othrelas' copy of "Redoran Cooking Secrets". It's an annoying waste of our time and resources, but what can we do? I've been told Dinara keeps it somewhere in Llethri Manor. It's not a hugely valuable possession, so maybe you can just persuade her to give it to you?
+INFO:NAME	00000000	13263154972624027934	1	-1	to_translate	You already brought me the book. I'm sure I'll win this year's contest.
+INFO:NAME	00000000	2803814228427516	1	-1	to_translate	Yes, this will definitely help me win this year's contest.
+INFO:NAME	00000000	21515761203323897	1	-1	to_translate	Well, find the book and bring it to me or Big Helende.
+INFO:NAME	00000000	2490713454264011323	1	-1	to_translate	So do you have the book with you?
+INFO:NAME	00000000	182623741322918270	1	-1	to_translate	Yes, I lost last year's contest because Dinara put ash salts in my dessert. This year, I've hired extra security... But if I also have Dinara's book of cooking secrets, I'm sure to win.
+INFO:NAME	00000000	24692166142301718225	1	-1	to_translate	I heard what you did. It won't make any difference. I'll still beat Fara like I did last year.
+INFO:NAME	00000000	601112910844032302	1	-1	to_translate	I heard what you did. It won't make any difference. I'll still beat Fara like I did last year.
+DIAL:NAME	00000000	Anareren's Devil Tanto	1	-1	to_translate	Anareren's Devil Tanto
+DIAL:NAME	00000000	Boethiah's Pillow Book	1	-1	to_translate	Boethiah's Pillow Book
+INFO:NAME	00000000	11603173851255815562	1	-1	to_translate	Thanks again for your help with that.
+INFO:NAME	00000000	9525116802602111359	1	-1	to_translate	Hm. Interesting books these Dunmer have. We're getting paid well for this job. I looked over the emergency supplies here and found a ring and amulet you might like. Just don't tell anyone I gave them to you, eh?
+INFO:NAME	00000000	1820128696250983861	1	-1	to_translate	I need that book. I can't keep my client waiting forever. I might have to hire someone else to get that book, if you know what I mean.
+INFO:NAME	00000000	356490401580731169	1	-1	to_translate	I need that book. I can't keep my client waiting forever. I might have to hire someone else to get that book, if you know what I mean.
+INFO:NAME	00000000	3033324731730423095	1	-1	to_translate	Well, I have a client that wanted some dirt on the Arobar family. Would you be willing to part with that book?
+INFO:NAME	00000000	852777701620214023	1	-1	to_translate	Oh. Well, a client of ours wants some dirt on Gandosa Arobar. If you find her copy of Boethiah's Pillow Book, give it to me and I'll give you a little something for your trouble.
+INFO:NAME	00000000	27376271801754517649	1	-1	to_translate	Is that Boethiah's Pillow Book? You didn't happen to find that in Arobar Manor, did you?
+INFO:NAME	00000000	1166228012882422360	1	-1	to_translate	Hm. Interesting books these Dunmer have. I looked over the emergency supplies here and found a ring and amulet you might like. Just don't tell anyone I gave them to you, eh?
+INFO:NAME	00000000	189501917434434997	1	-1	to_translate	Find that book for me.
+INFO:NAME	00000000	2880265852599717584	1	-1	to_translate	The Telvanni want dirt on the Arobar family. Apparently, Gandosa Arobar has a copy of this book, which has been banned by the Temple. Fetch the book and return it to me.
+DIAL:NAME	00000000	Anarenen's Devil Tanto	1	-1	to_translate	Anarenen's Devil Tanto
+INFO:NAME	00000000	24958107202895421525	1	-1	to_translate	You already gave me the Devil Tanto.
+INFO:NAME	00000000	3035330461901827399	1	-1	to_translate	Let Aengoth know the good news.
+INFO:NAME	00000000	16768178183237412401	1	-1	to_translate	It's a shame you had to resort to violence. Still, you did a great job. I'll take these from you and contact both the Redoran and the Mages Guild. You go tell Aengoth the good news.
+INFO:NAME	00000000	171684563964331040	1	-1	to_translate	You are an example to all of us, %PCName. Good work out there! I'll take these from you and contact both the Redoran and the Mages Guild. You go tell Aengoth the good news.
+INFO:NAME	00000000	25847212271928031304	1	-1	to_translate	I'm sorry to hear that they caught you. Good work getting the Redoran's items back, but it won't be enough. Go back to Shishara and kill Medyn Gilnith. There's no other way.
+INFO:NAME	00000000	29202977193729069	1	-1	to_translate	It's unfortunate that you got caught. You have no choice now but to go back to Shishara and kill Medyn Gilnith. And don't forget the Redoran's items.
+INFO:NAME	00000000	294812305334223942	1	-1	to_translate	Good work planting the tanto at Shishara. But where are the Redoran's stolen goods?
+INFO:NAME	00000000	2052019666951332080	1	-1	to_translate	Head to Shishara, plant the tanto, recover the stolen Redoran items, and then return them to me.
+INFO:NAME	00000000	261329181128422023	1	-1	to_translate	Oh, and here are a few supplies. I'm sure you'll find them useful. Good luck, %PCName.
+INFO:NAME	00000000	1870124032144332694	1	-1	to_translate	Here you are. The name of the Telvanni that set up Aengoth the Jeweler is Medyn Gilnith, who operates in a Velothi Tower by the name of Shishara. As he leads the operation, his chambers are likely at the top of the tower. Try and plant the weapon in a closet there. Do not get caught. If you do, you'll have no choice but to kill the Telvanni. Aim for Medyn and get out of there. Don't forget to collect each of the Redoran items too and bring them back to me. They're just as important to the plan.
+INFO:NAME	00000000	2568166731733721721	1	-1	to_translate	A mage was there? Well, I'm glad you were able to avoid him. Seems like the buyer's source was wrong, so I'll charge the buyer a little extra. I'll take that Devil Tanto from you; you can keep anything else you found. I'll have to focus on these negotiations with the buyer for now. Give me a day to get all this sorted and we can discuss whatever jobs I can offer you.
+INFO:NAME	00000000	2185528502307216796	1	-1	to_translate	A mage was there and attacked you? Damn. Seems like the buyer's source was wrong. I will have to charge the buyer extra. A dead member of the Mages Guild is very bad for business. If they find out we're responsible, we'd be in a lot of trouble. Still, that's not your concern. I'll take the Devil Tanto from you; you can keep anything else you found. I'll have to focus on this for now. Give me a day to get all this sorted and we can discuss whatever jobs I can offer you.
+INFO:NAME	00000000	274911854222974960	1	-1	to_translate	Bring me that tanto, %PCRank.
+INFO:NAME	00000000	2013624711243725845	1	-1	to_translate	As I said, my client claims to have a source in the Mages Guild that says they'll all be gone for a while. Go in there and take whatever you want, but be sure to bring me Anarenen's Devil Tanto.
+DIAL:NAME	00000000	courier with a receipt	1	-1	to_translate	courier with a receipt
+INFO:NAME	00000000	159719038103441212	1	-1	to_translate	%Name doesn't think any good can come from speaking of him.
+INFO:NAME	00000000	2048528244283557346	1	-1	to_translate	%Name doesn't think you should worry about the courier. The courier might lose his job. But %Name doubts the courier will lose his head. %Name thinks we will not see the courier again.
+INFO:NAME	00000000	14969345384282973	1	-1	to_translate	You killed the courier? That is very unprofessional. At least you have the receipt. Get the Dwemer artifacts from Ra'Zhid in Fatleg's Drop Off and deliver them to Sugar-Lips Habasi in Balmora.
+INFO:NAME	00000000	1407431942108031198	1	-1	to_translate	You have the receipt? Good. Get the Dwemer artifacts from Ra'Zhid in Fatleg's Drop Off and deliver them to Sugar-Lips Habasi in Balmora.
+INFO:NAME	00000000	100993261857018295	1	-1	to_translate	%Name suggests you hurry. If the courier gets hold of the artifacts, the courier might use magic to recall back to the buyer, and then it is too late.
+INFO:NAME	00000000	1201978212949320611	1	-1	to_translate	The courier travels by foot. %Name thinks the courier must be close to Hla Oad by now. Take a boat from Gnaar Mok to Hla Oad, and walk the path south out of the town heading towards Seyda Neen. You need the courier's receipt. Intimidate the courier, trick the courier, or pick the pocket of the courier. But do not kill the courier. We are thieves, not assassins. %Name thinks if the buyer doesn't receive the artifacts, it will hurt Ra'Zhid's reputation, and Ra'Zhid will not steal from us again.
+DIAL:NAME	00000000	Redoran Master Helm	1	-1	to_translate	Redoran Master Helm
+INFO:NAME	00000000	234946453787912522	1	-1	to_translate	Thanks again.
+INFO:NAME	00000000	25633151693140617565	1	-1	to_translate	Good work. Here. Take a little gold for your trouble.
+INFO:NAME	00000000	269881975755487861	1	-1	to_translate	Well, get us a Redoran Master Helm, %PCName.
+INFO:NAME	00000000	4038236141108721305	1	-1	to_translate	A client of ours wants a Redoran Master Helm, and I see you have one on you. Will you hand this over to the Guild, or get us another one?
+INFO:NAME	00000000	2121331106105496573	1	-1	to_translate	Did you get a Redoran Master Helm?
+INFO:NAME	00000000	2654716076671127360	1	-1	to_translate	Find a Redoran Master Helm and bring it to me.
+INFO:NAME	00000000	914927503201548325	1	-1	to_translate	Most of the Councilors in House Redoran have one, but they can be hard to find. I know Miner Arobar has one, probably in his bedroom. You'd have to check Arobar Manor in Ald'ruhn, Under-Skar.
+DIAL:NAME	00000000	Aengoth the Jeweler	1	-1	to_translate	Aengoth the Jeweler
+INFO:NAME	00000000	1681517713165875769	1	-1	to_translate	I'm glad that it all worked out for him.
+INFO:NAME	00000000	1965618198855925666	1	-1	to_translate	He's free now. There's nothing more to talk about.
+INFO:NAME	00000000	6478294101862910527	1	-1	to_translate	I've outlined the terms of the deal.
+INFO:NAME	00000000	15912324381259711560	1	-1	to_translate	I'm assuming Aengoth still has Anarenen's tanto hidden somewhere? If you or someone else plants it in the Telvanni's headquarters, I will tip the Imperial Legion, and they'll find it and presumably accuse the Telvanni instead. Although you are a member of the Thieves Guild, I must emphasize, do not kill the Telvanni responsible. We want real justice. If you do kill the Telvanni, I'll still ensure blame is placed on them, but it will cost Aengoth extra.
+INFO:NAME	00000000	1799221742435714793	1	-1	to_translate	I would never have guessed our Arch-Mage is doubling as a member of the Thieves Guild. Just... why? Never mind. I don't want to know. Alright, let's talk about the business at hand. I will tell the Imperial Legion that Aengoth is not responsible for the death of Manis Virmaulese, in exchange for your cooperation in bringing the Telvanni behind this to justice.
+INFO:NAME	00000000	31251271282113111509	1	-1	to_translate	So, being a member of the Mages Guild was not enough for you? You also chose to work for thieves? As long as your responsibilities do not cross again, I will keep quiet. Alright, let's talk about the business at hand. I will tell the Imperial Legion that Aengoth is not responsible for the death of Manis Virmaulese, in exchange for your cooperation in bringing the Telvanni behind this to justice.
+INFO:NAME	00000000	1660882642315312677	1	-1	to_translate	You're the one Skink-in-Tree's-Shade mentioned. Alright. Let's talk about the business at hand. I will tell the Imperial Legion that Aengoth is not responsible for the death of Manis Virmaulese, in exchange for your cooperation in bringing the Telvanni behind this to justice.
+INFO:NAME	00000000	88374023119179837	1	-1	to_translate	I have done my part. The rest is up to you.
+INFO:NAME	00000000	3124215010177631263	1	-1	to_translate	Thank you. I have spoken with Edwinna. It was a tough conversation, but she understands now. Her frustration is directed at the Telvanni who blackmailed Aengoth, and no longer at Aengoth himself. She wants to speak with you directly about the matter, as she has some conditions. I also ask that you kindly keep my business with the Thieves Guild out of the conversation. I asked her to overlook the fact that our Arch-Mage is also a member of the Thieves Guild, so I'd appreciate the same kindness. Thanks again.
+INFO:NAME	00000000	14677686185077784	1	-1	to_translate	Thank you. I spoke with Edwinna. It was a tough conversation, but she understands now. Her frustration is directed at the Telvanni who blackmailed Aengoth, and no longer at Aengoth himself. She wants to speak with you directly about the matter, as she has some conditions. I also ask that you kindly keep my business with the Thieves Guild out of the conversation. I asked her to overlook the fact that you're with both the Mages Guild and the Thieves Guild, so I'd appreciate the same courtesy. Thanks again.
+INFO:NAME	00000000	246352298121814173	1	-1	to_translate	Thank you. I have spoken with Edwinna. It was a tough conversation, but she understands now. Her frustration is directed at the Telvanni who blackmailed Aengoth, and no longer at Aengoth himself. She wants to speak with you directly about the matter, as she has some conditions. When you do speak with her, I'm sure it goes without saying, but I'd appreciate it if you kept my business with the Thieves Guild out of the conversation. Thanks again for the book.
+INFO:NAME	00000000	2920112452867323593	1	-1	to_translate	Provide me with a copy of Withershins in exchange for my help.
+INFO:NAME	00000000	1995942462439327216	1	-1	to_translate	Edwinna told me she kept a copy of this book in the Ald'ruhn Mages Guild. But when I went to find it, I learned someone had already purchased it from the guild. Miles Gloriosus, who stays at the Andus Tradehouse in Maar Gan, has the copy. It feels strange asking this of the Arch-Mage, but since you are also with the Thieves Guild, kindly 'acquire' it from Miles while I speak with Edwinna. Actually, I'll accept any copy you find, but I know he was the buyer of the one I originally sought.
+INFO:NAME	00000000	4302224941122914245	1	-1	to_translate	Edwinna told me she kept a copy of this book in the Ald'ruhn Mages Guild. But when I went to find it, I learned someone had already purchased it from the guild. Miles Gloriosus, who stays at the Andus Tradehouse in Maar Gan, has the copy. Acquire it from him while I speak with Edwinna. Actually, I'll accept any copy you find, but I know he was the buyer of the one I originally sought. Oh, and as you are also a member of the Mages Guild, please do not take me asking this of you as condoning theft.
+INFO:NAME	00000000	14917334162517491	1	-1	to_translate	Edwinna told me she kept a copy of this book in the Ald'ruhn Mages Guild. But when I went to find it, I learned someone had already purchased it from the guild. Miles Gloriosus, who stays at the Andus Tradehouse in Maar Gan, has the copy. Acquire it from him while I speak with Edwinna. Actually, I'll accept any copy you find, but I know he was the buyer of the one I originally sought.
+INFO:NAME	00000000	1227577211642312466	1	-1	to_translate	I heard what he did, and I don't believe it. I have met Aengoth before. I pride myself on my ability to read others, and the Thieves Guild, and Aengoth, are not murderers. If you are saying a Telvanni set up the Thieves Guild, then they are to blame, and no one else. I will clear this up with Edwinna. While I do this, I hope you don't mind me asking for a favor in return. Someone has something I want, and since you're not busy, I would like you to bring it to me. It's a book called "Withershins".
+INFO:NAME	00000000	26858165111291012509	1	-1	to_translate	Thanks to you, he'll soon be free.
+INFO:ANAM	00000000	6533166892435216324	1	-1	to_translate	Ald-ruhn, The Rat In The Pot
+INFO:NAME	00000000	6533166892435216324	1	-1	to_translate	Aengoth was arrested. He's in Fort Buckmoth.
+INFO:ANAM	00000000	2566912041404021699	1	-1	to_translate	Ald-ruhn, The Rat In The Pot
+INFO:NAME	00000000	2566912041404021699	1	-1	to_translate	Aengoth was arrested for the murder of a mage and for stealing from the Redoran and the Mages Guild. You can find him at Fort Buckmoth.
+INFO:NAME	00000000	69689737310215888	1	-1	to_translate	He usually operates in Ald'ruhn, but he's been arrested. He's in Fort Buckmoth now.
+INFO:NAME	00000000	859617156269269877	1	-1	to_translate	He usually operates in Ald'ruhn, but he's been arrested. He's in Fort Buckmoth now.
+INFO:NAME	00000000	134051556296376119	1	-1	to_translate	He's arrested.
+INFO:NAME	00000000	27391867111473807	1	-1	to_translate	He usually operates in Ald'ruhn, but he's been arrested. He's in Fort Buckmoth now.
+INFO:ANAM	00000000	2092622708290651790	1	-1	to_translate	Ald-ruhn
+INFO:NAME	00000000	2092622708290651790	1	-1	to_translate	We thought he had killed one of our mages, but it turns out, it was a rogue Telvanni.
+INFO:ANAM	00000000	75491359964599723	1	-1	to_translate	Ald-ruhn
+INFO:NAME	00000000	75491359964599723	1	-1	to_translate	He was arrested for killing one of our mages.
+INFO:ANAM	00000000	189911489427386520	1	-1	to_translate	Ald-ruhn
+INFO:NAME	00000000	189911489427386520	1	-1	to_translate	He was arrested for a while, but apparently it was all a misunderstanding.
+INFO:ANAM	00000000	12433245691196320407	1	-1	to_translate	Ald-ruhn
+INFO:NAME	00000000	12433245691196320407	1	-1	to_translate	He's just some Bosmer who was framed for something he didn't do. Turns out it was someone else.
+INFO:ANAM	00000000	72613147785213588	1	-1	to_translate	Ald-ruhn
+INFO:NAME	00000000	72613147785213588	1	-1	to_translate	Everyone's talking about him. Apparently he led a string of heists around the city, and even murdered a mage.
+INFO:ANAM	00000000	10523257602618114965	1	-1	to_translate	Ald-ruhn
+INFO:NAME	00000000	10523257602618114965	1	-1	to_translate	Check The Rat in the Pot. That's all I know.
+INFO:ANAM	00000000	20015290041692611864	1	-1	to_translate	Ald-ruhn
+INFO:NAME	00000000	20015290041692611864	1	-1	to_translate	I have nothing to say about that now.
+DIAL:NAME	00000000	Intimidate Success	1	-1	to_translate	Intimidate Success
+INFO:NAME	00000000	7573165692735624244	1	-1	to_translate	Alright, I get it. Don't hurt me, please. Here's the receipt. Just leave me alone.
+DIAL:NAME	00000000	Darts of Judgement	1	-1	to_translate	Darts of Judgement
+INFO:NAME	00000000	1032599531223351	1	-1	to_translate	No problem.
+INFO:NAME	00000000	554617991043020682	1	-1	to_translate	Thanks. Here you are. Take an extra one on the house.
+INFO:NAME	00000000	13153199792681324658	1	-1	to_translate	Thanks. Here you are.
+INFO:NAME	00000000	2717124734149316521	1	-1	to_translate	Sorry. You don't have enough gold.
+INFO:NAME	00000000	318602989620667783	1	-1	to_translate	Sure. I can get you another set. It will cost you 2000 gold.
+INFO:NAME	00000000	253522969535623419	1	-1	to_translate	Here's 2000 septims for the Darts. You've done pretty good work for me, %PCRank. If you've got a price on your head, I'll see if I can't take care of it.
+INFO:NAME	00000000	254145780283283149	1	-1	to_translate	Here's 1500 septims for the Darts. You've done pretty good work for me, %PCRank. If you've got a price on your head, I'll see if I can't take care of it.
+INFO:NAME	00000000	1486412527258484984	1	-1	to_translate	Here's 1000 septims for the Darts. You've done pretty good work for me, %PCRank. If you've got a price on your head, I'll see if I can't take care of it.
+INFO:NAME	00000000	25742108381534816858	1	-1	to_translate	Here's 500 septims for the Dart. You've done pretty good work for me, %PCRank. If you've got a price on your head, I'll see if I can't take care of it.
+INFO:NAME	00000000	128451230346628089	1	-1	to_translate	You put them to good use, then. You've done pretty good work for me, %PCRank. If you've got a price on your head, I'll see if I can't take care of it.
+INFO:NAME	00000000	2324377901351912514	1	-1	to_translate	Excellent work out there, %PCRank. Here's 2000 septims for the Darts.
+INFO:NAME	00000000	1710930961531824643	1	-1	to_translate	That's disappointing. Still, I'm not sure if it would have made a difference. The Telvanni was more focused on the dirt and I'm guessing the darts were intended to add insult to injury.
+INFO:NAME	00000000	12370833994404676	1	-1	to_translate	Thank you.
+INFO:NAME	00000000	207525616198175818	1	-1	to_translate	Bring the darts to me.
+INFO:NAME	00000000	255911509131683354	1	-1	to_translate	Eindel is a Bosmer like me. She has four Darts of Judgement. They're very rare darts made in my home province of Valenwood. Eindel is a guard at Llethri Manor in Ald'ruhn.
+DIAL:NAME	00000000	Dwemer artifacts	1	-1	to_translate	Dwemer artifacts
+INFO:NAME	00000000	1178827732781011393	1	-1	to_translate	Habasi looks. Yes, a Dwemer tube, a Dwemer bowl, a Dwemer goblet. All here. You have done Habasi a favor and Habasi does you a favor. Habasi gives you some tools.
+INFO:NAME	00000000	1325328534240305774	1	-1	to_translate	Get them from Ra'Zhid while Ra'Zhid still has them.
+INFO:NAME	00000000	10710286228166183	1	-1	to_translate	You have Ra'Zhid's Dwemer artifacts?
+INFO:NAME	00000000	7368138471054730439	1	-1	to_translate	Get them from Ra'Zhid while Ra'Zhid still has them.
+INFO:NAME	00000000	223815512493222338	1	-1	to_translate	No, Ra'Zhid is a liar. Ra'Zhid has the Dwemer artifacts. Habasi knows this. If you kill Ra'Zhid, Habasi thinks less of you, but that is all. If you steal from Ra'Zhid, Habasi thinks you are clever. Go back to Hla Oad, find the Dwemer goblet, bowl, and tube, and bring them all to Habasi.
+INFO:NAME	00000000	25967322452727227524	1	-1	to_translate	No, Ra'Zhid is a liar, like all Khajiit men. Ra'Zhid has the Dwemer artifacts. Habasi knows this. If you kill Ra'Zhid, Habasi thinks less of you, but that is all. If you steal from Ra'Zhid, Habasi thinks you are clever. Go back to Hla Oad, find the Dwemer goblet, bowl, and tube, and bring them all to Habasi.
+INFO:NAME	00000000	1966190342088824030	1	-1	to_translate	Please deliver them to your employer swiftly. We will not speak of them again until we next do business.
+INFO:NAME	00000000	5681101712199717242	1	-1	to_translate	%Name thanks your employer for his continued business.
+INFO:NAME	00000000	1675219421662232765	1	-1	to_translate	I gave you the receipt already.
+INFO:NAME	00000000	2838732861613516063	1	-1	to_translate	Oh, Ra'Zhid must have sent you. I thought I was meant to pick up the artifacts and deliver them myself, but if you're here saying otherwise, take the receipt. I'm sure you know where to deliver them. Thanks for your help. I guess I'll start heading back.
+INFO:NAME	00000000	1217577232743026948	1	-1	to_translate	How do you know about those? Look, I don't want any trouble. Just leave me alone.
+INFO:NAME	00000000	610228375131113034	1	-1	to_translate	To get the artifacts, you should find the courier with the receipt.
+INFO:NAME	00000000	23031209491345118519	1	-1	to_translate	Yes, Ra'Zhid acquires and sells these artifacts on behalf of our enemies, the Camonna Tong. But %Name hears business has been slow, because Ra'Zhid's sources are now dealing in more than Dwemer goods. %Name has heard Ra'Zhid has already sold the artifacts, but the buyer has yet to come to collect. We cannot let Ra'Zhid get away with this, or he will do it again, and the Thieves Guild will become his new source. %Name has learned the buyer is in Pelagiad, and has sent a courier with a receipt.
+INFO:NAME	00000000	22868983018850449	1	-1	to_translate	Ra'Zhid ordered artifacts from %Name but never paid. The guild has learned Ra'Zhid is aligned with our enemies, who usually have their own sources. Ra'Zhid must be in Fatleg's Drop Off in Hla Oad, but it is well protected. Try talking to Wadarkhu in Gnaar Mok, the Druegh-jigger's Rest. He's been watching Ra'Zhid's business. Otherwise, you can always risk stealth. You must bring Habasi a Dwarven goblet, a Dwarven bowl, and a Dwemer tube, but they must be Habasi's, because Ra'Zhid must learn his lesson.
+INFO:NAME	00000000	186065066243399448	1	-1	to_translate	So you know who's who around here. Ra'Zhid does not have the Dwemer artifacts. Understand? Run along, kitten.
+INFO:NAME	00000000	2032240142386719995	1	-1	to_translate	Ra'Zhid teaches you a lesson.
+INFO:NAME	00000000	2920626030746112878	1	-1	to_translate	Ra'Zhid sees that you've been sniffing around. Will you give those artifacts back to Ra'Zhid, or will Ra'Zhid kill you?
+INFO:NAME	00000000	180167512227784148	1	-1	to_translate	What Dwemer artifacts?
+DIAL:NAME	00000000	Erer Darothril	1	-1	to_translate	Erer Darothril
+INFO:NAME	00000000	5278568641295066	1	-1	to_translate	He's just some low-life thief pretending to be some sort of powerful mage. He insults House Telvanni by going around calling himself a master of Illusion magic and choosing to associate himself with not just the Thieves Guild but also the Mages Guild, here in Sadrith Mora, a great Telvanni city of all places! The others here don't share my sentiment, but given all the Thieves Guild activity here lately, they ought to be angry. If no one else handles him, then I will. Mark my words.
+INFO:NAME	00000000	1858912700251718410	1	-1	to_translate	If I trusted you, I would consider telling you. But I don't trust you.
+INFO:NAME	00000000	28582924233644996	1	-1	to_translate	I do not care.
+INFO:ANAM	00000000	7651411774853359	1	-1	to_translate	Sadrith Mora, Tel Naga Upper Tower
+INFO:NAME	00000000	7651411774853359	1	-1	to_translate	When he was alive, Vanel Serven voiced his frustration with him. Vanel had a fragile ego that was greater than his skill. He was upset with the claim that Erer is a master of Illusion magic and aligns himself with both the Thieves Guild and the Mages Guild, but not the Telvanni, despite operating in a Telvanni city. Though, I suspect it was more jealousy of Erer's talents, given he had similar issues with Ardarume. Vanel's tantrums were an embarrassment to us. But he's gone now. No sense in dwelling on it.
+INFO:ANAM	00000000	261765709177636428	1	-1	to_translate	Sadrith Mora, Tel Naga Upper Hall
+INFO:NAME	00000000	261765709177636428	1	-1	to_translate	When he was alive, Vanel Serven voiced his frustration with him. Vanel had a fragile ego that was greater than his skill. He was upset with the claim that Erer is a master of Illusion magic and aligns himself with both the Thieves Guild and the Mages Guild, but not the Telvanni, despite operating in a Telvanni city. Though, I suspect it was more jealousy of Erer's talents, given he had similar issues with Ardarume. Vanel's tantrums were an embarrassment to us. But he's gone now. No sense in dwelling on it.
+INFO:ANAM	00000000	211224942139029721	1	-1	to_translate	Sadrith Mora, Tel Naga Great Hall
+INFO:NAME	00000000	211224942139029721	1	-1	to_translate	When he was alive, Vanel Serven voiced his frustration with him. Vanel had a fragile ego that was greater than his skill. He was upset with the claim that Erer is a master of Illusion magic and aligns himself with both the Thieves Guild and the Mages Guild, but not the Telvanni, despite operating in a Telvanni city. Though, I suspect it was more jealousy of Erer's talents, given he had similar issues with Ardarume. Vanel's tantrums were an embarrassment to us. But he's gone now. No sense in dwelling on it.
+INFO:ANAM	00000000	27980140532949310054	1	-1	to_translate	Sadrith Mora, Tel Naga General Quarters
+INFO:NAME	00000000	27980140532949310054	1	-1	to_translate	When he was alive, Vanel Serven voiced his frustration with him. Vanel had a fragile ego that was greater than his skill. He was upset with the claim that Erer is a master of Illusion magic and aligns himself with both the Thieves Guild and the Mages Guild, but not the Telvanni, despite operating in a Telvanni city. Though, I suspect it was more jealousy of Erer's talents, given he had similar issues with Ardarume. Vanel's tantrums were an embarrassment to us. But he's gone now. No sense in dwelling on it.
+INFO:ANAM	00000000	2314512534111173628	1	-1	to_translate	Sadrith Mora, Telvanni Council House
+INFO:NAME	00000000	2314512534111173628	1	-1	to_translate	When he was alive, Vanel Serven voiced his frustration with him. Vanel had a fragile ego that was greater than his skill. He was upset with the claim that Erer is a master of Illusion magic and aligns himself with both the Thieves Guild and the Mages Guild, but not the Telvanni, despite operating in a Telvanni city. Though, I suspect it was more jealousy of Erer's talents, given he had similar issues with Ardarume. Vanel's tantrums were an embarrassment to us. But he's gone now. No sense in dwelling on it.
+INFO:ANAM	00000000	2773215752400831844	1	-1	to_translate	Sadrith Mora, Tel Naga Upper Tower
+INFO:NAME	00000000	2773215752400831844	1	-1	to_translate	Vanel Serven has been voicing his frustration with him. Vanel has a fragile ego that's greater than his skill. He's upset with the claim that Erer is a master of Illusion magic and aligns himself with both the Thieves Guild and the Mages Guild, but not House Telvanni, despite operating in a Telvanni city. Though, I suspect it's more jealousy of Erer's talents, given his similar issues with Ardarume. Master Neloth doesn't care for Vanel's frustration; in fact, Vanel's tantrums are an embarrassment to us.
+INFO:ANAM	00000000	16323237161162419065	1	-1	to_translate	Sadrith Mora, Tel Naga Upper Hall
+INFO:NAME	00000000	16323237161162419065	1	-1	to_translate	Vanel Serven has been voicing his frustration with him. Vanel has a fragile ego that's greater than his skill. He's upset with the claim that Erer is a master of Illusion magic and aligns himself with both the Thieves Guild and the Mages Guild, but not House Telvanni, despite operating in a Telvanni city. Though, I suspect it's more jealousy of Erer's talents, given his similar issues with Ardarume. Master Neloth doesn't care for Vanel's frustration; in fact, Vanel's tantrums are an embarrassment to us.
+INFO:ANAM	00000000	288218922939628	1	-1	to_translate	Sadrith Mora, Tel Naga Great Hall
+INFO:NAME	00000000	288218922939628	1	-1	to_translate	Vanel Serven has been voicing his frustration with him. Vanel has a fragile ego that's greater than his skill. He's upset with the claim that Erer is a master of Illusion magic and aligns himself with both the Thieves Guild and the Mages Guild, but not House Telvanni, despite operating in a Telvanni city. Though, I suspect it's more jealousy of Erer's talents, given his similar issues with Ardarume. Master Neloth doesn't care for Vanel's frustration; in fact, Vanel's tantrums are an embarrassment to us.
+INFO:ANAM	00000000	2668344321033031258	1	-1	to_translate	Sadrith Mora, Tel Naga General Quarters
+INFO:NAME	00000000	2668344321033031258	1	-1	to_translate	Vanel Serven has been voicing his frustration with him. Vanel has a fragile ego that's greater than his skill. He's upset with the claim that Erer is a master of Illusion magic and aligns himself with both the Thieves Guild and the Mages Guild, but not House Telvanni, despite operating in a Telvanni city. Though, I suspect it's more jealousy of Erer's talents, given his similar issues with Ardarume. Master Neloth doesn't care for Vanel's frustration; in fact, Vanel's tantrums are an embarrassment to us.
+INFO:ANAM	00000000	1602611900184977647	1	-1	to_translate	Sadrith Mora, Telvanni Council House
+INFO:NAME	00000000	1602611900184977647	1	-1	to_translate	Vanel Serven has been voicing his frustration with him. Vanel has a fragile ego that's greater than his skill. He's upset with the claim that Erer is a master of Illusion magic and aligns himself with both the Thieves Guild and the Mages Guild, but not House Telvanni, despite operating in a Telvanni city. Though, I suspect it's more jealousy of Erer's talents, given his similar issues with Ardarume. Master Neloth doesn't care for Vanel's frustration; in fact, Vanel's tantrums are an embarrassment to us.
+INFO:NAME	00000000	2078932041409211521	1	-1	to_translate	If I did know something, I'd keep it to myself.
+INFO:ANAM	00000000	2902947351572031748	1	-1	to_translate	Sadrith Mora, Tel Naga Upper Tower
+INFO:NAME	00000000	2902947351572031748	1	-1	to_translate	It's probably best not to gossip.
+INFO:ANAM	00000000	2812918110196398841	1	-1	to_translate	Sadrith Mora, Tel Naga Upper Hall
+INFO:NAME	00000000	2812918110196398841	1	-1	to_translate	It's probably best not to gossip.
+INFO:ANAM	00000000	4561326323199731351	1	-1	to_translate	Sadrith Mora, Tel Naga Great Hall
+INFO:NAME	00000000	4561326323199731351	1	-1	to_translate	It's probably best not to gossip.
+INFO:ANAM	00000000	295801770731523679	1	-1	to_translate	Sadrith Mora, Tel Naga General Quarters
+INFO:NAME	00000000	295801770731523679	1	-1	to_translate	It's probably best not to gossip.
+INFO:ANAM	00000000	611914696848226806	1	-1	to_translate	Sadrith Mora, Telvanni Council House
+INFO:NAME	00000000	611914696848226806	1	-1	to_translate	No one here has mentioned any issues with that individual. Try Tel Naga.
+INFO:ANAM	00000000	59882396280011144	1	-1	to_translate	Sadrith Mora, Nevrila Areloth's House
+INFO:NAME	00000000	59882396280011144	1	-1	to_translate	Look, %PCName. If we had issues with whoever that is, we'd handle it ourselves.
+INFO:ANAM	00000000	2661225259563420519	1	-1	to_translate	Sadrith Mora, Nevrila Areloth's House
+INFO:NAME	00000000	2661225259563420519	1	-1	to_translate	Who? What are you on about? Go away.
+DIAL:NAME	00000000	Vanel Serven	1	-1	to_translate	Vanel Serven
+INFO:NAME	00000000	102877704248477762	1	-1	to_translate	He was an idiot and I do not care for discussing him.
+INFO:NAME	00000000	222639788653224939	1	-1	to_translate	He is an idiot and I do not care for discussing him.
+INFO:NAME	00000000	1960929240796113484	1	-1	to_translate	Yes?
+INFO:NAME	00000000	2629520018323526482	1	-1	to_translate	He probably shouldn't have been picking fights with wizards more powerful than himself. Oh well.
+INFO:ANAM	00000000	81917279171691676	1	-1	to_translate	Sadrith Mora, Tel Naga Upper Tower
+INFO:NAME	00000000	81917279171691676	1	-1	to_translate	He probably shouldn't have been picking fights with wizards more powerful than himself. Oh well.
+INFO:ANAM	00000000	2084426870168498981	1	-1	to_translate	Sadrith Mora, Tel Naga Upper Hall
+INFO:NAME	00000000	2084426870168498981	1	-1	to_translate	He probably shouldn't have been picking fights with wizards more powerful than himself. Oh well.
+INFO:ANAM	00000000	3028215009708929627	1	-1	to_translate	Sadrith Mora, Tel Naga Great Hall
+INFO:NAME	00000000	3028215009708929627	1	-1	to_translate	He probably shouldn't have been picking fights with wizards more powerful than himself. Oh well.
+INFO:ANAM	00000000	26227276011024513928	1	-1	to_translate	Sadrith Mora, Tel Naga General Quarters
+INFO:NAME	00000000	26227276011024513928	1	-1	to_translate	He probably shouldn't have been picking fights with wizards more powerful than himself. Oh well.
+INFO:NAME	00000000	16925318971817114624	1	-1	to_translate	He's one of those types who deflects responsibility by placing the blame on others. Vanel says he wants to get better, so he should be training or running errands to gain more field experience. Instead, he complains that we don't have the finest trainers available and that he can't improve his skills because the most talented mages aren't committed to our cause. House Telvanni has the greatest wizards, everyone knows that. Who cares if others claim to be superior?
+INFO:ANAM	00000000	3153372371610618299	1	-1	to_translate	Sadrith Mora, Tel Naga Upper Tower
+INFO:NAME	00000000	3153372371610618299	1	-1	to_translate	He's one of those types who deflects responsibility by placing the blame on others. Vanel says he wants to get better, so he should be training or running errands to gain more field experience. Instead, he complains that we don't have the finest trainers available and that he can't improve his skills because the most talented mages aren't committed to our cause. House Telvanni has the greatest wizards, everyone knows that. Who cares if others claim to be superior?
+INFO:ANAM	00000000	2800611778107338940	1	-1	to_translate	Sadrith Mora, Tel Naga Upper Hall
+INFO:NAME	00000000	2800611778107338940	1	-1	to_translate	He's one of those types who deflects responsibility by placing the blame on others. Vanel says he wants to get better, so he should be training or running errands to gain more field experience. Instead, he complains that we don't have the finest trainers available and that he can't improve his skills because the most talented mages aren't committed to our cause. House Telvanni has the greatest wizards, everyone knows that. Who cares if others claim to be superior?
+INFO:ANAM	00000000	2580308152236422245	1	-1	to_translate	Sadrith Mora, Tel Naga Great Hall
+INFO:NAME	00000000	2580308152236422245	1	-1	to_translate	He's one of those types who deflects responsibility by placing the blame on others. Vanel says he wants to get better, so he should be training or running errands to gain more field experience. Instead, he complains that we don't have the finest trainers available and that he can't improve his skills because the most talented mages aren't committed to our cause. House Telvanni has the greatest wizards, everyone knows that. Who cares if others claim to be superior?
+INFO:ANAM	00000000	202191904132829349	1	-1	to_translate	Sadrith Mora, Tel Naga General Quarters
+INFO:NAME	00000000	202191904132829349	1	-1	to_translate	He's one of those types who deflects responsibility by placing the blame on others. Vanel says he wants to get better, so he should be training or running errands to gain more field experience. Instead, he complains that we don't have the finest trainers available and that he can't improve his skills because the most talented mages aren't committed to our cause. House Telvanni has the greatest wizards, everyone knows that. Who cares if others claim to be superior?
+INFO:NAME	00000000	327211906121909385	1	-1	to_translate	Let's avoid talking about him.
+INFO:ANAM	00000000	12606146186719826	1	-1	to_translate	Sadrith Mora, Tel Naga Upper Tower
+INFO:NAME	00000000	12606146186719826	1	-1	to_translate	Let's avoid talking about him.
+INFO:ANAM	00000000	72162894643822777	1	-1	to_translate	Sadrith Mora, Tel Naga Upper Hall
+INFO:NAME	00000000	72162894643822777	1	-1	to_translate	Let's avoid talking about him.
+INFO:ANAM	00000000	488816993118444519	1	-1	to_translate	Sadrith Mora, Tel Naga Great Hall
+INFO:NAME	00000000	488816993118444519	1	-1	to_translate	Let's avoid talking about him.
+INFO:ANAM	00000000	9449278443011610374	1	-1	to_translate	Sadrith Mora, Tel Naga General Quarters
+INFO:NAME	00000000	9449278443011610374	1	-1	to_translate	Let's avoid talking about him.
+DIAL:NAME	00000000	scrap metal	1	-1	to_translate	scrap metal
+INFO:NAME	00000000	18945232562596214493	1	-1	to_translate	You can find scrap metal in most Dwemer ruins. I wish I knew a better place to get some, but I don't. We need four pieces of scrap metal to be on the safe side, but you don't need to try and clear out a Dwemer ruin, just run in, snatch some, and get out.
+DIAL:NAME	00000000	Greeting 1	1	-1	to_translate	Greeting 1
+INFO:NAME	00000000	1930487293042218502	1	-1	to_translate	It's been a pleasure working with you. Unfortunately, though, I think this is the end of our business together now. I want to focus on smaller jobs for now so I don't get myself into more trouble, and given your skillset, I wouldn't want to insult you by offering you these more menial tasks. If you need more jobs, try Sugar-Lips Habasi in Balmora or Big Helende in Sadrith Mora. Or you could talk to the Master Thief himself, Gentleman Jim Stacey.
+INFO:NAME	00000000	2783119852136335782	1	-1	to_translate	It's been a pleasure working with you. Unfortunately, though, I think this is the end of our business together now. I want to focus on smaller jobs for now so I don't get myself into more trouble, and given your skillset, I wouldn't want to insult you by offering you these more menial tasks. If you need more jobs, try Sugar-Lips Habasi in Balmora or Big Helende in Sadrith Mora. Or you could talk to the Master Thief himself, Gentleman Jim Stacey.
+INFO:NAME	00000000	2024915304782930373	1	-1	to_translate	Thank you again for all your hard work, %PCRank. Please accept this Dart of Judgement as your reward. While you were getting me the second set of Redoran items, I tracked down Eindel's source and struck a good deal. If you ever need more, I'll sell them to you at cost. My source charges 2000 gold for a set of four, so that's what you'll pay. I had hoped to give you a full set, but Medyn's death forced me to spend some of the gold on Mages Guild negotiations.
+INFO:NAME	00000000	1253222507626028614	1	-1	to_translate	Thank you again for all your hard work, %PCRank. Please accept a new set of darts. While you were busy getting me the second set of Redoran items, my curiosity got the better of me, and I was able to locate Eindel's source. I struck a good deal with them, so if you ever need more, just ask. I'll sell them to you at cost, of course. My source charges me 2000 gold per set of four, so that's what I'll sell them to you for too.
+INFO:NAME	00000000	2015816709329032020	1	-1	to_translate	I'll see you there.
+INFO:NAME	00000000	17179310241770821436	1	-1	to_translate	Well done, %PCName. It's unfortunate to hear that you had to kill Medyn, but I am grateful for your help, nonetheless. I still have a reward in mind for you. Just you wait. I'm going to call the guards now and get these negotiations with the Redoran and the Mages Guild sorted. Meet me back at the Rat in the Pot.
+INFO:NAME	00000000	18207150522599530572	1	-1	to_translate	You did it! Well done, %PCName. I'm seriously impressed with what you've accomplished. I have the perfect reward for you. Just you wait. I'm going to call the guards now, and get these negotiations with the Redoran and the Mages Guild sorted. Meet me back at the Rat in the Pot.
+INFO:NAME	00000000	1630519472270999860	1	-1	to_translate	You're back. Did you manage to plant Anarenen's Devil Tanto and recover the Redoran's stolen items?
+INFO:NAME	00000000	1122925121203065249	1	-1	to_translate	I'm counting on you.
+INFO:NAME	00000000	22003231905928217	1	-1	to_translate	If all else fails, kill the Telvanni instead. But note, I'll have to deduct a little bit from your reward to help cover the cost of the negotiations should you do so. Once you have all of the Redoran's items, and the Telvanni is either dead or the weapon is planted, return to Yak gro-Skandar. He will handle the rest. I'm sure it goes without saying, but obviously if you get caught at all, don't bother trying to plant the tanto. They'll know. Good luck, %PCName. My freedom rests upon your shoulders.
+INFO:NAME	00000000	29319119741168712726	1	-1	to_translate	It's time. Here's the plan. Fetch Anarenen's Devil Tanto from Yak gro-Skandar in the Rat in the Pot. He'll give you the Telvanni's location. Once you're there, recover all of the Redoran's items: the Master Helm, the cookbook, and the Pillow Book. Conveniently, they don't know about the darts. To satisfy the Mages Guild, find a suitable place to plant Anarenen's Devil Tanto in chambers of the Telvanni in charge, like a closet or something.
+INFO:NAME	00000000	15459166382603914323	1	-1	to_translate	Good work out there, %PCName. While you were away, the Redoran sent a representative and I've negotiated my end of the bargain with them too. All of the pieces are in place now. When you're ready, let me know, and I'll tell you the plan.
+INFO:NAME	00000000	948116421767723675	1	-1	to_translate	Get Skink-in-Tree's-Shade on board, and tell me how it goes. I'll be waiting.
+INFO:NAME	00000000	14663264171295161	1	-1	to_translate	Speak with Skink-in-Tree's-Shade at the Mages Guild in the Wolverine Hall in Sadrith Mora. He has a silver tongue, a lot of influence within the Mages Guild, and, most importantly, the respect of Edwinna Elbert, the head of the Ald'ruhn Mages Guild. Ask him to try to convince Edwinna that we never intended to get blood on our hands and that, despite it not being obvious, there is honor among thieves. As a customer of ours, he knows that. And if anyone can convince her, it's him. Good luck.
+INFO:NAME	00000000	18302203548346321	1	-1	to_translate	The Empire generally tolerates our presence in Morrowind much more than in other provinces, thanks to their hatred of our mutual enemies. But that tolerance has its limits. The death of a mage by our hands looks very bad. The Ald'ruhn Mages Guild won't be quick to forgive us for it. But with the help of a friend, we might just be able to convince them to shift the blame from us to the Telvanni who set us up to begin with. You see, we have a friend in Sadrith Mora, and he values our services.
+INFO:NAME	00000000	201351677888003429	1	-1	to_translate	The Redoran are easy. They want what was stolen returned to them. They don't want the Telvanni to have what they have. Not just that, but they know our game as well as we do; it's just business to us. They also know that if we're gone, the Camonna Tong moves in, and they do not want the Camonna Tong involved in their affairs. I am confident I can sweet-talk them into dropping the theft charges against me in exchange for having their items returned. The Mages Guild will be a bit harder to finesse.
+INFO:NAME	00000000	182593694153356179	1	-1	to_translate	%PCName! I'm glad you're here. As you can see, the Telvanni never intended to let me walk away from this and anonymously revealed what we had done to the Redoran and the Mages Guild. I have no intention of escaping, although I did pick the lock so I can sneak around freely. You know in case I get hungry? I don't want to escape because I don't like the idea of being an outlaw for the rest of my life. But it's alright. I have a plan to get out of this situation, and I'm going to need your help.
+DIAL:NAME	00000000	Greeting 5	1	-1	to_translate	Greeting 5
+INFO:NAME	00000000	10336159702402416751	1	-1	to_translate	How are you going with the second set of Redoran jobs I have given you?
+INFO:NAME	00000000	1544414386754623859	1	-1	to_translate	Have you returned with a copy of Withershins?
+INFO:NAME	00000000	165401200068469536	1	-1	to_translate	Any luck getting hold of Boethiah's Pillow Book? I'm sure Gandosa has a copy.
+INFO:NAME	00000000	2633015505182120312	1	-1	to_translate	How are you getting on with the Redoran jobs I have given you?
+INFO:NAME	00000000	1588629826306336532	1	-1	to_translate	You were sent to fetch Anarenen's Devil Tanto from the Guild of Mages. What happened?
+INFO:NAME	00000000	177581254910639660	1	-1	to_translate	Are you here to talk about the writ against Erer Darothril?
+DIAL:NAME	00000000	Shishara	1	-1	to_translate	Shishara
+INFO:NAME	00000000	774122901961110608	1	-1	to_translate	Yes, as I said, Shishara is a Velothi Tower. It's a bit puzzling to get there, so follow my directions carefully. Leave Ald'ruhn and take the road to Ghostgate. Once at Ghostgate, turn around. Walk south, watching for a path on your left. Take that first path on the left. Keep going until the path kind of forks. It's one of those crossroads where it kind of goes straight but also forks. Continue straight leftish. Keep going, and take the next right. At the end of that path is the entrance to the tower.
+DIAL:NAME	00000000	jobs	1	-1	to_translate	jobs
+INFO:NAME	00000000	17435195231490130495	1	-1	to_translate	I got no jobs for you, %PCRank. Try Sugar-Lips Habasi in Balmora or Big Helende in Sadrith Mora. Or you could talk to the Master Thief himself, Gentleman Jim Stacey. He's in Vivec, but is very choosy about who he has do work for him.
+INFO:NAME	00000000	7057194811569124035	1	-1	to_translate	Give me more time.
+INFO:NAME	00000000	132462242982420602	1	-1	to_translate	Thanks for sorting that for me. I'll go back to the Telvanni from here. Give me one day, and follow up with me again.
+INFO:NAME	00000000	28387275562805827604	1	-1	to_translate	I need to provide the Telvanni blackmailing me with a copy of Boethiah's Pillow Book and the Darts of Judgement.
+INFO:NAME	00000000	2419990142116235	1	-1	to_translate	I've got some news from the Telvanni. It's not good. He wants us to get him some dirt on Miner Arobar and steal powerful weapons from one of Garisa Llethri's best archers. Specifically, the Telvanni is after a copy of Boethiah's Pillow Book and the Darts of Judgement.
+INFO:NAME	00000000	330985295213459	1	-1	to_translate	We got some Dwemer Spider Centurions from a friend, and we got Estoril who can fix them up, but we don't have any scrap metal.
+INFO:NAME	00000000	192221651782585306	1	-1	to_translate	There's another book I want you to fetch for me. It's called "Withershins."
+INFO:NAME	00000000	304228344821214145	1	-1	to_translate	Good work getting the helm and the cookbook. That should hopefully satisfy the Telvanni for now. When you're ready, I have an idea on how we can improve our security in case all this escalates.
+INFO:NAME	00000000	111892943276629993	1	-1	to_translate	I need to provide the Telvanni blackmailing me with a Redoran Master Helm and a cookbook called "Redoran Cooking Secrets".
+INFO:NAME	00000000	252462337383827208	1	-1	to_translate	It was a setup. The so-called buyer refused the tanto, as it's evidence. He wanted us to kill the mage so he could blackmail me with his death. The Telvanni bastard wants whatever we can get him from the Redoran, or he'll tip the Imperials. The first two items he mentioned are a Redoran Master Helm and a cookbook called "Redoran Cooking Secrets".
+INFO:NAME	00000000	105049630584730967	1	-1	to_translate	It was a setup. The so-called buyer refused the tanto, as it's evidence. He wanted us to kill the mage so he could blackmail me with his death. Even though you avoided the mage, the 'buyer' must have sent someone in there after you, as the mage was found dead. The Telvanni bastard wants whatever we can get him from the Redoran, or he'll tip the Imperials. The first two items he mentioned are a Redoran Master Helm and a cookbook called "Redoran Cooking Secrets".
+INFO:NAME	00000000	532012418244687968	1	-1	to_translate	Give me some more time.
+INFO:NAME	00000000	4250324162546318551	1	-1	to_translate	I got a job for you. Something that might add some clink to your pockets. I have a client with a source that says the Ald'ruhn Mages Guild has been left unguarded. I want you to get Anarenen's Devil Tanto.
+INFO:NAME	00000000	19880206552472026882	1	-1	to_translate	I'd like you to see if you can't get Felen Maryon's staff.
+INFO:NAME	00000000	2858720643793515436	1	-1	to_translate	How are you getting on with the writ against Erer Darothril?
+INFO:NAME	00000000	1986056692116910551	1	-1	to_translate	We've received a tip that someone has ordered a writ against Erer Darothril.

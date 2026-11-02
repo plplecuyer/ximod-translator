@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "id": "Oblivion",
+  "name": "The Elder Scrolls IV: Oblivion",
+  "engine": "tes4",
+  "pluginExtensions": [
+    "esp",
+    "esm"
+  ],
+  "masters": [
+    "Oblivion.esm"
+  ],
+  "formVersions": null,
+  "headerLen": 20,
+  "utf8": false,
+  "localizedStrings": false,
+  "stringsDir": "Strings",
+  "stringsLangStyle": "name",
+  "archiveExtension": "bsa",
+  "locksLocKeys": true,
+  "outputModes": [
+    "overridePatch",
+    "fullPlugin"
+  ],
+  "fieldsFile": "oblivion"
+}

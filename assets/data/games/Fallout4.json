@@ -1,0 +1,32 @@
+{
+  "format": 1,
+  "id": "Fallout4",
+  "name": "Fallout 4",
+  "engine": "tes4",
+  "pluginExtensions": [
+    "esp",
+    "esm",
+    "esl"
+  ],
+  "masters": [
+    "Fallout4.esm"
+  ],
+  "formVersions": [
+    131,
+    131
+  ],
+  "headerLen": 24,
+  "utf8": true,
+  "localizedStrings": true,
+  "stringsDir": "Strings",
+  "stringsLangStyle": "name",
+  "archiveExtension": "ba2",
+  "locksLocKeys": false,
+  "outputModes": [
+    "strings",
+    "hybrid",
+    "overridePatch",
+    "fullPlugin"
+  ],
+  "fieldsFile": "fallout4"
+}

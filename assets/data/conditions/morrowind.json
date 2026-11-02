@@ -1,0 +1,53 @@
+{
+"format": 1,
+"family": "morrowind",
+"indexOffset": 0,
+"enums": {},
+"functions": [
+{
+"index": 0,
+"name": "Global"
+},
+{
+"index": 1,
+"name": "Local"
+},
+{
+"index": 2,
+"name": "Journal",
+"phrase": "GetStage"
+},
+{
+"index": 3,
+"name": "Item"
+},
+{
+"index": 4,
+"name": "Dead"
+},
+{
+"index": 5,
+"name": "NotID"
+},
+{
+"index": 6,
+"name": "NotFaction"
+},
+{
+"index": 7,
+"name": "NotClass"
+},
+{
+"index": 8,
+"name": "NotRace"
+},
+{
+"index": 9,
+"name": "NotCell"
+},
+{
+"index": 10,
+"name": "NotLocal"
+}
+]
+}

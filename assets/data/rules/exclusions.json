@@ -1,0 +1,161 @@
+{
+ "format": 1,
+ "rules": [
+  {
+   "id": "key",
+   "kind": "regex",
+   "pattern": "^\\$",
+   "scope": [
+    "script"
+   ],
+   "comment": "Clé d'un fichier d'interface ($Clé), dans les chaînes de script"
+  },
+  {
+   "id": "key-text",
+   "kind": "regex",
+   "pattern": "^\\$[^\\s\\d]",
+   "scope": [
+    "text"
+   ],
+   "comment": "Clé d'un fichier d'interface ($Clé) ; « $100 » n'en est pas une"
+  },
+  {
+   "id": "path",
+   "kind": "regex",
+   "pattern": "(?i)\\.(esp|esm|esl|nif|dds|swf|wav|xwm|fuz|hkx|json|ini|txt|pex|psc)$|[/\\\\]|^_root\\.",
+   "scope": [
+    "script"
+   ],
+   "comment": "Chemin ou nom de fichier dans une chaîne de script"
+  },
+  {
+   "id": "url",
+   "kind": "regex",
+   "pattern": "(?i)^(?:https?://|www\\.)\\S+$",
+   "scope": [
+    "text",
+    "script"
+   ],
+   "comment": "Adresse web"
+  },
+  {
+   "id": "path-text",
+   "kind": "regex",
+   "pattern": "(?i)^(?:\\S*\\\\\\S*|\\S*/\\S*/\\S*|\\S+\\.(?:esp|esm|esl|nif|dds|swf|wav|xwm|fuz|hkx|json|ini|txt|pex|psc|bgsm|bgem|png|tga|ba2|bsa|seq|lip|mp3|ogg|bik|xml|dll|exe)|_root\\.\\S*)$",
+   "scope": [
+    "text"
+   ],
+   "comment": "Une ligne sans espace qui est un chemin : antislash, deux barres obliques ou extension connue (« Themes/Tags » et « </font> » n'en sont pas)"
+  },
+  {
+   "id": "noletter",
+   "kind": "regex",
+   "pattern": "^[^\\p{L}]*$",
+   "scope": [
+    "text",
+    "script"
+   ],
+   "comment": "Aucune lettre : nombres, ponctuation, symboles"
+  },
+  {
+   "id": "word",
+   "kind": "regex",
+   "pattern": "^[A-Za-z0-9_]+$",
+   "scope": [
+    "script"
+   ],
+   "comment": "Mot isolé d'une chaîne de script (nom d'état, d'animation, de variable)"
+  },
+  {
+   "id": "hex",
+   "kind": "regex",
+   "pattern": "^(?:(?:0[xX]|#)[0-9A-Fa-f]{2,8}|[0-9A-Fa-f]{8})$",
+   "also": "\\d",
+   "scope": [
+    "text"
+   ],
+   "comment": "FormID ou couleur en hexadécimal"
+  },
+  {
+   "id": "ident-text",
+   "kind": "regex",
+   "pattern": "^[\\p{L}\\p{N}_]{4,}$",
+   "also": "_|\\p{L}\\d|\\p{Ll}.*\\p{Lu}.*\\p{Lu}.*\\p{Lu}|^.+\\p{Lu}.*\\p{Ll}.*\\p{Lu}.*\\p{Lu}|^.+\\p{Lu}.*\\p{Lu}.*\\p{Ll}.*\\p{Lu}|^.+\\p{Lu}.*\\p{Lu}.*\\p{Lu}.*\\p{Ll}",
+   "scope": [
+    "text"
+   ],
+   "comment": "Identifiant sans espace ni ponctuation : un soulignement, une lettre suivie d'un chiffre ou trois majuscules internes (« ITMPotionUse », pas « MrHandy » ni « DCGuard »)"
+  },
+  {
+   "id": "tag-only",
+   "kind": "regex",
+   "pattern": "^(?:[\\s\\d\\[\\]()]|<(?:/?(?i:br|p|b|i|u|font|img|li|ul|ol|div|span|hr|h[1-6]|center|em|strong)(?:\\s[^<>]*)?/?|[A-Za-z][\\w.]*=[^<>]*)>)*<(?:/?(?i:br|p|b|i|u|font|img|li|ul|ol|div|span|hr|h[1-6]|center|em|strong)(?:\\s[^<>]*)?/?|[A-Za-z][\\w.]*=[^<>]*)>(?:[\\s\\d\\[\\]()]|<(?:/?(?i:br|p|b|i|u|font|img|li|ul|ol|div|span|hr|h[1-6]|center|em|strong)(?:\\s[^<>]*)?/?|[A-Za-z][\\w.]*=[^<>]*)>)*$",
+   "scope": [
+    "text"
+   ],
+   "comment": "Balises du moteur seules (« <Alias=…> », « <br> », « </font> »), séparées d'espaces, de chiffres ou de crochets ; « <Unknown> » est un texte"
+  },
+  {
+   "id": "mcm-config",
+   "kind": "key",
+   "pattern": "type|id|sourceType|sourceForm|form|script|function|propertyName|modName|libName|className",
+   "files": [
+    "MCM/Config/*/config.json"
+   ],
+   "scope": [
+    "text"
+   ],
+   "comment": "Clés techniques des fichiers MCM (config.json)"
+  },
+  {
+   "id": "json-ids",
+   "kind": "key",
+   "pattern": "*ID*|*Type|CellName|FileName",
+   "files": [
+    "*.json"
+   ],
+   "scope": [
+    "text"
+   ],
+   "comment": "Clés d'identifiants des fichiers JSON (QuestID, ActionType…)"
+  }
+ ],
+ "functions": [
+  "Game.GetFormFromFile",
+  "Game.GetModByName",
+  "Game.IsPluginInstalled",
+  "RegisterForModEvent",
+  "SendModEvent",
+  "RegisterForMenu",
+  "UnregisterForMenu",
+  "UI.*",
+  "Input.*",
+  "Utility.GetINI*",
+  "SetINI*",
+  "ModEvent.*",
+  "StorageUtil.*",
+  "JsonUtil.*",
+  "Debug.Trace",
+  "Debug.OpenUserLog",
+  "Debug.TraceUser",
+  "MiscUtil.*",
+  "PapyrusUtil.*"
+ ],
+ "deduce": {
+  "edidScopes": [
+   "script",
+   "file"
+  ],
+  "displayed": [
+   "*:FULL",
+   "*:DESC",
+   "*:ITXT",
+   "*:NAM1",
+   "*:CNAM",
+   "*:RNAM",
+   "*:SHRT",
+   "*:TNAM",
+   "*:NNAM"
+  ]
+ }
+}

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=XIMOD Translator
+Comment=Traduction de mods pour les jeux Bethesda
+Exec=ximod-translator %F
+Icon=ximod-translator
+Terminal=false
+Categories=Game;Utility;
+MimeType=application/x-ximod-dictionary;

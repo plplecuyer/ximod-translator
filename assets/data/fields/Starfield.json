@@ -1,0 +1,485 @@
+{
+  "format": 2,
+  "game": "Starfield",
+  "tags": [
+    "Alias*",
+    "Global*",
+    "Token*",
+    "BaseName",
+    "Pronoun*",
+    "Player*",
+    "font",
+    "/font",
+    "p",
+    "/p",
+    "br",
+    "img",
+    "b",
+    "/b",
+    "i",
+    "/i"
+  ],
+  "fields": [
+    {
+      "sig": "ACTI:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "ACTI:RNAM",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "ALCH:DESC",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "ALCH:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "AMMO:DESC",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "AMMO:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "APPA:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "ARMO:DESC",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "ARMO:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "AVIF:DESC",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "AVIF:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "BOOK:CNAM",
+      "mode": "translate"
+    },
+    {
+      "sig": "BOOK:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "BOOK:DESC",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "BPTD:BPTN",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "CELL:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "CLAS:FULL",
+      "mode": "unused",
+      "newline": false,
+      "comment": "Nom de classe : Starfield n'affiche pas les classes."
+    },
+    {
+      "sig": "CLAS:DESC",
+      "mode": "unused",
+      "newline": true,
+      "comment": "Description de classe : Starfield n'affiche pas les classes."
+    },
+    {
+      "sig": "CLFM:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "COBJ:DESC",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "CONT:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "DIAL:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "DOOR:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "ENCH:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "EXPL:FULL",
+      "mode": "unused",
+      "newline": false,
+      "comment": "Nom d'explosion : réservé à l'éditeur."
+    },
+    {
+      "sig": "EYES:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "FACT:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "FLOR:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "FLOR:RNAM",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "FURN:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "GMST:DATA",
+      "mode": "translate",
+      "rule": {
+        "type": "edidPrefix",
+        "value": "s"
+      },
+      "comment": "Réglage de jeu : texte seulement si l'EDID commence par « s »"
+    },
+    {
+      "sig": "HAZD:FULL",
+      "mode": "unused",
+      "newline": false,
+      "comment": "Nom de zone de danger : réservé à l'éditeur."
+    },
+    {
+      "sig": "HDPT:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "IMOD:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "IMOD:DESC",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "INFO:NAM1",
+      "mode": "translate"
+    },
+    {
+      "sig": "INFO:RNAM",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "INGR:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "KEYM:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "LCTN:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "LIGH:FULL",
+      "mode": "unused",
+      "newline": false,
+      "comment": "Nom de lumière : Starfield n'a pas de lumière portée en inventaire."
+    },
+    {
+      "sig": "LSCR:DESC",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "LVLI:ONAM",
+      "mode": "translate"
+    },
+    {
+      "sig": "MESG:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "MESG:DESC",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "MESG:ITXT",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "MGEF:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "MGEF:DNAM",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "MISC:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "OMOD:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "NPC_:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "NPC_:SHRT",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "PERK:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "PERK:DESC",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "PERK:EPF2",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "PROJ:FULL",
+      "mode": "unused",
+      "newline": false,
+      "comment": "Nom de projectile : réservé à l'éditeur."
+    },
+    {
+      "sig": "QUST:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "QUST:CNAM",
+      "mode": "translate"
+    },
+    {
+      "sig": "QUST:NNAM",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "RACE:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "RACE:DESC",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "REGN:RDMP",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "SCRL:DESC",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "SCRL:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "SHOU:DESC",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "SHOU:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "SLGM:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "SPEL:DESC",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "SPEL:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "TACT:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "TES4:CNAM",
+      "mode": "unused",
+      "comment": "En-tête du plugin : auteur (jamais affiché en jeu)."
+    },
+    {
+      "sig": "TES4:SNAM",
+      "mode": "unused",
+      "comment": "En-tête du plugin : description (jamais affichée en jeu)."
+    },
+    {
+      "sig": "TERM:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "TERM:DESC",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "TERM:ITXT",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "TERM:RNAM",
+      "mode": "translate"
+    },
+    {
+      "sig": "TMLM:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "TMLM:INAM",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "TMLM:ISTX",
+      "mode": "translate"
+    },
+    {
+      "sig": "TMLM:ITXT",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "TMLM:UNAM",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "TREE:FULL",
+      "mode": "unused",
+      "newline": false,
+      "comment": "Nom d'arbre : décor, jamais nommé en jeu (les plantes scannées sont des FLOR)."
+    },
+    {
+      "sig": "WEAP:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "WEAP:DESC",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "WOOP:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "WOOP:TNAM",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "WRLD:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "GBFM:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "FLST:FULL",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "MSTT:FULL",
+      "mode": "ignore",
+      "comment": "Libellés internes de statiques mobiles : omis par xTranslator et ESP-ESM Translator"
+    },
+    {
+      "sig": "*:VMAD",
+      "mode": "translate",
+      "maxBytes": 65535,
+      "newline": true
+    }
+  ]
+}

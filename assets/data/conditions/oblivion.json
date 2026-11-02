@@ -1,0 +1,1508 @@
+{
+"format": 1,
+"family": "oblivion",
+"indexOffset": 0,
+"enums": {
+"Sex": {
+"0": "cond-sex-male",
+"1": "cond-sex-female"
+},
+"Axis": {
+"0": "X",
+"1": "Y",
+"2": "Z"
+},
+"CastingSource": {
+"0": "Left",
+"1": "Right",
+"2": "Voice",
+"3": "Instant"
+},
+"Alignment": {
+"0": "Good",
+"1": "Neutral",
+"2": "Evil",
+"3": "VeryGood",
+"4": "VeryEvil"
+},
+"CrimeType": {
+"0": "Steal",
+"1": "Pickpocket",
+"2": "Trespass",
+"3": "Attack",
+"4": "Murder",
+"5": "EscapeJail",
+"6": "WerewolfTransformation"
+}
+},
+"functions": [
+{
+"index": 0,
+"name": "GetWantBlocking"
+},
+{
+"index": 1,
+"name": "GetDistance",
+"params": [
+"ObjectReference"
+],
+"phrase": "GetDistance"
+},
+{
+"index": 2,
+"name": "AddItem"
+},
+{
+"index": 3,
+"name": "SetEssential"
+},
+{
+"index": 4,
+"name": "Rotate"
+},
+{
+"index": 5,
+"name": "GetLocked"
+},
+{
+"index": 6,
+"name": "GetPos",
+"params": [
+"Axis"
+]
+},
+{
+"index": 7,
+"name": "SetPos"
+},
+{
+"index": 8,
+"name": "GetAngle",
+"params": [
+"Axis"
+]
+},
+{
+"index": 9,
+"name": "SetAngle"
+},
+{
+"index": 10,
+"name": "GetStartingPos",
+"params": [
+"Axis"
+]
+},
+{
+"index": 11,
+"name": "GetStartingAngle",
+"params": [
+"Axis"
+]
+},
+{
+"index": 12,
+"name": "GetSecondsPassed"
+},
+{
+"index": 13,
+"name": "Activate"
+},
+{
+"index": 14,
+"name": "GetActorValue",
+"params": [
+"ActorValue"
+],
+"phrase": "GetActorValue"
+},
+{
+"index": 15,
+"name": "SetActorValue"
+},
+{
+"index": 16,
+"name": "ModActorValue"
+},
+{
+"index": 17,
+"name": "SetAtStart"
+},
+{
+"index": 18,
+"name": "GetCurrentTime",
+"phrase": "GetCurrentTime"
+},
+{
+"index": 19,
+"name": "PlayGroup"
+},
+{
+"index": 20,
+"name": "LoopGroup"
+},
+{
+"index": 21,
+"name": "SkipAnim"
+},
+{
+"index": 22,
+"name": "StartCombat"
+},
+{
+"index": 23,
+"name": "StopCombat"
+},
+{
+"index": 24,
+"name": "GetScale"
+},
+{
+"index": 25,
+"name": "IsMoving"
+},
+{
+"index": 26,
+"name": "IsTurning"
+},
+{
+"index": 27,
+"name": "GetLineOfSight",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 28,
+"name": "AddSpell"
+},
+{
+"index": 29,
+"name": "RemoveSpell"
+},
+{
+"index": 30,
+"name": "Cast"
+},
+{
+"index": 31,
+"name": "GetButtonPressed"
+},
+{
+"index": 32,
+"name": "GetInSameCell",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 33,
+"name": "Enable"
+},
+{
+"index": 34,
+"name": "Disable"
+},
+{
+"index": 35,
+"name": "GetDisabled"
+},
+{
+"index": 36,
+"name": "MenuMode",
+"params": [
+"Int"
+]
+},
+{
+"index": 37,
+"name": "PlaceAtMe"
+},
+{
+"index": 38,
+"name": "PlaySound"
+},
+{
+"index": 39,
+"name": "GetDisease"
+},
+{
+"index": 40,
+"name": "FailAllObjectives"
+},
+{
+"index": 41,
+"name": "GetClothingValue"
+},
+{
+"index": 42,
+"name": "SameFaction",
+"params": [
+"Actor"
+],
+"phrase": "SameFaction"
+},
+{
+"index": 43,
+"name": "SameRace",
+"params": [
+"Actor"
+],
+"phrase": "SameRace"
+},
+{
+"index": 44,
+"name": "SameSex",
+"params": [
+"Actor"
+],
+"phrase": "SameSex"
+},
+{
+"index": 45,
+"name": "GetDetected",
+"params": [
+"Actor"
+]
+},
+{
+"index": 46,
+"name": "GetDead",
+"phrase": "GetDead"
+},
+{
+"index": 47,
+"name": "GetItemCount",
+"params": [
+"Form"
+],
+"phrase": "GetItemCount"
+},
+{
+"index": 48,
+"name": "GetGold",
+"phrase": "GetGold"
+},
+{
+"index": 49,
+"name": "GetSleeping",
+"phrase": "GetSleeping"
+},
+{
+"index": 50,
+"name": "GetTalkedToPC",
+"phrase": "GetTalkedToPC"
+},
+{
+"index": 51,
+"name": "Say"
+},
+{
+"index": 52,
+"name": "SayTo"
+},
+{
+"index": 53,
+"name": "GetScriptVariable",
+"params": [
+"ObjectReference",
+"Variable"
+]
+},
+{
+"index": 54,
+"name": "StartQuest"
+},
+{
+"index": 55,
+"name": "StopQuest"
+},
+{
+"index": 56,
+"name": "GetQuestRunning",
+"params": [
+"Quest"
+],
+"phrase": "GetQuestRunning"
+},
+{
+"index": 57,
+"name": "SetStage"
+},
+{
+"index": 58,
+"name": "GetStage",
+"params": [
+"Quest"
+],
+"phrase": "GetStage"
+},
+{
+"index": 59,
+"name": "GetStageDone",
+"params": [
+"Quest",
+"Int"
+],
+"phrase": "GetStageDone"
+},
+{
+"index": 60,
+"name": "GetFactionRankDifference",
+"params": [
+"Faction",
+"Actor"
+]
+},
+{
+"index": 61,
+"name": "GetAlarmed"
+},
+{
+"index": 62,
+"name": "IsRaining",
+"phrase": "IsRaining"
+},
+{
+"index": 63,
+"name": "GetAttacked"
+},
+{
+"index": 64,
+"name": "GetIsCreature",
+"phrase": "GetIsCreature"
+},
+{
+"index": 65,
+"name": "GetLockLevel"
+},
+{
+"index": 66,
+"name": "GetShouldAttack",
+"params": [
+"Actor"
+]
+},
+{
+"index": 67,
+"name": "GetInCell",
+"params": [
+"Cell"
+],
+"phrase": "GetInCell"
+},
+{
+"index": 68,
+"name": "GetIsClass",
+"params": [
+"Class"
+],
+"phrase": "GetIsClass"
+},
+{
+"index": 69,
+"name": "GetIsRace",
+"params": [
+"Race"
+],
+"phrase": "GetIsRace"
+},
+{
+"index": 70,
+"name": "GetIsSex",
+"params": [
+"Sex"
+],
+"phrase": "GetIsSex"
+},
+{
+"index": 71,
+"name": "GetInFaction",
+"params": [
+"Faction"
+],
+"phrase": "GetInFaction"
+},
+{
+"index": 72,
+"name": "GetIsID",
+"params": [
+"Actor"
+],
+"phrase": "GetIsID"
+},
+{
+"index": 73,
+"name": "GetFactionRank",
+"params": [
+"Faction"
+],
+"phrase": "GetFactionRank"
+},
+{
+"index": 74,
+"name": "GetGlobalValue",
+"params": [
+"Global"
+],
+"phrase": "GetGlobalValue"
+},
+{
+"index": 75,
+"name": "IsSnowing",
+"phrase": "IsSnowing"
+},
+{
+"index": 76,
+"name": "FastTravel"
+},
+{
+"index": 77,
+"name": "GetRandomPercent",
+"phrase": "GetRandomPercent"
+},
+{
+"index": 78,
+"name": "RemoveMusic"
+},
+{
+"index": 79,
+"name": "GetQuestVariable",
+"params": [
+"Quest",
+"Variable"
+]
+},
+{
+"index": 80,
+"name": "GetLevel",
+"phrase": "GetLevel"
+},
+{
+"index": 81,
+"name": "IsRotating"
+},
+{
+"index": 82,
+"name": "RemoveItem"
+},
+{
+"index": 83,
+"name": "GetLeveledEncounterValue"
+},
+{
+"index": 84,
+"name": "GetDeadCount",
+"params": [
+"Actor"
+]
+},
+{
+"index": 85,
+"name": "AddToMap"
+},
+{
+"index": 86,
+"name": "StartConversation"
+},
+{
+"index": 87,
+"name": "Drop"
+},
+{
+"index": 88,
+"name": "AddTopic"
+},
+{
+"index": 89,
+"name": "ShowMessage"
+},
+{
+"index": 90,
+"name": "SetAlert"
+},
+{
+"index": 91,
+"name": "GetIsAlerted"
+},
+{
+"index": 92,
+"name": "Look"
+},
+{
+"index": 93,
+"name": "StopLook"
+},
+{
+"index": 94,
+"name": "EvaluatePackage"
+},
+{
+"index": 95,
+"name": "SendAssaultAlarm"
+},
+{
+"index": 96,
+"name": "EnablePlayerControls"
+},
+{
+"index": 97,
+"name": "DisablePlayerControls"
+},
+{
+"index": 98,
+"name": "GetPlayerControlsDisabled",
+"params": [
+"Int",
+"Int",
+"Int",
+"Int",
+"Int",
+"Int",
+"Int"
+]
+},
+{
+"index": 99,
+"name": "GetHeadingAngle",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 100,
+"name": "PickIdle"
+},
+{
+"index": 101,
+"name": "IsWeaponMagicOut"
+},
+{
+"index": 102,
+"name": "IsTorchOut"
+},
+{
+"index": 103,
+"name": "IsShieldOut"
+},
+{
+"index": 104,
+"name": "CreateDetectionEvent"
+},
+{
+"index": 105,
+"name": "IsActionRef"
+},
+{
+"index": 106,
+"name": "IsFacingUp"
+},
+{
+"index": 107,
+"name": "GetKnockedState"
+},
+{
+"index": 108,
+"name": "GetWeaponAnimType"
+},
+{
+"index": 109,
+"name": "IsWeaponSkillType",
+"params": [
+"ActorValue"
+]
+},
+{
+"index": 110,
+"name": "GetCurrentAIPackage"
+},
+{
+"index": 111,
+"name": "IsWaiting"
+},
+{
+"index": 112,
+"name": "IsIdlePlaying"
+},
+{
+"index": 113,
+"name": "CompleteQuest"
+},
+{
+"index": 114,
+"name": "Lock"
+},
+{
+"index": 115,
+"name": "UnLock"
+},
+{
+"index": 116,
+"name": "IsIntimidatedbyPlayer",
+"phrase": "IsIntimidatedbyPlayer"
+},
+{
+"index": 117,
+"name": "IsPlayerInRegion",
+"params": [
+"Region"
+]
+},
+{
+"index": 118,
+"name": "GetActorAggroRadiusViolated"
+},
+{
+"index": 119,
+"name": "GetCrimeKnown"
+},
+{
+"index": 120,
+"name": "SetEnemy"
+},
+{
+"index": 121,
+"name": "SetAlly"
+},
+{
+"index": 122,
+"name": "GetCrime",
+"params": [
+"Actor",
+"CrimeType"
+]
+},
+{
+"index": 123,
+"name": "IsGreetingPlayer"
+},
+{
+"index": 124,
+"name": "StartMisterSandMan"
+},
+{
+"index": 125,
+"name": "IsGuard"
+},
+{
+"index": 126,
+"name": "StartCannibal"
+},
+{
+"index": 127,
+"name": "HasBeenEaten"
+},
+{
+"index": 128,
+"name": "GetStaminaPercentage"
+},
+{
+"index": 129,
+"name": "GetPCIsClass",
+"params": [
+"Class"
+]
+},
+{
+"index": 130,
+"name": "GetPCIsRace",
+"params": [
+"Race"
+]
+},
+{
+"index": 131,
+"name": "GetPCIsSex",
+"params": [
+"Sex"
+],
+"phrase": "GetPCIsSex"
+},
+{
+"index": 132,
+"name": "GetPCInFaction",
+"params": [
+"Faction"
+]
+},
+{
+"index": 133,
+"name": "SameFactionAsPC"
+},
+{
+"index": 134,
+"name": "SameRaceAsPC"
+},
+{
+"index": 135,
+"name": "SameSexAsPC"
+},
+{
+"index": 136,
+"name": "GetIsReference",
+"params": [
+"ObjectReference"
+],
+"phrase": "GetIsReference"
+},
+{
+"index": 137,
+"name": "SetFactionRank"
+},
+{
+"index": 138,
+"name": "ModFactionRank"
+},
+{
+"index": 139,
+"name": "KillActor"
+},
+{
+"index": 140,
+"name": "ResurrectActor"
+},
+{
+"index": 141,
+"name": "IsTalking"
+},
+{
+"index": 142,
+"name": "GetWalkSpeed"
+},
+{
+"index": 143,
+"name": "GetCurrentAIProcedure"
+},
+{
+"index": 144,
+"name": "GetTrespassWarningLevel"
+},
+{
+"index": 145,
+"name": "IsTrespassing"
+},
+{
+"index": 146,
+"name": "IsInMyOwnedCell"
+},
+{
+"index": 147,
+"name": "GetWindSpeed"
+},
+{
+"index": 148,
+"name": "GetCurrentWeatherPercent"
+},
+{
+"index": 149,
+"name": "GetIsCurrentWeather",
+"params": [
+"Weather"
+]
+},
+{
+"index": 150,
+"name": "IsContinuingPackagePCNear"
+},
+{
+"index": 151,
+"name": "SetCrimeFaction"
+},
+{
+"index": 152,
+"name": "GetIsCrimeFaction",
+"params": [
+"Faction"
+],
+"phrase": "GetIsCrimeFaction"
+},
+{
+"index": 153,
+"name": "CanHaveFlames"
+},
+{
+"index": 154,
+"name": "HasFlames"
+},
+{
+"index": 155,
+"name": "AddFlames"
+},
+{
+"index": 156,
+"name": "RemoveFlames"
+},
+{
+"index": 157,
+"name": "GetOpenState"
+},
+{
+"index": 158,
+"name": "MoveToMarker"
+},
+{
+"index": 159,
+"name": "GetSitting"
+},
+{
+"index": 160,
+"name": "GetFurnitureMarkerID"
+},
+{
+"index": 161,
+"name": "GetIsCurrentPackage",
+"params": [
+"Package"
+],
+"phrase": "GetIsCurrentPackage"
+},
+{
+"index": 162,
+"name": "IsCurrentFurnitureRef",
+"params": [
+"ObjectReference"
+]
+},
+{
+"index": 163,
+"name": "IsCurrentFurnitureObj",
+"params": [
+"Furniture"
+]
+},
+{
+"index": 164,
+"name": "SetSize"
+},
+{
+"index": 165,
+"name": "RemoveMe"
+},
+{
+"index": 166,
+"name": "DropMe"
+},
+{
+"index": 167,
+"name": "GetFactionReaction"
+},
+{
+"index": 168,
+"name": "SetFactionReaction"
+},
+{
+"index": 169,
+"name": "ModFactionReaction"
+},
+{
+"index": 170,
+"name": "GetDayOfWeek",
+"phrase": "GetDayOfWeek"
+},
+{
+"index": 171,
+"name": "IgnoreCrime"
+},
+{
+"index": 172,
+"name": "GetTalkedToPCParam",
+"params": [
+"Actor"
+]
+},
+{
+"index": 173,
+"name": "RemoveAllItems"
+},
+{
+"index": 174,
+"name": "WakeUpPC"
+},
+{
+"index": 175,
+"name": "IsPCSleeping"
+},
+{
+"index": 176,
+"name": "IsPCAMurderer"
+},
+{
+"index": 177,
+"name": "SetCombatStyle"
+},
+{
+"index": 178,
+"name": "PlaySound3D"
+},
+{
+"index": 179,
+"name": "SelectPlayerSpell"
+},
+{
+"index": 180,
+"name": "HasSameEditorLocAsRef",
+"params": [
+"ObjectReference",
+"Keyword"
+]
+},
+{
+"index": 181,
+"name": "HasSameEditorLocAsRefAlias",
+"params": [
+"Alias",
+"Keyword"
+]
+},
+{
+"index": 182,
+"name": "GetEquipped",
+"params": [
+"Form"
+],
+"phrase": "GetEquipped"
+},
+{
+"index": 183,
+"name": "Wait"
+},
+{
+"index": 184,
+"name": "StopWaiting"
+},
+{
+"index": 185,
+"name": "IsSwimming"
+},
+{
+"index": 186,
+"name": "ScriptEffectElapsedSeconds"
+},
+{
+"index": 187,
+"name": "SetCellPublicFlag"
+},
+{
+"index": 188,
+"name": "GetPCSleepHours"
+},
+{
+"index": 189,
+"name": "SetPCSleepHours"
+},
+{
+"index": 190,
+"name": "GetAmountSoldStolen"
+},
+{
+"index": 191,
+"name": "ModAmountSoldStolen"
+},
+{
+"index": 192,
+"name": "GetIgnoreCrime"
+},
+{
+"index": 193,
+"name": "GetPCExpelled",
+"params": [
+"Faction"
+]
+},
+{
+"index": 194,
+"name": "SetPCExpelled"
+},
+{
+"index": 195,
+"name": "GetPCFactionMurder",
+"params": [
+"Faction"
+]
+},
+{
+"index": 196,
+"name": "SetPCFactionMurder"
+},
+{
+"index": 197,
+"name": "GetPCEnemyofFaction",
+"params": [
+"Faction"
+]
+},
+{
+"index": 198,
+"name": "SetPCEnemyofFaction"
+},
+{
+"index": 199,
+"name": "GetPCFactionAttack",
+"params": [
+"Faction"
+]
+},
+{
+"index": 200,
+"name": "SetPCFactionAttack"
+},
+{
+"index": 201,
+"name": "StartScene"
+},
+{
+"index": 202,
+"name": "StopScene"
+},
+{
+"index": 203,
+"name": "GetDestroyed"
+},
+{
+"index": 204,
+"name": "SetDestroyed"
+},
+{
+"index": 205,
+"name": "GetActionRef"
+},
+{
+"index": 206,
+"name": "GetSelf"
+},
+{
+"index": 207,
+"name": "GetContainer"
+},
+{
+"index": 208,
+"name": "GetForceRun"
+},
+{
+"index": 209,
+"name": "SetForceRun"
+},
+{
+"index": 210,
+"name": "GetForceSneak"
+},
+{
+"index": 211,
+"name": "SetForceSneak"
+},
+{
+"index": 212,
+"name": "AdvancePCSkill"
+},
+{
+"index": 213,
+"name": "AdvancePCLevel"
+},
+{
+"index": 214,
+"name": "HasMagicEffect",
+"params": [
+"MagicEffect"
+],
+"phrase": "HasMagicEffect"
+},
+{
+"index": 215,
+"name": "GetDefaultOpen"
+},
+{
+"index": 216,
+"name": "SetDefaultOpen"
+},
+{
+"index": 217,
+"name": "ShowClassMenu"
+},
+{
+"index": 218,
+"name": "ShowRaceMenu"
+},
+{
+"index": 219,
+"name": "GetAnimAction"
+},
+{
+"index": 220,
+"name": "ShowNameMenu"
+},
+{
+"index": 221,
+"name": "SetOpenState"
+},
+{
+"index": 222,
+"name": "ResetReference"
+},
+{
+"index": 223,
+"name": "IsSpellTarget",
+"params": [
+"Spell"
+]
+},
+{
+"index": 224,
+"name": "GetVATSMode"
+},
+{
+"index": 225,
+"name": "GetPersuasionNumber"
+},
+{
+"index": 226,
+"name": "GetVampireFeed"
+},
+{
+"index": 227,
+"name": "GetCannibal"
+},
+{
+"index": 228,
+"name": "GetIsClassDefault",
+"params": [
+"Class"
+]
+},
+{
+"index": 229,
+"name": "GetClassDefaultMatch"
+},
+{
+"index": 230,
+"name": "GetInCellParam",
+"params": [
+"Cell",
+"ObjectReference"
+]
+},
+{
+"index": 232,
+"name": "GetCombatTarget"
+},
+{
+"index": 233,
+"name": "GetPackageTarget"
+},
+{
+"index": 234,
+"name": "ShowSpellMaking"
+},
+{
+"index": 235,
+"name": "GetVatsTargetHeight"
+},
+{
+"index": 236,
+"name": "SetGhost"
+},
+{
+"index": 237,
+"name": "GetIsGhost"
+},
+{
+"index": 238,
+"name": "EquipItem"
+},
+{
+"index": 239,
+"name": "UnequipItem"
+},
+{
+"index": 240,
+"name": "SetClass"
+},
+{
+"index": 241,
+"name": "SetUnconscious"
+},
+{
+"index": 242,
+"name": "GetUnconscious"
+},
+{
+"index": 243,
+"name": "SetRestrained"
+},
+{
+"index": 244,
+"name": "GetRestrained"
+},
+{
+"index": 245,
+"name": "ForceFlee"
+},
+{
+"index": 246,
+"name": "GetIsUsedItem",
+"params": [
+"Form"
+]
+},
+{
+"index": 247,
+"name": "GetIsUsedItemType",
+"params": [
+"FormType"
+]
+},
+{
+"index": 248,
+"name": "IsScenePlaying",
+"params": [
+"Scene"
+]
+},
+{
+"index": 249,
+"name": "IsInDialogueWithPlayer",
+"phrase": "IsInDialogueWithPlayer"
+},
+{
+"index": 250,
+"name": "GetLocationCleared",
+"params": [
+"Location"
+]
+},
+{
+"index": 251,
+"name": "SetLocationCleared"
+},
+{
+"index": 252,
+"name": "ForceRefIntoAlias"
+},
+{
+"index": 253,
+"name": "EmptyRefAlias"
+},
+{
+"index": 254,
+"name": "GetIsPlayableRace",
+"phrase": "GetIsPlayableRace"
+},
+{
+"index": 255,
+"name": "GetOffersServicesNow"
+},
+{
+"index": 256,
+"name": "GetGameSetting"
+},
+{
+"index": 257,
+"name": "StopCombatAlarmOnActor"
+},
+{
+"index": 258,
+"name": "HasAssociationType",
+"params": [
+"Actor",
+"AssociationType"
+]
+},
+{
+"index": 259,
+"name": "HasFamilyRelationship",
+"params": [
+"Actor"
+]
+},
+{
+"index": 260,
+"name": "SetWeather"
+},
+{
+"index": 261,
+"name": "HasParentRelationship",
+"params": [
+"Actor"
+]
+},
+{
+"index": 262,
+"name": "IsWarningAbout",
+"params": [
+"FormList"
+]
+},
+{
+"index": 263,
+"name": "IsWeaponOut",
+"phrase": "IsWeaponOut"
+},
+{
+"index": 264,
+"name": "HasSpell",
+"params": [
+"Spell"
+],
+"phrase": "HasSpell"
+},
+{
+"index": 265,
+"name": "IsTimePassing"
+},
+{
+"index": 266,
+"name": "IsPleasant"
+},
+{
+"index": 267,
+"name": "IsCloudy"
+},
+{
+"index": 268,
+"name": "TrapUpdate"
+},
+{
+"index": 269,
+"name": "ShowQuestObjectives"
+},
+{
+"index": 270,
+"name": "ForceActorValue"
+},
+{
+"index": 271,
+"name": "IncrementPCSkill"
+},
+{
+"index": 272,
+"name": "DoTrap"
+},
+{
+"index": 273,
+"name": "EnableFastTravel"
+},
+{
+"index": 274,
+"name": "IsSmallBump"
+},
+{
+"index": 275,
+"name": "GetParentRef"
+},
+{
+"index": 276,
+"name": "PlayBink"
+},
+{
+"index": 277,
+"name": "GetBaseActorValue",
+"params": [
+"ActorValue"
+]
+},
+{
+"index": 278,
+"name": "IsOwner",
+"params": [
+"Owner"
+]
+},
+{
+"index": 279,
+"name": "SetOwnership"
+},
+{
+"index": 280,
+"name": "IsCellOwner",
+"params": [
+"Cell",
+"Owner"
+]
+},
+{
+"index": 281,
+"name": "SetCellOwnership"
+},
+{
+"index": 282,
+"name": "IsHorseStolen"
+},
+{
+"index": 283,
+"name": "SetCellFullName"
+},
+{
+"index": 284,
+"name": "SetActorFullName"
+},
+{
+"index": 285,
+"name": "IsLeftUp"
+},
+{
+"index": 286,
+"name": "IsSneaking",
+"phrase": "IsSneaking"
+},
+{
+"index": 287,
+"name": "IsRunning"
+},
+{
+"index": 288,
+"name": "GetFriendHit"
+},
+{
+"index": 289,
+"name": "IsInCombat",
+"phrase": "IsInCombat"
+},
+{
+"index": 290,
+"name": "SetPackDuration"
+},
+{
+"index": 291,
+"name": "PlayMagicShaderVisuals"
+},
+{
+"index": 292,
+"name": "PlayMagicEffectVisuals"
+},
+{
+"index": 293,
+"name": "StopMagicShaderVisuals"
+},
+{
+"index": 294,
+"name": "StopMagicEffectVisuals"
+},
+{
+"index": 295,
+"name": "ResetInterior"
+},
+{
+"index": 296,
+"name": "IsAnimPlaying",
+"params": [
+"Idle"
+]
+},
+{
+"index": 297,
+"name": "SetActorAlpha"
+},
+{
+"index": 298,
+"name": "EnableLinkedPathPoints"
+},
+{
+"index": 299,
+"name": "DisableLinkedPathPoints"
+},
+{
+"index": 300,
+"name": "IsInInterior",
+"phrase": "IsInInterior"
+}
+]
+}

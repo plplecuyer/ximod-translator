@@ -1,0 +1,17 @@
+{
+  "installed": [
+    {
+      "appName": "1711906245",
+      "install_path": "__GAMES__/Skyrim Special Edition",
+      "platform": "windows",
+      "title": "The Elder Scrolls V: Skyrim Special Edition",
+      "version": "1.6.1170"
+    },
+    {
+      "appName": "1435828767",
+      "install_path": "__GAMES__/Not Installed Game",
+      "platform": "windows",
+      "title": "Some Other Game"
+    }
+  ]
+}

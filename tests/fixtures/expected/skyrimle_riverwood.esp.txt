@@ -1,0 +1,30 @@
+game=Skyrim
+TES4:CNAM	00000000		1	-1	ignored	DEFAULT
+BOOK:FULL	020018FF	RiverwoodHomeNote1	1	-1	to_translate	A Note
+BOOK:DESC	020018FF	RiverwoodHomeNote1	1	-1	to_translate	<font face='$HandwrittenFont'><font size='18'>\r\nIf You Are Reading This Note, Then You Have Downloaded My Riverwood Home Mod!!\r\n\r\nCheers and Enjoy!\r\n\r\nMattcm919\r\n\r\n\r\n
+BOOK:FULL	020018FE	CWFortGreymoorNoteAgnis01COPY0000	1	-1	to_translate	Soldier's Request
+BOOK:DESC	020018FE	CWFortGreymoorNoteAgnis01COPY0000	1	-1	to_translate	<font face='$HandwrittenFont'><font size='18'>\r\nCommander\r\n\r\nYou've got to do something about Agnis. The old bat keeps coming into the barracks in the middle of the night and "straightening up". How are we supposed to be alert on watch when she's knocking things around and muttering to herself and keeping us from getting any sleep?\r\n\r\nAnd she keeps taking all our gear and putting it on the shelves, but she mixes them all up! What if there is an attack and we can't get out the door in time because we can't find our own boots?\r\n\r\nI know you feel bad for the old lady, but if you can at least keep her out of the barracks, we'd all appreciate it.\r\n</font>\r\n\r\n\r\n
+CONT:FULL	020014D4	TreasBanditChestBossEMPTYCOPY0000	1	-1	to_translate	Chest
+CONT:FULL	02002B6A	RRiverwoodHomeSatchel	1	-1	to_translate	Knapsack
+CONT:FULL	02002B69	MQ101TorturerSatchelCOPY0000	1	-1	to_translate	Knapsack
+CONT:FULL	020014D5	RiverwoodHomePlayerChest	1	-1	to_translate	Chest
+MISC:FULL	02002B66	TGFenceCaravanSatchelCOPY0000	1	-1	to_translate	Satchel of Moon Sugar
+MISC:FULL	02002B67	TGFenceCaravanSatchelCOPY0001	1	-1	to_translate	Satchel of Moon Sugar
+CELL:FULL	00015284	FortFellhammer01	1	-1	to_translate	Fort Fellhammer Garrison
+CELL:FULL	000165A8	WhiterunBreezehome	1	-1	to_translate	Breezehome
+CELL:FULL	00016DFA	MarkarthVlindrelHall	1	-1	to_translate	Vlindrel Hall
+CELL:FULL	000133C7	RiverwoodGerdursHouse	1	-1	to_translate	Hod and Gerdur's House
+CELL:FULL	0005EAC7	aaaMarkers	1	-1	to_translate	Marker Storage Unit
+CELL:FULL	000133C9	RiverwoodRiverwoodTrader	1	-1	to_translate	Riverwood Trader
+CELL:FULL	00016778	WindhelmHjerim	1	-1	to_translate	Hjerim
+CELL:FULL	00016BCF	RiftenRaggedFlagon	1	-1	to_translate	The Ragged Flagon
+CELL:FULL	000193EE	DawnstarSanctuary	1	-1	to_translate	Dawnstar Sanctuary
+CELL:FULL	0001CB84	RiverwoodSvensHouse	1	-1	to_translate	Sven and Hilde's House
+CELL:FULL	020012E4	RiverwoodHome	1	-1	to_translate	Riverwood Home
+CELL:FULL	00016A06	SolitudeProudspireManor	1	-1	to_translate	Proudspire Manor
+CELL:FULL	000152A0	CrystaldriftCave01	1	-1	to_translate	Crystaldrift Cave
+CELL:FULL	00016BDD	RiftenHoneyside	1	-1	to_translate	Honeyside
+WRLD:FULL	0000003C	Tamriel	1	-1	to_translate	Skyrim
+REFR:FULL	020025D9	RiverwoodHomeMarker	1	-1	to_translate	Riverwood Home
+WRLD:FULL	00016BB4	RiftenWorld	1	-1	to_translate	Riften
+LCTN:FULL	00013163	RiverwoodLocation	1	-1	to_translate	Riverwood

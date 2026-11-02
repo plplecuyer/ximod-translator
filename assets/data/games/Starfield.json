@@ -1,0 +1,32 @@
+{
+  "format": 1,
+  "id": "Starfield",
+  "name": "Starfield",
+  "engine": "tes4",
+  "pluginExtensions": [
+    "esp",
+    "esm",
+    "esl"
+  ],
+  "masters": [
+    "Starfield.esm"
+  ],
+  "formVersions": [
+    552,
+    65535
+  ],
+  "headerLen": 24,
+  "utf8": true,
+  "localizedStrings": true,
+  "stringsDir": "Strings",
+  "stringsLangStyle": "iso2",
+  "archiveExtension": "ba2",
+  "locksLocKeys": false,
+  "outputModes": [
+    "strings",
+    "hybrid",
+    "overridePatch",
+    "fullPlugin"
+  ],
+  "fieldsFile": "starfield"
+}

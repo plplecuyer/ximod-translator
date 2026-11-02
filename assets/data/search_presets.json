@@ -1,0 +1,169 @@
+{
+ "format": 1,
+ "presets": [
+  {
+   "name": "numbers-differ",
+   "key": "search-preset-numbers",
+   "spec": {
+    "texts": [
+     "(\\d+)",
+     "(\\d+)",
+     "",
+     "",
+     "",
+     ""
+    ],
+    "regex": [
+     true,
+     true,
+     false,
+     false,
+     false,
+     false
+    ],
+    "case": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "groups": "differ",
+    "statuses": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "unused": false
+   }
+  },
+  {
+   "name": "tags-missing",
+   "key": "search-preset-tags",
+   "spec": {
+    "texts": [
+     "(<[^>]+>)",
+     "^[^<]*(<[^>]+>)?",
+     "",
+     "",
+     "",
+     ""
+    ],
+    "regex": [
+     true,
+     true,
+     false,
+     false,
+     false,
+     false
+    ],
+    "case": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "groups": "differ",
+    "statuses": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "unused": false
+   }
+  },
+  {
+   "name": "trans-equals-source",
+   "key": "search-preset-identical",
+   "spec": {
+    "texts": [
+     "(?s)^(.+)$",
+     "(?s)^(.+)$",
+     "",
+     "",
+     "",
+     ""
+    ],
+    "regex": [
+     true,
+     true,
+     false,
+     false,
+     false,
+     false
+    ],
+    "case": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "groups": "same",
+    "statuses": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "unused": false
+   }
+  },
+  {
+   "name": "no-edid",
+   "key": "search-preset-no-edid",
+   "spec": {
+    "texts": [
+     "",
+     "",
+     "^$",
+     "",
+     "",
+     ""
+    ],
+    "regex": [
+     false,
+     false,
+     true,
+     false,
+     false,
+     false
+    ],
+    "case": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "groups": "none",
+    "statuses": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "unused": false
+   }
+  }
+ ]
+}

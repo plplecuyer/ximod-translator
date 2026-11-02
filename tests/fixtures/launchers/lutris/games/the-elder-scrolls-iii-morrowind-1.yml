@@ -1,0 +1,9 @@
+game:
+  arch: win64
+  exe: drive_c/GOG Games/Morrowind/Morrowind.exe
+  prefix: __PREFIX__
+system:
+  env:
+    DXVK_HUD: '0'
+wine:
+  version: lutris-GE-Proton8-26-x86_64

@@ -1,0 +1,22 @@
+{
+ "format": 1,
+ "source": "eng",
+ "target": "fra",
+ "groups": [
+  {
+   "name": "Degrés CACO",
+   "terms": [
+    {
+     "src": "Grand",
+     "class": "adj",
+     "forms": {
+      "m": "extrême",
+      "f": "extrême",
+      "mp": "extrêmes",
+      "fp": "extrêmes"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,31 @@
+{
+  "format": 1,
+  "game": "FalloutNV",
+  "inherits": "Fallout3",
+  "tags": [
+    "Alias*",
+    "Global*",
+    "Token*",
+    "BaseName",
+    "Pronoun*",
+    "Player*",
+    "font",
+    "/font",
+    "p",
+    "/p",
+    "br",
+    "img",
+    "b",
+    "/b",
+    "i",
+    "/i"
+  ],
+  "fields": [
+    {
+      "sig": "FACT:FULL",
+      "mode": "translate",
+      "newline": false,
+      "comment": "New Vegas affiche les factions (réputation) : traduit, contrairement à Fallout 3."
+    }
+  ]
+}

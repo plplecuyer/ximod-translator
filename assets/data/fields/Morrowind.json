@@ -1,0 +1,227 @@
+{
+  "format": 1,
+  "game": "Morrowind",
+  "fields": [
+    {
+      "sig": "TES3:CNAM",
+      "mode": "translate"
+    },
+    {
+      "sig": "TES3:SNAM",
+      "mode": "translate"
+    },
+    {
+      "sig": "GMST:STRV",
+      "mode": "translate"
+    },
+    {
+      "sig": "CELL:NAME",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "DIAL:NAME",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "INFO:NAME",
+      "mode": "translate"
+    },
+    {
+      "sig": "INFO:ANAM",
+      "mode": "translate"
+    },
+    {
+      "sig": "BOOK:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "BOOK:TEXT",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "BSGN:DESC",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "CLAS:DESC",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "RACE:DESC",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "SKIL:DESC",
+      "mode": "translate",
+      "newline": true
+    },
+    {
+      "sig": "FACT:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "FACT:RNAM",
+      "mode": "translate",
+      "newline": false
+    },
+    {
+      "sig": "ACTI:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "ALCH:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "APPA:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "ARMO:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "BSGN:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "CLAS:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "CLOT:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "CONT:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "CREA:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "DOOR:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "INGR:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "LIGH:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "LOCK:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "MISC:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "NPC_:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "PROB:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "RACE:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "REGN:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "REPA:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "SPEL:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    },
+    {
+      "sig": "WEAP:FNAM",
+      "mode": "translate",
+      "maxBytes": 31,
+      "newline": false,
+      "comment": "Nom : 31 caractères au plus (tampon fixe du moteur)."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+game=FalloutNV
+TES4:CNAM	00000000		1	-1	ignored	Printerkop
+TES4:SNAM	00000000		1	-1	ignored	La Longe Carabine scope can be taken off.
+ARMO:FULL	01003B95	AALaLongueMenu	1	-1	to_translate	LaLongueMenu
+IMOD:FULL	01001379	ModNV44LaLongueCarabineScope	1	-1	to_translate	La Longue Carabine Scope
+IMOD:DESC	01001379	ModNV44LaLongueCarabineScope	1	-1	to_translate	Adds medium-range scope.
+WEAP:FULL	01000ADF	WeapNVCowboyRepeaterUniqueNS	1	-1	to_translate	La Longue Carabine NS
+WEAP:FULL	000F56F5	WeapNVCowboyRepeaterUnique	1	-1	to_translate	La Longue Carabine
+QUST:FULL	0100137C	AAMCLaLongueCarabineQuest	1	-1	to_translate	AAMCLaLongueCarabineQuest
+MESG:FULL	0100137A	AASwitchLLCarabine	1	-1	to_translate	La Longue Carabine Mods
+MESG:ITXT	0100137A	AASwitchLLCarabine	1	-1	to_translate	Attach/Detach Scope
+MESG:ITXT	0100137A	AASwitchLLCarabine	2	-1	to_translate	Ready, Close Menu

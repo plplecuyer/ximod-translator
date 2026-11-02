@@ -1,0 +1,33 @@
+{
+ "format": 1,
+ "game": "Oblivion",
+ "rules": [
+  {
+   "id": "scroll",
+   "target": "BOOK:FULL",
+   "src": "Scroll of %A%",
+   "parent": "SPEL:FULL",
+   "dst": {
+    "fra": "Parchemin de %A:low%"
+   }
+  },
+  {
+   "id": "potion",
+   "target": "ALCH:FULL",
+   "src": "Potion of %A%",
+   "parent": "MGEF:FULL",
+   "dst": {
+    "fra": "Potion de %A:low%"
+   }
+  },
+  {
+   "id": "poison",
+   "target": "ALCH:FULL",
+   "src": "Poison of %A%",
+   "parent": "MGEF:FULL",
+   "dst": {
+    "fra": "Poison de %A:low%"
+   }
+  }
+ ]
+}

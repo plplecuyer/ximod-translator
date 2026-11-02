@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "game": "OblivionRD",
+  "inherits": "Oblivion",
+  "fields": [
+    {
+      "value": "LOC_*",
+      "mode": "locked",
+      "comment": "Clé de localisation d'un texte vanilla (LOC_FN_…) : pas un texte à traduire"
+    }
+  ]
+}

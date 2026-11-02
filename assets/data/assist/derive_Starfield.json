@@ -1,0 +1,18 @@
+{
+ "format": 1,
+ "game": "Starfield",
+ "rules": [
+  {
+   "id": "recipe",
+   "target": "COBJ:FULL",
+   "src": "%A%",
+   "parent": [
+    "ALCH:FULL",
+    "WEAP:FULL",
+    "ARMO:FULL",
+    "MISC:FULL"
+   ],
+   "dst": "%A%"
+  }
+ ]
+}

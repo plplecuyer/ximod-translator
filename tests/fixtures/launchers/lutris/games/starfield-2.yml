@@ -1,0 +1,3 @@
+game:
+  exe: __GAMES__/Starfield/Starfield.exe
+  working_dir: __GAMES__/Starfield

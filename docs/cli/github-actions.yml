@@ -1,0 +1,42 @@
+# Intégration continue d'une traduction (XIMOD Translator, ximod-cli, D-06) :
+# à chaque mise à jour d'un dictionnaire du mod, reconstruire les sorties et
+# échouer si check trouve des erreurs. À copier dans
+# .github/workflows/ du dépôt de la traduction.
+#
+# Le dépôt contient : le plugin (mods/), son dictionnaire du mod
+# (dict/SkyrimSE/<plugin>_ENG-FRA.ximdb) et un Config.ini qui y renvoie
+# (ModBasesDir=dict), dans le dossier config/.
+name: Traduction
+
+on:
+  push:
+    paths: ["dict/**", "mods/**", "batch.json"]
+  pull_request:
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: XIMOD Translator
+        run: |
+          curl -sSL -o ximod.tar.gz "https://github.com/ximod/ximod-translator/releases/download/v0.3.0/XIMOD-Translator-0.3.0-linux-x86_64.tar.gz"
+          tar -xzf ximod.tar.gz
+          echo "$PWD/XIMOD-Translator-0.3.0" >> "$GITHUB_PATH"
+      - name: Reconstruire (lot)
+        run: ximod-cli --config config --json batch batch.json > result.jsonl
+      - name: Vérifier
+        # check rend 1 en cas d'erreurs (balises, nombres, caractères) :
+        # l'étape échoue, le résultat reste lisible dans result.jsonl.
+        run: |
+          for f in mods/*.esp; do
+            ximod-cli --config config check "$f" --fail-on error --report "check-$(basename "$f" .esp).csv"
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: traduction
+          path: |
+            out/
+            result.jsonl
+            check-*.csv

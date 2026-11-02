@@ -1,0 +1,31 @@
+{
+  "format": 1,
+  "id": "Skyrim",
+  "name": "The Elder Scrolls V: Skyrim (Legendary)",
+  "engine": "tes4",
+  "pluginExtensions": [
+    "esp",
+    "esm"
+  ],
+  "masters": [
+    "Skyrim.esm"
+  ],
+  "formVersions": [
+    40,
+    43
+  ],
+  "headerLen": 24,
+  "utf8": false,
+  "localizedStrings": true,
+  "stringsDir": "Strings",
+  "stringsLangStyle": "name",
+  "archiveExtension": "bsa",
+  "locksLocKeys": false,
+  "outputModes": [
+    "strings",
+    "hybrid",
+    "overridePatch",
+    "fullPlugin"
+  ],
+  "fieldsFile": "skyrim"
+}

@@ -1,0 +1,254 @@
+{
+ "format": 1,
+ "source": "eng",
+ "target": "fra",
+ "groups": [
+  {
+   "name": "Matériaux",
+   "terms": [
+    {
+     "src": "Iron",
+     "dst": "en fer",
+     "class": "material"
+    },
+    {
+     "src": "Steel",
+     "dst": "en acier",
+     "class": "material"
+    },
+    {
+     "src": "Ebony",
+     "dst": "en ébonite",
+     "class": "material"
+    },
+    {
+     "src": "Glass",
+     "dst": "en verre",
+     "class": "material"
+    },
+    {
+     "src": "Dragonbone",
+     "dst": "en os de dragon",
+     "class": "material"
+    },
+    {
+     "src": "Dragonscale",
+     "dst": "en écailles de dragon",
+     "class": "material"
+    },
+    {
+     "src": "Dragonhide",
+     "dst": "en peau de dragon",
+     "class": "material"
+    },
+    {
+     "src": "Fur",
+     "dst": "en fourrure",
+     "class": "material"
+    },
+    {
+     "src": "Hide",
+     "dst": "en peau",
+     "class": "material"
+    },
+    {
+     "src": "Leather",
+     "dst": "en cuir",
+     "class": "material"
+    },
+    {
+     "src": "Silver",
+     "dst": "en argent",
+     "class": "material"
+    },
+    {
+     "src": "Gold",
+     "dst": "en or",
+     "class": "material"
+    }
+   ]
+  },
+  {
+   "name": "Armures",
+   "terms": [
+    {
+     "src": "Shield",
+     "dst": "Bouclier",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Buckler",
+     "dst": "Bouclier",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Target Shield",
+     "dst": "Targe",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Round Shield",
+     "dst": "Rondache",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Kite Shield",
+     "dst": "Bouclier ovoïde",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Body Shield",
+     "dst": "Bouclier intégral",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Targe",
+     "dst": "Targe",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Boots",
+     "dst": "Bottes",
+     "class": "noun",
+     "gender": "fp"
+    },
+    {
+     "src": "Helmet",
+     "dst": "Casque",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Helm",
+     "dst": "Heaume",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Gauntlets",
+     "dst": "Gantelets",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Cuirass",
+     "dst": "Cuirasse",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Armor",
+     "dst": "Armure",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Hood",
+     "dst": "Capuche",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Robe",
+     "dst": "Robe",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Gloves",
+     "dst": "Gants",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Bracers",
+     "dst": "Brassards",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Mantle",
+     "dst": "Manteau",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Mask",
+     "dst": "Masque",
+     "class": "noun",
+     "gender": "m"
+    },
+    {
+     "src": "Heavy Boots",
+     "dst": "Solerets",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Light Gauntlets",
+     "dst": "Brassards",
+     "class": "noun",
+     "gender": "mp"
+    },
+    {
+     "src": "Heavy Armor",
+     "dst": "Cuirasse",
+     "class": "noun",
+     "gender": "f"
+    },
+    {
+     "src": "Heavy Helmet",
+     "dst": "Heaume",
+     "class": "noun",
+     "gender": "m"
+    }
+   ]
+  },
+  {
+   "name": "Modificateurs",
+   "terms": [
+    {
+     "src": "Light",
+     "class": "adj"
+    },
+    {
+     "src": "Heavy",
+     "class": "adj",
+     "forms": {
+      "m": "renforcé",
+      "f": "renforcée",
+      "mp": "renforcés",
+      "fp": "renforcées"
+     }
+    },
+    {
+     "src": "Painted",
+     "class": "adj",
+     "forms": {
+      "m": "peint",
+      "f": "peinte",
+      "mp": "peints",
+      "fp": "peintes"
+     }
+    },
+    {
+     "src": "Spiked",
+     "dst": "à pointes",
+     "class": "bound"
+    },
+    {
+     "src": "Splinted",
+     "dst": "à lamelles",
+     "class": "bound"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SSTXMLRessources>
+  <Params>
+    <Addon>Infirmary.esm</Addon>
+    <Source>en</Source>
+    <Dest>fr</Dest>
+    <Version>2</Version>
+  </Params>
+  <Content>
+    <String List="0">
+      <EDID>LInfFL_ValidBeds</EDID>
+      <REC>FLST:FULL</REC>
+      <Source>Valid Sugical Beds</Source>
+      <Dest>Lits chirurgicaux valides</Dest>
+    </String>
+    <String List="0">
+      <EDID>LInfMes_Heal</EDID>
+      <REC>MESG:FULL</REC>
+      <Source>Infirmary</Source>
+      <Dest>Infirmerie</Dest>
+    </String>
+    <String List="0">
+      <EDID>LInfMes_Heal</EDID>
+      <REC id="0" idMax="2">MESG:ITXT</REC>
+      <Source>Cure Conditions</Source>
+      <Dest>Conditions de guérison</Dest>
+    </String>
+    <String List="0">
+      <EDID>LInfMes_Heal</EDID>
+      <REC id="1" idMax="2">MESG:ITXT</REC>
+      <Source>Cure Injuries</Source>
+      <Dest>Guérir les blessures</Dest>
+    </String>
+    <String List="0">
+      <EDID>LInfMes_Heal</EDID>
+      <REC id="2" idMax="2">MESG:ITXT</REC>
+      <Source>Leave</Source>
+      <Dest>Do Nothing</Dest>
+    </String>
+  </Content>
+</SSTXMLRessources>

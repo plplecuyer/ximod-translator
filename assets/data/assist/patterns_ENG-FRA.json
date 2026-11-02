@@ -1,0 +1,108 @@
+{
+ "format": 1,
+ "source": "eng",
+ "target": "fra",
+ "composition": {
+  "order": [
+   "noun",
+   "bound",
+   "people",
+   "adj",
+   "color",
+   "origin",
+   "material"
+  ],
+  "joiner": " ",
+  "maxLen": 60,
+  "merge": {
+   "material": {
+    "prefix": "en ",
+    "and": " et "
+   }
+  }
+ },
+ "elision": {
+  "de": "d'",
+  "le": "l'",
+  "la": "l'"
+ },
+ "aspirated": [
+  "hache",
+  "haches",
+  "héros",
+  "harnais",
+  "hallebarde",
+  "hallebardes",
+  "heaume",
+  "heaumes",
+  "haubert",
+  "hauberts",
+  "hibou",
+  "honte",
+  "hurlement",
+  "hameau",
+  "hutte",
+  "hérisson"
+ ],
+ "contractions": {
+  "de le": "du",
+  "de les": "des",
+  "à le": "au",
+  "à les": "aux",
+  "de de": "de",
+  "de du": "du",
+  "de des": "des",
+  "de d'": "d'"
+ },
+ "articles": {
+  "le": {
+   "m": "le",
+   "f": "la",
+   "mp": "les",
+   "fp": "les",
+   "none": ""
+  }
+ },
+ "patterns": [
+  {
+   "src": "%A% of %B%",
+   "dst": "%A% de %B%",
+   "maxLen": 60,
+   "recursive": true,
+   "head": "A"
+  },
+  {
+   "src": "%A% of the %B%",
+   "dst": "%A% de le %B%",
+   "maxLen": 60,
+   "recursive": true,
+   "head": "A"
+  },
+  {
+   "src": "Scroll of %A%",
+   "dst": "Parchemin - %A:cap%",
+   "maxLen": 60,
+   "recursive": true
+  },
+  {
+   "src": "Potion of %A%",
+   "dst": "Potion de %A%",
+   "maxLen": 60,
+   "recursive": true
+  },
+  {
+   "src": "%A%'s %B%",
+   "dst": "%B% de le %A%",
+   "maxLen": 60,
+   "recursive": true,
+   "head": "B"
+  },
+  {
+   "src": "%A% (%B%)",
+   "dst": "%A% (%B%)",
+   "maxLen": 80,
+   "recursive": true,
+   "head": "A"
+  }
+ ]
+}

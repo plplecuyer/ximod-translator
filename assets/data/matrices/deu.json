@@ -1,0 +1,37 @@
+{
+  "format": 1,
+  "matrices": [
+    {
+      "name": "Anführungszeichen „…“",
+      "rules": [
+        {
+          "find": "(^|[^=\\w])\"([^\"<>\\n]+)\"",
+          "replace": "$1„$2“",
+          "mode": "regex",
+          "case": false,
+          "whole": false,
+          "inverse": {
+            "find": "„([^“]*)“",
+            "replace": "\"$1\""
+          }
+        }
+      ]
+    },
+    {
+      "name": "Apostroph ’",
+      "rules": [
+        {
+          "find": "(\\w)'(\\w)",
+          "replace": "$1’$2",
+          "mode": "regex",
+          "case": false,
+          "whole": false,
+          "inverse": {
+            "find": "(\\w)’(\\w)",
+            "replace": "$1'$2"
+          }
+        }
+      ]
+    }
+  ]
+}

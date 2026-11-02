@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "id": "Morrowind",
+  "name": "The Elder Scrolls III: Morrowind",
+  "engine": "tes3",
+  "pluginExtensions": [
+    "esp",
+    "esm"
+  ],
+  "masters": [
+    "Morrowind.esm"
+  ],
+  "formVersions": null,
+  "headerLen": 16,
+  "utf8": false,
+  "localizedStrings": false,
+  "stringsDir": "Strings",
+  "stringsLangStyle": "name",
+  "archiveExtension": "bsa",
+  "locksLocKeys": false,
+  "outputModes": [
+    "fullPlugin"
+  ],
+  "fieldsFile": "morrowind"
+}
