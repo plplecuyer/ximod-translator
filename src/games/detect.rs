@@ -385,16 +385,16 @@ fn steam_roots() -> Vec<PathBuf> {
         use winreg::RegKey;
         use winreg::enums::{HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE};
         let hkcu = RegKey::predef(HKEY_CURRENT_USER);
-        if let Ok(k) = hkcu.open_subkey("Software\\Valve\\Steam") {
-            if let Ok(p) = k.get_value::<String, _>("SteamPath") {
-                roots.push(PathBuf::from(p));
-            }
+        if let Ok(k) = hkcu.open_subkey("Software\\Valve\\Steam")
+            && let Ok(p) = k.get_value::<String, _>("SteamPath")
+        {
+            roots.push(PathBuf::from(p));
         }
         let hklm = RegKey::predef(HKEY_LOCAL_MACHINE);
-        if let Ok(k) = hklm.open_subkey("SOFTWARE\\WOW6432Node\\Valve\\Steam") {
-            if let Ok(p) = k.get_value::<String, _>("InstallPath") {
-                roots.push(PathBuf::from(p));
-            }
+        if let Ok(k) = hklm.open_subkey("SOFTWARE\\WOW6432Node\\Valve\\Steam")
+            && let Ok(p) = k.get_value::<String, _>("InstallPath")
+        {
+            roots.push(PathBuf::from(p));
         }
         if let Some(pf) = std::env::var_os("ProgramFiles(x86)") {
             roots.push(PathBuf::from(pf).join("Steam"));
@@ -590,10 +590,10 @@ fn detect_gog_registry() -> Vec<DetectedGame> {
                 continue;
             };
             for sub in games.enum_keys().flatten() {
-                if let Ok(k) = games.open_subkey(&sub) {
-                    if let Ok(path) = k.get_value::<String, _>("path") {
-                        out.extend(validate_any(Path::new(&path), Source::GogRegistry));
-                    }
+                if let Ok(k) = games.open_subkey(&sub)
+                    && let Ok(path) = k.get_value::<String, _>("path")
+                {
+                    out.extend(validate_any(Path::new(&path), Source::GogRegistry));
                 }
             }
         }
@@ -658,11 +658,11 @@ fn read_gog_galaxy_db(db: &Path) -> Vec<DetectedGame> {
         "SELECT installationPath FROM InstalledBaseProducts",
         "SELECT installationPath FROM InstalledProducts",
     ] {
-        if let Ok(mut stmt) = conn.prepare(sql) {
-            if let Ok(rows) = stmt.query_map([], |r| r.get::<_, String>(0)) {
-                for p in rows.flatten() {
-                    out.extend(validate_any(Path::new(&p), Source::GogGalaxy));
-                }
+        if let Ok(mut stmt) = conn.prepare(sql)
+            && let Ok(rows) = stmt.query_map([], |r| r.get::<_, String>(0))
+        {
+            for p in rows.flatten() {
+                out.extend(validate_any(Path::new(&p), Source::GogGalaxy));
             }
         }
     }
@@ -1018,11 +1018,10 @@ fn detect_lutris_db(db: &Path) -> Vec<DetectedGame> {
     let mut out = Vec::new();
     if let Ok(mut stmt) =
         conn.prepare("SELECT directory FROM games WHERE directory IS NOT NULL AND directory != ''")
+        && let Ok(rows) = stmt.query_map([], |r| r.get::<_, String>(0))
     {
-        if let Ok(rows) = stmt.query_map([], |r| r.get::<_, String>(0)) {
-            for p in rows.flatten() {
-                out.extend(validate_any(Path::new(&p), Source::Lutris));
-            }
+        for p in rows.flatten() {
+            out.extend(validate_any(Path::new(&p), Source::Lutris));
         }
     }
     out
@@ -1057,7 +1056,9 @@ fn parse_gaming_root(bytes: &[u8]) -> Option<String> {
         return None;
     }
     let u16s: Vec<u16> = bytes[8..]
-        .chunks_exact(2)
+        .as_chunks::<2>()
+        .0
+        .iter()
         .map(|c| u16::from_le_bytes([c[0], c[1]]))
         .take_while(|&u| u != 0)
         .collect();

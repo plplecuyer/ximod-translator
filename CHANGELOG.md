@@ -6,6 +6,36 @@ version étiquetée devient le corps de la page de version (S-02).
 
 ## [Unreleased]
 
+### Corrigé
+- Intégration continue : Clippy 1.99 (règle `chunks_exact_to_as_chunks`)
+  refusait dix appels `chunks_exact(2)` / `chunks_exact(4)` (décodage
+  UTF-16 des formats texte, EET, SST, lanceurs, FOMOD ; mots-clés de
+  l'explorateur ESM) ; ils utilisent `as_chunks` (Rust 1.88+, compatible
+  avec la version minimale 1.97). `actions/checkout` passe en v5 dans
+  les deux workflows (dépréciation de Node.js 20).
+- macOS : l'écran d'accueil natif (Cocoa) ne compilait pas — la bibliothèque
+  `cocoa` est dépréciée et ses symboles ont disparu des versions courantes.
+  Comme XIMOD Architect, macOS n'affiche plus l'image d'accueil : la
+  préparation du démarrage (détection des jeux, dictionnaires) est attendue
+  sans fenêtre, puis la fenêtre principale s'ouvre. Les dépendances `cocoa`
+  et `objc` sont retirées (manuel § 2.2).
+- Windows : Clippy 1.99 (`collapsible_if`, `too_many_arguments`,
+  `unnecessary_mut_passed`) sur le code propre à Windows — décodage xWMA de
+  l'explorateur d'archives, lecture du registre (Steam, GOG), écran
+  d'accueil Win32, mesure de l'écran — et sur la lecture des bases GOG
+  Galaxy / Lutris (fonctionnalité `gog-galaxy`) ; conditions réécrites en
+  chaînes de `let`, références non mutables.
+
+### Modifié
+- Dépendances mises à jour (`cargo update` du 29/10/2026, compatibles
+  Rust 1.97) : utf8_iter 1.0.4 → 1.1.0, qui ajoute utf_types 1.0.0 ;
+  zcheapstr 1.1.0 → 1.2.0. Aucun changement de code.
+- Dépendances mises à jour (`cargo update` du 02/11/2026, compatibles
+  Rust 1.97) : crc32fast 1.5.3 → 1.5.4, encoding_rs 0.8.42 → 0.8.44,
+  log 0.4.34 → 0.4.35, webbrowser 1.2.5 → 1.2.6, et la famille
+  wasm-bindgen 0.2.129 → 0.2.130 (js-sys et web-sys 0.3.107,
+  wasm-bindgen-futures 0.4.80). Aucun changement de code.
+
 ## [0.3.1] - 2026-10-29
 
 Les deux décisions de la recette de l'étape 2, pour le chemin de base.

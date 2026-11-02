@@ -152,10 +152,11 @@ pub fn decode_wma(xwma: &[u8], converter: Option<&Converter>) -> Result<Vec<u8>,
     // 2. Native Windows path — see `wma_win::decode` (Media Foundation). Compiled
     //    only on Windows; reached only for streams the converter couldn't handle.
     #[cfg(windows)]
-    if let Ok(wav) = wma_win::decode(xwma) {
-        if wav_has_audio(&wav) && !wav_is_silent(&wav) {
-            return Ok(wav);
-        }
+    if let Ok(wav) = wma_win::decode(xwma)
+        && wav_has_audio(&wav)
+        && !wav_is_silent(&wav)
+    {
+        return Ok(wav);
     }
 
     // 3. Extradata rescue — needs ffmpeg specifically (the fix targets ffmpeg's

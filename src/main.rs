@@ -180,10 +180,10 @@ fn detect_primary_screen() -> ScreenInfo {
                     if let Some(val) = v.split(':').nth(1) {
                         info.width = val.trim().parse().unwrap_or(info.width);
                     }
-                } else if let Some(v) = line.strip_prefix("Height") {
-                    if let Some(val) = v.split(':').nth(1) {
-                        info.height = val.trim().parse().unwrap_or(info.height);
-                    }
+                } else if let Some(v) = line.strip_prefix("Height")
+                    && let Some(val) = v.split(':').nth(1)
+                {
+                    info.height = val.trim().parse().unwrap_or(info.height);
                 }
             }
         }

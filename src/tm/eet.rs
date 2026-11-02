@@ -211,7 +211,7 @@ mod hex {
                 _ => Err("invalid hex digit"),
             }
         };
-        for pair in bytes.chunks_exact(2) {
+        for pair in bytes.as_chunks::<2>().0.iter() {
             out.push((val(pair[0])? << 4) | val(pair[1])?);
         }
         Ok(out)

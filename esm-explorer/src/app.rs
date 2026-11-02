@@ -1865,7 +1865,7 @@ impl EsmExplorerApp {
                 let cat = if sig == "WEAP" {
                     let mut edids: Vec<String> = Vec::new();
                     if let Some(kwda) = fields.iter().find(|s| s.sig == "KWDA") {
-                        for c in kwda.data.chunks_exact(4) {
+                        for c in kwda.data.as_chunks::<4>().0.iter() {
                             let k = u32::from_le_bytes([c[0], c[1], c[2], c[3]]);
                             if let Some(e) = km.resolve(k) {
                                 edids.push(e.to_string());

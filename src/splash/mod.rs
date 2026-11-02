@@ -1,7 +1,8 @@
 //! Native transparent splash screen implementation
 //!
-//! Platform-specific implementations for Windows, Linux (X11), and macOS.
-//! Creates a truly transparent borderless window that displays the splash image.
+//! Platform-specific implementations for Windows and Linux (X11): a truly
+//! transparent borderless window that displays the splash image. On macOS the
+//! image is skipped and the startup work is simply waited for (see `show_splash`).
 
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
@@ -150,6 +151,7 @@ fn load_overlays(splash: &std::path::Path) -> Option<(image::RgbaImage, image::R
 }
 
 /// Pre-scaled `(cadre, barre)` overlays passed to a backend, if available.
+#[cfg_attr(target_os = "macos", allow(dead_code))]
 type Overlay<'a> = Option<(&'a image::RgbaImage, &'a image::RgbaImage)>;
 
 /// Splash screen configuration
@@ -242,16 +244,18 @@ pub fn show_splash(config: SplashConfig) -> Result<(), String> {
         &config,
     );
 
+    // macOS: no native splash. The Cocoa bindings this port relied on (the
+    // `cocoa` crate) are deprecated and no longer build on current toolchains,
+    // and XIMOD Architect made the same choice. The background work (game
+    // detection, dictionaries) still runs and is still waited for; only the
+    // pre-launch image is skipped, the main window appears right afterwards.
     #[cfg(target_os = "macos")]
-    return macos::show_splash_window(
-        &rgba,
-        overlay_ref,
-        splash_width,
-        splash_height,
-        x,
-        y,
-        &config,
-    );
+    {
+        let _ = (&rgba, overlay_ref, splash_width, splash_height, x, y);
+        tracing::info!("Native splash not available on macOS, waiting for the startup work");
+        wait_out(&config);
+        Ok(())
+    }
 
     #[cfg(not(any(target_os = "windows", target_os = "linux", target_os = "macos")))]
     {
@@ -495,6 +499,7 @@ mod windows {
         }
     }
 
+    #[allow(clippy::too_many_arguments)]
     unsafe fn update_layered_window(
         hwnd: HWND,
         hdc_screen: HDC,
@@ -505,9 +510,9 @@ mod windows {
         height: u32,
         alpha: u8,
     ) {
-        let mut pt_pos = POINT { x, y };
-        let mut pt_src = POINT { x: 0, y: 0 };
-        let mut size = SIZE {
+        let pt_pos = POINT { x, y };
+        let pt_src = POINT { x: 0, y: 0 };
+        let size = SIZE {
             cx: width as i32,
             cy: height as i32,
         };
@@ -523,15 +528,7 @@ mod windows {
         // explicit unsafe block inside an unsafe fn).
         unsafe {
             UpdateLayeredWindow(
-                hwnd,
-                hdc_screen,
-                &mut pt_pos,
-                &mut size,
-                hdc_mem,
-                &mut pt_src,
-                0,
-                &blend,
-                ULW_ALPHA,
+                hwnd, hdc_screen, &pt_pos, &size, hdc_mem, &pt_src, 0, &blend, ULW_ALPHA,
             );
         }
     }
@@ -751,198 +748,6 @@ mod linux {
 
             Ok(())
         }
-    }
-}
-
-// ============================================================================
-// macOS Implementation
-// ============================================================================
-#[cfg(target_os = "macos")]
-mod macos {
-    use super::*;
-    use cocoa::appkit::*;
-    use cocoa::base::*;
-    use cocoa::foundation::*;
-    use objc::runtime::*;
-    use objc::*;
-
-    pub fn show_splash_window(
-        rgba: &image::RgbaImage,
-        overlay: Overlay,
-        width: u32,
-        height: u32,
-        x: i32,
-        y: i32,
-        config: &SplashConfig,
-    ) -> Result<(), String> {
-        unsafe {
-            // Initialize NSApplication
-            let app = NSApp();
-            app.setActivationPolicy_(NSApplicationActivationPolicyAccessory);
-
-            // Scale image
-            let scaled =
-                image::imageops::resize(rgba, width, height, image::imageops::FilterType::Lanczos3);
-
-            // Create NSImage from pixel data
-            let ns_image = create_ns_image(&scaled, width, height)?;
-
-            // Create window
-            let frame = NSRect::new(
-                NSPoint::new(x as f64, y as f64),
-                NSSize::new(width as f64, height as f64),
-            );
-
-            let style_mask = NSWindowStyleMask::NSBorderlessWindowMask;
-
-            let window: id = NSWindow::alloc(nil).initWithContentRect_styleMask_backing_defer_(
-                frame,
-                style_mask,
-                NSBackingStoreBuffered,
-                NO,
-            );
-
-            if window.is_null() {
-                return Err("Failed to create NSWindow".to_string());
-            }
-
-            // Configure window for transparency
-            window.setOpaque_(NO);
-            window.setBackgroundColor_(NSColor::clearColor(nil));
-            window.setLevel_(NSFloatingWindowLevel as i64);
-            window.setHasShadow_(NO);
-
-            // Create image view
-            let content_rect = NSRect::new(
-                NSPoint::new(0.0, 0.0),
-                NSSize::new(width as f64, height as f64),
-            );
-
-            let image_view: id = NSImageView::alloc(nil).initWithFrame_(content_rect);
-            image_view.setImage_(ns_image);
-            image_view.setImageScaling_(NSImageScaleProportionallyUpOrDown);
-
-            window.setContentView_(image_view);
-            window.makeKeyAndOrderFront_(nil);
-
-            let pump = || {
-                // Drain the app's pending events each frame (outer unsafe block).
-                loop {
-                    let event: id = app.nextEventMatchingMask_untilDate_inMode_dequeue_(
-                        NSEventMaskAny.bits(),
-                        NSDate::distantPast(nil),
-                        NSDefaultRunLoopMode,
-                        YES,
-                    );
-                    if event.is_null() {
-                        break;
-                    }
-                    app.sendEvent_(event);
-                }
-            };
-
-            // ---- Display phase: fixed duration, or until the work is done ----
-            let start_time = Instant::now();
-            loop {
-                pump();
-                let elapsed = start_time.elapsed();
-                let displaying = match &config.progress {
-                    Some(s) => {
-                        !((s.is_done() && elapsed >= config.display_duration)
-                            || elapsed >= PROGRESS_MAX_WAIT)
-                    }
-                    None => elapsed < config.display_duration,
-                };
-                if !displaying {
-                    break;
-                }
-                if let Some(s) = &config.progress {
-                    let mut frame = scaled.clone();
-                    match overlay {
-                        Some((cadre, barre)) => {
-                            apply_overlay(&mut frame, cadre, barre, s.fraction())
-                        }
-                        None => composite_progress(&mut frame, s.fraction()),
-                    }
-                    if let Ok(img) = create_ns_image(&frame, width, height) {
-                        image_view.setImage_(img);
-                    }
-                }
-                std::thread::sleep(Duration::from_millis(33));
-            }
-
-            // ---- Fade-out phase ----
-            let fade_start = Instant::now();
-            loop {
-                pump();
-                let fe = fade_start.elapsed();
-                if fe >= config.fade_duration {
-                    break;
-                }
-                let alpha = 1.0 - fe.as_secs_f32() / config.fade_duration.as_secs_f32();
-                window.setAlphaValue_(alpha as f64);
-                std::thread::sleep(Duration::from_millis(16));
-            }
-
-            // Cleanup
-            window.close();
-
-            Ok(())
-        }
-    }
-
-    // Ported Cocoa code: the whole body is a sequence of Objective-C message
-    // sends; keep edition-2024's unsafe-in-unsafe-fn lint quiet without rewrapping
-    // every call.
-    #[allow(unsafe_op_in_unsafe_fn)]
-    unsafe fn create_ns_image(
-        rgba: &image::RgbaImage,
-        width: u32,
-        height: u32,
-    ) -> Result<id, String> {
-        let size = NSSize::new(width as f64, height as f64);
-        let image: id = NSImage::alloc(nil).initWithSize_(size);
-
-        if image.is_null() {
-            return Err("Failed to create NSImage".to_string());
-        }
-
-        // Create bitmap representation
-        let bitmap: id = msg_send![class!(NSBitmapImageRep), alloc];
-
-        let bitmap: id = msg_send![
-            bitmap,
-            initWithBitmapDataPlanes: std::ptr::null_mut::<*mut u8>()
-            pixelsWide: width as i64
-            pixelsHigh: height as i64
-            bitsPerSample: 8_i64
-            samplesPerPixel: 4_i64
-            hasAlpha: YES
-            isPlanar: NO
-            colorSpaceName: NSDeviceRGBColorSpace
-            bytesPerRow: (width * 4) as i64
-            bitsPerPixel: 32_i64
-        ];
-
-        if bitmap.is_null() {
-            return Err("Failed to create NSBitmapImageRep".to_string());
-        }
-
-        // Copy pixel data
-        let bitmap_data: *mut u8 = msg_send![bitmap, bitmapData];
-        if !bitmap_data.is_null() {
-            for (i, pixel) in rgba.pixels().enumerate() {
-                let offset = i * 4;
-                *bitmap_data.add(offset) = pixel[0]; // R
-                *bitmap_data.add(offset + 1) = pixel[1]; // G
-                *bitmap_data.add(offset + 2) = pixel[2]; // B
-                *bitmap_data.add(offset + 3) = pixel[3]; // A
-            }
-        }
-
-        image.addRepresentation_(bitmap);
-
-        Ok(image)
     }
 }
 

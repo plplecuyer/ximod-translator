@@ -124,7 +124,9 @@ fn decode_utf8_or_cp1252(mut bytes: &[u8]) -> String {
 /// byte is ignored).
 fn decode_utf16(bytes: &[u8], little_endian: bool) -> String {
     let units: Vec<u16> = bytes
-        .chunks_exact(2)
+        .as_chunks::<2>()
+        .0
+        .iter()
         .map(|c| {
             if little_endian {
                 u16::from_le_bytes([c[0], c[1]])
@@ -156,8 +158,16 @@ pub fn decode_xml_bytes(bytes: &[u8]) -> (String, Encoding) {
     // so one byte of each pair is zero.
     let head = &bytes[..bytes.len().min(64) & !1];
     if head.len() >= 4 {
-        let odd_zero = head.chunks_exact(2).all(|c| c[0] != 0 && c[1] == 0);
-        let even_zero = head.chunks_exact(2).all(|c| c[0] == 0 && c[1] != 0);
+        let odd_zero = head
+            .as_chunks::<2>()
+            .0
+            .iter()
+            .all(|c| c[0] != 0 && c[1] == 0);
+        let even_zero = head
+            .as_chunks::<2>()
+            .0
+            .iter()
+            .all(|c| c[0] == 0 && c[1] != 0);
         if odd_zero {
             return (decode_utf16(bytes, true), Encoding::Utf16Le);
         }
