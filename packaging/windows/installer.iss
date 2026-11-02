@@ -34,7 +34,10 @@ ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 OutputDir={#OutDir}
 OutputBaseFilename=XIMOD-Translator-{#AppVersion}-setup
-SetupIconFile={#StageDir}\assets\icons\ximod-translator.ico
+; Icône de l'installateur : les tailles 16 à 256 px seulement. L'icône de
+; l'application (assets/icons) contient aussi des images 512 et 1024 px que le
+; compilateur de ressources d'Inno Setup refuse (« File is too large »).
+SetupIconFile=setup.ico
 UninstallDisplayIcon={app}\ximod-translator.exe
 Compression=lzma2
 SolidCompression=yes

@@ -108,7 +108,7 @@ jobs:
           bash packaging/macos/bundle.sh dist/stage "dist/app" "$VERSION"
           hdiutil create -volname "XIMOD Translator" -srcfolder dist/app -ov -format UDZO "dist/out/XIMOD-Translator-${VERSION}-${{ matrix.name }}.dmg"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: ${{ matrix.name }}
           path: dist/out/*
@@ -122,7 +122,7 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           path: artifacts
           merge-multiple: true

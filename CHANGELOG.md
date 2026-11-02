@@ -37,6 +37,12 @@ version étiquetée devient le corps de la page de version (S-02).
   dépôt de travail (`assets/bases/jeux`) quand il y en a — trois tests
   échouaient sur un poste de développement avec une base Skyrim. Chaque
   test a désormais son dossier portable (Config.ini + assets/bases vides).
+- Livraison Windows : Inno Setup refusait l'icône de l'application comme
+  icône de l'installateur (« Resource update error: File is too large » :
+  le fichier .ico partagé avec Architect contient des images 512 et
+  1024 px). L'installateur a sa propre icône, `packaging/windows/setup.ico`,
+  limitée aux tailles 16 à 256 px. `actions/upload-artifact` et
+  `download-artifact` passent en v5 (dépréciation de Node.js 20).
 - Dépôt : un `.gitattributes` fixe les fins de ligne — sources normalisées
   en LF, fixtures des tests, ressources et manuels pris octet pour octet.
   Sans lui, Git sous Windows convertissait les fins de ligne à la
