@@ -37,6 +37,13 @@ version étiquetée devient le corps de la page de version (S-02).
   dépôt de travail (`assets/bases/jeux`) quand il y en a — trois tests
   échouaient sur un poste de développement avec une base Skyrim. Chaque
   test a désormais son dossier portable (Config.ini + assets/bases vides).
+- Dépôt : un `.gitattributes` fixe les fins de ligne — sources normalisées
+  en LF, fixtures des tests, ressources et manuels pris octet pour octet.
+  Sans lui, Git sous Windows convertissait les fins de ligne à la
+  validation et à l'extraction : la fixture CSV à fins de ligne CRLF
+  arrivait en LF sur Linux et macOS (test `structured`), et les listings
+  de régression des champs arrivaient en CRLF sur Windows (test
+  `fields_regression`, désormais insensible aux fins de ligne).
 - macOS : Clippy 1.99 (`bind_instead_of_map`) sur la recherche de l'icône
   dans le bundle. Windows : le test du cache des noms comparait un chemin
   trouvé sans tenir compte de la casse du système de fichiers ; le test des

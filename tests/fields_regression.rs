@@ -65,12 +65,16 @@ fn extraction_matches_captured_listings() {
             std::fs::write(&exp_path, &got).unwrap();
             continue;
         }
-        let exp = std::fs::read_to_string(&exp_path).unwrap_or_else(|_| {
-            panic!(
-                "missing listing {} (run with XIMOD_UPDATE_EXPECTED=1)",
-                exp_path.display()
-            )
-        });
+        // Line endings are not part of the listing: a checkout that converts
+        // them (Git on Windows) must not make the comparison fail.
+        let exp = std::fs::read_to_string(&exp_path)
+            .unwrap_or_else(|_| {
+                panic!(
+                    "missing listing {} (run with XIMOD_UPDATE_EXPECTED=1)",
+                    exp_path.display()
+                )
+            })
+            .replace("\r\n", "\n");
         if got != exp {
             let got_lines: Vec<&str> = got.lines().collect();
             let exp_lines: Vec<&str> = exp.lines().collect();

@@ -1,0 +1,45 @@
+# Fins de ligne : les sources sont normalisées en LF dans le dépôt ; les
+# fixtures des tests, les ressources livrées et les documents sont pris tels
+# quels, octet pour octet — plusieurs tests vérifient que l'application
+# conserve les fins de ligne d'un fichier (CSV, MCM, XML), et Git ne doit ni
+# les convertir à la validation ni à l'extraction, quel que soit le système.
+*               text=auto eol=lf
+tests/fixtures/** -text
+assets/**        -text
+Manuals/**       -text
+docs/**          text=auto eol=lf
+
+# Formats binaires, quel que soit le dossier.
+*.esp  -text
+*.esm  -text
+*.esl  -text
+*.bsa  -text
+*.ba2  -text
+*.ximdb -text
+*.ximhist -text
+*.sst  -text
+*.eet  -text
+*.strings -text
+*.dlstrings -text
+*.ilstrings -text
+*.pex  -text
+*.swf  -text
+*.gfx  -text
+*.fuz  -text
+*.wav  -text
+*.xwm  -text
+*.wem  -text
+*.ogg  -text
+*.lip  -text
+*.dds  -text
+*.png  -text
+*.jpg  -text
+*.ico  -text
+*.ttf  -text
+*.otf  -text
+*.docx -text
+*.pdf  -text
+*.zip  -text
+*.7z   -text
+*.rar  -text
+*.db   -text
