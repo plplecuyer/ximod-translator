@@ -37,9 +37,9 @@ est livré dans `Manuals/` avec chaque paquet (**F1** dans l'application).
 ## Télécharger
 
 Chaque [version publiée](../../releases) fournit : un installateur et une
-archive ZIP pour Windows x64, une archive tar.gz pour Linux x64, un `.dmg` pour
-macOS (Apple Silicon et Intel ; bundle non signé : clic droit ▸ Ouvrir au
-premier lancement). Chaque paquet contient les deux exécutables
+archive ZIP pour Windows x64, une archive tar.gz pour Linux x64, un `.dmg` universel
+pour macOS (Apple Silicon et Intel dans le même bundle ; non signé : clic
+droit ▸ Ouvrir au premier lancement). Chaque paquet contient les deux exécutables
 (`ximod-translator` et `ximod-cli`), les ressources, les manuels et les
 exemples de la ligne de commande (`docs/cli/`).
 
@@ -93,8 +93,8 @@ chacun) : une version optimisée se compile en plusieurs minutes.
 
 `.github/workflows/ci.yml` exécute build, `clippy -D warnings` et tests sur
 Ubuntu, Windows et macOS à chaque push ; `release.yml` se déclenche sur une
-étiquette `vX.Y.Z` égale à la version de `Cargo.toml`, construit les quatre
-cibles, assemble les paquets (`packaging/stage.sh`) et publie la page de
+étiquette `vX.Y.Z` égale à la version de `Cargo.toml`, construit les trois
+paquets (Windows, Linux, macOS universel), assemble les paquets (`packaging/stage.sh`) et publie la page de
 version dont le corps est la section correspondante de `CHANGELOG.md`.
 
 ## Organisation du dépôt

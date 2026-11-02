@@ -37,6 +37,11 @@ version étiquetée devient le corps de la page de version (S-02).
   dépôt de travail (`assets/bases/jeux`) quand il y en a — trois tests
   échouaient sur un poste de développement avec une base Skyrim. Chaque
   test a désormais son dossier portable (Config.ini + assets/bases vides).
+- Livraison macOS : le runner Intel `macos-13` n'existe plus sur GitHub (le
+  job attendait un exécutant sans fin). Un seul paquet macOS désormais,
+  universel : les deux architectures sont compilées sur le runner Apple
+  Silicon et réunies par `lipo` dans un même bundle,
+  `XIMOD-Translator-<version>-macos-universal.dmg` (manuel § 2.1).
 - Livraison Windows : Inno Setup refusait l'icône de l'application comme
   icône de l'installateur (« Resource update error: File is too large » :
   le fichier .ico partagé avec Architect contient des images 512 et
