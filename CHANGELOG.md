@@ -41,7 +41,9 @@ version étiquetée devient le corps de la page de version (S-02).
   job attendait un exécutant sans fin). Un seul paquet macOS désormais,
   universel : les deux architectures sont compilées sur le runner Apple
   Silicon et réunies par `lipo` dans un même bundle,
-  `XIMOD-Translator-<version>-macos-universal.dmg` (manuel § 2.1).
+  `XIMOD-Translator-<version>-macos-universal.dmg` (manuel § 2.1), doublé
+  du bundle seul en archive, `…-macos-universal.app.zip`, comme pour
+  XIMOD Architect.
 - Livraison Windows : Inno Setup refusait l'icône de l'application comme
   icône de l'installateur (« Resource update error: File is too large » :
   le fichier .ico partagé avec Architect contient des images 512 et

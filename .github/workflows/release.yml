@@ -119,12 +119,16 @@ jobs:
           tar -C dist -czf "dist/out/XIMOD-Translator-${VERSION}-linux-x86_64.tar.gz" --transform "s,^stage,XIMOD-Translator-${VERSION}," stage
 
       # ---- macOS : bundle .app + .dmg (non signé, R-S02 : documenté) ----
-      - name: Bundle .app et .dmg (macOS)
+      # L'image disque (bundle + README, licence, journal, docs/cli) et, comme
+      # pour XIMOD Architect, le bundle seul en archive zip (ditto garde les
+      # attributs du bundle).
+      - name: Bundle .app, .dmg et .app.zip (macOS)
         if: runner.os == 'macOS'
         run: |
           mkdir -p dist/out
           bash packaging/macos/bundle.sh dist/stage "dist/app" "$VERSION"
           hdiutil create -volname "XIMOD Translator" -srcfolder dist/app -ov -format UDZO "dist/out/XIMOD-Translator-${VERSION}-macos-universal.dmg"
+          ditto -c -k --keepParent "dist/app/XIMOD Translator.app" "dist/out/XIMOD-Translator-${VERSION}-macos-universal.app.zip"
 
       - uses: actions/upload-artifact@v5
         with:

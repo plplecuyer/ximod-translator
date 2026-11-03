@@ -37,9 +37,9 @@ est livré dans `Manuals/` avec chaque paquet (**F1** dans l'application).
 ## Télécharger
 
 Chaque [version publiée](../../releases) fournit : un installateur et une
-archive ZIP pour Windows x64, une archive tar.gz pour Linux x64, un `.dmg` universel
-pour macOS (Apple Silicon et Intel dans le même bundle ; non signé : clic
-droit ▸ Ouvrir au premier lancement). Chaque paquet contient les deux exécutables
+archive ZIP pour Windows x64, une archive tar.gz pour Linux x64, et pour macOS un `.dmg` universel (Apple
+Silicon et Intel dans le même bundle) ainsi que le bundle seul en `.app.zip` ;
+le bundle n'est pas signé : clic droit ▸ Ouvrir au premier lancement. Chaque paquet contient les deux exécutables
 (`ximod-translator` et `ximod-cli`), les ressources, les manuels et les
 exemples de la ligne de commande (`docs/cli/`).
 
