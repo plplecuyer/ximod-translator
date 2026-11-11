@@ -33,7 +33,25 @@ version étiquetée devient le corps de la page de version (S-02).
   suit plus `--verbose` mais la seule variable `RUST_LOG`. Aucune clé
   d'API ni texte envoyé en ligne n'entre dans le journal (test).
 
+### Modifié
+- Boutons en relief (F-07, demande du 11 novembre 2026) : egui ne dessinant
+  pas de relief, un bouton a désormais un fond « levé », entre celui du
+  panneau et celui des champs, et un contour sombre ; les listes
+  déroulantes prennent le fond creusé des champs de saisie. Un bouton se
+  distingue ainsi d'un champ et d'une liste, dans les deux thèmes.
+
 ### Corrigé
+- Windows : *Traduire la ligne en ligne* (Ctrl+G) sans service configuré
+  ouvrait Google Traduction sans le texte ni la langue cible. L'adresse
+  passait par `cmd /C start`, qui lit chaque « & » comme une fin de
+  commande ; elle est désormais ouverte par l'appel du système
+  (ShellExecute, bibliothèque `webbrowser`), entière, sur les trois
+  systèmes. Même correction pour la fenêtre de traduction des FOMOD.
+- Intégration continue et livraison : GitHub a retiré les runners
+  `macos-14` le 2 novembre 2026 (« The configuration
+  'macos-14-arm64-us-default' is not supported ») ; `ci.yml` et
+  `release.yml` passent à `macos-15` (Apple Silicon, paquet universel
+  toujours réuni par `lipo`).
 - Intégration continue : Clippy 1.99 (règle `chunks_exact_to_as_chunks`)
   refusait dix appels `chunks_exact(2)` / `chunks_exact(4)` (décodage
   UTF-16 des formats texte, EET, SST, lanceurs, FOMOD ; mots-clés de

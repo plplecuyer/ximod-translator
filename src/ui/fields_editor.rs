@@ -10,6 +10,7 @@
 //! Validation runs after every change (R-A06-05); an invalid file cannot be
 //! saved. Changes apply at the next load of a plugin (R-A06-06).
 
+use crate::ui::theme::ComboField as _;
 use std::path::PathBuf;
 
 use eframe::egui;
@@ -398,7 +399,7 @@ impl FieldsEditor {
             let mut new_game: Option<Game> = None;
             egui::ComboBox::from_id_salt("fields_game")
                 .selected_text(self.game.display_name())
-                .show_ui(ui, |ui| {
+                .show_field(ui, |ui| {
                     for g in Game::ALL {
                         if ui
                             .selectable_label(*g == self.game, g.display_name())
@@ -666,7 +667,7 @@ impl FieldsEditor {
                 ui.label(i18n.t("fields-col-mode"));
                 egui::ComboBox::from_id_salt("fields_mode")
                     .selected_text(Self::mode_label(i18n, mode))
-                    .show_ui(ui, |ui| {
+                    .show_field(ui, |ui| {
                         for m in FieldMode::ALL {
                             if ui
                                 .selectable_label(mode == m, Self::mode_label(i18n, m))
@@ -719,7 +720,7 @@ impl FieldsEditor {
                     egui::ComboBox::from_id_salt("fields-newline")
                         .selected_text(shown)
                         .width(70.0)
-                        .show_ui(ui, |ui| {
+                        .show_field(ui, |ui| {
                             for (v, label) in [
                                 (None, "—".to_string()),
                                 (Some(true), Self::yes_no(i18n, true)),
@@ -741,7 +742,7 @@ impl FieldsEditor {
                     let none = i18n.t("fields-rule-none");
                     egui::ComboBox::from_id_salt("fields_rule_kind")
                         .selected_text(rule_kind.clone().unwrap_or_else(|| none.clone()))
-                        .show_ui(ui, |ui| {
+                        .show_field(ui, |ui| {
                             if ui.selectable_label(rule_kind.is_none(), &none).clicked()
                                 && rule_kind.is_some()
                             {

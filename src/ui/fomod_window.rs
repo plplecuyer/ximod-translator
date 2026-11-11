@@ -16,6 +16,7 @@
 //! for the translated preview.
 
 use super::app::{XimodApp, read_geometry};
+use crate::ui::theme::ComboField as _;
 use crate::ui::toasts::ToastLevel;
 use eframe::egui::{self, RichText};
 use egui_extras::{Column, TableBuilder};
@@ -1345,7 +1346,7 @@ fn render_header(
                         ExportMode::InPlace => i18n.t("ftr-export-inplace"),
                         ExportMode::Package => i18n.t("ftr-export-package"),
                     })
-                    .show_ui(ui, |ui| {
+                    .show_field(ui, |ui| {
                         ui.selectable_value(
                             &mut st.export_mode,
                             ExportMode::Sibling,
@@ -1467,7 +1468,7 @@ fn render_header(
                     KindFilter::Descriptions => i18n.t("ftr-type-descriptions"),
                     KindFilter::Meta => i18n.t("ftr-type-meta"),
                 })
-                .show_ui(ui, |ui| {
+                .show_field(ui, |ui| {
                     ui.selectable_value(&mut st.kind, KindFilter::All, i18n.t("ftr-type-all"));
                     ui.selectable_value(&mut st.kind, KindFilter::Names, i18n.t("ftr-type-names"));
                     ui.selectable_value(
@@ -1671,7 +1672,7 @@ fn lang_combo(
         egui::ComboBox::from_id_salt(id)
             .selected_text(format!("{} ({})", i18n.display_name(value), value))
             .width(200.0)
-            .show_ui(ui, |ui| {
+            .show_field(ui, |ui| {
                 for code in locales {
                     let label = format!("{} ({})", i18n.display_name(code), code);
                     ui.selectable_value(value, code.clone(), label);
@@ -2125,6 +2126,23 @@ fn render_table(ctx: &egui::Context, st: &mut FomodTranslationState, i18n: &crat
 
 #[cfg(test)]
 mod tests {
+
+    /// The whole line reaches Google Translate: every « & », « # », « / »,
+    /// space or line break of the text is encoded, so the query keeps its
+    /// target and its text (the Windows opening cut it at the first « & »).
+    #[test]
+    fn google_url_carries_target_and_whole_text() {
+        let u = super::google_url("Salt & Pepper #2\nA/B é", "fr");
+        assert!(u.starts_with("https://translate.google.com/?sl=auto&tl=fr&text="));
+        assert!(u.ends_with("&op=translate"));
+        let text = u
+            .split("&text=")
+            .nth(1)
+            .and_then(|t| t.strip_suffix("&op=translate"))
+            .unwrap();
+        assert_eq!(text, "Salt%20%26%20Pepper%20%232%0AA%2FB%20%C3%A9");
+    }
+
     use super::*;
 
     fn sample_fomod(tag: &str) -> PathBuf {

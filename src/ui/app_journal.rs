@@ -2,6 +2,7 @@
 //! of the status bar, the « Journal : … » chip of the filter bar, and the
 //! helpers that record an entry.
 
+use crate::ui::theme::ComboField as _;
 use std::collections::{BTreeSet, HashMap};
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -279,7 +280,7 @@ impl XimodApp {
                 };
                 egui::ComboBox::from_id_salt("journal-level")
                     .selected_text(cur.as_str())
-                    .show_ui(ui, |ui| {
+                    .show_field(ui, |ui| {
                         let v = &mut self.journal_win.view.min_level;
                         ui.selectable_value(v, None, &lbl_all);
                         ui.selectable_value(v, Some(Level::Warn), &lbl_warn);
@@ -293,7 +294,7 @@ impl XimodApp {
                     .unwrap_or_else(|| lbl_doc_all.clone());
                 egui::ComboBox::from_id_salt("journal-doc")
                     .selected_text(cur_doc)
-                    .show_ui(ui, |ui| {
+                    .show_field(ui, |ui| {
                         let v = &mut self.journal_win.view.doc;
                         ui.selectable_value(v, None, &lbl_doc_all);
                         for d in &docs {

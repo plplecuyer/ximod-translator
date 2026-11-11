@@ -3,6 +3,7 @@
 //! and the application of a matrix to the lines of a scope — one undoable
 //! operation, status kept, provenance « remplacement (<matrice>) ».
 
+use crate::ui::theme::ComboField as _;
 use eframe::egui;
 
 use super::{XimodApp, read_geometry as read_geometry_of};
@@ -252,7 +253,7 @@ impl XimodApp {
                 egui::ComboBox::from_id_salt("ximod-replace-matrix")
                     .selected_text(current)
                     .width(260.0)
-                    .show_ui(ui, |ui| {
+                    .show_field(ui, |ui| {
                         if ui
                             .selectable_label(self.replace.matrix.is_none(), &none_label)
                             .clicked()
@@ -761,7 +762,7 @@ impl XimodApp {
             egui::ComboBox::from_id_salt("ximod-matrices-lang")
                 .selected_text(cur)
                 .width(220.0)
-                .show_ui(ui, |ui| {
+                .show_field(ui, |ui| {
                     for l in self.matrices_win.languages.clone() {
                         let label = self.matrices_lang_label(&l);
                         if ui
@@ -967,7 +968,7 @@ impl XimodApp {
                                     egui::ComboBox::from_id_salt(("ximod-matrices-mode", i))
                                         .selected_text(self.i18n.t(r.rule.mode.i18n_key()))
                                         .width(80.0)
-                                        .show_ui(ui, |ui| {
+                                        .show_field(ui, |ui| {
                                             for md in Mode::ALL {
                                                 if ui
                                                     .selectable_value(

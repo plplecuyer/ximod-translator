@@ -3,6 +3,7 @@
 //! and the folding, the account, the four lists, the CSV report and the
 //! merge into a dictionary.
 
+use crate::ui::theme::ComboField as _;
 use std::path::PathBuf;
 
 use eframe::egui;
@@ -256,7 +257,7 @@ impl XimodApp {
             egui::ComboBox::from_id_salt(if b { "ximod-cmp-b" } else { "ximod-cmp-a" })
                 .selected_text(shown)
                 .width(260.0)
-                .show_ui(ui, |ui| {
+                .show_field(ui, |ui| {
                     ui.selectable_value(&mut side.doc, None, &none);
                     for (s, n) in &docs {
                         ui.selectable_value(&mut side.doc, Some(*s), n);

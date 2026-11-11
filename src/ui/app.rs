@@ -5,6 +5,7 @@
 //! *independent* windows (Settings, Flags, About) rendered as immediate egui
 //! viewports whose position and size are persisted to `Config.ini`.
 
+use crate::ui::theme::ComboField as _;
 use std::path::PathBuf;
 use std::sync::Arc;
 
@@ -5445,7 +5446,7 @@ impl XimodApp {
                     ui.add_enabled_ui(!readonly, |ui| {
                         egui::ComboBox::from_id_salt("game_sel")
                             .selected_text(sel_game_label.as_str())
-                            .show_ui(ui, |ui| {
+                            .show_field(ui, |ui| {
                                 // Empty position (no game selected).
                                 ui.selectable_value(&mut cur.game, String::new(), " ");
                                 for (id, label) in &game_opts {
@@ -5507,7 +5508,7 @@ impl XimodApp {
                     ui.add_enabled_ui(!readonly, |ui| {
                         egui::ComboBox::from_id_salt("output_mode")
                             .selected_text(sel_output_label)
-                            .show_ui(ui, |ui| {
+                            .show_field(ui, |ui| {
                                 // Empty position (no output chosen), like the game list.
                                 ui.selectable_value(&mut cur.output, None, " ");
                                 let is_text = self.active_doc().is_some_and(Doc::is_text);
@@ -5828,7 +5829,7 @@ impl XimodApp {
                     egui::ComboBox::from_id_salt("ximod-filter-in")
                         .selected_text(&in_labels[cur])
                         .width(120.0)
-                        .show_ui(ui, |ui| {
+                        .show_field(ui, |ui| {
                             for (i, t) in crate::filter::SearchIn::ALL.iter().enumerate() {
                                 if ui
                                     .selectable_value(&mut self.filter_in, *t, &in_labels[i])
@@ -5968,7 +5969,7 @@ impl XimodApp {
                     egui::ComboBox::from_id_salt("ximod-filter-prov")
                         .selected_text(&prov_labels[cur])
                         .height(480.0)
-                        .show_ui(ui, |ui| {
+                        .show_field(ui, |ui| {
                             for (i, p) in crate::provenance::ProvFilter::ALL.iter().enumerate() {
                                 ui.selectable_value(&mut self.filter_prov, *p, &prov_labels[i]);
                             }
@@ -5983,7 +5984,7 @@ impl XimodApp {
                     };
                     egui::ComboBox::from_id_salt("filter_record")
                         .selected_text(sel)
-                        .show_ui(ui, |ui| {
+                        .show_field(ui, |ui| {
                             ui.selectable_value(&mut self.filter_record, String::new(), &lbl_all);
                             for r in &records {
                                 ui.selectable_value(&mut self.filter_record, r.clone(), r);
@@ -5999,7 +6000,7 @@ impl XimodApp {
                     };
                     egui::ComboBox::from_id_salt("filter_field")
                         .selected_text(sel_f)
-                        .show_ui(ui, |ui| {
+                        .show_field(ui, |ui| {
                             ui.selectable_value(&mut self.filter_field, String::new(), &lbl_all);
                             for f in &fields {
                                 ui.selectable_value(&mut self.filter_field, f.clone(), f);
@@ -9259,7 +9260,7 @@ impl XimodApp {
                     };
                     egui::ComboBox::from_id_salt("ximod-replace-scope")
                         .selected_text(label(self.replace.scope))
-                        .show_ui(ui, |ui| {
+                        .show_field(ui, |ui| {
                             for s in Scope::ALL {
                                 if ui
                                     .selectable_value(&mut self.replace.scope, s, label(s))
@@ -9289,7 +9290,7 @@ impl XimodApp {
                     ui.label(t("replace-mode"));
                     egui::ComboBox::from_id_salt("ximod-replace-mode")
                         .selected_text(t(self.replace.mode.i18n_key()))
-                        .show_ui(ui, |ui| {
+                        .show_field(ui, |ui| {
                             for m in Mode::ALL {
                                 if ui
                                     .selectable_value(&mut self.replace.mode, m, t(m.i18n_key()))
@@ -14975,7 +14976,7 @@ impl XimodApp {
                         let combo = egui::ComboBox::from_id_salt("settings_lang")
                             .selected_text(current)
                             .height(320.0)
-                            .show_ui(ui, |ui| {
+                            .show_field(ui, |ui| {
                                 egui::ScrollArea::vertical().show(ui, |ui| {
                                     let sections = [
                                         ("settings-language-country", &country_langs),
@@ -15020,7 +15021,7 @@ impl XimodApp {
                     self.settings_label(ui, lw, "settings-theme");
                     let combo = egui::ComboBox::from_id_salt("settings_theme")
                         .selected_text(self.i18n.t(self.temp_theme.i18n_key()))
-                        .show_ui(ui, |ui| {
+                        .show_field(ui, |ui| {
                             for theme in Theme::variants() {
                                 ui.selectable_value(
                                     &mut self.temp_theme,
@@ -18222,7 +18223,7 @@ impl XimodApp {
                         ui.label(lbl_game.as_str());
                         egui::ComboBox::from_id_salt("dict_conv_game")
                             .selected_text(p.game.display_name())
-                            .show_ui(ui, |ui| {
+                            .show_field(ui, |ui| {
                                 for g in crate::games::Game::ALL {
                                     if *g != crate::games::Game::Unknown {
                                         ui.selectable_value(&mut p.game, *g, g.display_name());
@@ -19350,7 +19351,7 @@ fn lang_combo(
     };
     egui::ComboBox::from_id_salt(id)
         .selected_text(selected)
-        .show_ui(ui, |ui| {
+        .show_field(ui, |ui| {
             if with_empty {
                 ui.selectable_value(current, String::new(), " ");
             }

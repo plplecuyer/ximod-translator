@@ -61,6 +61,9 @@ thiserror = "2.0"
 anyhow = "1.0"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+# Open a web page with its whole query string (ShellExecute on Windows,
+# where `cmd /C start` cut the address at its first « & »).
+webbrowser = "1"
 spellbook = "0.4"
 ba2 = "3"
 # Memory-map plugins on load so huge masters (e.g. 1.35 GB Starfield.esm) don't

@@ -57,6 +57,28 @@ pub fn visuals_for(dark: bool) -> egui::Visuals {
     visuals.error_fg_color = palette.danger;
     visuals.warn_fg_color = palette.warning;
 
+    // Buttons stand out from fields and lists (requested on 11/11/2026):
+    // egui draws no relief, so a button gets a raised fill, between the
+    // panel and the fields, and a dark outline; text fields keep the
+    // sunken fill (`extreme_bg_color`) and combo boxes take it too through
+    // [`ComboField::show_field`].
+    let (raised, raised_hover, outline) = if dark {
+        (
+            Color32::from_gray(72),
+            Color32::from_gray(88),
+            Color32::from_gray(0),
+        )
+    } else {
+        (
+            Color32::from_gray(214),
+            Color32::from_gray(200),
+            Color32::from_gray(25),
+        )
+    };
+    visuals.widgets.inactive.weak_bg_fill = raised;
+    visuals.widgets.inactive.bg_stroke = Stroke::new(1.0_f32, outline);
+    visuals.widgets.hovered.weak_bg_fill = raised_hover;
+
     let r = Rounding::same(6.0);
     visuals.widgets.noninteractive.rounding = r;
     visuals.widgets.inactive.rounding = r;
@@ -72,4 +94,58 @@ pub fn visuals_for(dark: bool) -> egui::Visuals {
         color: Color32::from_black_alpha(if dark { 110 } else { 50 }),
     };
     visuals
+}
+
+/// The look of a field (sunken fill, the outline of the theme) on the
+/// widgets of `visuals`: what a combo box borrows so it reads as a list to
+/// fill in, not as a button.
+pub fn field_look(visuals: &mut egui::Visuals) {
+    let fill = visuals.extreme_bg_color;
+    visuals.widgets.inactive.weak_bg_fill = fill;
+    visuals.widgets.hovered.weak_bg_fill = fill;
+}
+
+/// `ComboBox::show_field`: [`egui::ComboBox::show_ui`] with the look of a
+/// field ([`field_look`]); the popup keeps the look of the application.
+pub trait ComboField {
+    fn show_field<R>(
+        self,
+        ui: &mut egui::Ui,
+        add_contents: impl FnOnce(&mut egui::Ui) -> R,
+    ) -> egui::InnerResponse<Option<R>>;
+}
+
+impl ComboField for egui::ComboBox {
+    fn show_field<R>(
+        self,
+        ui: &mut egui::Ui,
+        add_contents: impl FnOnce(&mut egui::Ui) -> R,
+    ) -> egui::InnerResponse<Option<R>> {
+        ui.scope(|ui| {
+            field_look(ui.visuals_mut());
+            self.show_ui(ui, add_contents)
+        })
+        .inner
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn buttons_differ_from_fields_in_both_themes() {
+        for dark in [false, true] {
+            let v = visuals_for(dark);
+            let button = v.widgets.inactive.weak_bg_fill;
+            assert_ne!(button, v.extreme_bg_color, "dark={dark}");
+            assert_ne!(button, v.panel_fill, "dark={dark}");
+            assert!(v.widgets.inactive.bg_stroke.width >= 1.0);
+            let mut f = v.clone();
+            field_look(&mut f);
+            assert_eq!(f.widgets.inactive.weak_bg_fill, v.extreme_bg_color);
+            // The outline stays: a field is framed too.
+            assert_eq!(f.widgets.inactive.bg_stroke, v.widgets.inactive.bg_stroke);
+        }
+    }
 }

@@ -1,6 +1,7 @@
 //! Fichier ▸ Enregistrer une partie… (B-10): the modal dialog — scope,
 //! statuses, records and field, the file and its preview — and the write.
 
+use crate::ui::theme::ComboField as _;
 use std::collections::{BTreeSet, HashMap};
 use std::path::PathBuf;
 
@@ -234,7 +235,7 @@ impl XimodApp {
                     egui::ComboBox::from_id_salt("ximod-savepart-field")
                         .width(120.0)
                         .selected_text(dlg.choices.field.clone().unwrap_or(all_l.clone()))
-                        .show_ui(ui, |ui| {
+                        .show_field(ui, |ui| {
                             ui.selectable_value(&mut dlg.choices.field, None, all_l);
                             for f in &fields {
                                 ui.selectable_value(

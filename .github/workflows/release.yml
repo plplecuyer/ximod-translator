@@ -45,7 +45,7 @@ jobs:
           # architectures compilées sur le runner Apple Silicon puis réunies
           # par lipo — les runners Intel (macos-13) n'existent plus.
           - name: macos-universal
-            os: macos-14
+            os: macos-15
             targets: aarch64-apple-darwin,x86_64-apple-darwin
             release_dir: dist/universal
     runs-on: ${{ matrix.os }}

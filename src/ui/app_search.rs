@@ -1,6 +1,7 @@
 //! Outils ▸ Recherche avancée… (A-19): the window, its presets, its
 //! preview, and the search applied to the grid as a filter chip.
 
+use crate::ui::theme::ComboField as _;
 use std::sync::Arc;
 
 use eframe::egui;
@@ -170,7 +171,7 @@ impl XimodApp {
             egui::ComboBox::from_id_salt("ximod-search-preset")
                 .width(240.0)
                 .selected_text(cur.map(|i| names[i].as_str()).unwrap_or(""))
-                .show_ui(ui, |ui| {
+                .show_field(ui, |ui| {
                     for (i, n) in names.iter().enumerate() {
                         if ui.selectable_label(cur == Some(i), n).clicked() {
                             picked = Some(i);

@@ -3,6 +3,7 @@
 //! when the source language is unknown, forced by Fichier ▸ Encodage du
 //! fichier… and kept in the mod's dictionary — and the dialog itself.
 
+use crate::ui::theme::ComboField as _;
 use std::path::Path;
 
 use eframe::egui;
@@ -421,7 +422,7 @@ impl XimodApp {
                         egui::ComboBox::from_id_salt("ximod-encoding-read")
                             .width(400.0)
                             .selected_text(cur)
-                            .show_ui(ui, |ui| {
+                            .show_field(ui, |ui| {
                                 for (p, n) in &names {
                                     ui.selectable_value(&mut dlg.read, *p, n);
                                 }
@@ -444,7 +445,7 @@ impl XimodApp {
                         egui::ComboBox::from_id_salt("ximod-encoding-write")
                             .width(400.0)
                             .selected_text(cur)
-                            .show_ui(ui, |ui| {
+                            .show_field(ui, |ui| {
                                 for (p, n) in &names_out {
                                     ui.selectable_value(&mut dlg.write, *p, n);
                                 }

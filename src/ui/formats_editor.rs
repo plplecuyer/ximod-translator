@@ -6,6 +6,7 @@
 //! A structured format (D-08, figure B.5) has a type and a table of its
 //! fields — resolution and value — instead of the line expression.
 
+use crate::ui::theme::ComboField as _;
 use eframe::egui;
 
 use crate::i18n::I18n;
@@ -270,7 +271,7 @@ impl FormatsEditor {
                                     i18n.t(&format!("fmt-kind-{}", kind_of(&self.draft))),
                                 )
                                 .width(200.0)
-                                .show_ui(ui, |ui| {
+                                .show_field(ui, |ui| {
                                     for k in KINDS {
                                         ui.selectable_value(
                                             &mut self.draft.kind,
@@ -510,7 +511,7 @@ fn fields_table(ui: &mut egui::Ui, i18n: &I18n, f: &mut TextFormat) {
                 egui::ComboBox::from_id_salt(format!("ximod-format-by-{name}"))
                     .selected_text(shown)
                     .width(170.0)
-                    .show_ui(ui, |ui| {
+                    .show_field(ui, |ui| {
                         if name != "text" {
                             ui.selectable_value(&mut by, String::new(), "—");
                         }
@@ -576,7 +577,7 @@ fn combo(ui: &mut egui::Ui, salt: &str, value: &mut String, choices: &[&str]) {
     egui::ComboBox::from_id_salt(format!("ximod-format-{salt}"))
         .selected_text(value.as_str())
         .width(150.0)
-        .show_ui(ui, |ui| {
+        .show_field(ui, |ui| {
             for c in choices {
                 ui.selectable_value(value, c.to_string(), *c);
             }

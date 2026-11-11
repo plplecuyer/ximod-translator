@@ -4,6 +4,7 @@
 //! the edit window) and the glossary of the active document, shared by F9
 //! and the Vocabulaire tab.
 
+use crate::ui::theme::ComboField as _;
 use std::sync::Arc;
 
 use eframe::egui;
@@ -500,7 +501,7 @@ impl XimodApp {
             let cur = self.assist_win.pair.clone();
             egui::ComboBox::from_id_salt("ximod-assist-pair")
                 .selected_text(&cur)
-                .show_ui(ui, |ui| {
+                .show_field(ui, |ui| {
                     for p in &pairs {
                         if ui.selectable_label(*p == cur, p).clicked() && *p != cur && !dirty {
                             self.assist_win.pair = p.clone();
@@ -770,7 +771,7 @@ impl XimodApp {
                     touched |= ui.checkbox(&mut t.whole, &cols[3]).changed();
                     egui::ComboBox::from_id_salt("ximod-assist-class")
                         .selected_text(words(&class_l, t.class))
-                        .show_ui(ui, |ui| {
+                        .show_field(ui, |ui| {
                             for (c, l) in &class_l {
                                 touched |= ui.selectable_value(&mut t.class, *c, l).changed();
                             }
@@ -784,7 +785,7 @@ impl XimodApp {
                                 .map(|(_, s)| s.clone())
                                 .unwrap_or_default(),
                         )
-                        .show_ui(ui, |ui| {
+                        .show_field(ui, |ui| {
                             for (x, l) in &gender_l {
                                 touched |= ui.selectable_value(&mut t.gender, *x, l).changed();
                             }
@@ -797,7 +798,7 @@ impl XimodApp {
                                 .map(|(_, s)| s.clone())
                                 .unwrap_or_default(),
                         )
-                        .show_ui(ui, |ui| {
+                        .show_field(ui, |ui| {
                             for (p, l) in &pos_l {
                                 touched |= ui.selectable_value(&mut t.pos, *p, l).changed();
                             }
@@ -1182,7 +1183,7 @@ impl XimodApp {
                             };
                             egui::ComboBox::from_id_salt("ximod-add-term-group")
                                 .selected_text(cur)
-                                .show_ui(ui, |ui| {
+                                .show_field(ui, |ui| {
                                     for (k, g) in dlg.groups.iter().enumerate() {
                                         ui.selectable_value(&mut dlg.group, Some(k), g);
                                     }
@@ -1218,7 +1219,7 @@ impl XimodApp {
                                         .map(|(_, s)| s.clone())
                                         .unwrap_or_default(),
                                 )
-                                .show_ui(ui, |ui| {
+                                .show_field(ui, |ui| {
                                     for (c, l) in &class_l {
                                         ui.selectable_value(&mut dlg.term.class, *c, l);
                                     }
@@ -1232,7 +1233,7 @@ impl XimodApp {
                                         .map(|(_, s)| s.clone())
                                         .unwrap_or_default(),
                                 )
-                                .show_ui(ui, |ui| {
+                                .show_field(ui, |ui| {
                                     for (x, l) in &gender_l {
                                         ui.selectable_value(&mut dlg.term.gender, *x, l);
                                     }

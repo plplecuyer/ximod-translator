@@ -7,6 +7,7 @@
 //! will show them. Ouvrir… comes here for a file no precise name pattern
 //! takes.
 
+use crate::ui::theme::ComboField as _;
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
@@ -432,7 +433,7 @@ impl XimodApp {
                     egui::ComboBox::from_id_salt("ximod-import-format")
                         .selected_text(shown)
                         .width(380.0)
-                        .show_ui(ui, |ui| {
+                        .show_field(ui, |ui| {
                             for (id, label) in &rows {
                                 ui.selectable_value(&mut chosen, id.clone(), label);
                             }

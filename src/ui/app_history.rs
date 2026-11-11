@@ -3,6 +3,7 @@
 //! mod's dictionary when it is saved; the Historique window (Outils), the
 //! Historique tab of the edit window and the returns to an earlier version.
 
+use crate::ui::theme::ComboField as _;
 use std::collections::HashMap;
 
 use eframe::egui;
@@ -594,7 +595,7 @@ impl XimodApp {
                 .unwrap_or_else(|| op_all.clone());
             egui::ComboBox::from_id_salt("ximod-history-op")
                 .selected_text(cur)
-                .show_ui(ui, |ui| {
+                .show_field(ui, |ui| {
                     ui.selectable_value(&mut self.history_win.op, None, &op_all);
                     for (code, name) in &op_names {
                         ui.selectable_value(&mut self.history_win.op, Some(code.clone()), name);

@@ -3,6 +3,7 @@
 //! of the answer, sampling, its own guards —, new, duplicate, remove,
 //! restore; saved with the settings.
 
+use crate::ui::theme::ComboField as _;
 use std::ops::RangeInclusive;
 
 use eframe::egui;
@@ -193,7 +194,7 @@ impl XimodApp {
                     Answer::Json => &l_json,
                     Answer::Lines => &l_lines,
                 })
-                .show_ui(ui, |ui| {
+                .show_field(ui, |ui| {
                     changed |= ui
                         .selectable_value(&mut p.answer, Answer::Json, &l_json)
                         .changed();

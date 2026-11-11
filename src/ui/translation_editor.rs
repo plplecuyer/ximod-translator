@@ -16,6 +16,7 @@
 //!   the translator moves within the sentence; a lost or duplicated marker
 //!   is shown in red and the key falls back to the label on save.
 
+use crate::ui::theme::ComboField as _;
 use std::collections::{BTreeMap, HashMap};
 use std::path::{Path, PathBuf};
 
@@ -1045,7 +1046,7 @@ pub fn body(ui: &mut egui::Ui, ed: &mut TrEditor, f: &Feed) -> Vec<TrAction> {
                         .selected_text(current)
                         .width(220.0)
                         .height(300.0)
-                        .show_ui(ui, |ui| {
+                        .show_field(ui, |ui| {
                             for (code, label) in &f.targets {
                                 if ui.selectable_label(ed.target == *code, label).clicked()
                                     && ed.target != *code
@@ -1072,7 +1073,7 @@ pub fn body(ui: &mut egui::Ui, ed: &mut TrEditor, f: &Feed) -> Vec<TrAction> {
                         .selected_text(lang_name(&ed.displayed))
                         .width(220.0)
                         .height(300.0)
-                        .show_ui(ui, |ui| {
+                        .show_field(ui, |ui| {
                             for (code, label) in &f.displayed {
                                 if ui.selectable_label(ed.displayed == *code, label).clicked()
                                     && ed.displayed != *code

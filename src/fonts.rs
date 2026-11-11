@@ -243,21 +243,18 @@ fn build_defs(rel_paths: &[String]) -> egui::FontDefinitions {
     fonts
 }
 
-/// Open a URL in the user's default browser (used for the Google Fonts link).
+/// Open a URL in the user's default browser (Google Translate with the
+/// line, Google Fonts, a mail).
 ///
-/// Failure is not an error worth interrupting the user for: it is logged and
-/// ignored, since the address is also shown in the interface.
+/// Through the system's own call (ShellExecute on Windows, `open` on macOS,
+/// `xdg-open` and the like on Linux), so the whole address arrives: on
+/// Windows, `cmd /C start` read each « & » of the query string as the end
+/// of the command, and Google Translate opened without the text nor the
+/// target language. Failure is not an error worth interrupting the user
+/// for: it is logged and ignored, since the address is also shown in the
+/// interface.
 pub fn open_url(url: &str) {
-    #[cfg(target_os = "windows")]
-    let result = std::process::Command::new("cmd")
-        .args(["/C", "start", "", url])
-        .spawn();
-    #[cfg(target_os = "macos")]
-    let result = std::process::Command::new("open").arg(url).spawn();
-    #[cfg(all(unix, not(target_os = "macos")))]
-    let result = std::process::Command::new("xdg-open").arg(url).spawn();
-
-    if let Err(e) = result {
+    if let Err(e) = webbrowser::open(url) {
         tracing::warn!("Could not open {}: {}", url, e);
     }
 }

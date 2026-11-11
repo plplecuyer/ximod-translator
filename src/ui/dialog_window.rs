@@ -3,6 +3,7 @@
 //! here; the application feeds the window with the dialogue map and the
 //! document's lines and applies the actions it returns.
 
+use crate::ui::theme::ComboField as _;
 use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
 
@@ -374,7 +375,7 @@ pub fn body(ui: &mut egui::Ui, st: &mut DialogWindow, feed: &Feed) -> DialogActi
             egui::ComboBox::from_id_salt("ximod-dialog-quest")
                 .selected_text(crate::ui::edit_window::one_line(&q_label, 28))
                 .width(190.0)
-                .show_ui(ui, |ui| {
+                .show_field(ui, |ui| {
                     if ui
                         .selectable_label(st.filter_quest.is_none(), i18n.t("dialog-quest-all"))
                         .clicked()
@@ -399,7 +400,7 @@ pub fn body(ui: &mut egui::Ui, st: &mut DialogWindow, feed: &Feed) -> DialogActi
             egui::ComboBox::from_id_salt("ximod-dialog-npc")
                 .selected_text(crate::ui::edit_window::one_line(&n_label, 24))
                 .width(170.0)
-                .show_ui(ui, |ui| {
+                .show_field(ui, |ui| {
                     if ui
                         .selectable_label(st.filter_npc.is_none(), i18n.t("dialog-npc-all"))
                         .clicked()

@@ -3,6 +3,7 @@
 //! d'exclusion… with its three tabs — Règles actives, Éditeur, Suggestions
 //! — and the generalization proposed after a line was set Ignoré by hand.
 
+use crate::ui::theme::ComboField as _;
 use std::collections::HashSet;
 use std::sync::Arc;
 
@@ -376,7 +377,7 @@ impl XimodApp {
                         let cur = dlg.proposal.prefix.clone().unwrap_or_default();
                         egui::ComboBox::from_id_salt("ximod-generalize-prefix")
                             .selected_text(format!("{}  ({})", cur.0, cur.1))
-                            .show_ui(ui, |ui| {
+                            .show_field(ui, |ui| {
                                 for c in &p.prefixes {
                                     if ui
                                         .selectable_label(
@@ -1130,7 +1131,7 @@ impl XimodApp {
                 ui.label(i18n.t("rules-field-kind"));
                 egui::ComboBox::from_id_salt("ximod-rules-kind")
                     .selected_text(i18n.t(r.kind.i18n_key()))
-                    .show_ui(ui, |ui| {
+                    .show_field(ui, |ui| {
                         for k in Kind::ALL {
                             touched |= ui
                                 .selectable_value(&mut r.kind, k, i18n.t(k.i18n_key()))

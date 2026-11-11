@@ -6855,6 +6855,7 @@ dependencies = [
  "unic-langid",
  "unicode-normalization",
  "ureq",
+ "webbrowser",
  "windows-sys 0.59.0",
  "winreg",
  "winres",

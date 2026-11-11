@@ -3,6 +3,7 @@
 //! essay on the active document), the derivations of the dialog Appliquer
 //! les assistants, and the derived lines that follow their parent.
 
+use crate::ui::theme::ComboField as _;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::sync::Arc;
 
@@ -743,7 +744,7 @@ impl XimodApp {
                         .unwrap_or_default();
                     egui::ComboBox::from_id_salt("ximod-derive-gender")
                         .selected_text(shown)
-                        .show_ui(ui, |ui| {
+                        .show_field(ui, |ui| {
                             for (g, l) in &gender_l {
                                 if ui.selectable_label(cur == *g, l).clicked() {
                                     let mut m = match r.gender.take() {
@@ -789,7 +790,7 @@ impl XimodApp {
                             });
                         egui::ComboBox::from_id_salt(("ximod-derive-var", v.clone()))
                             .selected_text(shown)
-                            .show_ui(ui, |ui| {
+                            .show_field(ui, |ui| {
                                 for (x, l) in &preset_l {
                                     if ui.selectable_label(cur == *x, l).clicked() {
                                         match x {

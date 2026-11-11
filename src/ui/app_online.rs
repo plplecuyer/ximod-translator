@@ -3,6 +3,7 @@
 //! the job polled each frame and applied as one undoable operation, the
 //! « Tester… » of the settings, and the FOMOD window's request.
 
+use crate::ui::theme::ComboField as _;
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -1359,7 +1360,7 @@ impl XimodApp {
             egui::ComboBox::from_id_salt("ximod-online-default")
                 .selected_text(cur)
                 .width(260.0)
-                .show_ui(ui, |ui| {
+                .show_field(ui, |ui| {
                     ui.selectable_value(&mut self.temp_online.service, None, " ");
                     for (s, l) in labels {
                         ui.selectable_value(&mut self.temp_online.service, Some(s), l);
@@ -1408,7 +1409,7 @@ impl XimodApp {
                         egui::ComboBox::from_id_salt("ximod-deepl-endpoint")
                             .selected_text(&self.temp_online.deepl_endpoint)
                             .width(260.0)
-                            .show_ui(ui, |ui| {
+                            .show_field(ui, |ui| {
                                 for e in ["api-free.deepl.com", "api.deepl.com"] {
                                     ui.selectable_value(
                                         &mut self.temp_online.deepl_endpoint,
@@ -1423,7 +1424,7 @@ impl XimodApp {
                         egui::ComboBox::from_id_salt("ximod-deepl-formality")
                             .selected_text(&self.temp_online.deepl_formality)
                             .width(160.0)
-                            .show_ui(ui, |ui| {
+                            .show_field(ui, |ui| {
                                 for e in ["default", "prefer_more", "prefer_less", "more", "less"] {
                                     ui.selectable_value(
                                         &mut self.temp_online.deepl_formality,

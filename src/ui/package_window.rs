@@ -3,6 +3,7 @@
 //! (Mod Organizer 2, Vortex) installs for the game, with the notes that
 //! family of game needs (manual § 19).
 
+use crate::ui::theme::ComboField as _;
 use std::path::PathBuf;
 
 use crate::i18n::I18n;
@@ -89,7 +90,7 @@ impl PackageWindow {
                 ui.label(i18n.t("pack-game"));
                 egui::ComboBox::from_id_salt("pack_game")
                     .selected_text(self.spec.game.display_name())
-                    .show_ui(ui, |ui| {
+                    .show_field(ui, |ui| {
                         for g in Game::ALL {
                             if *g != Game::Unknown {
                                 ui.selectable_value(&mut self.spec.game, *g, g.display_name());

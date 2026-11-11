@@ -3,6 +3,7 @@
 //! pattern chosen, the composition and the rules of the target language,
 //! the essay; Enregistrer validates the file (R-B16-07).
 
+use crate::ui::theme::ComboField as _;
 use std::sync::Arc;
 
 use eframe::egui;
@@ -337,7 +338,7 @@ impl XimodApp {
                     let cur = p.head.clone().unwrap_or_else(|| l_last.clone());
                     egui::ComboBox::from_id_salt("ximod-patterns-head")
                         .selected_text(cur)
-                        .show_ui(ui, |ui| {
+                        .show_field(ui, |ui| {
                             if ui.selectable_label(p.head.is_none(), &l_last).clicked() {
                                 p.head = None;
                                 touched = true;
@@ -373,7 +374,7 @@ impl XimodApp {
                             });
                         egui::ComboBox::from_id_salt(("ximod-patterns-var", v.clone()))
                             .selected_text(shown)
-                            .show_ui(ui, |ui| {
+                            .show_field(ui, |ui| {
                                 for (r, l) in &preset_l {
                                     if ui.selectable_label(cur == *r, l).clicked() {
                                         match r {
