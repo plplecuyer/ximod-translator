@@ -79,6 +79,8 @@ pub struct Global {
     pub json: bool,
     pub quiet: bool,
     pub verbose: bool,
+    /// `--log <file>`: the journal appended to that file (E-01).
+    pub log: Option<String>,
     pub game: Option<String>,
     pub from: Option<String>,
     pub to: Option<String>,
@@ -91,6 +93,7 @@ impl Global {
             json: c.has("json"),
             quiet: c.has("quiet"),
             verbose: c.has("verbose"),
+            log: c.get("log").map(str::to_string),
             game: c.get("game").map(str::to_string),
             from: c.get("from").map(str::to_string),
             to: c.get("to").map(str::to_string),
@@ -105,13 +108,18 @@ pub struct Out<'a> {
     pub err: &'a mut dyn Write,
     pub json: bool,
     pub quiet: bool,
+    /// `--verbose`: the journal on stderr, as the run goes.
+    pub verbose: bool,
+    /// `--log`: the journal appended to that file.
+    pub log: Option<std::fs::File>,
 }
 
 impl Out<'_> {
     /// A reply: its object on stdout with `--json`, its lines otherwise;
     /// its messages on stderr.
     pub fn reply(&mut self, i18n: &crate::i18n::I18n, r: &Reply) {
-        if !self.quiet {
+        // With --verbose, the messages already went through the journal.
+        if !self.quiet && !self.verbose {
             for n in &r.notes {
                 let _ = writeln!(self.err, "{}", i18n.localize(n));
             }
@@ -135,7 +143,9 @@ impl Out<'_> {
     /// `--json`).
     pub fn fail(&mut self, i18n: &crate::i18n::I18n, command: &str, f: &Fail) {
         let msg = i18n.localize(&f.0);
-        let _ = writeln!(self.err, "{msg}");
+        if !self.verbose {
+            let _ = writeln!(self.err, "{msg}");
+        }
         if self.json {
             let j = serde_json::json!({ "command": command, "code": FAIL, "error": msg });
             let _ = writeln!(self.out, "{j}");
@@ -143,20 +153,91 @@ impl Out<'_> {
     }
 }
 
-fn init_log(verbose: bool) {
+impl Out<'_> {
+    /// The new entries of the journal: on stderr with `--verbose`, in the
+    /// file of `--log`; their objects for `--json` (R-E01-07).
+    pub fn journal(&mut self, ctx: &mut work::Ctx) -> Vec<Value> {
+        let entries = ctx.journal.take_unflushed();
+        if entries.is_empty() {
+            return Vec::new();
+        }
+        let text = crate::journal::tsv(&entries, |l| ctx.i18n.t(l.i18n_key()));
+        if self.verbose {
+            let _ = write!(self.err, "{text}");
+        }
+        if let Some(f) = &mut self.log {
+            let _ = f.write_all(text.as_bytes());
+        }
+        entries.iter().map(crate::journal::json).collect()
+    }
+}
+
+/// The nature of the entries of a command.
+pub fn journal_kind(command: &str) -> crate::journal::Kind {
+    use crate::journal::Kind;
+    match command {
+        "import" | "info" => Kind::Open,
+        "apply" => Kind::Apply,
+        "assist" => Kind::Assist,
+        "translate" => Kind::Online,
+        "check" => Kind::Check,
+        "export" | "manifest" => Kind::Export,
+        "package" => Kind::Package,
+        "scan" | "compare" => Kind::Scan,
+        "convert" => Kind::Tool,
+        _ => Kind::Message,
+    }
+}
+
+/// The report of a command in the journal: its lines (info), its messages
+/// (warnings) or its failure (error).
+pub fn journal_result(
+    ctx: &mut work::Ctx,
+    command: &str,
+    doc: Option<&str>,
+    res: Result<&Reply, &Fail>,
+) {
+    use crate::journal::Level;
+    let kind = journal_kind(command);
+    match res {
+        Ok(r) => {
+            for l in &r.lines {
+                let t = ctx.i18n.localize(l);
+                ctx.journal.push(Level::Info, kind, doc, &t);
+            }
+            for n in &r.notes {
+                let t = ctx.i18n.localize(n);
+                ctx.journal.push(Level::Warn, kind, doc, &t);
+            }
+        }
+        Err(f) => {
+            let t = ctx.i18n.localize(&f.0);
+            ctx.journal.push(Level::Error, kind, doc, &t);
+        }
+    }
+}
+
+/// The file name of a path, for the journal.
+fn doc_name(p: &str) -> String {
+    std::path::Path::new(p)
+        .file_name()
+        .map(|n| n.to_string_lossy().to_string())
+        .unwrap_or_default()
+}
+
+/// The technical trace: `RUST_LOG` alone sets it; the journal does not go
+/// there (it has its own outputs, --verbose and --log).
+fn init_log() {
     use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-    let filter = if verbose {
-        "ximod_translator=debug"
-    } else {
-        "ximod_translator=error"
-    };
+    let filter = tracing_subscriber::EnvFilter::try_from_default_env()
+        .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("ximod_translator=error"));
     let _ = tracing_subscriber::registry()
         .with(
             tracing_subscriber::fmt::layer()
                 .with_writer(std::io::stderr)
                 .with_ansi(false),
         )
-        .with(tracing_subscriber::EnvFilter::new(filter))
+        .with(filter)
         .try_init();
 }
 
@@ -192,6 +273,7 @@ fn session(p: &Parsed) -> Ctx {
         cfg,
         cache: Default::default(),
         i18n,
+        journal: crate::journal::Journal::new().without_trace(),
     }
 }
 
@@ -233,12 +315,31 @@ pub fn run(argv: Vec<String>, out: &mut dyn Write, err: &mut dyn Write) -> i32 {
     let pre = args::parse_common_only(&argv);
     let mut ctx = session(if parsed.is_ok() { &p } else { &pre });
     let g = Global::of(if parsed.is_ok() { &p } else { &pre });
-    init_log(g.verbose);
+    init_log();
+    let log = match &g.log {
+        Some(p) => match std::fs::OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(p)
+        {
+            Ok(f) => Some(f),
+            Err(e) => {
+                let msg = ctx
+                    .i18n
+                    .localize(&crate::l10n!("cli-err-log", path = p, error = e));
+                let _ = writeln!(err, "{msg}");
+                return FAIL;
+            }
+        },
+        None => None,
+    };
     let mut o = Out {
         out,
         err,
         json: g.json,
         quiet: g.quiet,
+        verbose: g.verbose,
+        log,
     };
     let p = match parsed {
         Ok(p) => p,
@@ -281,8 +382,15 @@ pub fn run(argv: Vec<String>, out: &mut dyn Write, err: &mut dyn Write) -> i32 {
     if command == "batch" {
         return batch::run(&mut ctx, &g, &p.files[0], &mut o);
     }
-    match commands::run(&mut ctx, &g, &command, &p.files, &p.opts) {
-        Ok(r) => {
+    let res = commands::run(&mut ctx, &g, &command, &p.files, &p.opts);
+    let doc = doc_name(&p.files[0]);
+    journal_result(&mut ctx, &command, Some(&doc), res.as_ref());
+    let entries = o.journal(&mut ctx);
+    match res {
+        Ok(mut r) => {
+            if g.json && g.verbose {
+                r.set("journal", Value::Array(entries));
+            }
             o.reply(&ctx.i18n, &r);
             r.code
         }

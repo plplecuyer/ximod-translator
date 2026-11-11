@@ -602,11 +602,16 @@ fn translate_through_a_service_and_the_key_never_shown() {
     assert_eq!(o.status.code(), Some(1), "{}", text(&o.stderr));
     assert_eq!(json_lines(&o)[0]["sent"], false);
     assert!(auth.lock().unwrap().is_empty(), "nothing sent");
-    // Within: every line received, En attente, the key used and never shown.
+    // Within: every line received, En attente, the key used and never shown
+    // — not on stdout, not on stderr, not in the journal (E-01, R-E01-08).
+    let journal = env.root.join("w").join("journal.txt");
+    let journal_arg = journal.to_str().unwrap().to_string();
     let o = run(
         &[
             "--json",
             "--verbose",
+            "--log",
+            &journal_arg,
             "translate",
             plugin,
             "--service",
@@ -622,6 +627,13 @@ fn translate_through_a_service_and_the_key_never_shown() {
     assert_eq!(j["received"], j["lines"], "{j}");
     assert!(j["received"].as_u64().unwrap() >= 20);
     assert!(!text(&o.stdout).contains(secret) && !text(&o.stderr).contains(secret));
+    let logged = std::fs::read_to_string(&journal).unwrap();
+    assert!(!logged.is_empty() && !logged.contains(secret), "{logged}");
+    assert!(
+        j["journal"].as_array().is_some_and(|a| !a.is_empty()),
+        "{j}"
+    );
+    assert!(!j["journal"].to_string().contains(secret));
     assert!(auth.lock().unwrap().iter().all(|a| a.contains(secret)));
     let rows = basedb::ximdb_to_tm(&env.mod_dict()).unwrap();
     assert!(
@@ -636,4 +648,91 @@ fn translate_through_a_service_and_the_key_never_shown() {
     assert!(hist.iter().all(|h| h.op == "online"));
     // No log file, no key file written by the command line.
     assert!(!env.cfg.join("secrets.json").exists());
+}
+
+/// E-01 (R-E01-07, T-E01-04): the journal of the session on stderr with
+/// --verbose, in the language of --lang; appended to a file with --log,
+/// without --verbose; in the JSON object with --json --verbose only.
+#[test]
+fn journal_verbose_log_and_json() {
+    let env = Env::new("journal");
+    let dict = env.dict();
+    let plugin = env.plugin.to_str().unwrap();
+    let d = dict.to_str().unwrap();
+    let o = env.run(&["--verbose", "--lang", "eng", "apply", plugin, "--dict", d]);
+    assert_eq!(o.status.code(), Some(0), "{}", text(&o.stderr));
+    let err = text(&o.stderr);
+    let lines: Vec<&str> = err.lines().collect();
+    assert!(lines.len() >= 3, "{err}");
+    // « time ⇥ level ⇥ document ⇥ message », one entry per line.
+    assert!(lines.iter().all(|l| l.split('\t').count() == 4), "{err}");
+    assert!(
+        lines
+            .iter()
+            .all(|l| l.split('\t').nth(2) == Some("skyrim_dialogue.esp")),
+        "{err}"
+    );
+    assert!(lines[0].contains("\tOpened: "), "{err}");
+    // One entry per level of the stack, with its lines, then the total.
+    assert!(lines.iter().any(|l| l.contains("fr.ximdb: ")), "{err}");
+    assert!(
+        lines.iter().any(|l| l.contains("\tDictionaries: ")),
+        "{err}"
+    );
+    // The readable output stays on stdout.
+    assert!(!text(&o.stdout).is_empty());
+    // --log without --verbose: the file, nothing on stderr; appended.
+    let log = env.root.join("w").join("j.txt");
+    let log_arg = log.to_str().unwrap();
+    let o = env.run(&["--log", log_arg, "apply", plugin, "--dict", d]);
+    assert_eq!(o.status.code(), Some(0));
+    assert!(text(&o.stderr).is_empty(), "{}", text(&o.stderr));
+    let first = std::fs::read_to_string(&log).unwrap();
+    assert_eq!(first.lines().count(), lines.len(), "{first}");
+    // In the language of the configuration (fra) this time.
+    assert!(
+        first.lines().next().unwrap().contains("\tOuvert : "),
+        "{first}"
+    );
+    env.run(&["--log", log_arg, "apply", plugin, "--dict", d]);
+    let second = std::fs::read_to_string(&log).unwrap();
+    assert_eq!(second.lines().count(), 2 * lines.len());
+    assert!(second.starts_with(&first));
+    // --json --verbose: the entries in the object.
+    let o = env.run(&["--json", "--verbose", "apply", plugin, "--dict", d]);
+    let j = &json_lines(&o)[0];
+    let arr = j["journal"].as_array().expect("journal");
+    assert_eq!(arr.len(), lines.len());
+    assert!(arr.iter().all(|e| e["at"].is_i64()
+        && e["level"].is_string()
+        && e["kind"].is_string()
+        && e["doc"] == "skyrim_dialogue.esp"
+        && e["text"].is_string()));
+    assert!(arr.iter().any(|e| e["kind"] == "open"));
+    assert!(arr.iter().any(|e| e["kind"] == "dicts"));
+    // --json alone: no journal.
+    let o = env.run(&["--json", "apply", plugin, "--dict", d]);
+    assert!(json_lines(&o)[0].get("journal").is_none());
+    // A file that cannot be written: refused before anything.
+    let bad = env.root.join("missing-dir").join("j.txt");
+    let o = env.run(&["--log", bad.to_str().unwrap(), "apply", plugin, "--dict", d]);
+    assert_eq!(o.status.code(), Some(2));
+}
+
+/// E-01: an error goes to the journal once, not twice on stderr.
+#[test]
+fn journal_error_is_written_once() {
+    let env = Env::new("journal-err");
+    let missing = env.root.join("w").join("absent.esp");
+    let o = env.run(&[
+        "--verbose",
+        "--lang",
+        "eng",
+        "apply",
+        missing.to_str().unwrap(),
+    ]);
+    assert_eq!(o.status.code(), Some(2));
+    let err = text(&o.stderr);
+    assert_eq!(err.lines().count(), 1, "{err}");
+    assert_eq!(err.split('\t').nth(1), Some("Error"), "{err}");
 }

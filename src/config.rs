@@ -304,6 +304,8 @@ pub struct AppConfig {
     pub scripts_win: [f32; 4],
     /// The Concordance window (A-20): `[Window] ConcordX/Y/W/H`.
     pub concord_win: [f32; 4],
+    /// The journal of the session (E-01): `[Window] JournalX/Y/W/H`.
+    pub journal_win: [f32; 4],
     /// The history of the translations (A-18): `[History] Enabled`,
     /// `MaxEntries`.
     pub history_enabled: bool,
@@ -494,6 +496,7 @@ impl Default for AppConfig {
             search_win: [-1.0, -1.0, 760.0, 470.0],
             scripts_win: [-1.0, -1.0, 900.0, 520.0],
             concord_win: [-1.0, -1.0, 820.0, 480.0],
+            journal_win: [-1.0, -1.0, 860.0, 440.0],
             history_enabled: true,
             history_max: crate::history::DEFAULT_MAX,
             frame_log_ms: 0,
@@ -920,6 +923,14 @@ impl AppConfig {
         {
             if let Some(v) = getf(k) {
                 config.concord_win[i] = v;
+            }
+        }
+        for (i, k) in ["JournalX", "JournalY", "JournalW", "JournalH"]
+            .iter()
+            .enumerate()
+        {
+            if let Some(v) = getf(k) {
+                config.journal_win[i] = v;
             }
         }
         for (i, k) in ["DialogX", "DialogY", "DialogW", "DialogH"]
@@ -1524,6 +1535,12 @@ impl AppConfig {
             .enumerate()
         {
             lines.push(format!("{k}={}", self.concord_win[i]));
+        }
+        for (i, k) in ["JournalX", "JournalY", "JournalW", "JournalH"]
+            .iter()
+            .enumerate()
+        {
+            lines.push(format!("{k}={}", self.journal_win[i]));
         }
         for (i, k) in ["DialogX", "DialogY", "DialogW", "DialogH"]
             .iter()

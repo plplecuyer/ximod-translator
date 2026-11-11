@@ -6,6 +6,33 @@ version étiquetée devient le corps de la page de version (S-02).
 
 ## [Unreleased]
 
+### Ajouté (étape 3, lot 1)
+- Journal de la session (E-01, décision D-108) : *Aide › Journal…*
+  (Ctrl+Maj+J) et un bouton *Journal* dans la barre d'état, qui n'apparaît
+  qu'après la première opération et compte les avertissements et erreurs
+  non lus (« Journal (2 ⚠) »). Le journal garde, dans la langue de
+  l'interface, le démarrage, chaque ouverture (jeu, langues, lignes,
+  encodage, durée), la pile de dictionnaires appliquée — une entrée par
+  dictionnaire avec ses lignes, puis le total, les restantes et les
+  verrouillées —, le changement de cible ou de sortie, les vérifications,
+  chaque fichier écrit par un export, et tout message, avertissement, erreur
+  ou alerte (10 000 entrées au plus, en mémoire). Filtres par niveau, par
+  document et par texte (sans casse ni accents) ; *Voir les lignes* pose une
+  puce « Journal : … » dans la barre de filtres (anomalies d'une
+  vérification, lignes qu'un export refuse pour l'encodage) ; *Copier la
+  sélection*, *Tout copier* et *Enregistrer…* en texte tabulé ; *Effacer*.
+  Chaque entrée va aussi dans `logs/ximod.log` : le test du chemin de base
+  du 7 novembre 2026 avait montré que ce fichier s'arrêtait après le
+  démarrage. Fenêtre : `[Window] JournalX/Y/W/H`. Manuel § 4.1, 4.5, 4.7,
+  17, 18.1.
+- `ximod-cli` : `--verbose` écrit désormais le journal de la session sur la
+  sortie d'erreur (une entrée par ligne, « heure ⇥ niveau ⇥ document ⇥
+  message », dans la langue de `--lang`), et l'ajoute à l'objet de réponse
+  avec `--json` (clé `journal`) ; la nouvelle option `--log <fichier>`
+  l'ajoute à un fichier, avec ou sans `--verbose`. La trace technique ne
+  suit plus `--verbose` mais la seule variable `RUST_LOG`. Aucune clé
+  d'API ni texte envoyé en ligne n'entre dans le journal (test).
+
 ### Corrigé
 - Intégration continue : Clippy 1.99 (règle `chunks_exact_to_as_chunks`)
   refusait dix appels `chunks_exact(2)` / `chunks_exact(4)` (décodage

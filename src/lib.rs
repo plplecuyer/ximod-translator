@@ -40,6 +40,7 @@ pub mod i18n;
 pub mod icon;
 pub mod icons;
 pub mod instant;
+pub mod journal;
 pub mod l10n;
 pub mod lang;
 pub mod langdetect;

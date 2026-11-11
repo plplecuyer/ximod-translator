@@ -27,6 +27,8 @@ pub struct Ctx {
     pub formats: Formats,
     pub cache: FileDbCache,
     pub i18n: I18n,
+    /// The journal of the session (E-01): written by --verbose and --log.
+    pub journal: crate::journal::Journal,
 }
 
 /// The game and languages asked for (`--game`, `--from`, `--to`), the
@@ -126,6 +128,7 @@ fn only_stack(path: &Path, cache: &mut FileDbCache) -> Option<DictStack> {
 impl Work {
     /// Open a file as the interface opens it.
     pub fn open(ctx: &mut Ctx, path: &Path, pair: &Pair, source: Source) -> Result<Work, String> {
+        let started = std::time::Instant::now();
         if !path.is_file() {
             return Err(crate::l10n!("cli-err-file", path = path.display()));
         }
@@ -175,6 +178,30 @@ impl Work {
         };
         let plan = headless::rules_plan(&ctx.cfg, &o);
         let applied = headless::apply(&mut o, stack.as_ref(), &plan);
+        // The journal (R-E01-02, R-E01-07): the opening, then the stack.
+        let name = path
+            .file_name()
+            .map(|n| n.to_string_lossy().to_string())
+            .unwrap_or_default();
+        let lines = o.tm.entries.iter().filter(|e| !e.unused).count();
+        let text = crate::journal::opened_text(
+            &ctx.i18n,
+            &o.settings,
+            lines,
+            None,
+            started.elapsed().as_secs_f32(),
+        );
+        let (info, open_k, dicts_k) = (
+            crate::journal::Level::Info,
+            crate::journal::Kind::Open,
+            crate::journal::Kind::Dicts,
+        );
+        ctx.journal.push(info, open_k, Some(&name), &text);
+        if stack.is_some() {
+            for t in crate::journal::stack_texts(&ctx.i18n, &applied.report, &o.tm.entries) {
+                ctx.journal.push(info, dicts_k, Some(&name), &t);
+            }
+        }
         Ok(Work {
             o,
             undo: UndoStack::default(),
@@ -224,19 +251,7 @@ impl Work {
 
     /// Lines shown in game, still to translate, locked (B-18, Ignoré).
     pub fn counts(&self) -> (usize, usize, usize) {
-        let (mut lines, mut left, mut locked) = (0, 0, 0);
-        for e in &self.o.tm.entries {
-            if e.unused || e.source.trim().is_empty() {
-                continue;
-            }
-            lines += 1;
-            if status::derive(e) == Status::Ignored {
-                locked += 1;
-            } else if e.trans.trim().is_empty() {
-                left += 1;
-            }
-        }
-        (lines, left, locked)
+        headless::line_counts(&self.o.tm.entries)
     }
 
     /// Appliquer les dictionnaires (B-06) with a mode and a rule of

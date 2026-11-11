@@ -268,6 +268,19 @@ impl XimodApp {
             .count()
     }
 
+    /// Their indexes, for « Voir les lignes » of the journal (E-01).
+    pub(crate) fn unencodable_rows(tm: &TranslationMemory, page: Page) -> Vec<usize> {
+        if page == Page::Utf8 {
+            return Vec::new();
+        }
+        tm.entries
+            .iter()
+            .enumerate()
+            .filter(|(_, e)| !e.unused && e.is_translated() && !page.can_encode(&e.trans))
+            .map(|(i, _)| i)
+            .collect()
+    }
+
     /// Fichier ▸ Encodage du fichier… : open the dialog on the active
     /// document.
     pub(crate) fn open_encoding_dialog(&mut self) {

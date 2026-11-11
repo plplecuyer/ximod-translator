@@ -56,6 +56,7 @@ pub const COMMON: &[Opt] = &[
     flag("json"),
     flag("quiet"),
     flag("verbose"),
+    value("log"),
     value("lang"),
     flag("no-color"),
     value("config"),

@@ -329,7 +329,10 @@ pub fn run(ctx: &mut super::work::Ctx, g: &Global, file: &str, o: &mut Out) -> i
                 Ok(w) => Some(w),
                 Err(e) => {
                     let f = Fail(e);
-                    say_step(ctx, o, &label, n, &job.steps[0].name, Err(&f));
+                    let doc = file_label(&job.file);
+                    super::journal_result(ctx, &job.steps[0].name, Some(&doc), Err(&f));
+                    let entries = o.journal(ctx);
+                    say_step(ctx, o, &label, n, &job.steps[0].name, Err(&f), entries);
                     failed += 1;
                     code = FAIL;
                     if job.stop_on_error {
@@ -379,7 +382,10 @@ pub fn run(ctx: &mut super::work::Ctx, g: &Global, file: &str, o: &mut Out) -> i
                     code = FAIL;
                 }
             }
-            say_step(ctx, o, &label, n, &s.name, res.as_ref());
+            let doc = file_label(&job.file);
+            super::journal_result(ctx, &s.name, Some(&doc), res.as_ref());
+            let entries = o.journal(ctx);
+            say_step(ctx, o, &label, n, &s.name, res.as_ref(), entries);
             let failed_now = match &res {
                 Err(_) => true,
                 Ok(r) => r.code >= FAIL,
@@ -410,6 +416,13 @@ pub fn run(ctx: &mut super::work::Ctx, g: &Global, file: &str, o: &mut Out) -> i
     code
 }
 
+/// The file name of a job, for the journal.
+fn file_label(p: &Path) -> String {
+    p.file_name()
+        .map(|x| x.to_string_lossy().to_string())
+        .unwrap_or_default()
+}
+
 fn say_step(
     ctx: &super::work::Ctx,
     o: &mut Out,
@@ -417,6 +430,7 @@ fn say_step(
     n: usize,
     step: &str,
     res: Result<&Reply, &Fail>,
+    journal: Vec<serde_json::Value>,
 ) {
     match res {
         Ok(r) => {
@@ -446,6 +460,9 @@ fn say_step(
             }
             r2.set("job", n + 1);
             r2.set("step", step);
+            if o.json && o.verbose {
+                r2.set("journal", serde_json::Value::Array(journal));
+            }
             o.reply(&ctx.i18n, &r2);
         }
         Err(f) => {
@@ -458,8 +475,11 @@ fn say_step(
             ));
             let _ = writeln_err(o, &line);
             if o.json {
-                let j = serde_json::json!({ "command": step, "job": n + 1, "step": step,
+                let mut j = serde_json::json!({ "command": step, "job": n + 1, "step": step,
                                             "code": FAIL, "error": msg });
+                if o.verbose {
+                    j["journal"] = serde_json::Value::Array(journal);
+                }
                 let _ = writeln!(o.out, "{j}");
             }
         }

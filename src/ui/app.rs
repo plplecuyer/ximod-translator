@@ -41,6 +41,8 @@ mod app_dialog;
 mod app_encoding;
 #[path = "app_history.rs"]
 mod app_history;
+#[path = "app_journal.rs"]
+mod app_journal;
 #[path = "app_localize.rs"]
 mod app_localize;
 #[path = "app_matrices.rs"]
@@ -304,6 +306,8 @@ struct MenuShortcuts {
     search: egui::KeyboardShortcut,
     /// Ctrl+K: Concordance (A-20).
     concord: egui::KeyboardShortcut,
+    /// Ctrl+Shift+J: the journal of the session (E-01).
+    journal: egui::KeyboardShortcut,
 }
 
 impl MenuShortcuts {
@@ -326,6 +330,7 @@ impl MenuShortcuts {
             review_accept: KeyboardShortcut::new(Modifiers::COMMAND.plus(Modifiers::SHIFT), Key::R),
             search: KeyboardShortcut::new(Modifiers::COMMAND.plus(Modifiers::ALT), Key::F),
             concord: KeyboardShortcut::new(Modifiers::COMMAND, Key::K),
+            journal: KeyboardShortcut::new(Modifiers::COMMAND.plus(Modifiers::SHIFT), Key::J),
         }
     }
 }
@@ -1268,6 +1273,17 @@ pub struct XimodApp {
     /// The script blocks of the active plugin, for the Script tab (C-07).
     sctx_cache: std::cell::RefCell<Option<(PathBuf, std::sync::Arc<app_scripts::SctxMap>)>>,
     concord_win: app_concord::ConcordWindow,
+    /// The journal of the session (E-01) and its window.
+    journal: crate::journal::Journal,
+    journal_win: app_journal::JournalWindow,
+    /// « Voir les lignes » of a journal entry: the chip (R-E01-04).
+    filter_journal: Option<app_journal::JournalChip>,
+    /// The last alert recorded (an alert stays shown for several frames).
+    alert_logged: Option<String>,
+    /// The encoding refusal of the open export dialog is already recorded.
+    export_enc_logged: bool,
+    /// When the opening in progress started (duration in the journal).
+    open_started: Option<std::time::Instant>,
     /// Fichier ▸ Enregistrer une partie… (B-10) and its choices per file.
     savepart_dlg: Option<app_savepart::SavePartDialog>,
     /// Fichier ▸ Encodage du fichier… (D-09).
@@ -1638,6 +1654,31 @@ impl XimodApp {
         let rules_migrated = crate::exclusions::Dirs::installed()
             .migrate_papyrus()
             .map(|n| i18n.t_arg("rules-migrated", "n", &n.to_string()));
+        // The journal of the session (E-01): its first word.
+        let mut journal = crate::journal::Journal::new();
+        {
+            let p = crate::config::paths::get();
+            let mode = if p.mode.as_str() == "portable" {
+                i18n.t("journal-mode-portable")
+            } else {
+                i18n.t("journal-mode-user")
+            };
+            let start = i18n.t_args(
+                "journal-start",
+                &[
+                    ("version", env!("CARGO_PKG_VERSION")),
+                    ("mode", &mode),
+                    ("lang", &i18n.display_name(&config.locale)),
+                    ("dir", &p.config_dir.display().to_string()),
+                ],
+            );
+            journal.push(
+                crate::journal::Level::Info,
+                crate::journal::Kind::Start,
+                None,
+                &start,
+            );
+        }
 
         Self {
             temp_locale,
@@ -1764,6 +1805,12 @@ impl XimodApp {
             rules_migrated,
             sctx_cache: Default::default(),
             concord_win: Default::default(),
+            journal,
+            journal_win: Default::default(),
+            filter_journal: None,
+            alert_logged: None,
+            export_enc_logged: false,
+            open_started: None,
             savepart_dlg: None,
             encoding_dlg: None,
             localize_cache: Default::default(),
@@ -2675,6 +2722,7 @@ impl XimodApp {
             self.active = i;
             return true;
         }
+        self.open_started = Some(std::time::Instant::now());
         let ext = path
             .extension()
             .and_then(|e| e.to_str())
@@ -2857,6 +2905,7 @@ impl XimodApp {
         // lifted around the filling, laid after it.
         self.rules_remembered(&mut doc);
         let plan = self.rules_plan(&doc);
+        let mut opened_report: Option<crate::dict_stack::StackReport> = None;
         {
             let stack_line = match stack {
                 Some(stack) => {
@@ -2875,6 +2924,7 @@ impl XimodApp {
                             r
                         },
                     );
+                    opened_report = Some(report.clone());
                     stack.status_line(&self.i18n, &report)
                 }
                 None => {
@@ -2915,6 +2965,16 @@ impl XimodApp {
             self.docs.insert(at, doc);
             self.active = at;
             self.config.add_recent_file(path);
+            // The journal: the opening, then the stack level by level (R-E01-02).
+            let secs = self
+                .open_started
+                .take()
+                .map(|t| t.elapsed().as_secs_f32())
+                .unwrap_or(0.0);
+            self.journal_opened(at, secs);
+            if let Some(report) = &opened_report {
+                self.journal_stack(at, report);
+            }
             let mut status = self.i18n.dash(&head, &stack_line);
             if let Some(note) = interface_note {
                 status = self.i18n.dash(&status, &note);
@@ -3036,6 +3096,23 @@ impl XimodApp {
     /// After a target change: a text document reads its target file first
     /// (R-C05-03), then the dictionary stack completes the empty lines.
     fn target_changed(&mut self, idx: usize) {
+        // The journal (R-E01-02): the new target, before what it brings.
+        if let Some(doc) = self.docs.get(idx) {
+            let code = doc.settings.target.clone();
+            let lang = if code.trim().is_empty() {
+                "—".to_string()
+            } else {
+                self.i18n.display_name(&code)
+            };
+            let name = doc.file_name();
+            let text = self.i18n.t_arg("journal-target", "lang", &lang);
+            self.journal_for(
+                crate::journal::Level::Info,
+                crate::journal::Kind::Config,
+                Some(&name),
+                &text,
+            );
+        }
         let head = if self.docs.get(idx).is_some_and(Doc::is_text) {
             self.text_target_changed(idx)
         } else {
@@ -3108,6 +3185,7 @@ impl XimodApp {
             r
         });
         let mut line = stack.status_line(&self.i18n, &report);
+        self.journal_stack(idx, &report);
         // Lines whose text changed since the mod's dictionary (B-07).
         let (path, settings, entries) = {
             let doc = &self.docs[idx];
@@ -3597,6 +3675,13 @@ impl XimodApp {
             let _ = self.config.save();
         }
         if index < self.docs.len() {
+            let name = self.docs[index].file_name();
+            self.journal_for(
+                crate::journal::Level::Info,
+                crate::journal::Kind::Close,
+                Some(&name),
+                &self.i18n.t("journal-closed"),
+            );
             // A normal close drops the rescue files (R-B11-04).
             let _ = crate::slow_io("autosave discard", || {
                 self.autosave.discard(&self.docs[index].path)
@@ -3814,6 +3899,7 @@ impl XimodApp {
             _ => {}
         }
         self.pending_export = Some((crate::export::ExportPolicy::validated_only(), true));
+        self.export_enc_logged = false;
     }
 
     /// The « Lignes exportées » dialog (S-04, figure B.1): the rule, the
@@ -3923,6 +4009,21 @@ impl XimodApp {
                 ],
             )
         });
+        // Recorded once per dialog, with its lines (R-E01-04).
+        if let Some(msg) = &encoding_bad
+            && !self.export_enc_logged
+        {
+            let rows = Self::unencodable_rows(&policy.filtered(&doc.tm), out_page);
+            let (msg, idx) = (msg.clone(), self.active);
+            self.export_enc_logged = true;
+            self.journal_rows(
+                crate::journal::Level::Error,
+                crate::journal::Kind::Export,
+                idx,
+                &msg,
+                rows,
+            );
+        }
         // A plugin to localize (C-09): the files it will give.
         let localize_lines = if mode == OutputMode::Strings {
             self.localize_lines(&policy)
@@ -4058,6 +4159,18 @@ impl XimodApp {
                 if let Some(k) = &kept {
                     tracing::info!("export: original kept as {}", k.display());
                 }
+                let text = self.i18n.t_args(
+                    "journal-export-file",
+                    &[
+                        ("path", &path.display().to_string()),
+                        ("size", &self.i18n.size(bytes.len() as u64)),
+                    ],
+                );
+                self.journal_add(
+                    crate::journal::Level::Info,
+                    crate::journal::Kind::Export,
+                    &text,
+                );
                 Ok(kept)
             }
             Err(crate::backup::ExportWriteError::Keep(e)) => {
@@ -4883,6 +4996,15 @@ impl XimodApp {
                     ) {
                         do_manual = true;
                     }
+                    if menu_item(
+                        ui,
+                        &self.i18n.t("menu-journal"),
+                        Some(&shortcut_text(ctx, &MENU_SHORTCUTS.journal, &self.i18n)),
+                        true,
+                        "",
+                    ) {
+                        self.open_journal_window();
+                    }
                     ui.separator();
                     if ui.button(self.i18n.t("menu-about")).clicked() {
                         self.show_about = true;
@@ -5515,6 +5637,16 @@ impl XimodApp {
         // Output: the document's export mode only.
         if cur.output != old.output {
             self.docs[idx].settings.output = cur.output;
+            let mode = cur
+                .output
+                .map(|m| self.i18n.t(output_mode_key(m)))
+                .unwrap_or_else(|| "—".to_string());
+            let text = self.i18n.t_arg("journal-output", "mode", &mode);
+            self.journal_add(
+                crate::journal::Level::Info,
+                crate::journal::Kind::Config,
+                &text,
+            );
         }
         // Game (R-E12-03): reload as the new game, after confirmation when the
         // document was modified.
@@ -5630,6 +5762,10 @@ impl XimodApp {
         // Ctrl+K: Concordance (A-20).
         if !self.modal_open() && ctx.input_mut(|i| i.consume_shortcut(&MENU_SHORTCUTS.concord)) {
             self.open_concord_window(ctx, None);
+        }
+        // Ctrl+Shift+J: the journal of the session (E-01).
+        if ctx.input_mut(|i| i.consume_shortcut(&MENU_SHORTCUTS.journal)) {
+            self.open_journal_window();
         }
         // Ctrl+Maj+F: the filter row (A-10), before Ctrl+F.
         if !self.modal_open()
@@ -5942,6 +6078,22 @@ impl XimodApp {
                             self.filter_lock_rule = None;
                         }
                     }
+                    // « Voir les lignes » of a journal entry (E-01).
+                    if let Some((label, _, _)) = self.filter_journal.clone() {
+                        vsep(ui);
+                        let text = format!(
+                            "{} {}",
+                            self.i18n.t_arg("filter-chip-journal", "text", &label),
+                            crate::icons::X
+                        );
+                        if ui
+                            .selectable_label(true, text)
+                            .on_hover_text(&lbl_chip_tip)
+                            .clicked()
+                        {
+                            self.filter_journal = None;
+                        }
+                    }
                     if let Some(src) = self.filter_source_exact.clone() {
                         vsep(ui);
                         let short: String = src.chars().take(24).collect();
@@ -5993,6 +6145,7 @@ impl XimodApp {
                         self.filter_source_exact = None;
                         self.filter_speaker = None;
                         self.filter_lock_rule = None;
+                        self.filter_journal = None;
                         self.filter.clear();
                         self.filter_in = crate::filter::SearchIn::All;
                         self.filter_regex = false;
@@ -6059,7 +6212,8 @@ impl XimodApp {
             source_exact: self.filter_source_exact.clone(),
             only_lines: self
                 .speaker_filter_lines()
-                .or_else(|| self.filter_lock_rule.as_ref().map(|(_, s)| s.clone())),
+                .or_else(|| self.filter_lock_rule.as_ref().map(|(_, s)| s.clone()))
+                .or_else(|| self.journal_filter_lines()),
             anomalies_only: self.filter_anomalies,
             anomalies: self.anomaly_set.clone(),
             ambiguous_only: self.filter_ambiguous,
@@ -6681,6 +6835,7 @@ impl XimodApp {
         let mut clicked: Option<(crate::status::Status, bool)> = None;
         let offer = self.rules_offer_label();
         let mut open_offer = false;
+        let mut open_journal = false;
         egui::TopBottomPanel::bottom("status_bar").show(ctx, |ui| {
             ui.horizontal(|ui| {
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
@@ -6773,6 +6928,10 @@ impl XimodApp {
                             ui.separator();
                         }
                     }
+                    // The journal (R-E01-06): before the counters, after the message.
+                    if self.journal_status_button(ui, ui.ctx().screen_rect().width() < 760.0) {
+                        open_journal = true;
+                    }
                     if modified {
                         // « ● Modifié », warning colour readable on both themes (F-05).
                         ui.label(self.i18n.t("statusbar-modified"));
@@ -6802,6 +6961,9 @@ impl XimodApp {
         }
         if open_offer {
             self.rules_open_offer();
+        }
+        if open_journal {
+            self.open_journal_window();
         }
     }
 
@@ -9392,9 +9554,18 @@ impl XimodApp {
                     )
                 };
                 self.quality.message = Some(msg.clone());
-                self.status = msg;
+                self.status = msg.clone();
                 self.anomaly_serial = Some(serial);
                 self.set_anomalies_from(&report);
+                let level = if report.findings.is_empty() {
+                    crate::journal::Level::Info
+                } else {
+                    crate::journal::Level::Warn
+                };
+                let rows: Vec<usize> = report.lines().into_iter().collect();
+                if let Some(idx) = self.docs.iter().position(|d| d.serial == serial) {
+                    self.journal_rows(level, crate::journal::Kind::Check, idx, &msg, rows);
+                }
                 self.quality.report = Some(report);
                 self.quality.sort_rows();
             }
@@ -16251,6 +16422,15 @@ impl XimodApp {
     /// are enabled (F-05).
     pub(crate) fn notify(&mut self, level: crate::ui::toasts::ToastLevel, msg: impl Into<String>) {
         let msg = self.i18n.localize(&msg.into());
+        // The journal first (R-E01-03), at the level of the function called.
+        let jl = match level {
+            crate::ui::toasts::ToastLevel::Info | crate::ui::toasts::ToastLevel::Success => {
+                crate::journal::Level::Info
+            }
+            crate::ui::toasts::ToastLevel::Warning => crate::journal::Level::Warn,
+            crate::ui::toasts::ToastLevel::Error => crate::journal::Level::Error,
+        };
+        self.journal_add(jl, crate::journal::Kind::Message, &msg);
         self.status = msg.clone();
         if self.config.toasts {
             self.toasts.push(level, msg, self.frame_time);
@@ -16282,8 +16462,17 @@ impl XimodApp {
     /// clearly visible instead of only writing to the status bar.
     fn alert_window(&mut self, ctx: &egui::Context) {
         let Some(msg) = self.alert.as_deref().map(|m| self.i18n.localize(m)) else {
+            self.alert_logged = None;
             return;
         };
+        if self.alert_logged.as_deref() != Some(msg.as_str()) {
+            self.alert_logged = Some(msg.clone());
+            self.journal_add(
+                crate::journal::Level::Warn,
+                crate::journal::Kind::Message,
+                &msg,
+            );
+        }
         let title = self.i18n.t("alert-title");
         let ok = self.i18n.t("btn-ok");
         let mut close = false;
@@ -18879,6 +19068,7 @@ impl XimodApp {
         self.timed(ctx, "search_window", |a| a.search_window(ctx));
         self.timed(ctx, "scripts_window", |a| a.scripts_window(ctx));
         self.timed(ctx, "concord_window", |a| a.concord_window(ctx));
+        self.timed(ctx, "journal_window", |a| a.journal_window(ctx));
         self.timed(ctx, "online_windows", |a| a.online_windows(ctx));
         self.timed(ctx, "close_prompt_window", |a| {
             a.close_prompt_window(ctx, frame)

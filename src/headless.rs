@@ -385,3 +385,23 @@ pub fn apply(o: &mut Opened, stack: Option<&DictStack>, plan: &Plan) -> Applied 
     }
     a
 }
+
+/// `(lines, left, locked)` of a document: the lines with a source text
+/// outside « Jamais affichées en jeu », those still without a translation,
+/// and the Ignoré ones (VMAD locks and exclusion rules included). The
+/// command line and the journal (E-01) count alike.
+pub fn line_counts(entries: &[crate::tm::TmEntry]) -> (usize, usize, usize) {
+    let (mut lines, mut left, mut locked) = (0, 0, 0);
+    for e in entries {
+        if e.unused || e.source.trim().is_empty() {
+            continue;
+        }
+        lines += 1;
+        if crate::status::derive(e) == crate::status::Status::Ignored {
+            locked += 1;
+        } else if e.trans.trim().is_empty() {
+            left += 1;
+        }
+    }
+    (lines, left, locked)
+}
