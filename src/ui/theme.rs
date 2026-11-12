@@ -96,6 +96,15 @@ pub fn visuals_for(dark: bool) -> egui::Visuals {
     visuals
 }
 
+/// The violet of a spelling mark (A-16), readable on both themes.
+pub fn spelling_color(visuals: &egui::Visuals) -> Color32 {
+    if visuals.dark_mode {
+        Color32::from_rgb(190, 140, 255)
+    } else {
+        Color32::from_rgb(130, 60, 200)
+    }
+}
+
 /// The look of a field (sunken fill, the outline of the theme) on the
 /// widgets of `visuals`: what a combo box borrows so it reads as a list to
 /// fill in, not as a button.

@@ -118,6 +118,7 @@ pub fn validate(command: &str, opts: &Values) -> Result<(), Fail> {
     check("mode", &|v| parse_mode(v).is_some())?;
     check("overwrite", &|v| parse_overwrite(v).is_some())?;
     check("statuses", &|v| parse_statuses(v).is_some())?;
+    check("ids", &|v| crate::export::IdForm::from_id(v).is_some())?;
     check("fail-on", &|v| matches!(v, "error" | "warning"))?;
     check("scope", &|v| matches!(v, "untranslated" | "document"))?;
     check("max-chars", &|v| v.trim().parse::<usize>().is_ok())?;
@@ -659,6 +660,10 @@ fn check(ctx: &mut Ctx, w: &mut Work, opts: &Values) -> Res {
         warnings = c.warnings,
         errors = c.errors
     ));
+    // The lines whose translation is the source (A-21): information only,
+    // the return code does not depend on it.
+    let same = crate::filter::count_same_as_source(&w.o.tm.entries);
+    r.line(l10n!("cli-check-same", n = same));
     let flat = |t: &str| {
         let s: String = t.split(['\r', '\n']).collect::<Vec<_>>().join(" / ");
         let mut out: String = s.chars().take(40).collect();
@@ -725,6 +730,7 @@ fn check(ctx: &mut Ctx, w: &mut Work, opts: &Values) -> Res {
     r.set("checked", report.lines_checked);
     r.set("errors", c.errors);
     r.set("warnings", c.warnings);
+    r.set("sameAsSource", same);
     r.set("findings", Value::Array(rows));
     Ok(r)
 }
@@ -736,10 +742,20 @@ fn export(w: &mut Work, opts: &Values, dir: &Path) -> Res {
         .get("output")
         .and_then(Output::from_id)
         .ok_or_else(|| missing("output"))?;
-    let policy = match opts.get("statuses") {
+    let mut policy = match opts.get("statuses") {
         Some(s) => parse_statuses(s).ok_or_else(|| bad_value("statuses", s))?,
         None => crate::export::ExportPolicy::validated_only(),
     };
+    // A-22: the debugging export, each text prefixed by its identifier.
+    if let Some(v) = opts.get("ids") {
+        policy.ids = Some(crate::export::IdForm::from_id(v).ok_or_else(|| bad_value("ids", v))?);
+    }
+    // The reverse check: translations that already start with one.
+    let plain = crate::export::ExportPolicy {
+        ids: None,
+        ..policy
+    };
+    let ids_left = plain.ids_present(&w.o.tm).len();
     let written = w
         .export(output, policy, dir, !opts.has("no-esl"))
         .map_err(Fail)?;
@@ -749,10 +765,19 @@ fn export(w: &mut Work, opts: &Values, dir: &Path) -> Res {
         r.line(l10n!("cli-export-done", path = path_text(p), lines = n));
         files.push(json!({ "path": path_text(p), "lines": n }));
     }
-    let left = w.untranslated(&policy);
+    let left = w.untranslated(&plain);
     if opts.has("strict") && left > 0 {
         r.code = WARN;
         r.notes.push(l10n!("cli-export-left", n = left));
+    }
+    if ids_left > 0 {
+        r.notes.push(l10n!("cli-export-ids-left", n = ids_left));
+        if opts.has("strict") {
+            r.code = WARN;
+        }
+    }
+    if let Some(form) = policy.ids {
+        r.set("debugIds", form.id());
     }
     r.set("output", output.id());
     r.set("statuses", json!(w.statuses));

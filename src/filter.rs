@@ -304,6 +304,10 @@ pub struct Criteria {
     pub prov: crate::provenance::ProvFilter,
     /// Only the lines whose review differs from the translation (A-17).
     pub review_diff: bool,
+    /// « = source » (`Some(true)`) / « ≠ source » (`Some(false)`) (A-21):
+    /// the lines whose translation is the source, or differs from it; see
+    /// [`same_as_source`].
+    pub same_as_source: Option<bool>,
     /// Exact record signature (GRUP) to keep (empty = all).
     pub record: String,
     /// Exact field signature (Champ) to keep (empty = all).
@@ -388,6 +392,7 @@ impl Default for Criteria {
             statuses: [true; status::COUNT],
             prov: crate::provenance::ProvFilter::All,
             review_diff: false,
+            same_as_source: None,
             record: String::new(),
             field: String::new(),
             min_chars: 0,
@@ -448,6 +453,11 @@ impl Criteria {
         if self.review_diff && !crate::review::differs(e) {
             return false;
         }
+        if let Some(want) = self.same_as_source
+            && same_as_source(e) != Some(want)
+        {
+            return false;
+        }
         if self.ambiguous_only && !crate::ambiguity::is_marked(e) {
             return false;
         }
@@ -477,6 +487,7 @@ impl Criteria {
             || self.statuses.iter().any(|b| !b)
             || self.prov != crate::provenance::ProvFilter::All
             || self.review_diff
+            || self.same_as_source.is_some()
             || self.formid.is_some()
             || self.source_exact.is_some()
             || self.anomalies_only
@@ -531,6 +542,23 @@ impl Criteria {
         }
         out
     }
+}
+
+/// Whether a line's translation is its source (A-21, R-A21-01): `None`
+/// without translation, else whether both are equal once the spaces at
+/// both ends are removed — case and accents count.
+pub fn same_as_source(e: &TmEntry) -> Option<bool> {
+    let t = e.trans.trim();
+    (!t.is_empty()).then(|| t == e.source.trim())
+}
+
+/// The lines shown in game whose translation is their source (A-21): the
+/// count of `ximod-cli check`.
+pub fn count_same_as_source(entries: &[TmEntry]) -> usize {
+    entries
+        .iter()
+        .filter(|e| !e.unused && same_as_source(e) == Some(true))
+        .count()
 }
 
 /// Number of **unique** source strings among the entries.
@@ -692,6 +720,41 @@ mod tests {
             },
         );
         e
+    }
+
+    #[test]
+    fn same_as_source_has_three_states_and_combines() {
+        // A-21: trimmed, exact (case and accents count); no translation is
+        // in neither state.
+        let entries = vec![
+            entry("WEAP", "Iron Sword", "Iron Sword "),
+            entry("WEAP", "Iron Sword", "iron sword"),
+            entry("WEAP", "Iron Sword", ""),
+            entry("MISC", "OK", "OK"),
+            entry("WEAP", "Steel Sword", "Épée en acier"),
+        ];
+        assert_eq!(same_as_source(&entries[0]), Some(true));
+        assert_eq!(same_as_source(&entries[1]), Some(false));
+        assert_eq!(same_as_source(&entries[2]), None);
+        let mut c = Criteria {
+            same_as_source: Some(true),
+            ..Criteria::default()
+        };
+        assert!(c.is_active());
+        assert_eq!(c.apply(&entries), vec![0, 3]);
+        c.same_as_source = Some(false);
+        assert_eq!(c.apply(&entries), vec![1, 4]);
+        // AND with the other criteria: GRUP and text.
+        c.same_as_source = Some(true);
+        c.record = "WEAP".into();
+        c.text = "sword".into();
+        assert_eq!(c.apply(&entries), vec![0]);
+        c.same_as_source = None;
+        assert_eq!(c.apply(&entries), vec![0, 1, 2, 4]);
+        assert_eq!(count_same_as_source(&entries), 2);
+        let mut hidden = entries[3].clone();
+        hidden.unused = true;
+        assert_eq!(count_same_as_source(&[hidden]), 0);
     }
 
     #[test]

@@ -76,6 +76,17 @@ impl XimodApp {
         self.i18n.t(super::output_mode_key(m))
     }
 
+    /// The output that usually suits the active document (R-T01): a
+    /// plugin is localized when it has its STRINGS or ids in place of texts.
+    pub(crate) fn usual_output(&self, game: Game) -> Option<OutputMode> {
+        let doc = self.active_doc()?;
+        if doc.all.is_some() {
+            return None;
+        }
+        let localized = doc.strings.is_some() || doc.tm.entries.iter().any(|e| e.idstexte >= 0);
+        OutputMode::usual(game, localized, doc.is_text(), doc.scripts.is_some())
+    }
+
     /// The message of an output the game cannot receive.
     pub(crate) fn output_unfit_message(&self, m: OutputMode, game: Game) -> String {
         self.i18n.t_args(

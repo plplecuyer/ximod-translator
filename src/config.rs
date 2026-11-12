@@ -152,6 +152,44 @@ impl OutputMode {
         }
     }
 
+    /// The output that usually suits a document (R-T01, D-114): marked
+    /// « (usuel) » in the list, never chosen for the user. STRINGS for a
+    /// localized plugin of a game with STRINGS; otherwise the override
+    /// patch when the game takes it; otherwise the full plugin (Morrowind);
+    /// the text file or the scripts for those documents.
+    pub fn usual(
+        game: crate::games::Game,
+        localized: bool,
+        is_text: bool,
+        is_scripts: bool,
+    ) -> Option<Self> {
+        if is_text {
+            return Some(Self::Text);
+        }
+        if is_scripts {
+            return Some(Self::Scripts);
+        }
+        if localized && Self::Strings.fits(game) {
+            return Some(Self::Strings);
+        }
+        [Self::OverridePatch, Self::FullPlugin]
+            .into_iter()
+            .find(|m| m.fits(game))
+    }
+
+    /// The message key of the sentence describing this output (R-T01).
+    pub fn desc_key(self) -> &'static str {
+        match self {
+            Self::Strings => "output-desc-strings",
+            Self::Hybrid => "output-desc-hybrid",
+            Self::OverridePatch => "output-desc-override",
+            Self::FullPlugin => "output-desc-full",
+            Self::Dsd => "output-desc-dsd",
+            Self::Text => "output-desc-text",
+            Self::Scripts => "output-desc-scripts",
+        }
+    }
+
     /// The modes a document offers: text documents have the text file
     /// alone (R-C05-04).
     pub fn variants_for(is_text: bool, is_scripts: bool) -> &'static [Self] {
@@ -244,6 +282,9 @@ pub struct AppConfig {
     pub show_comment: bool,
     /// The Provenance column of the grid (`[Columns] ShowProvenance`, B-09).
     pub show_provenance: bool,
+    /// Rich tooltips on the Source and Traduction cells (`[Columns]
+    /// RichTooltips`, A-16): identity, text, marks, length, provenance.
+    pub rich_tooltips: bool,
     /// The Relecture column of the grid (`[Columns] ShowReview`, A-17).
     pub show_review: bool,
     /// The status buttons column of the grid (`[Columns] ShowStatusButtons`,
@@ -306,6 +347,9 @@ pub struct AppConfig {
     pub concord_win: [f32; 4],
     /// The journal of the session (E-01): `[Window] JournalX/Y/W/H`.
     pub journal_win: [f32; 4],
+    /// Permanent answers of the confirmation dialogs (E-03):
+    /// `[Confirmations] <question>=<answer>`; see [`crate::remember`].
+    pub confirmations: BTreeMap<String, String>,
     /// The history of the translations (A-18): `[History] Enabled`,
     /// `MaxEntries`.
     pub history_enabled: bool,
@@ -469,6 +513,7 @@ impl Default for AppConfig {
             column_filters: false,
             show_comment: false,
             show_provenance: false,
+            rich_tooltips: true,
             show_review: false,
             show_status_buttons: false,
             export_generated_comments: false,
@@ -497,6 +542,7 @@ impl Default for AppConfig {
             scripts_win: [-1.0, -1.0, 900.0, 520.0],
             concord_win: [-1.0, -1.0, 820.0, 480.0],
             journal_win: [-1.0, -1.0, 860.0, 440.0],
+            confirmations: BTreeMap::new(),
             history_enabled: true,
             history_max: crate::history::DEFAULT_MAX,
             frame_log_ms: 0,
@@ -717,17 +763,29 @@ impl AppConfig {
         let mut config = Self::default();
         let mut values: HashMap<String, String> = HashMap::new();
 
+        // The keys are global, except those of [Confirmations] (E-03), read
+        // in their section only.
+        let mut in_confirmations = false;
         for line in content.lines() {
             let line = line.trim();
             if line.is_empty() || line.starts_with(';') || line.starts_with('#') {
                 continue;
             }
             if line.starts_with('[') && line.ends_with(']') {
+                in_confirmations = line[1..line.len() - 1]
+                    .trim()
+                    .eq_ignore_ascii_case("Confirmations");
                 continue;
             }
             if let Some(pos) = line.find('=') {
                 let key = line[..pos].trim().to_string();
                 let value = line[pos + 1..].trim().to_string();
+                if in_confirmations {
+                    if crate::remember::Question::from_key(&key).is_some() && !value.is_empty() {
+                        config.confirmations.insert(key, value);
+                    }
+                    continue;
+                }
                 values.insert(key, value);
             }
         }
@@ -1153,6 +1211,9 @@ impl AppConfig {
         if let Some(v) = values.get("ShowComment") {
             config.show_comment = matches!(v.trim(), "1" | "true" | "yes");
         }
+        if let Some(v) = values.get("RichTooltips") {
+            config.rich_tooltips = !matches!(v.trim(), "0" | "false" | "no");
+        }
         if let Some(v) = values.get("ShowProvenance") {
             config.show_provenance = matches!(v.trim(), "1" | "true" | "yes");
         }
@@ -1266,6 +1327,9 @@ impl AppConfig {
             }
             if let Some(v) = gs("LastScope") {
                 o.last_scope = v;
+            }
+            if let Some(v) = gs("BrowserSite") {
+                o.browser_site = crate::online::browser::Site::from_id(&v);
             }
         }
         if let Some(v) = values.get("ShowSpecialChars") {
@@ -1661,6 +1725,7 @@ impl AppConfig {
             "ShowComment={}",
             if self.show_comment { 1 } else { 0 }
         ));
+        lines.push(format!("RichTooltips={}", u8::from(self.rich_tooltips)));
         lines.push(format!(
             "ShowReview={}",
             if self.show_review { 1 } else { 0 }
@@ -1739,6 +1804,7 @@ impl AppConfig {
         lines.push(format!("Proxy={}", o.proxy));
         lines.push(format!("TimeoutSeconds={}", o.timeout_secs));
         lines.push(format!("LastScope={}", o.last_scope));
+        lines.push(format!("BrowserSite={}", o.browser_site.id()));
         lines.push(String::new());
 
         lines.push("[Backup]".to_string());
@@ -1823,6 +1889,15 @@ impl AppConfig {
             lines.push(format!("StatusColor_{}={r},{g},{b}", s.key()));
         }
         lines.push(String::new());
+
+        // E-03: only when something is remembered for good.
+        if !self.confirmations.is_empty() {
+            lines.push("[Confirmations]".to_string());
+            for (k, v) in &self.confirmations {
+                lines.push(format!("{k}={v}"));
+            }
+            lines.push(String::new());
+        }
 
         lines.push("[RecentFiles]".to_string());
         for (i, path) in self.recent_files.iter().enumerate() {
@@ -1948,6 +2023,59 @@ mod tests {
     use super::*;
 
     #[test]
+    fn the_usual_output_follows_the_document_and_its_game() {
+        use crate::games::Game;
+        // RFM.esm: a plugin with its texts inline.
+        assert_eq!(
+            OutputMode::usual(Game::SkyrimSE, false, false, false),
+            Some(OutputMode::OverridePatch)
+        );
+        assert_eq!(
+            OutputMode::usual(Game::SkyrimSE, true, false, false),
+            Some(OutputMode::Strings)
+        );
+        assert_eq!(
+            OutputMode::usual(Game::Fallout4, true, false, false),
+            Some(OutputMode::Strings)
+        );
+        // Oblivion has no STRINGS: a localized flag changes nothing.
+        assert_eq!(
+            OutputMode::usual(Game::Oblivion, true, false, false),
+            Some(OutputMode::OverridePatch)
+        );
+        assert_eq!(
+            OutputMode::usual(Game::Morrowind, false, false, false),
+            Some(OutputMode::FullPlugin)
+        );
+        assert_eq!(
+            OutputMode::usual(Game::SkyrimSE, false, true, false),
+            Some(OutputMode::Text)
+        );
+        assert_eq!(
+            OutputMode::usual(Game::SkyrimSE, false, false, true),
+            Some(OutputMode::Scripts)
+        );
+        // Every output has its sentence, and none the same key.
+        let mut keys: Vec<&str> = OutputMode::variants()
+            .iter()
+            .chain([OutputMode::Text, OutputMode::Scripts].iter())
+            .map(|m| m.desc_key())
+            .collect();
+        keys.sort_unstable();
+        keys.dedup();
+        assert_eq!(keys.len(), 7);
+        // The reference language has them (the others are checked against
+        // it by the messages test), and the mark of the usual output.
+        let eng = std::fs::read_to_string(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("assets/locales/eng/main.ftl"),
+        )
+        .unwrap();
+        for k in keys.iter().chain(["output-usual"].iter()) {
+            assert!(eng.contains(&format!("\n{k} = ")), "{k}");
+        }
+    }
+
+    #[test]
     fn test_defaults() {
         let c = AppConfig::default();
         assert_eq!(c.source_language, "eng");
@@ -2032,6 +2160,39 @@ mod tests {
         let d = AppConfig::default();
         assert_eq!(d.edit_win, [-1.0, -1.0, 760.0, 520.0]);
         assert_eq!(d.edit_tab, "record");
+    }
+
+    #[test]
+    fn the_ctrl_g_site_is_saved_and_read_back() {
+        use crate::online::browser::Site;
+        assert_eq!(AppConfig::default().online.browser_site, Site::Google);
+        let mut c = AppConfig::default();
+        c.online.browser_site = Site::Claude;
+        let ini = c.to_ini();
+        assert!(ini.contains("BrowserSite=claude"), "{ini}");
+        assert_eq!(AppConfig::parse_ini(&ini).online.browser_site, Site::Claude);
+    }
+
+    #[test]
+    fn confirmations_round_trip_in_their_section_only() {
+        // E-03: [Confirmations] only when something is remembered for good;
+        // unknown questions are dropped; a same-named key elsewhere is not
+        // an answer.
+        let d = AppConfig::default();
+        assert!(!d.to_ini().contains("[Confirmations]"));
+        let mut c = AppConfig::default();
+        c.confirmations.insert("Propagate".into(), "yes".into());
+        c.confirmations
+            .insert("PersonalConflict".into(), "keep".into());
+        let ini = c.to_ini();
+        assert!(ini.contains("[Confirmations]\nPersonalConflict=keep\nPropagate=yes"));
+        let p = AppConfig::parse_ini(&ini);
+        assert_eq!(p.confirmations, c.confirmations);
+        let p = AppConfig::parse_ini(
+            "[General]\nJournalClear=yes\n[Confirmations]\nCloseUnsaved=yes\nDictGame=yes\n[Window]\nOnlineVolume=yes\n",
+        );
+        assert_eq!(p.confirmations.len(), 1);
+        assert_eq!(p.confirmations["DictGame"], "yes");
     }
 
     #[test]

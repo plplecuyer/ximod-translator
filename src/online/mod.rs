@@ -8,6 +8,7 @@
 //! comes back « En attente » with its provenance (R-D01-04).
 
 pub mod azure;
+pub mod browser;
 pub mod cache;
 pub mod deepl;
 pub mod google;
@@ -160,6 +161,8 @@ pub struct OnlineConfig {
     pub game: String,
     /// The scope of « Traduire en ligne » chosen last (R-D04-01).
     pub last_scope: String,
+    /// The page Ctrl+G opens without a service (R-T03, D-117).
+    pub browser_site: browser::Site,
 }
 
 impl Default for OnlineConfig {
@@ -183,6 +186,7 @@ impl Default for OnlineConfig {
             timeout_secs: 30,
             game: String::new(),
             last_scope: "document".into(),
+            browser_site: browser::Site::Google,
         }
     }
 }

@@ -422,6 +422,12 @@ pub struct MenuLabels {
     pub key_history: String,
     /// Appliquer aux fichiers ouverts (B-25), offered with two files open.
     pub propagate_files: Option<String>,
+    /// Transformer ▸ (A-13): the sub-menu, then each command with its
+    /// shortcut (empty when it has none), in [`Command::ALL`] order.
+    ///
+    /// [`Command::ALL`]: crate::text::transform::Command::ALL
+    pub transform: String,
+    pub transform_items: Vec<(String, String)>,
     /// Concordance… (A-20) and its shortcut (Ctrl+K).
     pub concord: String,
     pub key_concord: String,
@@ -473,6 +479,8 @@ pub enum MenuAction {
     Concordance,
     /// Appliquer aux fichiers ouverts (B-25).
     PropagateFiles,
+    /// Transformer ▸ (A-13).
+    Transform(crate::text::transform::Command),
 }
 
 pub struct GridLabels<'a> {
@@ -481,15 +489,16 @@ pub struct GridLabels<'a> {
     /// The page of code the document is written in (D-09): the bytes of
     /// the length badges.
     pub page: crate::codepage::Page,
-    /// Tooltips of the length badges, with `{chars}` `{max}` `{bytes}`
-    /// `{field}` placeholders.
-    pub len_over_tip: &'a str,
-    pub len_newline_tip: &'a str,
     /// The bytes unit of the length badge (« o », « B », E-07).
     pub bytes_unit: &'a str,
-    /// Alias / number anomaly texts (A-07): missing tag, unknown tag,
-    /// missing number, unknown number (`{tag}` / `{n}` placeholders), order.
-    pub alias_tips: &'a [String; 5],
+    /// The texts of the marks, natures and rich tooltips (A-16).
+    pub tips: &'a MarkTexts<'a>,
+    /// Rich tooltips on Source and Traduction (A-16, `[Columns]
+    /// RichTooltips`); the full text alone otherwise.
+    pub rich_tooltips: bool,
+    /// The words the spell checker flagged per line at its last scan of
+    /// this document (A-16): the violet margin.
+    pub spelling: &'a std::collections::HashMap<usize, Vec<String>>,
     /// Special characters shown as glyphs (A-11, R-A11-07).
     pub show_special: bool,
     /// Lines in anomaly after the last check (D-05): the tooltip per line.
@@ -517,6 +526,11 @@ pub struct GridLabels<'a> {
     /// The entries of Options ▸ Colonnes (title, shown), offered again on
     /// a right-click of the header (D-42).
     pub col_menu: &'a [(String, bool)],
+    /// The sort of the view (A-14): its column shows ▴ / ▾ in the accent
+    /// colour; « Ordre du fichier » ends the header's menu.
+    pub sort: Option<(crate::sort::SortCol, crate::sort::SortDir)>,
+    pub sort_tip: &'a str,
+    pub file_order_label: &'a str,
     /// Annuler / Rétablir entries of the context menu (A-01) and whether
     /// they are available.
     pub undo_label: &'a str,
@@ -533,6 +547,85 @@ pub struct GridLabels<'a> {
     /// The Commentaire column (C-03): the text of a line, generated and
     /// cached by the application; `None` hides the column.
     pub comment: Option<&'a CommentFn<'a>>,
+}
+
+/// The texts the marks need (A-16), localized by the application: a mark,
+/// the nature of a line, the identity and length lines of the rich tooltip,
+/// the title of the marks (`n`).
+pub struct MarkTexts<'a> {
+    pub mark: &'a dyn Fn(&crate::marks::Mark) -> String,
+    pub nature: &'a dyn Fn(crate::marks::Nature) -> String,
+    pub identity: &'a dyn Fn(&TmEntry) -> String,
+    pub length: &'a dyn Fn(usize, Option<u32>) -> String,
+    pub marks_title: &'a dyn Fn(usize) -> String,
+}
+
+/// The colour of a mark's gravity (A-16): the theme's error and warning
+/// colours, violet for the spelling.
+pub fn severity_color(v: &egui::Visuals, s: crate::marks::Severity) -> Color32 {
+    use crate::marks::Severity;
+    match s {
+        Severity::Error => v.error_fg_color,
+        Severity::Warning => v.warn_fg_color,
+        Severity::Spelling => crate::ui::theme::spelling_color(v),
+    }
+}
+
+/// The icon of a line's nature (A-16, R-A16-02).
+pub fn nature_icon(n: crate::marks::Nature) -> &'static str {
+    use crate::marks::Nature;
+    match n {
+        Nature::Dialogue => crate::icons::QUOTES,
+        Nature::Book => crate::icons::BOOK_OPEN_TEXT,
+        Nature::Script => crate::icons::GEAR,
+        Nature::Message => crate::icons::ENVELOPE_SIMPLE,
+    }
+}
+
+/// The rich tooltip of a Source or Traduction cell (A-16, R-A16-04): the
+/// identity, the whole text (40 lines at most), the marks, the length,
+/// « Statut — provenance ».
+pub fn rich_tip(
+    ui: &mut egui::Ui,
+    e: &TmEntry,
+    text: &str,
+    marks: &[crate::marks::Mark],
+    length: Option<(usize, Option<u32>)>,
+    origin: Option<&str>,
+    tips: &MarkTexts<'_>,
+) {
+    ui.set_max_width(480.0);
+    ui.label(egui::RichText::new((tips.identity)(e)).monospace().weak());
+    if !text.is_empty() {
+        ui.add_space(2.0);
+        let lines: Vec<&str> = text.lines().collect();
+        let shown = if lines.len() > 40 {
+            format!("{}\n…", lines[..40].join("\n"))
+        } else {
+            text.to_string()
+        };
+        ui.add(egui::Label::new(shown).wrap());
+    }
+    if !marks.is_empty() {
+        ui.separator();
+        ui.label(egui::RichText::new((tips.marks_title)(marks.len())).strong());
+        for m in marks {
+            let c = severity_color(ui.visuals(), m.severity);
+            ui.horizontal_wrapped(|ui| {
+                ui.label(egui::RichText::new(crate::icons::WARNING_CIRCLE).color(c));
+                ui.label(egui::RichText::new((tips.mark)(m)).color(c));
+            });
+        }
+    }
+    if length.is_some() || origin.is_some() {
+        ui.separator();
+    }
+    if let Some((n, max)) = length {
+        ui.label((tips.length)(n, max));
+    }
+    if let Some(o) = origin {
+        ui.label(o);
+    }
 }
 
 /// The comment of a line (index, entry) → text, C-03.
@@ -580,6 +673,10 @@ pub struct GridOutput {
     pub filter_typed: bool,
     pub filter_enter: bool,
     pub filter_now: bool,
+    /// A sortable title was clicked (A-14) / « Ordre du fichier » was
+    /// chosen in the header's menu.
+    pub header_clicked: Option<crate::sort::SortCol>,
+    pub file_order: bool,
 }
 
 /// The lines selected in the grid (entry indices) and the current line.
@@ -857,6 +954,20 @@ pub fn row_menu(
                 pick = Some(MenuAction::HistoryShow);
             }
         });
+        // Transformer (A-13): on the translation of the line or the selection.
+        ui.menu_button(&menu.transform, |ui| {
+            for (cmd, (label, k)) in crate::text::transform::Command::ALL
+                .iter()
+                .zip(menu.transform_items.iter())
+            {
+                if cmd.needs_dialog() && *cmd == crate::text::transform::Command::AffixAdd {
+                    ui.separator();
+                }
+                if key(ui, label, k, has_trans || sel_count > 1, "") {
+                    pick = Some(MenuAction::Transform(*cmd));
+                }
+            }
+        });
     });
     ui.separator();
     // Statut
@@ -997,10 +1108,10 @@ pub fn draw(
     let GridLabels {
         game,
         page,
-        len_over_tip,
-        len_newline_tip,
         bytes_unit,
-        alias_tips,
+        tips,
+        rich_tooltips,
+        spelling,
         show_special,
         anomalies,
         prov_tip,
@@ -1022,6 +1133,9 @@ pub fn draw(
         status_buttons,
         empty_msg,
         file_col,
+        sort,
+        sort_tip,
+        file_order_label,
     } = *labels;
     let muted = crate::ui::special::muted(ui.visuals());
     let _ = book_label;
@@ -1047,6 +1161,7 @@ pub fn draw(
     let header_h = title_h + filter_h;
     let dark = on_pastel();
     let sel_color = ui.visuals().selection.bg_fill;
+    let accent = ui.visuals().selection.stroke.color;
 
     // Per-row heights: the tallest of the wrapped source, the wrapped
     // translation and the review, and one text line — plus a little
@@ -1087,42 +1202,61 @@ pub fn draw(
         table = table.column(Column::exact(com_w));
     }
     use crate::filter::FilterCol as FC;
+    use crate::sort::{SortCol as SC, SortDir};
     // The titles and, per column, the field of the filter row (A-10):
-    // none under St and the status buttons (R-A10-01).
-    let mut shown: Vec<(&str, Option<FC>)> = vec![
-        (&headers[0], None),
-        (&headers[1], Some(FC::Record)),
-        (&headers[2], Some(FC::Field)),
-        (&headers[3], Some(FC::Edid)),
-        (&headers[4], Some(FC::Source)),
-        (&headers[5], Some(FC::Trans)),
+    // none under St and the status buttons (R-A10-01); the column a click
+    // sorts (A-14), none for the buttons.
+    let mut shown: Vec<(&str, Option<FC>, Option<SC>)> = vec![
+        (&headers[0], None, Some(SC::Status)),
+        (&headers[1], Some(FC::Record), Some(SC::Record)),
+        (&headers[2], Some(FC::Field), Some(SC::Field)),
+        (&headers[3], Some(FC::Edid), Some(SC::Edid)),
+        (&headers[4], Some(FC::Source), Some(SC::Source)),
+        (&headers[5], Some(FC::Trans), Some(SC::Trans)),
     ];
     if opt.status_buttons {
         // The buttons speak for themselves: no title.
-        shown.insert(1, ("", None));
+        shown.insert(1, ("", None, None));
     }
     if opt.file {
         // Second after St and the buttons (R-B25-04).
         let at = if opt.status_buttons { 2 } else { 1 };
-        shown.insert(at, (&headers[H_FILE], Some(FC::File)));
+        shown.insert(at, (&headers[H_FILE], Some(FC::File), Some(SC::File)));
     }
     if opt.review {
-        shown.push((&headers[H_REVIEW], Some(FC::Review)));
+        shown.push((&headers[H_REVIEW], Some(FC::Review), Some(SC::Review)));
     }
     if opt.provenance {
-        shown.push((&headers[H_PROV], Some(FC::Prov)));
+        shown.push((&headers[H_PROV], Some(FC::Prov), Some(SC::Prov)));
     }
     if opt.comment {
-        shown.push((&headers[H_COMMENT], Some(FC::Comment)));
+        shown.push((&headers[H_COMMENT], Some(FC::Comment), Some(SC::Comment)));
     }
     let mut toggled: Option<usize> = None;
     table
         .header(header_h, |mut header| {
-            for (n, (title, fcol)) in shown.iter().enumerate() {
+            for (n, (title, fcol, scol)) in shown.iter().enumerate() {
                 header.col(|ui| {
                     let cell = ui.max_rect();
+                    let sorted = sort.filter(|(c, _)| Some(*c) == *scol).map(|(_, d)| d);
                     ui.vertical(|ui| {
-                        ui.strong(*title);
+                        match sorted {
+                            // The sorted column: its arrow, in the accent colour.
+                            Some(d) => {
+                                let arrow = match d {
+                                    SortDir::Asc => crate::icons::CARET_UP,
+                                    SortDir::Desc => crate::icons::CARET_DOWN,
+                                };
+                                ui.label(
+                                    egui::RichText::new(format!("{title} {arrow}"))
+                                        .strong()
+                                        .color(accent),
+                                );
+                            }
+                            None => {
+                                ui.strong(*title);
+                            }
+                        }
                         let Some(fr) = filter_row.as_deref_mut() else {
                             return;
                         };
@@ -1207,6 +1341,17 @@ pub fn draw(
                         ui.id().with(("ximod-grid-header", n)),
                         egui::Sense::click(),
                     );
+                    // A left click sorts (A-14, R-A14-02).
+                    let resp = match scol {
+                        Some(c) => {
+                            let resp = resp.on_hover_text(sort_tip);
+                            if resp.clicked() {
+                                out.header_clicked = Some(*c);
+                            }
+                            resp
+                        }
+                        None => resp,
+                    };
                     resp.context_menu(|ui| {
                         for (i, (label, on)) in col_menu.iter().enumerate() {
                             let mut v = *on;
@@ -1214,6 +1359,14 @@ pub fn draw(
                                 toggled = Some(i);
                                 ui.close_menu();
                             }
+                        }
+                        ui.separator();
+                        if ui
+                            .add_enabled(sort.is_some(), egui::Button::new(file_order_label))
+                            .clicked()
+                        {
+                            out.file_order = true;
+                            ui.close_menu();
                         }
                     });
                 });
@@ -1282,10 +1435,35 @@ pub fn draw(
                     );
                 };
 
+                // The marks of the line (A-16): one computation for the
+                // margin bar and the rich tooltips.
+                let quality = anomalies.get(&idx).map(String::as_str);
+                let words = spelling.get(&idx).map(Vec::as_slice).unwrap_or(&[]);
+                let marks = crate::marks::of(
+                    &entries[idx],
+                    &crate::marks::Context {
+                        game,
+                        page,
+                        quality,
+                        spelling: words,
+                    },
+                );
+                let worst = crate::marks::worst(&marks);
+                let nature = crate::marks::nature(&entries[idx]);
+
                 // --- Status cell: colored swatch + glyph. ---
                 row.col(|ui| {
                     let rect = ui.max_rect();
                     ui.painter().rect_filled(rect, 0.0, color);
+                    // The margin bar, at the row's left edge (R-A16-03).
+                    if let Some(w) = worst {
+                        let bar = egui::Rect::from_min_size(
+                            rect.left_top(),
+                            egui::vec2(3.0, rect.height()),
+                        );
+                        ui.painter()
+                            .rect_filled(bar, 0.0, severity_color(ui.visuals(), w));
+                    }
                     ui.painter().text(
                         rect.center_top() + egui::vec2(0.0, font.size * 0.7),
                         egui::Align2::CENTER_CENTER,
@@ -1303,24 +1481,24 @@ pub fn draw(
                             dark,
                         );
                     }
-                    // « [!] » next to the swatch for a line in anomaly (D-05).
-                    let anomaly_tip = anomalies.get(&idx);
-                    if anomaly_tip.is_some() {
+                    // The icon of the line's nature (A-16), grey, at the right
+                    // of the swatch.
+                    if let Some(n) = nature {
                         ui.painter().text(
-                            egui::pos2(rect.right() - 2.0, rect.top() + 2.0),
+                            egui::pos2(rect.right() - 3.0, rect.top() + 2.0),
                             egui::Align2::RIGHT_TOP,
-                            "[!]",
-                            egui::FontId::proportional(9.0),
-                            ui.visuals().error_fg_color,
+                            nature_icon(n),
+                            egui::FontId::proportional(11.0),
+                            Color32::from_gray(95),
                         );
                     }
                     let resp = ui.interact(rect, ui.id().with(("st", idx)), egui::Sense::click());
-                    // « Statut — provenance » (B-09, R-B09-04).
+                    // The nature, then « Statut — provenance » (B-09, R-B09-04).
                     let origin = prov_tip(&entries[idx]);
-                    let resp = if anomaly_tip.is_some() || origin.is_some() {
+                    let resp = if nature.is_some() || origin.is_some() {
                         resp.on_hover_ui(|ui| {
-                            if let Some(tip) = anomaly_tip {
-                                ui.label(tip);
+                            if let Some(n) = nature {
+                                ui.label(format!("{} {}", nature_icon(n), (tips.nature)(n)));
                             }
                             if let Some(o) = &origin {
                                 ui.label(o);
@@ -1428,6 +1606,21 @@ pub fn draw(
                     } else {
                         paint_label(ui, &entries[idx].source, true);
                     }
+                    // The rich tooltip (A-16), or the whole text.
+                    let hover = ui.interact(
+                        ui.max_rect(),
+                        ui.id().with(("src", idx)),
+                        egui::Sense::hover(),
+                    );
+                    let e = &entries[idx];
+                    if rich_tooltips {
+                        let origin = prov_tip(e);
+                        hover.on_hover_ui(|ui| {
+                            rich_tip(ui, e, &e.source, &marks, None, origin.as_deref(), tips)
+                        });
+                    } else {
+                        hover.on_hover_text(&e.source);
+                    }
                 });
 
                 // --- Translation: editable, frameless (so the row color shows),
@@ -1493,95 +1686,46 @@ pub fn draw(
                     if resp.secondary_clicked() {
                         out.row_right_clicked = Some(idx);
                     }
-                    // Length badges (A-05, R-A05-03): nothing while the
-                    // translation fits; « 34 / 32 » in red when over a limit,
-                    // [!] in orange on a forbidden line break; details on hover.
-                    let report = crate::length::Report::of_page(&entries[idx], game, page);
-                    let tags = crate::tags::Report::of(&entries[idx], game);
-                    let resp = if report.is_anomaly() || tags.is_anomaly() {
-                        let e = &entries[idx];
-                        let field = format!("{}:{}", e.rec_sig, e.field_sig);
+                    // The length badge (A-05, R-A05-03): nothing while the
+                    // translation fits, « 34 / 32 » in red when over a limit.
+                    // The other findings are in the margin bar and the rich
+                    // tooltip (A-16).
+                    let e = &entries[idx];
+                    let report = crate::length::Report::of_page(e, game, page);
+                    if report.over() {
                         let cell = ui.max_rect();
                         let small = egui::FontId::proportional((font.size * 0.85).max(9.0));
-                        let mut x = cell.right() - 4.0;
-                        let mut tip = String::new();
-                        if report.over() {
-                            let badge = report.badge(bytes_unit);
-                            let r = ui.painter().text(
-                                egui::pos2(x, cell.top() + 2.0),
-                                egui::Align2::RIGHT_TOP,
-                                &badge,
-                                small.clone(),
-                                ui.visuals().error_fg_color,
-                            );
-                            x = r.left() - 6.0;
-                            let max = report
-                                .limits
-                                .max_chars
-                                .or(report.limits.max_bytes)
-                                .unwrap_or(0);
-                            tip.push_str(
-                                &len_over_tip
-                                    .replace("{chars}", &report.chars.to_string())
-                                    .replace("{max}", &max.to_string())
-                                    .replace("{bytes}", &report.bytes.to_string())
-                                    .replace("{field}", &field),
-                            );
-                        }
-                        if report.bad_newline {
-                            let r = ui.painter().text(
-                                egui::pos2(x, cell.top() + 2.0),
-                                egui::Align2::RIGHT_TOP,
-                                "[!]",
-                                small.clone(),
-                                ui.visuals().warn_fg_color,
-                            );
-                            x = r.left() - 6.0;
-                            if !tip.is_empty() {
-                                tip.push('\n');
-                            }
-                            tip.push_str(&len_newline_tip.replace("{field}", &field));
-                        }
-                        // Aliases and numbers (A-07): « ⚠ », red when something
-                        // is missing or unknown, orange for an order difference;
-                        // the edit window's tab has the detail and the repairs.
-                        if tags.is_anomaly() {
-                            let color = if tags.is_error() {
-                                ui.visuals().error_fg_color
-                            } else {
-                                ui.visuals().warn_fg_color
-                            };
-                            ui.painter().text(
-                                egui::pos2(x, cell.top() + 2.0),
-                                egui::Align2::RIGHT_TOP,
-                                crate::icons::WARNING,
-                                small,
-                                color,
-                            );
-                            if !tip.is_empty() {
-                                tip.push('\n');
-                            }
-                            let mut parts: Vec<String> = Vec::new();
-                            for t in &tags.missing_tags {
-                                parts.push(alias_tips[0].replace("{tag}", t));
-                            }
-                            for t in &tags.unknown_tags {
-                                parts.push(alias_tips[1].replace("{tag}", t));
-                            }
-                            for n in &tags.missing_numbers {
-                                parts.push(alias_tips[2].replace("{n}", n));
-                            }
-                            for n in &tags.unknown_numbers {
-                                parts.push(alias_tips[3].replace("{n}", n));
-                            }
-                            if tags.order_differs {
-                                parts.push(alias_tips[4].clone());
-                            }
-                            tip.push_str(&parts.join("\n"));
-                        }
-                        resp.on_hover_text(tip)
-                    } else {
+                        ui.painter().text(
+                            egui::pos2(cell.right() - 4.0, cell.top() + 2.0),
+                            egui::Align2::RIGHT_TOP,
+                            report.badge(bytes_unit),
+                            small,
+                            ui.visuals().error_fg_color,
+                        );
+                    }
+                    let resp = if rich_tooltips {
+                        let max = report.limits.max_chars.or(report.limits.max_bytes);
+                        let n = if report.limits.max_chars.is_none() && max.is_some() {
+                            report.bytes
+                        } else {
+                            report.chars
+                        };
+                        let origin = prov_tip(e);
+                        resp.on_hover_ui(|ui| {
+                            rich_tip(
+                                ui,
+                                e,
+                                &e.trans,
+                                &marks,
+                                Some((n, max)),
+                                origin.as_deref(),
+                                tips,
+                            )
+                        })
+                    } else if e.trans.is_empty() {
                         resp
+                    } else {
+                        resp.on_hover_text(&e.trans)
                     };
                     resp.context_menu(|ui| menu_ui(ui, &mut out));
                 });

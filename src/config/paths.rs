@@ -321,12 +321,55 @@ pub fn write_atomic(path: &Path, bytes: &[u8]) -> io::Result<()> {
         f.write_all(bytes)?;
         f.sync_all()?;
         drop(f);
-        std::fs::rename(&tmp, path)
+        rename_retrying(|| std::fs::rename(&tmp, path), std::thread::sleep)
     })();
     if result.is_err() {
         let _ = std::fs::remove_file(&tmp);
     }
     result
+}
+
+/// Whether an error of a rename is the kind Windows gives while another
+/// program holds the file for a moment (antivirus, search indexer, backup
+/// client): access denied (5), sharing violation (32), lock violation (33).
+fn is_transient_rename_error(e: &io::Error) -> bool {
+    e.kind() == io::ErrorKind::PermissionDenied || matches!(e.raw_os_error(), Some(5 | 32 | 33))
+}
+
+/// Run `rename`, and try again for about one second while the error is
+/// transient ([`is_transient_rename_error`]): on Windows a file just closed
+/// is often opened at once by the antivirus, and the rename of an atomic
+/// write failed now and then (autosave test seen failing on 11/11/2026). A
+/// lasting error is returned as it is.
+fn rename_retrying(
+    mut rename: impl FnMut() -> io::Result<()>,
+    mut sleep: impl FnMut(std::time::Duration),
+) -> io::Result<()> {
+    const TRIES: u32 = 20;
+    let mut last = None;
+    for i in 0..TRIES {
+        match rename() {
+            Ok(()) => return Ok(()),
+            Err(e) if is_transient_rename_error(&e) && i + 1 < TRIES => {
+                last = Some(e);
+                sleep(std::time::Duration::from_millis(50));
+            }
+            Err(e) => return Err(e),
+        }
+    }
+    Err(last.unwrap_or_else(|| io::Error::other("rename")))
+}
+
+/// Remove a file, trying again for about one second while Windows reports
+/// it held by another program ([`is_transient_rename_error`]): the autosave
+/// files are often opened by the antivirus just after their writing, and a
+/// discard then failed (autosave test failing on a Windows workstation on
+/// 11/11/2026). A file already gone is not an error.
+pub fn remove_file_retrying(path: &Path) -> io::Result<()> {
+    match rename_retrying(|| std::fs::remove_file(path), std::thread::sleep) {
+        Err(e) if e.kind() == io::ErrorKind::NotFound => Ok(()),
+        r => r,
+    }
 }
 
 /// Whether the folder can be written to (creating it if it does not exist yet):
@@ -622,6 +665,62 @@ mod tests {
             "nouveau\n"
         );
         let _ = std::fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn remove_file_retrying_ignores_a_missing_file() {
+        let d = temp_dir("remove-retrying");
+        let f = d.join("x.json");
+        std::fs::write(&f, b"x").unwrap();
+        remove_file_retrying(&f).unwrap();
+        assert!(!f.exists());
+        // Gone already: not an error.
+        remove_file_retrying(&f).unwrap();
+        // A folder is not a file: a lasting error, returned.
+        assert!(remove_file_retrying(&d).is_err());
+        let _ = std::fs::remove_dir_all(&d);
+    }
+
+    #[test]
+    fn rename_is_retried_while_the_file_is_held() {
+        // Held twice (sharing violation), then free: done, two waits.
+        let mut calls = 0;
+        let mut waits = 0;
+        let r = rename_retrying(
+            || {
+                calls += 1;
+                if calls <= 2 {
+                    Err(io::Error::from_raw_os_error(32))
+                } else {
+                    Ok(())
+                }
+            },
+            |_| waits += 1,
+        );
+        assert!(r.is_ok());
+        assert_eq!((calls, waits), (3, 2));
+        // Held for good: the error comes back after the last try.
+        let mut calls = 0;
+        let r = rename_retrying(
+            || {
+                calls += 1;
+                Err(io::Error::from(io::ErrorKind::PermissionDenied))
+            },
+            |_| {},
+        );
+        assert_eq!(r.unwrap_err().kind(), io::ErrorKind::PermissionDenied);
+        assert_eq!(calls, 20);
+        // Any other error: at once.
+        let mut calls = 0;
+        let r = rename_retrying(
+            || {
+                calls += 1;
+                Err(io::Error::from(io::ErrorKind::NotFound))
+            },
+            |_| {},
+        );
+        assert_eq!(r.unwrap_err().kind(), io::ErrorKind::NotFound);
+        assert_eq!(calls, 1);
     }
 
     #[test]

@@ -6,6 +6,16 @@ version étiquetée devient le corps de la page de version (S-02).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-12
+
+Fin du lot 1 de l'étape 3, « Grille et édition au quotidien » : le journal
+de la session (E-01), les choix mémorisés (E-03), le tri par colonne
+(A-14), le filtre « identiques à la source » (A-21), les marques de la
+grille (A-16), les transformations du texte (A-13), l'export de débogage
+(A-22) ; les suites du test du chemin de base du 7 novembre — sorties
+expliquées et fins de ligne de la source (D-114, D-115) — et Ctrl+G vers
+le site choisi (D-117).
+
 ### Ajouté (étape 3, lot 1)
 - Journal de la session (E-01, décision D-108) : *Aide › Journal…*
   (Ctrl+Maj+J) et un bouton *Journal* dans la barre d'état, qui n'apparaît
@@ -32,6 +42,117 @@ version étiquetée devient le corps de la page de version (S-02).
   l'ajoute à un fichier, avec ou sans `--verbose`. La trace technique ne
   suit plus `--verbose` mais la seule variable `RUST_LOG`. Aucune clé
   d'API ni texte envoyé en ligne n'entre dans le journal (test).
+- Choix mémorisés (E-03, décision D-109) : huit dialogues de confirmation
+  portent une case « Se souvenir de mon choix », pour la session (par
+  défaut) ou définitivement — la propagation proposée après F5 ou Ctrl+↓,
+  « Est-ce la bonne sortie ? », le remplacement par la traduction
+  instantanée, le conflit du dictionnaire personnel, l'écrasement et le
+  volume de la traduction en ligne, le jeu à l'enregistrement d'un
+  dictionnaire, l'effacement du journal. Une réponse n'est retenue que par
+  un bouton, jamais par Annuler, Échap ou la croix ; mémorisée, la question
+  ne s'affiche plus et le journal note la réponse appliquée. Aucun dialogue
+  qui peut perdre du travail n'y a droit. Les choix définitifs vont dans
+  `[Confirmations]` de Config.ini ; *Paramètres › Général › Questions
+  mémorisées* les liste et *Réafficher les questions* les oublie tous.
+  Remplace la case « Ne plus demander pendant cette session » de la
+  traduction instantanée et « Se souvenir de ce choix pour la session » du
+  dictionnaire personnel ; `ximod-cli` ne lit pas ces choix. Manuel § 4.7,
+  4.8, 8.4, 8.10, 16.1, 17.
+- Tri de la grille (A-14, décision D-110) : un clic sur le titre d'une
+  colonne (St, Fichier, GRUP, Champ, EDID, Source, Traduction, Relecture,
+  Provenance, Commentaire) trie croissant, puis décroissant, puis revient à
+  l'ordre du fichier ; flèche dans la couleur d'accent sur le titre et
+  « Tri : Source, croissant » dans la barre d'état. St suit l'ordre du
+  travail (À traduire d'abord) ; les textes se comparent sans casse ni
+  accents, traductions vides en fin, égalités dans l'ordre du fichier. Le
+  tri est un instantané : une ligne traduite ou dont le statut change ne
+  bouge pas jusqu'au clic suivant. La sélection, Ctrl+↓ et la navigation
+  suivent l'ordre affiché ; la vue Uniques garde la première ligne du
+  fichier de chaque source ; chaque onglet a son tri ; filtres et
+  *Réinitialiser* ne le défont pas. *Ordre du fichier* (menu du clic droit
+  sur un titre, *Options › Colonnes*) le défait. L'enregistrement, l'export
+  et `ximod-cli` gardent l'ordre du fichier ; rien n'est écrit dans
+  Config.ini. SS2.esm (62 412 lignes) : tri en 4 à 42 ms selon la colonne
+  (version optimisée). Manuel § 4.5, 8.1, 8.4.
+- Filtre « traduction identique à la source » (A-21) : un bouton à trois
+  états après les statuts de la barre de filtres — inactif (« = source » en
+  gris), « = source », « ≠ source ». Une traduction non vide égale à la
+  source une fois retirés les espaces de début et de fin (casse et accents
+  comptent) est « = source » ; une ligne sans traduction n'est dans aucun
+  des deux. Le critère se combine aux autres et *Réinitialiser* le
+  désactive. L'info-bulle du compteur des lignes affichées donne le nombre
+  de lignes identiques à la source. `ximod-cli check` ajoute « Identiques à
+  la source : n » et le champ JSON `sameAsSource`, sans effet sur le code
+  de retour. Manuel § 10, 18.2.
+- Marques de ligne (A-16, décision D-111) : les contrôles que la grille
+  faisait déjà — balises et nombres, longueur, retour à la ligne interdit,
+  encodage de la sortie, dernière vérification qualité, source ambiguë,
+  dernière analyse du correcteur — et deux constats simples (espaces en tête
+  ou en queue que la source n'a pas, double espace) sont réunis dans un seul
+  calcul (`marks.rs`). Ils s'affichent par une barre de marge au bord gauche
+  de la ligne (rouge : erreur ; orange : avertissement ; violet :
+  orthographe) et par une info-bulle riche sur les cellules Source et
+  Traduction (identité, texte entier, marques, longueur, statut et
+  provenance) ; *Options › Colonnes › Info-bulles riches* (`[Columns]
+  RichTooltips`, cochée) la réduit au texte complet. Une icône grise dans la
+  colonne St dit la nature de la ligne (réplique, livre, script, message).
+  Le filtre *[!] Anomalies* montre toute ligne qui porte une barre. Les
+  [!] et ⚠ des cellules St et Traduction disparaissent ; le badge « 34 /
+  32 » reste. Manuel § 8.1, 8.2, 8.7, 14.2, 17.
+- Transformer le texte (A-13, décision D-112) : *Outils › Transformer* et
+  le même sous-menu dans le menu de la ligne — Majuscules (Ctrl+Maj+U),
+  Minuscules (Ctrl+Maj+L), Casse de titre (Ctrl+Maj+T), Première lettre en
+  majuscule, Supprimer les espaces en tête et en queue, Ajouter / Retirer
+  un préfixe ou un suffixe (dialogue avec aperçu, « Ne pas répéter »).
+  Seule la traduction change ; balises, nombres, `%s` et sauts de ligne
+  restent intacts. Une opération annulable par commande (« Transformer :
+  … »), statut selon la règle de la saisie, provenance « saisie », compte
+  dans la barre d'état et le journal ; les lignes jamais affichées, Ignoré,
+  tenues par VMAD ou sans traduction sont sautées. Les mots que la casse de
+  titre laisse en minuscules et les sigles conservés viennent de
+  `assets/data/text/title_case.json` (par langue), modifiables pour la
+  langue cible dans *Paramètres › Avancé › Casse de titre* (copie
+  utilisateur `data/text/title_case.json`). Dans la fenêtre d'édition, les
+  trois raccourcis agissent sur la sélection de la traduction. Module
+  `text::transform` dans la bibliothèque, prêt pour le Header Processor.
+  Manuel § 8.5, 8.15, 16.3, annexe.
+- Export de débogage (A-22, décision D-113) : dans le dialogue d'export, le
+  groupe *Débogage en jeu* et sa case *Préfixer chaque texte par son
+  identifiant* — `[FormID]`, `[REC:FLD]` ou les deux — avec un aperçu.
+  Toutes les lignes affichées en jeu sont préfixées (la traduction
+  exportée, ou la source à défaut) ; Ignoré et lignes jamais affichées
+  restent telles quelles ; un texte trop long est coupé à la limite de son
+  champ après le préfixe. Le document n'est jamais modifié, la case est
+  décochée à chaque ouverture, le titre devient « Export de débogage — … »
+  et le décompte dit combien de lignes partent préfixées. L'export est noté
+  dans le journal une fois le fichier écrit, avec les lignes coupées.
+  Contrôle inverse : les lignes exportées dont la traduction commence déjà
+  par un identifiant sont signalées, *voir les lignes* fermant le dialogue
+  sur elles. `ximod-cli export --ids formid|sig|both` (et `"ids"` dans un
+  lot), clé `debugIds` du résultat ; le contrôle inverse y est toujours
+  fait (code 1 avec `--strict`). Manuel § 11.2, 18.2.
+- Sorties expliquées (B.8, décision D-114, suite du test du chemin de base
+  du 7 novembre 2026) : chaque entrée de la liste *Sortie* a une phrase en
+  info-bulle — ce que produit l'export et ce que le jeu demande pour le
+  charger —, que la confirmation « Est-ce la bonne sortie ? » répète pour
+  la sortie choisie (l'avertissement du module complet devient sa phrase).
+  L'entrée qui convient d'ordinaire au document ouvert porte « (usuel) » :
+  STRINGS pour un plugin localisé d'un jeu à STRINGS, sinon Correctif,
+  sinon Module complet (Morrowind) ; rien n'est présélectionné. Manuel
+  § 6.5.
+- Ctrl+G vers le site choisi (B.9, décision D-117, candidat D-13) : sans
+  service en ligne utilisable, *Ctrl+G* ouvre la page choisie dans
+  *Paramètres › En ligne*, liste « Sans service, Ctrl+G ouvre » —
+  Google Traduction (par défaut, comme en 0.3.1), DeepL, ChatGPT, Claude,
+  Perplexity (`[Online] BrowserSite`). Un site de traduction reçoit la
+  ligne, les langues du document dans l'adresse ; un assistant reçoit une
+  consigne de traduction (langues, jeu, balises de la ligne à recopier,
+  nombres et sauts de ligne à garder, réponse seule) suivie de la ligne,
+  aussi copiées dans le presse-papiers. Au-delà de 2 000 caractères, le
+  texte part dans le presse-papiers et la page s'ouvre vide. Grille,
+  fenêtre d'édition et fenêtre Traduire un FOMOD ; un service configuré
+  garde la priorité. Module `online::browser` dans la bibliothèque. Manuel
+  § 8.10, 16.4, 17.
 
 ### Modifié
 - Boutons en relief (F-07, demande du 11 novembre 2026) : egui ne dessinant
@@ -39,8 +160,44 @@ version étiquetée devient le corps de la page de version (S-02).
   panneau et celui des champs, et un contour sombre ; les listes
   déroulantes prennent le fond creusé des champs de saisie. Un bouton se
   distingue ainsi d'un champ et d'une liste, dans les deux thèmes.
+- Dépendances mises à jour (`cargo update` du 29/10/2026, compatibles
+  Rust 1.97) : utf8_iter 1.0.4 → 1.1.0, qui ajoute utf_types 1.0.0 ;
+  zcheapstr 1.1.0 → 1.2.0. Aucun changement de code.
+- Dépendances mises à jour (`cargo update` du 02/11/2026, compatibles
+  Rust 1.97) : crc32fast 1.5.3 → 1.5.4, encoding_rs 0.8.42 → 0.8.44,
+  log 0.4.34 → 0.4.35, webbrowser 1.2.5 → 1.2.6, et la famille
+  wasm-bindgen 0.2.129 → 0.2.130 (js-sys et web-sys 0.3.107,
+  wasm-bindgen-futures 0.4.80). Aucun changement de code.
+- Dépendances mises à jour (`cargo update` du 11/11/2026, compatibles
+  Rust 1.97) : async-executor 1.14.1, async-lock 3.5.0, crc32fast 1.5.5,
+  flate2 1.1.11, itoa 1.0.19, libz-sys 1.1.33, mime 0.3.18,
+  rustls-pki-types 1.16.0, smallvec 1.16.5, syn 3.0.10, toml_datetime
+  1.1.3, toml_edit 0.25.19, uuid 1.29.2, webbrowser 1.2.7, webpki-roots
+  1.0.12, winnow 1.0.5. Aucun changement de code.
 
 ### Corrigé
+- Fins de ligne à l'export (B.8, décision D-115) : une traduction saisie ou
+  collée sur plusieurs lignes n'avait que des LF, et le plugin exporté
+  portait donc des fins de ligne que l'original n'avait pas (56 retours du
+  livre de RFM.esm au test du 7 novembre). Pour les sorties de plugin,
+  chaque traduction prend désormais les fins de ligne de sa source (CRLF
+  ou LF ; source sans retour ou mêlée : inchangée), dans l'interface comme
+  dans `ximod-cli export` ; le dictionnaire garde le texte saisi, les
+  fichiers texte leur propre réglage. Le correctif de RFM refait depuis le
+  dictionnaire du testeur ne diffère plus de l'original que par le texte
+  du livre, avec ses 56 CRLF. Manuel § 11.2.
+- Après Ctrl+↓ sur une ligne que l'on vient de saisir, la barre d'état
+  annonçait « 0 ligne(s) → Validé » : la saisie avait déjà rendu la ligne
+  Validé et seules les lignes changées étaient comptées. Le message compte
+  désormais toutes les lignes prises (« 1 ligne(s) → Validé »).
+- Windows : la sauvegarde automatique ne supprimait pas toujours ses
+  fichiers de secours à la fermeture d'un document ni lors de la purge :
+  l'antivirus les ouvre souvent juste après leur écriture, et la
+  suppression échouait alors (« fichier utilisé par un autre processus »),
+  si bien que la reprise pouvait être proposée à tort au lancement suivant.
+  La suppression est réessayée pendant une seconde environ, comme le
+  renommage de l'écriture atomique (test `spawn_poll_pending_discard` en
+  échec sur un poste Windows le 11 novembre 2026).
 - Windows : *Traduire la ligne en ligne* (Ctrl+G) sans service configuré
   ouvrait Google Traduction sans le texte ni la langue cible. L'adresse
   passait par `cmd /C start`, qui lit chaque « & » comme une fin de
@@ -109,15 +266,18 @@ version étiquetée devient le corps de la page de version (S-02).
   des fichiers JSON ; le test des textes codés en dur comparait un chemin
   relatif avec un suffixe à barres obliques.
 
-### Modifié
-- Dépendances mises à jour (`cargo update` du 29/10/2026, compatibles
-  Rust 1.97) : utf8_iter 1.0.4 → 1.1.0, qui ajoute utf_types 1.0.0 ;
-  zcheapstr 1.1.0 → 1.2.0. Aucun changement de code.
-- Dépendances mises à jour (`cargo update` du 02/11/2026, compatibles
-  Rust 1.97) : crc32fast 1.5.3 → 1.5.4, encoding_rs 0.8.42 → 0.8.44,
-  log 0.4.34 → 0.4.35, webbrowser 1.2.5 → 1.2.6, et la famille
-  wasm-bindgen 0.2.129 → 0.2.130 (js-sys et web-sys 0.3.107,
-  wasm-bindgen-futures 0.4.80). Aucun changement de code.
+### Corrigé (recette du lot 1)
+- Skyrim : les marques d'effet magique `<mag>`, `<dur>` et `<area>` ne
+  figuraient pas dans la liste des balises du jeu (`assets/data/fields/
+  Skyrim.json`, héritée par Skyrim SE) : une traduction qui en perdait une
+  n'était signalée ni par les marques de la grille (A-16), ni par le
+  filtre Anomalies, ni par `ximod-cli check`, ni protégée en traduction en
+  ligne. Sur Apocalypse traduit, 12 lignes apparaissent désormais en erreur :
+  10 où `<mag>` manque (WB_A000_Alarm_Effect…), une où il est ajouté, une
+  où l'ordre des balises diffère.
+- Simulateur des services en ligne (`tools/mock_online.py`) : la variable
+  `MOCK_SAME=n` rend les n premiers textes inchangés, pour vérifier qu'une
+  réponse identique à la source est refusée (D-02).
 
 ## [0.3.1] - 2026-10-29
 

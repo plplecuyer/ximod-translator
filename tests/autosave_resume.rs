@@ -47,19 +47,22 @@ fn crash_then_resume_restores_the_work() {
     };
     let mut auto = Autosave::new(dir.clone(), 5);
     auto.spawn(tm.clone(), Manifest::new(&src, &settings, n), 3);
-    let mut done = false;
-    for _ in 0..300 {
-        if auto
-            .poll()
-            .iter()
-            .any(|e| matches!(e, AutosaveEvent::Done { .. }))
-        {
-            done = true;
-            break;
+    // Up to 30 s: the suite runs in parallel on a loaded machine; a failed
+    // write is shown with its error.
+    let mut events = Vec::new();
+    let deadline = std::time::Instant::now() + Duration::from_secs(30);
+    while events.is_empty() && std::time::Instant::now() < deadline {
+        events.extend(auto.poll());
+        if events.is_empty() {
+            std::thread::sleep(Duration::from_millis(10));
         }
-        std::thread::sleep(Duration::from_millis(10));
     }
-    assert!(done);
+    assert!(
+        events
+            .iter()
+            .any(|e| matches!(e, AutosaveEvent::Done { .. })),
+        "{events:?}"
+    );
 
     // "Crash": no discard. The next start finds the manifest with the settings.
     let found = Autosave::pending(&dir);

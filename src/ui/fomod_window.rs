@@ -1203,8 +1203,16 @@ impl XimodApp {
                 None => false,
             };
             if !served {
-                let iso1 = ximod_fomod::lang::iso639_3_to_1(&st.target_lang);
-                crate::fonts::open_url(&google_url(&text, &iso1));
+                // The site chosen in Paramètres › En ligne (R-T03).
+                let dst = ximod_fomod::lang::iso639_3_to_1(&st.target_lang);
+                let src = ximod_fomod::lang::iso639_3_to_1(&st.source_lang);
+                self.browser_open(
+                    &text,
+                    src,
+                    dst,
+                    crate::games::Game::Unknown,
+                    crate::tags::TagSet::any(),
+                );
             }
         }
         if let Some(req) = package {
@@ -1232,20 +1240,6 @@ impl XimodApp {
         }
         self.fomod_trans = st;
     }
-}
-
-/// Google Translate URL for a text, in the browser (the Ctrl+G of M-02).
-pub fn google_url(text: &str, target_iso1: &str) -> String {
-    let mut enc = String::new();
-    for b in text.bytes() {
-        match b {
-            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
-                enc.push(b as char)
-            }
-            _ => enc.push_str(&format!("%{b:02X}")),
-        }
-    }
-    format!("https://translate.google.com/?sl=auto&tl={target_iso1}&text={enc}&op=translate")
 }
 
 /// Top panel: source folder, languages, translator, actions, progress.
@@ -2130,19 +2124,6 @@ mod tests {
     /// The whole line reaches Google Translate: every « & », « # », « / »,
     /// space or line break of the text is encoded, so the query keeps its
     /// target and its text (the Windows opening cut it at the first « & »).
-    #[test]
-    fn google_url_carries_target_and_whole_text() {
-        let u = super::google_url("Salt & Pepper #2\nA/B é", "fr");
-        assert!(u.starts_with("https://translate.google.com/?sl=auto&tl=fr&text="));
-        assert!(u.ends_with("&op=translate"));
-        let text = u
-            .split("&text=")
-            .nth(1)
-            .and_then(|t| t.strip_suffix("&op=translate"))
-            .unwrap();
-        assert_eq!(text, "Salt%20%26%20Pepper%20%232%0AA%2FB%20%C3%A9");
-    }
-
     use super::*;
 
     fn sample_fomod(tag: &str) -> PathBuf {

@@ -11,6 +11,7 @@ use eframe::egui;
 
 use super::{XimodApp, read_geometry as read_geometry_of};
 use crate::journal::{Entry, Kind, Level, View};
+use crate::remember::{Answer, Question};
 
 /// The window while it is open, and what it keeps of the session.
 #[derive(Default)]
@@ -227,6 +228,7 @@ impl XimodApp {
         let mut show_rows: Option<u64> = None;
         let mut copy: Option<String> = None;
         let mut save = false;
+        let mut clear = false;
         // The buttons at the bottom.
         egui::TopBottomPanel::bottom("ximod-journal-buttons").show(vctx, |ui| {
             ui.add_space(4.0);
@@ -263,7 +265,7 @@ impl XimodApp {
                         .add_enabled(!self.journal.is_empty(), egui::Button::new(&lbl_clear))
                         .clicked()
                     {
-                        self.journal_win.confirm_clear = true;
+                        clear = true;
                     }
                 });
             });
@@ -419,6 +421,9 @@ impl XimodApp {
         if let Some(text) = copy {
             vctx.copy_text(text);
         }
+        if clear {
+            self.journal_ask_clear();
+        }
         if save {
             let text = self.journal_tsv(shown.iter().filter_map(|id| self.journal.get(*id)));
             self.journal_save(&text);
@@ -467,6 +472,26 @@ impl XimodApp {
         }
     }
 
+    /// Effacer: asked, unless the answer is remembered (E-03).
+    fn journal_ask_clear(&mut self) {
+        if self.remembered.get(Question::JournalClear).is_some() {
+            // Emptied first, so that the list keeps the entry of the
+            // remembered answer.
+            self.journal_clear_now();
+            self.remembered(Question::JournalClear);
+        } else {
+            self.journal_win.confirm_clear = true;
+        }
+    }
+
+    /// The list of the session emptied.
+    fn journal_clear_now(&mut self) {
+        self.journal.clear();
+        self.journal_win.selected.clear();
+        self.journal_win.anchor = None;
+        self.journal_win.paths.clear();
+    }
+
     /// « Effacer le journal de la session ? » (confirmation, R-E01-05).
     fn journal_confirm_clear(&mut self, vctx: &egui::Context) {
         let title = self.i18n.t("journal-clear");
@@ -480,7 +505,14 @@ impl XimodApp {
             .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
             .show(vctx, |ui| {
                 ui.label(&ask);
-                ui.add_space(10.0);
+                ui.add_space(8.0);
+                super::app_remember::remember_box(
+                    ui,
+                    &self.i18n,
+                    &mut self.remember_draft,
+                    Question::JournalClear,
+                );
+                ui.add_space(8.0);
                 let (p, c) = super::confirm_buttons(ui, &yes, &no);
                 if p {
                     choice = Some(true);
@@ -488,13 +520,13 @@ impl XimodApp {
                     choice = Some(false);
                 }
             });
+        if let Some(ok) = choice {
+            self.remember_answered(Question::JournalClear, ok.then_some(Answer::YES));
+        }
         match choice {
             Some(true) => {
-                self.journal.clear();
-                self.journal_win.selected.clear();
-                self.journal_win.anchor = None;
-                self.journal_win.paths.clear();
                 self.journal_win.confirm_clear = false;
+                self.journal_clear_now();
             }
             Some(false) => self.journal_win.confirm_clear = false,
             None => {}

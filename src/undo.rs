@@ -114,6 +114,8 @@ pub enum OpKind {
     RulesApply,
     /// « Appliquer les assistants » (B-15): `label_arg` says how many lines.
     Assist,
+    /// Transformer ▸ (A-13): `label_arg` names the command.
+    Transform,
 }
 
 impl OpKind {
@@ -141,11 +143,12 @@ impl OpKind {
             OpKind::Generalize => "op-generalize",
             OpKind::RulesApply => "op-rules-apply",
             OpKind::Assist => "op-assist",
+            OpKind::Transform => "op-transform",
         }
     }
 
     /// Every kind, for [`OpKind::from_code`].
-    pub const ALL: [OpKind; 21] = [
+    pub const ALL: [OpKind; 22] = [
         OpKind::Edit,
         OpKind::Status,
         OpKind::ApplyBase,
@@ -167,6 +170,7 @@ impl OpKind {
         OpKind::Generalize,
         OpKind::RulesApply,
         OpKind::Assist,
+        OpKind::Transform,
     ];
 
     /// The code of the operation in the history (A-18): stable from one
@@ -188,6 +192,8 @@ impl OpKind {
             OpKind::Fix | OpKind::Replace => Some(crate::provenance::REPLACE),
             OpKind::ReviewAccept => Some(crate::provenance::REVIEW),
             OpKind::History => Some(crate::provenance::HISTORY),
+            // A transformation is the translator's own hand (R-A13-08).
+            OpKind::Transform => Some(crate::provenance::TYPED),
             OpKind::Status
             | OpKind::PropagateFiles
             | OpKind::ApplyBase

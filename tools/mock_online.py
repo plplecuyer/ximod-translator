@@ -3,14 +3,21 @@
 """Stand-in for the online services (lot 5 recette): DeepL, Azure, OpenAI
 and Google endpoints on one local port, answering « [XX] text » with the
 protection tokens kept. Usage: python3 tools/mock_online.py 8765 [delay]
-(delay: seconds before each translation answer, to try « Arrêter »)."""
-import json, re, sys, time
+(delay: seconds before each translation answer, to try « Arrêter »).
+MOCK_SAME=n in the environment: the first n texts come back unchanged, as
+a service sometimes does with a name (A-21 recette)."""
+import json, os, re, sys, time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8765
 DELAY = float(sys.argv[2]) if len(sys.argv) > 2 else 0.0
 
+SAME = [int(os.environ.get("MOCK_SAME", "0"))]
+
 def fake(text, dst):
+    if SAME[0] > 0:
+        SAME[0] -= 1
+        return text
     # Keep <a_A> … tokens; pseudo-translate the words.
     parts = re.split(r"(<[a-z]+_[A-Z]+>)", text)
     out = []

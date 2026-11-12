@@ -94,6 +94,18 @@ pub struct LocalizeInfo<'a> {
     pub unknown: Option<&'a str>,
 }
 
+/// Débogage en jeu (A-22): the preview of the first line written with its
+/// identifier, the warning when translations already start with one, and
+/// « voir les lignes ».
+pub struct IdsInfo<'a> {
+    pub preview: Option<&'a str>,
+    /// What a debugging export writes, in place of the count of the
+    /// exported translations: every line shown, prefixed.
+    pub count: Option<&'a str>,
+    pub present: Option<&'a str>,
+    pub show_rows: &'a mut bool,
+}
+
 /// The parts of the dialog that depend on the document.
 #[derive(Default)]
 pub struct Extra<'a> {
@@ -108,6 +120,8 @@ pub struct Extra<'a> {
     pub localize: Option<LocalizeInfo<'a>>,
     /// Exported VMAD lines the output does not write (C-08).
     pub vmad_note: Option<&'a str>,
+    /// The debugging export (A-22).
+    pub ids: Option<IdsInfo<'a>>,
 }
 
 /// Draw the dialog's content; `policy` and `esl` are updated in place.
@@ -126,6 +140,7 @@ pub fn body(
         encoding_bad,
         localize,
         vmad_note,
+        ids,
     } = extra;
     let mut outcome = Outcome::Open;
     let labels: Vec<(Status, String)> = ExportPolicy::optional_statuses()
@@ -277,8 +292,62 @@ pub fn body(
                 .wrap_mode(egui::TextWrapMode::Wrap),
         );
     }
+    // Débogage en jeu (A-22, figure B.5): unchecked at each opening, the
+    // document is not modified.
+    let mut count_text = count_line(i18n, counts);
+    if let Some(info) = ids {
+        if policy.ids.is_some()
+            && let Some(c) = info.count
+        {
+            count_text = c.to_string();
+        }
+        ui.add_space(6.0);
+        ui.group(|ui| {
+            ui.set_width(ui.available_width());
+            ui.label(egui::RichText::new(i18n.t("export-debug-group")).strong());
+            let mut on = policy.ids.is_some();
+            if ui.checkbox(&mut on, i18n.t("export-ids")).changed() {
+                policy.ids = on.then_some(crate::export::IdForm::FormId);
+            }
+            if let Some(form) = policy.ids {
+                ui.horizontal(|ui| {
+                    ui.add_space(22.0);
+                    for f in crate::export::IdForm::ALL {
+                        if ui.radio(form == f, i18n.t(f.i18n_key())).clicked() {
+                            policy.ids = Some(f);
+                        }
+                    }
+                });
+                ui.add(
+                    egui::Label::new(
+                        egui::RichText::new(i18n.t("export-ids-note"))
+                            .weak()
+                            .small(),
+                    )
+                    .wrap_mode(egui::TextWrapMode::Wrap),
+                );
+                if let Some(p) = info.preview {
+                    ui.add(
+                        egui::Label::new(egui::RichText::new(p).monospace().small())
+                            .wrap_mode(egui::TextWrapMode::Wrap),
+                    );
+                }
+            }
+            if let Some(present) = info.present {
+                ui.horizontal_wrapped(|ui| {
+                    ui.colored_label(
+                        ui.visuals().warn_fg_color,
+                        format!("{} {present}", crate::icons::WARNING),
+                    );
+                    if ui.link(i18n.t("export-ids-present-rows")).clicked() {
+                        *info.show_rows = true;
+                    }
+                });
+            }
+        });
+    }
     ui.add_space(8.0);
-    ui.add(egui::Label::new(count_line(i18n, counts)).wrap_mode(egui::TextWrapMode::Wrap));
+    ui.add(egui::Label::new(count_text).wrap_mode(egui::TextWrapMode::Wrap));
     // Characters impossible in the page of writing (R-D09-05, D-60): the
     // export is refused unless they are replaced.
     if let Some(bad) = encoding_bad {
@@ -296,8 +365,12 @@ pub fn body(
             } else {
                 "btn-export"
             });
+            // A debugging export writes the source of the other lines too.
             if ui
-                .add_enabled(counts.total > 0, egui::Button::new(export_l))
+                .add_enabled(
+                    counts.total > 0 || policy.ids.is_some(),
+                    egui::Button::new(export_l),
+                )
                 .clicked()
             {
                 outcome = Outcome::Export;

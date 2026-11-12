@@ -305,6 +305,119 @@ fn apply_export_manifest_package() {
 }
 
 #[test]
+fn check_counts_the_translations_identical_to_the_source() {
+    // A-21: three lines translated by their own source; the count is in the
+    // report and the JSON, and does not change the return code.
+    let env = Env::new("same");
+    let p = env.plugin.to_str().unwrap();
+    let tm = ximod_translator::plugin::read_file(&env.plugin).unwrap();
+    let mut same = 0;
+    let rows: Vec<BaseRow> = tm
+        .entries
+        .iter()
+        .filter(|e| !e.unused && !e.source.trim().is_empty())
+        .map(|e| {
+            let mut e = e.clone();
+            e.trans = if same < 3 {
+                same += 1;
+                e.source.clone()
+            } else {
+                format!("FR {}", e.source)
+            };
+            status::set(&mut e, Status::Validated);
+            BaseRow::from_entry(&e, true)
+        })
+        .collect();
+    assert_eq!(same, 3);
+    let d = env.root.join("w").join("same.ximdb");
+    basedb::write_ximdb(rows, "fra", &d).unwrap();
+    let o = env.run(&["apply", p, "--dict", d.to_str().unwrap(), "--write-dict"]);
+    assert_eq!(o.status.code(), Some(0), "{}", text(&o.stderr));
+    let o = env.run(&["--json", "check", p]);
+    let j = &json_lines(&o)[0];
+    let errors = j["errors"].as_u64().unwrap();
+    assert_eq!(j["sameAsSource"], 3, "{j}");
+    assert_eq!(o.status.code(), Some(if errors > 0 { 1 } else { 0 }), "{j}");
+    let o = env.run(&["--lang", "fra", "check", p]);
+    assert!(
+        text(&o.stdout).contains("Identiques à la source : 3"),
+        "{}",
+        text(&o.stdout)
+    );
+}
+
+#[test]
+fn export_with_identifiers_leaves_the_document_alone() {
+    // A-22: --ids prefixes each text of the output, the mod's dictionary is
+    // untouched; the same output as the library's policy; the reverse
+    // check makes --strict return 1.
+    let env = Env::new("ids");
+    let p = env.plugin.to_str().unwrap();
+    let dict = env.dict();
+    let o = env.run(&["apply", p, "--dict", dict.to_str().unwrap(), "--write-dict"]);
+    assert_eq!(o.status.code(), Some(0), "{}", text(&o.stderr));
+    let before = std::fs::read(env.mod_dict()).unwrap();
+    let out = env.root.join("out");
+    let o = env.run(&[
+        "--json",
+        "export",
+        p,
+        "--output",
+        "override",
+        "--ids",
+        "formid",
+        "-o",
+        out.to_str().unwrap(),
+    ]);
+    assert_eq!(o.status.code(), Some(0), "{}", text(&o.stderr));
+    assert_eq!(json_lines(&o)[0]["debugIds"], "formid");
+    assert_eq!(
+        std::fs::read(env.mod_dict()).unwrap(),
+        before,
+        "dictionary untouched"
+    );
+    let written =
+        ximod_translator::plugin::read_file(&out.join("skyrim_dialogue_patch.esp")).unwrap();
+    let shown: Vec<_> = written
+        .entries
+        .iter()
+        // The header of the patch (its author) is not a line of the mod.
+        .filter(|e| !e.source.trim().is_empty() && e.rec_sig != "TES4")
+        .collect();
+    assert!(!shown.is_empty());
+    for e in &shown {
+        assert!(
+            e.source.starts_with(&format!("[{:08X}] FR: ", e.formid))
+                || ximod_translator::export::policy::starts_with_id(&e.source),
+            "{:?}",
+            e.source
+        );
+    }
+    // Without --ids: the export as before.
+    let o = env.run(&[
+        "export",
+        p,
+        "--output",
+        "override",
+        "-o",
+        out.to_str().unwrap(),
+    ]);
+    assert_eq!(o.status.code(), Some(0), "{}", text(&o.stderr));
+    // A bad form is refused before anything is written.
+    let o = env.run(&[
+        "export",
+        p,
+        "--output",
+        "override",
+        "--ids",
+        "x",
+        "-o",
+        out.to_str().unwrap(),
+    ]);
+    assert_eq!(o.status.code(), Some(2));
+}
+
+#[test]
 fn check_codes_and_report() {
     let env = Env::new("check");
     let p = env.plugin.to_str().unwrap();

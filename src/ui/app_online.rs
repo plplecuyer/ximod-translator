@@ -19,6 +19,7 @@ use crate::online::profile::{self, Profile};
 use crate::online::protect;
 use crate::online::quota::Item;
 use crate::online::{Error, Service};
+use crate::remember::Question;
 use crate::status::Status;
 use crate::tags::TagSet;
 use crate::undo::{OpKind, record};
@@ -169,18 +170,72 @@ impl XimodApp {
             return;
         }
         if self.online_usable().is_none() {
-            // The browser, as in lot 2.
+            // The browser, on the site chosen in Paramètres › En ligne
+            // (R-T03, D-117).
             let Some(doc) = self.active_doc() else {
                 return;
             };
-            if let Some(e) = doc.tm.entries.get(lines[0]) {
-                let iso1 = self.iso1_of(&doc.settings.target);
-                crate::fonts::open_url(&crate::ui::fomod_window::google_url(&e.source, &iso1));
-            }
-            self.status = self.i18n.t("online-no-service");
+            let Some(e) = doc.tm.entries.get(lines[0]) else {
+                return;
+            };
+            let line = e.source.clone();
+            let game = doc.settings.game();
+            let tags = if crate::textfmt::is_text_field(&e.field_sig) {
+                crate::tags::TagSet::for_entry(e, game)
+            } else {
+                crate::tags::TagSet::any()
+            };
+            let src = doc.settings.source.trim().to_string();
+            let dst = doc.settings.target.trim().to_string();
+            let src = if src.is_empty() {
+                String::new()
+            } else {
+                self.iso1_of(&src)
+            };
+            let dst = self.iso1_of(&dst);
+            self.browser_open(&line, src, dst, game, tags);
             return;
         }
         self.online_begin(lines, false, false);
+    }
+
+    /// Ctrl+G without a service (R-T03): open the chosen site with the
+    /// line — or, for an assistant, the instruction and the line —, the
+    /// clipboard holding the text when the address is too long or may be
+    /// refused. `src`, `dst`: ISO 639-1 (`src` empty: detected by the site).
+    pub(crate) fn browser_open(
+        &mut self,
+        line: &str,
+        src: String,
+        dst: String,
+        game: crate::games::Game,
+        tags: crate::tags::TagSet,
+    ) {
+        use crate::online::browser;
+        let site = self.config.online.browser_site;
+        let cx = browser::Context {
+            src,
+            dst,
+            game: if game == crate::games::Game::Unknown {
+                String::new()
+            } else {
+                game.display_name().to_string()
+            },
+            tags,
+        };
+        let o = browser::opening(site, line, &cx);
+        crate::fonts::open_url(&o.url);
+        let name = self.i18n.t(site.i18n_key());
+        self.status = if o.too_long {
+            self.i18n.t_arg("browser-too-long", "site", &name)
+        } else if o.clipboard.is_some() {
+            self.i18n.t_arg("browser-assistant-opened", "site", &name)
+        } else {
+            self.i18n.t("online-no-service")
+        };
+        if let Some(text) = o.clipboard {
+            self.copy_out = Some(text);
+        }
     }
 
     /// The lines a scope covers, before the selection of what is sent.
@@ -232,22 +287,27 @@ impl XimodApp {
         };
         if !confirmed {
             let protected = mass::protected_lines(&doc.tm.entries, &lines);
-            if protected > 0 {
-                self.online.confirm_overwrite = Some((lines, protected, show_dialog));
-                return;
-            }
             let chars: usize = lines
                 .iter()
                 .filter_map(|&i| doc.tm.entries.get(i))
                 .map(|e| e.source.chars().count())
                 .sum();
+            // A remembered answer goes on without asking (E-03).
+            if protected > 0 && self.remembered(Question::OnlineOverwrite).is_none() {
+                self.online.confirm_overwrite = Some((lines, protected, show_dialog));
+                return;
+            }
             if self.config.online.session_warn > 0
                 && self.online.session_chars > self.config.online.session_warn
+                && self.remembered(Question::OnlineVolume).is_none()
             {
                 self.online.confirm_session = Some((lines, chars, show_dialog));
                 return;
             }
         }
+        let Some(doc) = self.active_doc() else {
+            return;
+        };
         let game = doc.settings.game();
         let opts = protect::Options {
             tags: self.config.online.protect_tags,
@@ -752,7 +812,12 @@ impl XimodApp {
             let msg = self
                 .i18n
                 .t_arg("online-overwrite-confirm", "n", &n.to_string());
-            match self.simple_confirm(ctx, "ximod-online-overwrite", &msg) {
+            match self.simple_confirm(
+                ctx,
+                "ximod-online-overwrite",
+                &msg,
+                Question::OnlineOverwrite,
+            ) {
                 Some(true) => {
                     self.online.confirm_overwrite = None;
                     // Drop the protected lines from the job.
@@ -789,7 +854,7 @@ impl XimodApp {
                     ("n", &chars.to_string()),
                 ],
             );
-            match self.simple_confirm(ctx, "ximod-online-session", &msg) {
+            match self.simple_confirm(ctx, "ximod-online-session", &msg, Question::OnlineVolume) {
                 Some(true) => {
                     self.online.confirm_session = None;
                     self.online_begin(lines, true, show);
@@ -805,8 +870,15 @@ impl XimodApp {
         self.online_dialog(ctx);
     }
 
-    /// Oui / Non in a small modal; `Some(choice)` when answered.
-    fn simple_confirm(&self, ctx: &egui::Context, id: &str, msg: &str) -> Option<bool> {
+    /// Oui / Non in a small modal, with its « Se souvenir de mon choix »
+    /// (E-03); `Some(choice)` when answered.
+    fn simple_confirm(
+        &mut self,
+        ctx: &egui::Context,
+        id: &str,
+        msg: &str,
+        q: Question,
+    ) -> Option<bool> {
         let mut choice = None;
         let oui = self.i18n.t("btn-yes");
         let non = self.i18n.t("btn-no");
@@ -820,7 +892,9 @@ impl XimodApp {
                 ui.set_max_width(460.0);
                 ui.add_space(4.0);
                 ui.add(egui::Label::new(msg).wrap());
-                ui.add_space(10.0);
+                ui.add_space(8.0);
+                super::app_remember::remember_box(ui, &self.i18n, &mut self.remember_draft, q);
+                ui.add_space(8.0);
                 let (p, c) = super::confirm_buttons(ui, &oui, &non);
                 if p {
                     choice = Some(true);
@@ -830,6 +904,9 @@ impl XimodApp {
             });
         if ctx.input(|i| i.key_pressed(egui::Key::Escape)) {
             choice = Some(false);
+        }
+        if let Some(ok) = choice {
+            self.remember_answered(q, ok.then_some(crate::remember::Answer::YES));
         }
         choice
     }
@@ -1367,6 +1444,29 @@ impl XimodApp {
                     }
                 });
         });
+        // Without a service, the page Ctrl+G opens (R-T03, D-117).
+        ui.horizontal(|ui| {
+            self.settings_label(ui, lw, "online-browser-site");
+            let names: Vec<(crate::online::browser::Site, String)> =
+                crate::online::browser::Site::ALL
+                    .iter()
+                    .map(|s| (*s, self.i18n.t(s.i18n_key())))
+                    .collect();
+            let cur = self.i18n.t(self.temp_online.browser_site.i18n_key());
+            egui::ComboBox::from_id_salt("ximod-online-browser-site")
+                .selected_text(cur)
+                .width(260.0)
+                .show_field(ui, |ui| {
+                    for (s, l) in names {
+                        ui.selectable_value(&mut self.temp_online.browser_site, s, l);
+                    }
+                });
+        });
+        ui.label(
+            egui::RichText::new(self.i18n.t("online-browser-hint"))
+                .weak()
+                .small(),
+        );
         ui.add_space(6.0);
         let s = pick;
         egui::Frame::group(ui.style()).show(ui, |ui| {

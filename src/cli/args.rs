@@ -120,6 +120,7 @@ pub const COMMANDS: &[Command] = &[
             value("statuses"),
             value("o"),
             value("dict"),
+            value("ids"),
             flag("strict"),
             flag("no-esl"),
         ],

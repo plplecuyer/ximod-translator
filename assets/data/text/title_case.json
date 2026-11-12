@@ -1,0 +1,767 @@
+{
+ "format": 1,
+ "fra": {
+  "lower": [
+   "de",
+   "du",
+   "des",
+   "la",
+   "le",
+   "les",
+   "l'",
+   "d'",
+   "et",
+   "à",
+   "au",
+   "aux",
+   "en",
+   "sur",
+   "sous",
+   "pour",
+   "par",
+   "un",
+   "une",
+   "ou",
+   "avec",
+   "dans",
+   "contre",
+   "sans",
+   "vers",
+   "chez",
+   "entre",
+   "que",
+   "qu'"
+  ],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "eng": {
+  "lower": [
+   "a",
+   "an",
+   "the",
+   "and",
+   "but",
+   "or",
+   "nor",
+   "for",
+   "of",
+   "in",
+   "on",
+   "at",
+   "to",
+   "by",
+   "from",
+   "with",
+   "as",
+   "into",
+   "onto",
+   "over",
+   "per",
+   "via",
+   "vs"
+  ],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "deu": {
+  "lower": [
+   "der",
+   "die",
+   "das",
+   "des",
+   "dem",
+   "den",
+   "ein",
+   "eine",
+   "einer",
+   "eines",
+   "und",
+   "oder",
+   "von",
+   "vom",
+   "zu",
+   "zum",
+   "zur",
+   "im",
+   "in",
+   "am",
+   "an",
+   "auf",
+   "aus",
+   "bei",
+   "mit",
+   "für"
+  ],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "spa": {
+  "lower": [
+   "de",
+   "del",
+   "la",
+   "las",
+   "el",
+   "los",
+   "y",
+   "e",
+   "o",
+   "u",
+   "en",
+   "a",
+   "al",
+   "con",
+   "por",
+   "para",
+   "un",
+   "una",
+   "sobre",
+   "sin"
+  ],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "ita": {
+  "lower": [
+   "di",
+   "del",
+   "della",
+   "dei",
+   "delle",
+   "degli",
+   "il",
+   "lo",
+   "la",
+   "i",
+   "gli",
+   "le",
+   "l'",
+   "d'",
+   "e",
+   "ed",
+   "o",
+   "in",
+   "a",
+   "al",
+   "alla",
+   "con",
+   "per",
+   "su",
+   "da",
+   "un",
+   "una",
+   "uno"
+  ],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "por": {
+  "lower": [
+   "de",
+   "do",
+   "da",
+   "dos",
+   "das",
+   "o",
+   "a",
+   "os",
+   "as",
+   "e",
+   "ou",
+   "em",
+   "no",
+   "na",
+   "nos",
+   "nas",
+   "com",
+   "por",
+   "para",
+   "um",
+   "uma",
+   "ao",
+   "à"
+  ],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "nld": {
+  "lower": [
+   "de",
+   "het",
+   "een",
+   "en",
+   "of",
+   "van",
+   "in",
+   "op",
+   "met",
+   "voor",
+   "aan",
+   "bij",
+   "uit",
+   "tot",
+   "te"
+  ],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "ron": {
+  "lower": [
+   "de",
+   "din",
+   "la",
+   "cu",
+   "și",
+   "sau",
+   "în",
+   "pe",
+   "pentru",
+   "a",
+   "al",
+   "ale",
+   "un",
+   "o"
+  ],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "cat": {
+  "lower": [
+   "de",
+   "del",
+   "la",
+   "les",
+   "el",
+   "els",
+   "i",
+   "o",
+   "en",
+   "a",
+   "al",
+   "amb",
+   "per",
+   "un",
+   "una",
+   "l'",
+   "d'"
+  ],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "swe": {
+  "lower": [
+   "och",
+   "eller",
+   "av",
+   "i",
+   "på",
+   "till",
+   "med",
+   "för",
+   "en",
+   "ett",
+   "den",
+   "det"
+  ],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "dan": {
+  "lower": [
+   "og",
+   "eller",
+   "af",
+   "i",
+   "på",
+   "til",
+   "med",
+   "for",
+   "en",
+   "et",
+   "den",
+   "det"
+  ],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "nob": {
+  "lower": [
+   "og",
+   "eller",
+   "av",
+   "i",
+   "på",
+   "til",
+   "med",
+   "for",
+   "en",
+   "et",
+   "den",
+   "det"
+  ],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "nor": {
+  "lower": [
+   "og",
+   "eller",
+   "av",
+   "i",
+   "på",
+   "til",
+   "med",
+   "for",
+   "en",
+   "et",
+   "den",
+   "det"
+  ],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "pol": {
+  "lower": [
+   "i",
+   "oraz",
+   "lub",
+   "w",
+   "we",
+   "z",
+   "ze",
+   "na",
+   "do",
+   "od",
+   "dla",
+   "o",
+   "po",
+   "za"
+  ],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "ces": {
+  "lower": [
+   "a",
+   "i",
+   "nebo",
+   "v",
+   "ve",
+   "z",
+   "ze",
+   "na",
+   "do",
+   "od",
+   "pro",
+   "o",
+   "po",
+   "za",
+   "s",
+   "se"
+  ],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "ara": {
+  "lower": [],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "bul": {
+  "lower": [],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "ell": {
+  "lower": [],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "est": {
+  "lower": [],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "fin": {
+  "lower": [],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "gle": {
+  "lower": [],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "hrv": {
+  "lower": [],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "hun": {
+  "lower": [],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "jpn": {
+  "lower": [],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "kor": {
+  "lower": [],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "lav": {
+  "lower": [],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "lit": {
+  "lower": [],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "mlt": {
+  "lower": [],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "roh": {
+  "lower": [],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "rus": {
+  "lower": [],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "slk": {
+  "lower": [],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "slv": {
+  "lower": [],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "tur": {
+  "lower": [],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ },
+ "zho": {
+  "lower": [],
+  "keep": [
+   "II",
+   "III",
+   "IV",
+   "VI",
+   "VII",
+   "VIII",
+   "IX",
+   "XI",
+   "XII"
+  ]
+ }
+}

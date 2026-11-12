@@ -6,7 +6,7 @@ Fallout 4, Fallout 76 et Starfield — sous Windows, Linux et macOS. Compagnon d
 **XIMOD Architect**, écrit en **Rust** avec l'interface **egui**, traduit en
 33 langues d'interface.
 
-Version courante : **0.3.1** (29 octobre 2026). Le détail des versions est dans
+Version courante : **0.4.0** (12 novembre 2026). Le détail des versions est dans
 [`CHANGELOG.md`](CHANGELOG.md) ; la documentation en ligne est le
 [wiki](../../wiki), en anglais ; le manuel complet, en français et en anglais,
 est livré dans `Manuals/` avec chaque paquet (**F1** dans l'application).

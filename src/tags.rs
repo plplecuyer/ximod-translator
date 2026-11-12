@@ -405,6 +405,24 @@ mod tests {
         assert!(!Report::of(&e, Game::SkyrimSE).is_error());
     }
 
+    /// Recette of lot 1 (étape 3): the magic effect placeholders of
+    /// Skyrim are tags — a translation that drops one is an error.
+    #[test]
+    fn skyrim_magic_placeholders_are_checked() {
+        let e = crate::tm::TmEntry {
+            rec_sig: "MGEF".into(),
+            field_sig: "DNAM".into(),
+            source: "Deals <mag> damage for <dur> seconds in <area> feet.".into(),
+            trans: "Inflige <mag> points de dégâts pendant 10 secondes.".into(),
+            ..Default::default()
+        };
+        for game in [Game::Skyrim, Game::SkyrimSE] {
+            let r = Report::of(&e, game);
+            assert_eq!(r.missing_tags, vec!["<dur>", "<area>"], "{game:?}");
+            assert!(r.is_error());
+        }
+    }
+
     #[test]
     fn tags_are_extracted_in_order_and_filtered_by_the_game_list() {
         let t = tags(

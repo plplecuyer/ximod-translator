@@ -638,11 +638,7 @@ impl Autosave {
     /// Remove the rescue files of a document closed normally (R-B11-04).
     pub fn discard(&self, source: &Path) -> std::io::Result<()> {
         for p in [self.manifest_path(source), self.state_path(source)] {
-            match std::fs::remove_file(&p) {
-                Ok(()) => {}
-                Err(e) if e.kind() == std::io::ErrorKind::NotFound => {}
-                Err(e) => return Err(e),
-            }
+            crate::config::paths::remove_file_retrying(&p)?;
         }
         Ok(())
     }
@@ -682,8 +678,8 @@ impl Autosave {
             };
             let state = dir.join(name.replace(".manifest.json", ".json"));
             if now - m.saved > (PURGE_AFTER_DAYS * 86_400) as i64 || !state.is_file() {
-                let _ = std::fs::remove_file(&state);
-                let _ = std::fs::remove_file(&p);
+                let _ = crate::config::paths::remove_file_retrying(&state);
+                let _ = crate::config::paths::remove_file_retrying(&p);
                 pending.purged += 1;
                 continue;
             }
@@ -698,9 +694,9 @@ impl Autosave {
         while total > QUOTA_BYTES && manifests.len() > 1 {
             let (m, state) = manifests.pop().unwrap();
             total = total.saturating_sub(std::fs::metadata(&state).map(|x| x.len()).unwrap_or(0));
-            let _ = std::fs::remove_file(&state);
-            let _ = std::fs::remove_file(
-                dir.join(format!("{}.manifest.json", Self::key_for(&m.source))),
+            let _ = crate::config::paths::remove_file_retrying(&state);
+            let _ = crate::config::paths::remove_file_retrying(
+                &dir.join(format!("{}.manifest.json", Self::key_for(&m.source))),
             );
             pending.quota_purged = true;
         }
@@ -899,13 +895,15 @@ mod tests {
         let m = Manifest::new(&src, &settings(), 1);
         auto.spawn(tm.clone(), m.clone(), 7);
         assert!(auto.is_inflight(&src));
+        // The write runs on a thread: up to 30 s for a loaded machine (the
+        // whole suite runs in parallel), the failure shown when it fails.
         let mut events = Vec::new();
-        for _ in 0..200 {
+        let deadline = std::time::Instant::now() + Duration::from_secs(30);
+        while events.is_empty() && std::time::Instant::now() < deadline {
             events.extend(auto.poll());
-            if !events.is_empty() {
-                break;
+            if events.is_empty() {
+                std::thread::sleep(Duration::from_millis(10));
             }
-            std::thread::sleep(Duration::from_millis(10));
         }
         assert_eq!(
             events,

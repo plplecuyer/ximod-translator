@@ -18,6 +18,7 @@ use crate::dict_stack::DictStack;
 use crate::doc_settings::{DocSettings, IdleSettings};
 use crate::games::Game;
 use crate::i18n::I18n;
+use crate::remember::{Answer, Question};
 use crate::tm::apply::{MergeOptions, merge};
 use crate::tm::encoding::Codec;
 use crate::tm::{self, TranslationMemory, WriteOutcome, eet::EetWriteMode};
@@ -34,6 +35,8 @@ mod app_common;
 mod app_concord;
 #[path = "app_crc.rs"]
 mod app_crc;
+#[path = "app_debug_ids.rs"]
+mod app_debug_ids;
 #[path = "app_derive.rs"]
 mod app_derive;
 #[path = "app_dialog.rs"]
@@ -56,6 +59,8 @@ mod app_patterns;
 mod app_profiles;
 #[path = "app_props.rs"]
 mod app_props;
+#[path = "app_remember.rs"]
+mod app_remember;
 #[path = "app_review.rs"]
 mod app_review;
 #[path = "app_rules.rs"]
@@ -66,8 +71,12 @@ mod app_savepart;
 mod app_scripts;
 #[path = "app_search.rs"]
 mod app_search;
+#[path = "app_sort.rs"]
+mod app_sort;
 #[path = "app_text.rs"]
 mod app_text;
+#[path = "app_transform.rs"]
+mod app_transform;
 #[path = "app_translation.rs"]
 mod app_translation;
 #[path = "app_vmad.rs"]
@@ -150,17 +159,35 @@ pub(crate) struct Doc {
     deduced: std::sync::OnceLock<std::sync::Arc<crate::exclusions::Deduced>>,
     /// The pages of code of the file (D-09).
     enc: app_encoding::EncState,
+    /// The sort of this tab's view (A-14): a snapshot rank, never saved.
+    sort: Option<crate::sort::Sort>,
 }
+
+/// What the reverse check of a debugging export was computed for (A-22):
+/// document, revision, statuses included.
+pub(crate) type IdsKey = (u64, u64, [bool; crate::status::COUNT]);
+
+/// The words of a spell scan per line (A-16).
+pub(crate) type SpellWords = std::sync::Arc<std::collections::HashMap<usize, Vec<String>>>;
+
+/// What the set of the marked lines was computed from (A-16): document,
+/// revision, page of the output, quality set, spell scan.
+pub(crate) type MarkedKey = (u64, u64, crate::codepage::Page, usize, usize);
+
+/// What the view of the active tab was computed from: the document, its
+/// revision, the pinned lines, the criteria and the sort (A-14).
+pub(crate) type ViewKey = (u64, u64, (usize, usize), crate::filter::Criteria, u64);
 
 /// The view of a tab left (B-25): its key and what the filter computed.
 pub(crate) struct StoredView {
-    key: Option<(u64, u64, (usize, usize), crate::filter::Criteria)>,
+    key: Option<ViewKey>,
     visible: Vec<usize>,
     total: usize,
     unique: usize,
     unique_remaining: usize,
     per_status: [usize; crate::status::COUNT],
     shown_per_status: [usize; crate::status::COUNT],
+    same: usize,
 }
 
 static DOC_SERIAL: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
@@ -202,6 +229,7 @@ impl Doc {
             sources_rev: 0,
             enc: Default::default(),
             deduced: std::sync::OnceLock::new(),
+            sort: None,
         };
         d.mark_saved();
         d
@@ -309,6 +337,11 @@ struct MenuShortcuts {
     concord: egui::KeyboardShortcut,
     /// Ctrl+Shift+J: the journal of the session (E-01).
     journal: egui::KeyboardShortcut,
+    /// Ctrl+Shift+U / L / T: Transformer ▸ Majuscules, Minuscules, Casse
+    /// de titre (A-13).
+    transform_upper: egui::KeyboardShortcut,
+    transform_lower: egui::KeyboardShortcut,
+    transform_title: egui::KeyboardShortcut,
 }
 
 impl MenuShortcuts {
@@ -332,6 +365,18 @@ impl MenuShortcuts {
             search: KeyboardShortcut::new(Modifiers::COMMAND.plus(Modifiers::ALT), Key::F),
             concord: KeyboardShortcut::new(Modifiers::COMMAND, Key::K),
             journal: KeyboardShortcut::new(Modifiers::COMMAND.plus(Modifiers::SHIFT), Key::J),
+            transform_upper: KeyboardShortcut::new(
+                Modifiers::COMMAND.plus(Modifiers::SHIFT),
+                Key::U,
+            ),
+            transform_lower: KeyboardShortcut::new(
+                Modifiers::COMMAND.plus(Modifiers::SHIFT),
+                Key::L,
+            ),
+            transform_title: KeyboardShortcut::new(
+                Modifiers::COMMAND.plus(Modifiers::SHIFT),
+                Key::T,
+            ),
         }
     }
 }
@@ -971,6 +1016,9 @@ struct PropagateDialog {
     groups: Vec<crate::propagate::Group>,
     /// Opened from the edit window: drawn in its viewport.
     in_edit: bool,
+    /// Proposed after F5 or Ctrl+↓ (R-A12-02): its answer may be
+    /// remembered (E-03); opened on request, it is always shown.
+    proposed: bool,
 }
 
 /// What the Vocabulaire tab shows (B-01).
@@ -1011,7 +1059,6 @@ struct PersonalPrompt {
     /// Pairs already known with another translation.
     conflicts: usize,
     many_confirmed: bool,
-    remember: bool,
 }
 
 /// What is pulled out of an archive when opening a plugin from the navigator:
@@ -1108,7 +1155,7 @@ pub struct XimodApp {
     filter_focus_request: bool,
     /// The filtered view's key `(document serial, revision, pinned rows,
     /// criteria)`: recomputed only when one of them moved.
-    view_key: Option<(u64, u64, (usize, usize), crate::filter::Criteria)>,
+    view_key: Option<ViewKey>,
     /// The views of the other tabs, kept so going back to a tab is
     /// immediate (B-25: « Tous les mods » and its files, R-B25-05).
     view_store: std::collections::HashMap<u64, StoredView>,
@@ -1126,6 +1173,8 @@ pub struct XimodApp {
     /// Lines per status in the document and in the view (A-15).
     view_per_status: [usize; crate::status::COUNT],
     view_shown_per_status: [usize; crate::status::COUNT],
+    /// Lines of the view whose translation is the source (A-21).
+    view_same: usize,
 
     status: String,
 
@@ -1195,8 +1244,24 @@ pub struct XimodApp {
     fuzzy_jobs: std::collections::HashMap<PathBuf, FuzzyJob>,
     /// Fragment indexes (B-14): one per dictionary file.
     frag_cache: std::collections::HashMap<PathBuf, Arc<crate::instant::FragmentIndex>>,
-    /// « Ne plus demander » of the whole-source replacement (session).
-    instant_no_confirm: bool,
+    /// Transformer ▸ (A-13): the prefix / suffix dialog and what the
+    /// session remembers.
+    transform: app_transform::TransformState,
+    /// The reverse check of a debugging export (A-22): its key and lines.
+    export_ids_cache: Option<(IdsKey, Vec<usize>, usize)>,
+    /// The policy of the debugging export under way (A-22), journaled when
+    /// its first file is written.
+    debug_export: Option<crate::export::ExportPolicy>,
+    /// A text for the clipboard, put there at the next frame (Ctrl+G
+    /// without a service, R-T03).
+    copy_out: Option<String>,
+    /// Paramètres › Avancé › Casse de titre (A-13): language, words left
+    /// in lower case, words kept.
+    temp_title_case: (String, String, String),
+    /// Remembered answers of the confirmation dialogs (E-03) and the box
+    /// of the dialog on screen.
+    remembered: crate::remember::Remembered,
+    remember_draft: app_remember::RememberDraft,
     /// Propagation aux lignes de même source (A-12), when open.
     propagate_dlg: Option<PropagateDialog>,
     /// The dialogues (C-01, C-02, C-13).
@@ -1320,9 +1385,12 @@ pub struct XimodApp {
     /// The Communes tab (C-04) and the source indexes of the open files.
     common: app_common::CommonState,
     personal_prompt: Option<PersonalPrompt>,
-    personal_session_choice: Option<bool>,
     anomalies: std::collections::HashMap<usize, String>,
     anomaly_set: crate::filter::AnomalySet,
+    /// The lines with a mark (A-16), for the « Anomalies » filter: the key
+    /// it was computed for (document, revision, page, quality set, spell
+    /// scan) and the set.
+    marked_set: Option<(MarkedKey, crate::filter::AnomalySet)>,
     anomaly_serial: Option<u64>,
     filter_anomalies: bool,
     /// « Ambiguës » of the filter bar (B-08).
@@ -1331,6 +1399,8 @@ pub struct XimodApp {
     filter_prov: crate::provenance::ProvFilter,
     /// ≠ : only the lines whose review differs from the translation (A-17).
     filter_review_diff: bool,
+    /// « = source » / « ≠ source » of the filter bar (A-21).
+    filter_same: Option<bool>,
     /// The filter row under the headers (A-10): the texts being typed,
     /// the applied ones, and the error of each applied field.
     filter_columns: crate::filter::ColumnFilters,
@@ -1379,6 +1449,9 @@ pub struct XimodApp {
     spell_lang: String,
     /// Misspellings found in the active document's translations.
     spell_issues: Vec<SpellIssue>,
+    /// The words of the last scan per line, with the document scanned
+    /// (A-16): the violet margin of the grid.
+    spell_marks: Option<(u64, SpellWords)>,
     /// Human-readable outcome of the last scan.
     spell_status: String,
 
@@ -1628,6 +1701,7 @@ impl XimodApp {
         let temp_propose_generalization = config.propose_generalization;
         let temp_propose_propagation = config.propose_propagation;
         let temp_propagate_files = config.propagate_files;
+        let remembered = crate::remember::Remembered::from_config(&config.confirmations);
         // Rescue folder: what a previous session left behind is offered for
         // resumption before anything else (B-11, R-B11-05).
         let autosave = crate::backup::Autosave::new(config.autosave_dir(), config.autosave_minutes);
@@ -1732,6 +1806,7 @@ impl XimodApp {
             view_total: 0,
             view_per_status: [0; crate::status::COUNT],
             view_shown_per_status: [0; crate::status::COUNT],
+            view_same: 0,
             view_unique: 0,
             view_unique_remaining: 0,
             status: String::new(),
@@ -1761,7 +1836,13 @@ impl XimodApp {
             fuzzy_cache: Default::default(),
             fuzzy_jobs: Default::default(),
             frag_cache: Default::default(),
-            instant_no_confirm: false,
+            remembered,
+            remember_draft: Default::default(),
+            transform: Default::default(),
+            export_ids_cache: None,
+            debug_export: None,
+            copy_out: None,
+            temp_title_case: Default::default(),
             propagate_dlg: None,
             dialogs: Default::default(),
             filter_speaker: None,
@@ -1832,14 +1913,15 @@ impl XimodApp {
             vocab: Default::default(),
             common: Default::default(),
             personal_prompt: None,
-            personal_session_choice: None,
             anomalies: Default::default(),
             anomaly_set: Default::default(),
+            marked_set: None,
             anomaly_serial: None,
             filter_anomalies: false,
             filter_ambiguous: false,
             filter_prov: crate::provenance::ProvFilter::All,
             filter_review_diff: false,
+            filter_same: None,
             filter_columns: Default::default(),
             filter_columns_applied: Default::default(),
             filter_column_errors: Default::default(),
@@ -1867,6 +1949,7 @@ impl XimodApp {
             spell: None,
             spell_lang: String::new(),
             spell_issues: Vec::new(),
+            spell_marks: None,
             spell_status: String::new(),
             show_archive: false,
             archive_needs_center: false,
@@ -1974,6 +2057,20 @@ impl XimodApp {
                 "",
             ) {
                 self.open_search_window();
+            }
+            // Transformer ▸ (A-13): the selection or the line of the cursor.
+            let labels = self.transform_labels(ui.ctx());
+            let mut transform_pick = None;
+            ui.add_enabled_ui(has_doc && !self.selection.targets().is_empty(), |ui| {
+                ui.menu_button(self.i18n.t("menu-transform"), |ui| {
+                    fit_menu(ui);
+                    transform_pick = self.transform_menu(ui, &labels);
+                });
+            });
+            if let Some(cmd) = transform_pick {
+                let lines = self.selection.targets();
+                self.open_transform(cmd, lines);
+                ui.close_menu();
             }
             // Concordance… (A-20), Ctrl+K.
             if menu_item(
@@ -3850,7 +3947,7 @@ impl XimodApp {
             self.alert = Some(msg);
             return;
         };
-        if !self.pending_output_confirm {
+        if !self.pending_output_confirm && self.remembered(Question::OutputConfirm).is_none() {
             self.pending_output_confirm = true;
             return;
         }
@@ -3921,12 +4018,10 @@ impl XimodApp {
         let mut msg = self
             .i18n
             .t_arg("confirm-output-body", "mode", &self.output_label(mode));
-        if mode == OutputMode::FullPlugin {
-            // A rewritten original is the wrong way to publish someone else's
-            // mod: mod authors expect an override plugin.
-            msg.push_str("\n\n");
-            msg.push_str(&self.i18n.t("confirm-output-full-plugin-hint"));
-        }
+        // What the chosen output produces (D-114): for the full plugin, the
+        // reminder that mod authors expect an override patch.
+        msg.push_str("\n\n");
+        msg.push_str(&self.i18n.t(mode.desc_key()));
         let title = self.i18n.t("confirm-output-title");
         let oui = self.i18n.t("btn-yes");
         let non = self.i18n.t("btn-no");
@@ -3940,7 +4035,14 @@ impl XimodApp {
                 ui.set_max_width(460.0);
                 ui.add_space(4.0);
                 ui.add(egui::Label::new(msg).wrap_mode(egui::TextWrapMode::Wrap));
-                ui.add_space(12.0);
+                ui.add_space(8.0);
+                app_remember::remember_box(
+                    ui,
+                    &self.i18n,
+                    &mut self.remember_draft,
+                    Question::OutputConfirm,
+                );
+                ui.add_space(8.0);
                 let (p, c) = confirm_buttons(ui, &oui, &non);
                 if p {
                     choice = Some(true);
@@ -3948,6 +4050,9 @@ impl XimodApp {
                     choice = Some(false);
                 }
             });
+        if let Some(ok) = choice {
+            self.remember_answered(Question::OutputConfirm, ok.then_some(Answer::YES));
+        }
         match choice {
             Some(true) => self.open_export_dialog(), // the pending flag lets it through
             Some(false) => self.pending_output_confirm = false,
@@ -3998,9 +4103,15 @@ impl XimodApp {
             && doc.tm.meta.source_format == "plugin")
             .then(|| self.i18n.t("export-overwrite-self"));
         let mut copy = self.config.export_untranslated_copy;
+        // The checks below look at the texts, not at the debugging prefixes
+        // (A-22): no copy of the memory per frame for them.
+        let plain = crate::export::ExportPolicy {
+            ids: None,
+            ..policy
+        };
         // Lines the page of writing cannot hold (D-09).
         let out_page = self.out_page(doc);
-        let bad = Self::unencodable_lines(&policy.filtered(&doc.tm), out_page);
+        let bad = Self::unencodable_lines(&plain.filtered(&doc.tm), out_page);
         let encoding_bad = (bad > 0).then(|| {
             self.i18n.t_args(
                 "export-encoding-refused",
@@ -4014,7 +4125,7 @@ impl XimodApp {
         if let Some(msg) = &encoding_bad
             && !self.export_enc_logged
         {
-            let rows = Self::unencodable_rows(&policy.filtered(&doc.tm), out_page);
+            let rows = Self::unencodable_rows(&plain.filtered(&doc.tm), out_page);
             let (msg, idx) = (msg.clone(), self.active);
             self.export_enc_logged = true;
             self.journal_rows(
@@ -4042,7 +4153,7 @@ impl XimodApp {
             let n = doc
                 .filter(|_| unwritten)
                 .map(|d| {
-                    policy
+                    plain
                         .filtered(&d.tm)
                         .entries
                         .iter()
@@ -4056,6 +4167,67 @@ impl XimodApp {
             })
         };
         let mut source_too = self.config.localize_source_strings;
+        // Débogage en jeu (A-22): the preview on the first line written, the
+        // lines that already start with an identifier.
+        let ids_preview = policy.ids.and_then(|form| {
+            let doc = self.active_doc()?;
+            let e = doc
+                .tm
+                .entries
+                .iter()
+                .find(|e| plain.exportable(e))
+                .or_else(|| {
+                    doc.tm.entries.iter().find(|e| {
+                        !e.unused
+                            && crate::status::derive(e) != crate::status::Status::Ignored
+                            && !e.source.trim().is_empty()
+                    })
+                })?;
+            let text = if plain.exportable(e) {
+                &e.trans
+            } else {
+                &e.source
+            };
+            let shown: String = format!("{}{text}", form.prefix(e))
+                .chars()
+                .take(80)
+                .collect();
+            Some(self.i18n.t_arg("export-ids-preview", "text", &shown))
+        });
+        let (present, ids_lines) = self.export_ids_present(&plain);
+        let ids_count = policy.ids.map(|_| {
+            self.i18n.t_args(
+                "export-ids-count",
+                &[
+                    (
+                        "n",
+                        &crate::ui::export_dialog::fmt_count(&self.i18n, ids_lines),
+                    ),
+                    (
+                        "translated",
+                        &crate::ui::export_dialog::fmt_count(&self.i18n, counts.total),
+                    ),
+                ],
+            )
+        });
+        let present_l = present.first().map(|&first| {
+            let example = self
+                .active_doc()
+                .and_then(|d| d.tm.entries.get(first))
+                .map(|e| e.trans.chars().take(12).collect::<String>())
+                .unwrap_or_default();
+            self.i18n.t_args(
+                "export-ids-present",
+                &[("n", &present.len().to_string()), ("example", &example)],
+            )
+        });
+        let mut show_present = false;
+        let title = if policy.ids.is_some() {
+            let file = self.active_doc().map(|d| d.file_name()).unwrap_or_default();
+            self.i18n.t_arg("export-debug-title", "file", &file)
+        } else {
+            title
+        };
         let mut outcome = crate::ui::export_dialog::Outcome::Open;
         egui::Window::new(title)
             .collapsible(false)
@@ -4076,6 +4248,12 @@ impl XimodApp {
                         overwrite_note: overwrite_note.as_deref(),
                         encoding_bad: encoding_bad.as_deref(),
                         vmad_note: vmad_note.as_deref(),
+                        ids: Some(crate::ui::export_dialog::IdsInfo {
+                            preview: ids_preview.as_deref(),
+                            count: ids_count.as_deref(),
+                            present: present_l.as_deref(),
+                            show_rows: &mut show_present,
+                        }),
                         localize: localize_lines.as_ref().map(|l| {
                             crate::ui::export_dialog::LocalizeInfo {
                                 intro: &localize_texts.0,
@@ -4101,14 +4279,21 @@ impl XimodApp {
             self.localize_cache = Default::default();
         }
         use crate::ui::export_dialog::Outcome;
-        if outcome == Outcome::Cancel || ctx.input(|i| i.key_pressed(egui::Key::Escape)) {
+        if show_present {
+            // « voir les lignes » closes the dialog on the lines to correct.
+            self.export_ids_show_rows(present);
+        } else if outcome == Outcome::Cancel || ctx.input(|i| i.key_pressed(egui::Key::Escape)) {
             self.pending_export = None;
         } else if outcome == Outcome::Export {
             self.pending_export = None;
             // Everything written goes in the document's page (R-D09-03).
+            // A debugging export is noted in the journal once its first
+            // file is written (A-22): not when the save dialog is cancelled.
+            self.debug_export = policy.ids.is_some().then_some(policy);
             crate::tm::encoding::with_output(Some(out_page), || {
                 self.export_translation(frame, policy, counts, esl)
             });
+            self.debug_export = None;
         } else {
             self.pending_export = Some((policy, esl));
         }
@@ -4172,6 +4357,9 @@ impl XimodApp {
                     crate::journal::Kind::Export,
                     &text,
                 );
+                if let Some(policy) = self.debug_export.take() {
+                    self.journal_debug_export(&policy);
+                }
                 Ok(kept)
             }
             Err(crate::backup::ExportWriteError::Keep(e)) => {
@@ -4801,6 +4989,18 @@ impl XimodApp {
                                     self.toggle_column(i);
                                 }
                             }
+                            // A-14: back to the order of the file.
+                            ui.separator();
+                            if ui
+                                .add_enabled(
+                                    self.sort_state().is_some(),
+                                    egui::Button::new(self.i18n.t("menu-columns-file-order")),
+                                )
+                                .clicked()
+                            {
+                                self.sort_file_order();
+                                ui.close_menu();
+                            }
                             ui.min_rect()
                         })
                         .inner;
@@ -5332,6 +5532,7 @@ impl XimodApp {
         self.temp_propose_generalization = self.config.propose_generalization;
         self.temp_propose_propagation = self.config.propose_propagation;
         self.temp_propagate_files = self.config.propagate_files;
+        self.temp_title_case = self.title_case_texts();
         self.temp_online = self.config.online.clone();
         self.online_load_keys();
         self.online.show_key = false;
@@ -5517,13 +5718,22 @@ impl XimodApp {
                                 // The outputs the game cannot receive are
                                 // shown greyed, not selectable.
                                 let game = Game::from_id(cur.game.trim());
+                                // The output that usually suits the active
+                                // document is marked, never chosen (D-114).
+                                let usual = self.usual_output(game);
                                 for m in OutputMode::variants_for(is_text, is_scripts) {
+                                    let label = if usual == Some(*m) {
+                                        self.i18n.t_arg(
+                                            "output-usual",
+                                            "mode",
+                                            &self.output_label(*m),
+                                        )
+                                    } else {
+                                        self.output_label(*m)
+                                    };
                                     if m.fits(game) {
-                                        ui.selectable_value(
-                                            &mut cur.output,
-                                            Some(*m),
-                                            self.output_label(*m),
-                                        );
+                                        ui.selectable_value(&mut cur.output, Some(*m), label)
+                                            .on_hover_text(self.i18n.t(m.desc_key()));
                                     } else {
                                         ui.add_enabled(
                                             false,
@@ -5727,6 +5937,11 @@ impl XimodApp {
         let lbl_prov = self.i18n.t("filter-provenance");
         let lbl_ambiguous = self.i18n.t("filter-ambiguous");
         let lbl_ambiguous_tip = self.i18n.t("filter-ambiguous-tip");
+        let (lbl_same, lbl_same_not, lbl_same_tip) = (
+            self.i18n.t("filter-same"),
+            self.i18n.t("filter-same-not"),
+            self.i18n.t("filter-same-tip"),
+        );
         let lbl_columns = self.i18n.t("filter-columns");
         let lbl_columns_tip = self.i18n.t("filter-columns-tip");
         let prov_labels: Vec<String> = crate::provenance::ProvFilter::ALL
@@ -5767,6 +5982,16 @@ impl XimodApp {
         // Ctrl+Shift+J: the journal of the session (E-01).
         if ctx.input_mut(|i| i.consume_shortcut(&MENU_SHORTCUTS.journal)) {
             self.open_journal_window();
+        }
+        // Ctrl+Shift+U / L / T (A-13): the selection or the line of the
+        // cursor, when no text field has the keyboard.
+        if !self.modal_open()
+            && !ctx.wants_keyboard_input()
+            && !self.docs.is_empty()
+            && let Some(cmd) = Self::transform_shortcut(ctx)
+        {
+            let lines = self.selection.targets();
+            self.open_transform(cmd, lines);
         }
         // Ctrl+Maj+F: the filter row (A-10), before Ctrl+F.
         if !self.modal_open()
@@ -5927,6 +6152,26 @@ impl XimodApp {
                         }
                     }
                     ui.spacing_mut().item_spacing.x = spacing;
+                    // « = source » / « ≠ source » (A-21): three states, a
+                    // click moves to the next one.
+                    let same_text = match self.filter_same {
+                        None => {
+                            egui::RichText::new(&lbl_same).color(ui.visuals().weak_text_color())
+                        }
+                        Some(true) => egui::RichText::new(&lbl_same),
+                        Some(false) => egui::RichText::new(&lbl_same_not),
+                    };
+                    if ui
+                        .selectable_label(self.filter_same.is_some(), same_text)
+                        .on_hover_text(&lbl_same_tip)
+                        .clicked()
+                    {
+                        self.filter_same = match self.filter_same {
+                            None => Some(true),
+                            Some(true) => Some(false),
+                            Some(false) => None,
+                        };
+                    }
                     // « Anomalies » (D-05): only the lines flagged by the last check.
                     let anomaly_label = egui::RichText::new(format!("[!] {}", lbl_anomalies))
                         .color(ui.visuals().error_fg_color);
@@ -6152,6 +6397,7 @@ impl XimodApp {
                         self.filter_regex = false;
                         self.filter_anomalies = false;
                         self.filter_ambiguous = false;
+                        self.filter_same = None;
                         self.filter_columns.clear();
                         self.filter_review_diff = false;
                         self.apply_filter_text();
@@ -6203,6 +6449,7 @@ impl XimodApp {
             review_diff: self.filter_review_diff
                 && self.config.show_review
                 && self.config.column_filters,
+            same_as_source: self.filter_same,
             record: self.filter_record.clone(),
             field: self.filter_field.clone(),
             min_chars: self.filter_min_chars as usize,
@@ -6216,7 +6463,11 @@ impl XimodApp {
                 .or_else(|| self.filter_lock_rule.as_ref().map(|(_, s)| s.clone()))
                 .or_else(|| self.journal_filter_lines()),
             anomalies_only: self.filter_anomalies,
-            anomalies: self.anomaly_set.clone(),
+            // The « Anomalies » filter shows every line with a mark (A-16).
+            anomalies: match &self.marked_set {
+                Some((_, set)) if self.filter_anomalies => set.clone(),
+                _ => self.anomaly_set.clone(),
+            },
             ambiguous_only: self.filter_ambiguous,
             comments: if self.filter_applied_in == crate::filter::SearchIn::Comment
                 || self.column_filter_needs(crate::filter::FilterCol::Comment)
@@ -6421,6 +6672,8 @@ impl XimodApp {
             propagate_files: (self.file_count() >= 2).then(|| t("ctx-propagate-files")),
             concord: t("ctx-concordance"),
             key_concord: shortcut_text(ctx, &MENU_SHORTCUTS.concord, &self.i18n),
+            transform: t("menu-transform"),
+            transform_items: self.transform_labels(ctx),
             key_personal: t("key-ctrl-m"),
             key_edit: t("key-enter"),
             key_copy: key_text(ctx, &self.i18n, egui::Modifiers::COMMAND, egui::Key::C),
@@ -6443,6 +6696,7 @@ impl XimodApp {
             t
         };
         match action {
+            A::Transform(cmd) => self.open_transform(cmd, targets),
             A::Edit => self.open_edit_window(idx),
             A::CopySource => {
                 if let Some(e) = self.active_doc().and_then(|d| d.tm.entries.get(idx)) {
@@ -6571,6 +6825,9 @@ impl XimodApp {
         if self.column_filter_needs(crate::filter::FilterCol::Prov) {
             self.ensure_prov_texts();
         }
+        if self.filter_anomalies {
+            self.ensure_marked_set();
+        }
         let crit = self.criteria();
         if self.last_criteria.as_ref() != Some(&crit) {
             // A filter change drops the pinned lines (R-A03-05).
@@ -6579,16 +6836,28 @@ impl XimodApp {
         }
         // The view is recomputed only when the document, its revision or
         // the criteria moved (50 000 lines must not be filtered every frame).
-        let (serial, revision) = self
+        // A sort whose rank no longer fits the lines (re-extracted) goes.
+        if let Some(d) = self.docs.get_mut(self.active)
+            && d.sort.as_ref().is_some_and(|s| !s.fits(d.tm.entries.len()))
+        {
+            d.sort = None;
+        }
+        let (serial, revision, sort_serial) = self
             .docs
             .get(self.active)
-            .map(|d| (d.serial, d.undo.revision))
-            .unwrap_or((0, 0));
+            .map(|d| {
+                (
+                    d.serial,
+                    d.undo.revision,
+                    d.sort.as_ref().map_or(0, |s| s.serial),
+                )
+            })
+            .unwrap_or((0, 0, 0));
         let pinned = (
             self.pinned_rows.len(),
             self.pinned_rows.iter().sum::<usize>(),
         );
-        let key = (serial, revision, pinned, crit.clone());
+        let key = (serial, revision, pinned, crit.clone(), sort_serial);
         if self.view_key.as_ref() == Some(&key) {
             return;
         }
@@ -6606,6 +6875,7 @@ impl XimodApp {
                 unique_remaining: self.view_unique_remaining,
                 per_status: self.view_per_status,
                 shown_per_status: self.view_shown_per_status,
+                same: self.view_same,
             };
             self.view_store.insert(old, stored);
         }
@@ -6621,6 +6891,7 @@ impl XimodApp {
             self.view_unique_remaining = v.unique_remaining;
             self.view_per_status = v.per_status;
             self.view_shown_per_status = v.shown_per_status;
+            self.view_same = v.same;
             return;
         }
         self.view_key = Some(key);
@@ -6647,6 +6918,11 @@ impl XimodApp {
             merged.dedup();
             visible = merged;
         }
+        // The sort orders the lines the filter kept (A-14): the Uniques view
+        // has already kept each source's first line in the file.
+        if let Some(s) = self.docs.get(self.active).and_then(|d| d.sort.as_ref()) {
+            s.order(&mut visible);
+        }
         self.view_total = stats.total;
         self.view_unique = stats.unique;
         self.view_unique_remaining = stats.unique_remaining();
@@ -6656,6 +6932,20 @@ impl XimodApp {
             .get(self.active)
             .map(|d| crate::filter::shown_per_status(&d.tm.entries, &visible))
             .unwrap_or_default();
+        self.view_same = self
+            .docs
+            .get(self.active)
+            .map(|d| {
+                visible
+                    .iter()
+                    .filter(|&&i| {
+                        d.tm.entries
+                            .get(i)
+                            .is_some_and(|e| crate::filter::same_as_source(e) == Some(true))
+                    })
+                    .count()
+            })
+            .unwrap_or(0);
         self.visible = visible;
     }
 
@@ -6794,6 +7084,7 @@ impl XimodApp {
     fn status_bar(&mut self, ctx: &egui::Context) {
         let has_doc = !self.docs.is_empty();
         let modified = self.active_doc().is_some_and(|d| d.is_dirty());
+        let sort_text = self.sort_status_text();
         let fmt = |n: usize| crate::ui::export_dialog::fmt_count(&self.i18n, n);
         // Cached counters from refresh_view: « Total N · M affichées » and
         // « uniques (à traduire) »; the per-status pills replace the former
@@ -6831,8 +7122,16 @@ impl XimodApp {
         // The VMAD lines and the blocks not read (C-08).
         let vmad = self.vmad_counters();
         let vmad_tip = self.i18n.t("menu-vmad-enable-tip");
-        // The active column filters, on the « affichées » count (R-A10-06).
-        let counts_tip = self.column_filters_summary();
+        // The active column filters, on the « affichées » count (R-A10-06);
+        // the lines whose translation is the source (A-21).
+        let counts_tip = {
+            let same = (self.view_same > 0)
+                .then(|| self.i18n.t_arg("counter-same-n", "n", &fmt(self.view_same)));
+            match (self.column_filters_summary(), same) {
+                (Some(a), Some(b)) => Some(format!("{a}\n{b}")),
+                (a, b) => a.or(b),
+            }
+        };
         let mut clicked: Option<(crate::status::Status, bool)> = None;
         let offer = self.rules_offer_label();
         let mut open_offer = false;
@@ -6942,6 +7241,11 @@ impl XimodApp {
                         );
                         ui.separator();
                     }
+                    // « Tri : Source, croissant » while a sort is on (A-14).
+                    if let Some(t) = &sort_text {
+                        ui.label(egui::RichText::new(t).color(ui.visuals().selection.stroke.color));
+                        ui.separator();
+                    }
                     // Whatever is left, from the left edge: the message, cut
                     // with an ellipsis rather than overflowing (a truncated
                     // label shows its full text on hover by itself).
@@ -6991,6 +7295,10 @@ impl XimodApp {
         // grid itself knows nothing about GRUP / EDID.
         let headers = self.grid_headers();
         let col_menu = self.column_menu_items();
+        // The sort of the view (A-14).
+        let sort = self.sort_state();
+        let sort_tip = self.i18n.t("sort-header-tip");
+        let file_order_label = self.i18n.t("menu-columns-file-order");
         let show_prov = self.config.show_provenance;
         // The status buttons column (A-04): its tooltips.
         let status_buttons = self.config.show_status_buttons.then(|| {
@@ -7033,28 +7341,44 @@ impl XimodApp {
         }
         let comment_cache = std::cell::RefCell::new(std::mem::take(&mut self.comment_cache));
         let menu_labels = crate::slow_io("menu labels", || self.menu_labels(ctx));
-        let len_over_tip = self.i18n.t_args(
-            "len-over-tip",
-            &[
-                ("chars", "{chars}"),
-                ("max", "{max}"),
-                ("bytes", "{bytes}"),
-                ("field", "{field}"),
-            ],
-        );
-        let len_newline_tip = self.i18n.t_arg("len-newline-tip", "field", "{field}");
         let bytes_unit = self.i18n.t("len-bytes-unit");
-        let alias_tips: [String; 5] = [
-            self.i18n.t_arg("alias-missing", "tag", "{tag}"),
-            self.i18n.t_arg("alias-unknown", "tag", "{tag}"),
-            self.i18n.t_arg("alias-number-missing", "n", "{n}"),
-            self.i18n.t_arg("alias-number-unknown", "n", "{n}"),
-            self.i18n.t("alias-order"),
-        ];
+        // The spell checker's last scan, when it was of this document (A-16).
+        let spelling = match (&self.spell_marks, self.docs.get(self.active)) {
+            (Some((serial, map)), Some(d)) if *serial == d.serial => map.clone(),
+            _ => Default::default(),
+        };
         let undo_label = self.i18n.t("btn-undo");
         let redo_label = self.i18n.t("btn-redo");
         let anomalies = std::mem::take(&mut self.anomalies);
         let i18n = &self.i18n;
+        // The texts of the marks and rich tooltips (A-16).
+        let mark_text = |m: &crate::marks::Mark| {
+            let args: Vec<(&str, &str)> = m.args.iter().map(|(k, v)| (*k, v.as_str())).collect();
+            i18n.t_args(m.key, &args)
+        };
+        let nature_text = |n: crate::marks::Nature| i18n.t(n.i18n_key());
+        let identity_text = |e: &crate::tm::TmEntry| {
+            i18n.t_args(
+                "tip-identity",
+                &[
+                    ("sig", &format!("{}:{}", e.rec_sig, e.field_sig)),
+                    ("formid", &format!("{:08X}", e.formid)),
+                    ("edid", if e.edid.is_empty() { "—" } else { &e.edid }),
+                ],
+            )
+        };
+        let length_text = |n: usize, max: Option<u32>| {
+            let max = max.map_or_else(|| "—".to_string(), |m| m.to_string());
+            i18n.t_args("tip-length", &[("n", &n.to_string()), ("max", &max)])
+        };
+        let marks_title = |n: usize| i18n.t_arg("tip-marks", "n", &n.to_string());
+        let mark_texts = grid::MarkTexts {
+            mark: &mark_text,
+            nature: &nature_text,
+            identity: &identity_text,
+            length: &length_text,
+            marks_title: &marks_title,
+        };
         let prov_tip = |e: &crate::tm::TmEntry| crate::provenance::tip(i18n, e);
         let prov_short = |e: &crate::tm::TmEntry| crate::provenance::short_label(i18n, e);
         // The script and the property of a VMAD line (C-08).
@@ -7123,10 +7447,10 @@ impl XimodApp {
                 let labels = grid::GridLabels {
                     game,
                     page: out_page,
-                    len_over_tip: &len_over_tip,
-                    len_newline_tip: &len_newline_tip,
                     bytes_unit: &bytes_unit,
-                    alias_tips: &alias_tips,
+                    tips: &mark_texts,
+                    rich_tooltips: self.config.rich_tooltips,
+                    spelling: &spelling,
                     show_special: self.config.show_special_chars,
                     anomalies: &anomalies,
                     prov_tip: &prov_tip,
@@ -7160,6 +7484,9 @@ impl XimodApp {
                     status_buttons: status_buttons.as_ref(),
                     empty_msg: empty_msg.as_deref(),
                     file_col: doc.all.is_some(),
+                    sort,
+                    sort_tip: &sort_tip,
+                    file_order_label: &file_order_label,
                 };
                 let out = crate::slow_io("grid draw", || {
                     grid::draw(
@@ -7209,6 +7536,12 @@ impl XimodApp {
             }
             if let Some(i) = out.column_toggled {
                 self.toggle_column(i);
+            }
+            if let Some(c) = out.header_clicked {
+                self.sort_by_column(ctx, c);
+            }
+            if out.file_order {
+                self.sort_file_order();
             }
             let action = out.menu_action;
             self.handle_grid_output(out, unique_only);
@@ -7494,7 +7827,9 @@ impl XimodApp {
         let mut msg = self.i18n.t_args(
             "status-keys-done",
             &[
-                ("n", &changed.to_string()),
+                // Every line taken now has the status, changed or already
+                // there (a line typed then Ctrl+↓ is Validé by the typing).
+                ("n", &before.len().to_string()),
                 ("status", &self.i18n.t(st.legend_key())),
             ],
         );
@@ -8026,6 +8361,10 @@ impl XimodApp {
         if vctx.input_mut(|i| i.consume_shortcut(&MENU_SHORTCUTS.concord)) {
             self.open_concord_window(vctx, None);
         }
+        // Ctrl+Maj+U / L / T: the field's selection transformed (A-13).
+        if !unused_now && let Some(cmd) = Self::transform_shortcut(vctx) {
+            self.edit_transform_field(vctx, win.line, cmd);
+        }
         // Ctrl+M: the line's pair to the personal dictionary (B-04).
         if vctx.input_mut(|i| i.consume_shortcut(&MENU_SHORTCUTS.personal)) {
             self.close_edit_session();
@@ -8517,6 +8856,11 @@ impl XimodApp {
                 A::Status(st) => self.edit_set_status(win, st),
                 // The concordance keeps the focus it takes.
                 A::Concordance => self.open_concord_window(vctx, None),
+                // Transformer ▸: the field's selection (R-A13-09).
+                A::Transform(cmd) => {
+                    self.edit_transform_field(vctx, win.line, cmd);
+                    win.focus_request = true;
+                }
                 other => {
                     self.selection.set_single(idx);
                     self.run_menu_action(vctx, idx, other);
@@ -9574,6 +9918,59 @@ impl XimodApp {
         }
     }
 
+    /// The lines that carry a mark (A-16): the « Anomalies » filter shows
+    /// them all, with those of the last quality check.
+    fn ensure_marked_set(&mut self) {
+        let Some(doc) = self.docs.get(self.active) else {
+            return;
+        };
+        let page = self.out_page(doc);
+        let spell = match &self.spell_marks {
+            Some((serial, map)) if *serial == doc.serial => std::sync::Arc::as_ptr(map) as usize,
+            _ => 0,
+        };
+        let key = (
+            doc.serial,
+            doc.undo.revision,
+            page,
+            std::sync::Arc::as_ptr(&self.anomaly_set.0) as usize,
+            spell,
+        );
+        if self.marked_set.as_ref().is_some_and(|(k, _)| *k == key) {
+            return;
+        }
+        let game = doc.settings.game();
+        let words = match &self.spell_marks {
+            Some((serial, map)) if *serial == doc.serial => Some(map.clone()),
+            _ => None,
+        };
+        let set: std::collections::HashSet<usize> = doc
+            .tm
+            .entries
+            .iter()
+            .enumerate()
+            .filter(|(i, e)| {
+                self.anomaly_set.contains(*i)
+                    || !crate::marks::of(
+                        e,
+                        &crate::marks::Context {
+                            game,
+                            page,
+                            quality: None,
+                            spelling: words
+                                .as_ref()
+                                .and_then(|m| m.get(i))
+                                .map(Vec::as_slice)
+                                .unwrap_or(&[]),
+                        },
+                    )
+                    .is_empty()
+            })
+            .map(|(i, _)| i)
+            .collect();
+        self.marked_set = Some((key, crate::filter::AnomalySet(std::sync::Arc::new(set))));
+    }
+
     /// Rebuild the grid's indicator map and the filter's set from a report.
     fn set_anomalies_from(&mut self, report: &crate::quality::Report) {
         let mut map: std::collections::HashMap<usize, String> = std::collections::HashMap::new();
@@ -10326,6 +10723,11 @@ impl XimodApp {
                 self.i18n.t("menu-columns-provenance"),
                 self.config.show_provenance,
             ),
+            // A-16: not a column, but the cells' tooltips.
+            (
+                self.i18n.t("menu-columns-rich-tooltips"),
+                self.config.rich_tooltips,
+            ),
         ]
     }
 
@@ -10340,6 +10742,7 @@ impl XimodApp {
                 self.config.show_review = !self.config.show_review;
             }
             3 => self.config.show_provenance = !self.config.show_provenance,
+            4 => self.config.rich_tooltips = !self.config.rich_tooltips,
             _ => return,
         }
         let _ = self.config.save();
@@ -11098,7 +11501,6 @@ impl XimodApp {
             dict,
             conflicts,
             many_confirmed: false,
-            remember: false,
         });
         self.personal_prompt_step();
     }
@@ -11111,10 +11513,14 @@ impl XimodApp {
         if p.pairs.len() > 20 && !p.many_confirmed {
             return; // the « many » dialog is shown by personal_prompt_window
         }
-        if p.conflicts > 0 && self.personal_session_choice.is_none() {
-            return; // the conflict dialog
-        }
-        let replace = self.personal_session_choice.unwrap_or(true);
+        let replace = if p.conflicts > 0 {
+            match self.remembered(Question::PersonalConflict) {
+                Some(a) => a == Answer(0),
+                None => return, // the conflict dialog
+            }
+        } else {
+            true
+        };
         self.personal_commit(replace);
     }
 
@@ -11181,16 +11587,14 @@ impl XimodApp {
         let Some(p) = &self.personal_prompt else {
             return;
         };
-        let (many, n, conflicts, remember) = (
+        let (many, n, conflicts) = (
             p.pairs.len() > 20 && !p.many_confirmed,
             p.pairs.len(),
             p.conflicts,
-            p.remember,
         );
         let valider = self.i18n.t("btn-validate");
         let annuler = self.i18n.t("btn-cancel");
         let mut choice: Option<u8> = None;
-        let mut remember_now = remember;
         if many {
             let msg = self.i18n.t_arg("personal-many", "n", &n.to_string());
             egui::Window::new(self.i18n.t("personal-title"))
@@ -11223,7 +11627,12 @@ impl XimodApp {
                     ui.add_space(4.0);
                     ui.label(msg);
                     ui.add_space(6.0);
-                    ui.checkbox(&mut remember_now, self.i18n.t("personal-remember"));
+                    app_remember::remember_box(
+                        ui,
+                        &self.i18n,
+                        &mut self.remember_draft,
+                        Question::PersonalConflict,
+                    );
                     ui.add_space(8.0);
                     ui.horizontal(|ui| {
                         if ui.button(self.i18n.t("personal-replace")).clicked() {
@@ -11242,11 +11651,13 @@ impl XimodApp {
                     });
                 });
         }
-        if let Some(p) = self.personal_prompt.as_mut() {
-            p.remember = remember_now;
-        }
         match choice {
-            Some(0) => self.personal_prompt = None,
+            Some(0) => {
+                if !many {
+                    self.remember_answered(Question::PersonalConflict, None);
+                }
+                self.personal_prompt = None;
+            }
             Some(1) => {
                 if let Some(p) = self.personal_prompt.as_mut() {
                     p.many_confirmed = true;
@@ -11255,9 +11666,7 @@ impl XimodApp {
             }
             Some(c @ (2 | 3)) => {
                 let replace = c == 2;
-                if remember_now {
-                    self.personal_session_choice = Some(replace);
-                }
+                self.remember_answered(Question::PersonalConflict, Some(Answer(c - 2)));
                 self.personal_commit(replace);
             }
             _ => {}
@@ -13494,7 +13903,7 @@ impl XimodApp {
                 "path",
                 &self.assist_outcome_path(&t, &a),
             );
-            if !trans.trim().is_empty() && !self.instant_no_confirm {
+            if !trans.trim().is_empty() && self.remembered(Question::InstantReplace).is_none() {
                 win.confirm = Some(crate::ui::edit_window::InstantConfirm {
                     text: t.text,
                     message,
@@ -13547,7 +13956,7 @@ impl XimodApp {
             // The whole source: the result replaces the translation.
             let new_text = adjust_case(&outcome.text, &text, true, true);
             let prov = crate::provenance::fuzzy(outcome.coverage());
-            if !trans.trim().is_empty() && !self.instant_no_confirm {
+            if !trans.trim().is_empty() && self.remembered(Question::InstantReplace).is_none() {
                 win.confirm = Some(crate::ui::edit_window::InstantConfirm {
                     text: new_text,
                     message,
@@ -13590,7 +13999,7 @@ impl XimodApp {
     }
 
     /// The « Remplacer la traduction actuelle ? » dialog of F9 on the whole
-    /// source (R-B14-01), with its « ne plus demander » for the session.
+    /// source (R-B14-01), whose answer may be remembered (E-03).
     fn edit_instant_confirm(
         &mut self,
         vctx: &egui::Context,
@@ -13599,7 +14008,6 @@ impl XimodApp {
         let Some(pending) = win.confirm.clone() else {
             return;
         };
-        let mut no_more = self.instant_no_confirm;
         let (replace_l, cancel_l) = (self.i18n.t("instant-replace"), self.i18n.t("btn-cancel"));
         let mut choice: Option<bool> = None;
         egui::Window::new(self.i18n.t("instant-replace-title"))
@@ -13617,7 +14025,12 @@ impl XimodApp {
                 });
                 ui.label(egui::RichText::new(&pending.message).weak().small());
                 ui.add_space(6.0);
-                ui.checkbox(&mut no_more, self.i18n.t("instant-no-more"));
+                app_remember::remember_box(
+                    ui,
+                    &self.i18n,
+                    &mut self.remember_draft,
+                    Question::InstantReplace,
+                );
                 ui.add_space(8.0);
                 let (ok, cancel) = confirm_buttons(ui, &replace_l, &cancel_l);
                 if ok {
@@ -13627,7 +14040,9 @@ impl XimodApp {
                     choice = Some(false);
                 }
             });
-        self.instant_no_confirm = no_more;
+        if let Some(ok) = choice {
+            self.remember_answered(Question::InstantReplace, ok.then_some(Answer::YES));
+        }
         match choice {
             Some(true) => {
                 win.confirm = None;
@@ -14019,7 +14434,11 @@ impl XimodApp {
             self.status = self.i18n.t("propagate-none");
             return false;
         }
-        self.propagate_dlg = Some(PropagateDialog { groups, in_edit });
+        self.propagate_dlg = Some(PropagateDialog {
+            groups,
+            in_edit,
+            proposed: false,
+        });
         true
     }
 
@@ -14037,8 +14456,14 @@ impl XimodApp {
             .docs
             .get(self.active)
             .is_some_and(|d| crate::propagate::has_differing_duplicates(&d.tm.entries, line));
-        if has {
-            self.open_propagate(&[line], in_edit);
+        if has && self.open_propagate(&[line], in_edit) {
+            if self.remembered(Question::Propagate).is_some() {
+                // The remembered answer: the lines the dialog checks by
+                // default receive the translation.
+                self.propagate_apply();
+            } else if let Some(d) = self.propagate_dlg.as_mut() {
+                d.proposed = true;
+            }
         }
     }
 
@@ -14216,6 +14641,15 @@ impl XimodApp {
                 });
                 egui::TopBottomPanel::bottom("ximod-propagate-bottom").show_inside(ui, |ui| {
                     ui.add_space(6.0);
+                    if dlg.proposed {
+                        app_remember::remember_box(
+                            ui,
+                            &self.i18n,
+                            &mut self.remember_draft,
+                            Question::Propagate,
+                        );
+                        ui.add_space(4.0);
+                    }
                     ui.horizontal(|ui| {
                         if ui.small_button(&all_l).clicked() {
                             for g in dlg.groups.iter_mut() {
@@ -14386,7 +14820,13 @@ impl XimodApp {
                     action = Some(false);
                 }
             });
+        let proposed = dlg.proposed;
         self.propagate_dlg = Some(dlg);
+        if let Some(ok) = action
+            && proposed
+        {
+            self.remember_answered(Question::Propagate, ok.then_some(Answer::YES));
+        }
         match action {
             Some(true) => self.propagate_apply(),
             Some(false) => self.propagate_dlg = None,
@@ -15215,6 +15655,8 @@ impl XimodApp {
                 self.temp_xtranslator_dir.clear();
             }
         });
+        // E-03: the remembered answers and their reset.
+        self.settings_remembered(ui);
     }
 
     fn settings_recent(&mut self, ui: &mut egui::Ui) {
@@ -15524,6 +15966,37 @@ impl XimodApp {
                 .weak()
                 .small(),
         );
+
+        // ---- Casse de titre (A-13, D-112): the target language's lists ----
+        ui.add_space(10.0);
+        ui.separator();
+        ui.add_space(6.0);
+        ui.label(egui::RichText::new(self.i18n.t("settings-title-case")).strong());
+        let lang = self.temp_title_case.0.clone();
+        if lang.trim().is_empty() {
+            ui.label(
+                egui::RichText::new(self.i18n.t("settings-title-no-lang"))
+                    .weak()
+                    .small(),
+            );
+            return;
+        }
+        let lang_name = self.i18n.display_name(&lang);
+        ui.label(
+            egui::RichText::new(self.i18n.t_arg("settings-title-lang", "lang", &lang_name))
+                .weak()
+                .small(),
+        );
+        ui.label(self.i18n.t("settings-title-lower"));
+        ui.add(
+            egui::TextEdit::multiline(&mut self.temp_title_case.1)
+                .desired_rows(2)
+                .desired_width(f32::INFINITY),
+        );
+        ui.label(self.i18n.t("settings-title-keep"));
+        ui.add(
+            egui::TextEdit::singleline(&mut self.temp_title_case.2).desired_width(f32::INFINITY),
+        );
     }
 
     fn save_settings(&mut self) {
@@ -15556,6 +16029,9 @@ impl XimodApp {
         self.config.toasts = self.temp_toasts;
         self.config.propose_propagation = self.temp_propose_propagation;
         self.config.propagate_files = self.temp_propagate_files;
+        // Casse de titre (A-13): the user's copy of the lists.
+        let (lang, lower, keep) = self.temp_title_case.clone();
+        self.save_title_case(&lang, &lower, &keep);
         let mr = crate::backup::AUTOSAVE_MINUTES_RANGE;
         self.config.autosave_minutes = self.temp_autosave_minutes.clamp(*mr.start(), *mr.end());
         self.config.autosave_dir = self.temp_autosave_dir.trim().to_string();
@@ -16185,6 +16661,15 @@ impl XimodApp {
                 }
             }
         }
+        // The grid's violet margins follow this scan (A-16).
+        let mut map: std::collections::HashMap<usize, Vec<String>> = Default::default();
+        for i in &self.spell_issues {
+            map.entry(i.entry).or_default().push(i.word.clone());
+        }
+        self.spell_marks = self
+            .docs
+            .get(self.active)
+            .map(|d| (d.serial, std::sync::Arc::new(map)));
         self.spell_status = if count == 0 {
             self.i18n.t("spell-clean")
         } else {
@@ -16506,6 +16991,12 @@ impl XimodApp {
         if self.pending_save.is_none() {
             return;
         }
+        if self.remembered(Question::DictGame).is_some()
+            && let Some(p) = self.pending_save.take()
+        {
+            self.perform_pending_save(p);
+            return;
+        }
         let active = self.active_settings();
         let game = active.game.trim();
         let label = {
@@ -16531,11 +17022,21 @@ impl XimodApp {
             .show(ctx, |ui| {
                 ui.add_space(4.0);
                 ui.label(msg);
-                ui.add_space(12.0);
+                ui.add_space(8.0);
+                app_remember::remember_box(
+                    ui,
+                    &self.i18n,
+                    &mut self.remember_draft,
+                    Question::DictGame,
+                );
+                ui.add_space(8.0);
                 let (p, c) = confirm_buttons(ui, &valider, &annuler);
                 do_save = p;
                 cancel = c;
             });
+        if do_save || cancel {
+            self.remember_answered(Question::DictGame, do_save.then_some(Answer::YES));
+        }
 
         if cancel {
             self.pending_save = None;
@@ -19070,6 +19571,7 @@ impl XimodApp {
         self.timed(ctx, "scripts_window", |a| a.scripts_window(ctx));
         self.timed(ctx, "concord_window", |a| a.concord_window(ctx));
         self.timed(ctx, "journal_window", |a| a.journal_window(ctx));
+        self.timed(ctx, "affix_window", |a| a.affix_window(ctx));
         self.timed(ctx, "online_windows", |a| a.online_windows(ctx));
         self.timed(ctx, "close_prompt_window", |a| {
             a.close_prompt_window(ctx, frame)
@@ -19092,6 +19594,9 @@ impl eframe::App for XimodApp {
         // English like the rest of the log).
         let started = std::time::Instant::now();
         self.update_inner(ctx, frame);
+        if let Some(text) = self.copy_out.take() {
+            ctx.copy_text(text);
+        }
         if self.frame_log > 0 {
             let ms = started.elapsed().as_millis();
             if ms >= self.frame_log {

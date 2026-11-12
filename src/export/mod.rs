@@ -2,4 +2,4 @@
 
 pub mod policy;
 
-pub use policy::{ExportCounts, ExportPolicy};
+pub use policy::{ExportCounts, ExportPolicy, IdForm};
