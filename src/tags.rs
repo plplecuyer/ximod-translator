@@ -6,6 +6,7 @@
 //! the game's (`tags` of its fields file, A-06).
 
 use crate::games::Game;
+use crate::numstyle::{NumPair, NumStyle};
 
 /// Which `<…>` tags count: the game's list (names, `*` suffix = prefix),
 /// or every tag when the list is empty.
@@ -170,6 +171,12 @@ fn angle_tags(text: &str, set: &TagSet) -> Vec<Span> {
 /// The numbers of a text (digits with an optional decimal separator `.` or
 /// `,`), outside its tags.
 pub fn numbers(text: &str, set: &TagSet) -> Vec<Span> {
+    numbers_in(text, set, NumStyle::FALLBACK)
+}
+
+/// The numbers of a text written in a language (B.6): « 250 000 » is one
+/// number in French, two in English.
+pub fn numbers_in(text: &str, set: &TagSet, style: NumStyle) -> Vec<Span> {
     let mut tag_spans = tags(text, &TagSet::any());
     // The placeholders of a text line are not numbers (`{0}`, `%1`).
     tag_spans.extend(placeholders(text, set));
@@ -183,19 +190,7 @@ pub fn numbers(text: &str, set: &TagSet) -> Vec<Span> {
         }
         if bytes[i].is_ascii_digit() {
             let start = i;
-            while i < bytes.len() && bytes[i].is_ascii_digit() {
-                i += 1;
-            }
-            // A decimal part: separator followed by digits.
-            if i + 1 < bytes.len()
-                && matches!(bytes[i], b'.' | b',')
-                && bytes[i + 1].is_ascii_digit()
-            {
-                i += 1;
-                while i < bytes.len() && bytes[i].is_ascii_digit() {
-                    i += 1;
-                }
-            }
+            i = style.number_end(text, i);
             out.push(Span {
                 text: text[start..i].to_string(),
                 start,
@@ -227,19 +222,31 @@ impl Report {
     /// Compare a source and its translation; an empty translation has
     /// nothing to compare (R-A07-05).
     pub fn new(source: &str, trans: &str, set: &TagSet) -> Report {
+        Report::new_in(source, trans, set, NumPair::default())
+    }
+
+    /// [`Report::new`], the numbers read in the languages of the document
+    /// (B.6): « 250,000 » in English is « 250 000 » in French.
+    pub fn new_in(source: &str, trans: &str, set: &TagSet, nums: NumPair) -> Report {
         let mut r = Report::default();
         let st: Vec<String> = tags(source, set).into_iter().map(|s| s.text).collect();
-        let sn: Vec<String> = numbers(source, set).into_iter().map(|s| s.text).collect();
+        let sn: Vec<String> = numbers_in(source, set, nums.source)
+            .into_iter()
+            .map(|s| s.text)
+            .collect();
         r.nothing_to_compare = st.is_empty() && sn.is_empty();
         if trans.trim().is_empty() {
             return r;
         }
         let tt: Vec<String> = tags(trans, set).into_iter().map(|s| s.text).collect();
-        let tn: Vec<String> = numbers(trans, set).into_iter().map(|s| s.text).collect();
+        let tn: Vec<String> = numbers_in(trans, set, nums.target)
+            .into_iter()
+            .map(|s| s.text)
+            .collect();
         let (missing, unknown) = diff_multiset(&st, &tt, true);
         r.missing_tags = missing;
         r.unknown_tags = unknown;
-        let (missing, unknown) = diff_multiset(&sn, &tn, false);
+        let (missing, unknown) = diff_numbers(&sn, &tn, nums);
         r.missing_numbers = missing;
         r.unknown_numbers = unknown;
         if r.missing_tags.is_empty() && r.unknown_tags.is_empty() && !st.is_empty() {
@@ -250,9 +257,10 @@ impl Report {
         r
     }
 
-    /// The report of an entry in a game.
-    pub fn of(e: &crate::tm::TmEntry, game: Game) -> Report {
-        Report::new(&e.source, &e.trans, &TagSet::for_entry(e, game))
+    /// The report of an entry in a game, its numbers read in the languages
+    /// of the document.
+    pub fn of(e: &crate::tm::TmEntry, game: Game, nums: NumPair) -> Report {
+        Report::new_in(&e.source, &e.trans, &TagSet::for_entry(e, game), nums)
     }
 
     /// Something is missing or unknown (an anomaly for D-05).
@@ -304,6 +312,37 @@ fn diff_multiset(a: &[String], b: &[String], fold_case: bool) -> (Vec<String>, V
     (missing, unknown)
 }
 
+/// The numbers of the source missing from the translation and those of the
+/// translation unknown to the source (B.6): a number written the same is
+/// paired first, then one of the same value.
+fn diff_numbers(a: &[String], b: &[String], nums: NumPair) -> (Vec<String>, Vec<String>) {
+    let mut free_a = vec![true; a.len()];
+    let mut free_b = vec![true; b.len()];
+    for (i, x) in a.iter().enumerate() {
+        if let Some(j) = (0..b.len()).find(|&j| free_b[j] && b[j] == *x) {
+            free_a[i] = false;
+            free_b[j] = false;
+        }
+    }
+    for (i, x) in a.iter().enumerate() {
+        if !free_a[i] {
+            continue;
+        }
+        if let Some(j) = (0..b.len()).find(|&j| free_b[j] && nums.corresponds(x, &b[j])) {
+            free_a[i] = false;
+            free_b[j] = false;
+        }
+    }
+    let pick = |v: &[String], free: &[bool]| -> Vec<String> {
+        v.iter()
+            .zip(free)
+            .filter(|(_, f)| **f)
+            .map(|(s, _)| s.clone())
+            .collect()
+    };
+    (pick(a, &free_a), pick(b, &free_b))
+}
+
 /// Result of a repair.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Fixed {
@@ -321,27 +360,28 @@ pub struct Fixed {
 pub fn fix_tags(source: &str, trans: &str, set: &TagSet) -> Fixed {
     let src = tags(source, set);
     let dst = tags(trans, set);
-    fix_spans(trans, &src, &dst)
+    fix_spans(trans, &src, &dst, |a, b| a == b)
 }
 
-/// « Rétablir les nombres », the same way.
-pub fn fix_numbers(source: &str, trans: &str, set: &TagSet) -> Fixed {
-    let src = numbers(source, set);
-    let dst = numbers(trans, set);
-    fix_spans(trans, &src, &dst)
+/// « Rétablir les nombres », the same way; a number of the translation that
+/// has the value of its source number, written as its language writes it,
+/// is left (B.6).
+pub fn fix_numbers(source: &str, trans: &str, set: &TagSet, nums: NumPair) -> Fixed {
+    let src = numbers_in(source, set, nums.source);
+    let dst = numbers_in(trans, set, nums.target);
+    fix_spans(trans, &src, &dst, |a, b| nums.corresponds(a, b))
 }
 
-fn fix_spans(trans: &str, src: &[Span], dst: &[Span]) -> Fixed {
+fn fix_spans(trans: &str, src: &[Span], dst: &[Span], same: impl Fn(&str, &str) -> bool) -> Fixed {
     let mut out = String::with_capacity(trans.len() + 16);
     let mut last = 0;
     let mut replaced = 0;
     for (i, d) in dst.iter().enumerate() {
         out.push_str(&trans[last..d.start]);
         match src.get(i) {
+            Some(s) if same(&s.text, &d.text) => out.push_str(&d.text),
             Some(s) => {
-                if s.text != d.text {
-                    replaced += 1;
-                }
+                replaced += 1;
                 out.push_str(&s.text);
             }
             None => out.push_str(&d.text),
@@ -398,11 +438,11 @@ mod tests {
             field_sig: "TXT".into(),
             ..Default::default()
         };
-        assert!(Report::of(&e, Game::SkyrimSE).is_error());
+        assert!(Report::of(&e, Game::SkyrimSE, NumPair::default()).is_error());
         // A plugin line: « {0} » is no tag, its 0 is a number.
         e.field_sig = "FULL".into();
         e.trans = "Bonjour 0".into();
-        assert!(!Report::of(&e, Game::SkyrimSE).is_error());
+        assert!(!Report::of(&e, Game::SkyrimSE, NumPair::default()).is_error());
     }
 
     /// Recette of lot 1 (étape 3): the magic effect placeholders of
@@ -417,7 +457,7 @@ mod tests {
             ..Default::default()
         };
         for game in [Game::Skyrim, Game::SkyrimSE] {
-            let r = Report::of(&e, game);
+            let r = Report::of(&e, game, NumPair::default());
             assert_eq!(r.missing_tags, vec!["<dur>", "<area>"], "{game:?}");
             assert!(r.is_error());
         }
@@ -476,9 +516,58 @@ mod tests {
         let set = ce();
         let r = Report::new("3 jours", "trois jours", &set);
         assert_eq!(r.missing_numbers, ["3"]);
-        let f = fix_numbers("3 jours", "trois jours", &set);
+        let f = fix_numbers("3 jours", "trois jours", &set, NumPair::default());
         assert_eq!(f.text, "trois jours 3");
         assert_eq!((f.replaced, f.appended), (0, 1));
+    }
+
+    /// T-N (B.6): the numbers compared by their value in the languages of
+    /// the document.
+    #[test]
+    fn acceptance_t_n_grouped_numbers() {
+        let set = ce();
+        let en_fr = NumPair::of("eng", "fra");
+        let en_de = NumPair::of("eng", "deu");
+        let ok = |s: &str, t: &str, p: NumPair| Report::new_in(s, t, &set, p).is_clean();
+        assert!(ok(
+            "Costs 250,000 gold.",
+            "Coûte 250 000 pièces d'or.",
+            en_fr
+        ));
+        assert!(ok(
+            "Costs 250,000 gold.",
+            "Coûte 250\u{202f}000 pièces d'or.",
+            en_fr
+        ));
+        assert!(ok(
+            "Costs 250000 gold.",
+            "Coûte 250 000 pièces d'or.",
+            en_fr
+        ));
+        assert!(ok("Costs 250,000 gold.", "Kostet 250.000 Gold.", en_de));
+        assert!(ok("2.5 kg", "2,5 kg", en_fr));
+        let r = Report::new_in("250 000 or", "25 000 or", &set, NumPair::of("fra", "fra"));
+        assert_eq!(r.missing_numbers, ["250 000"]);
+        assert_eq!(r.unknown_numbers, ["25 000"]);
+        // « 10 20 30 » stays three numbers.
+        let n = numbers_in("10 20 30", &set, crate::numstyle::style("fra"));
+        assert_eq!(texts(&n), ["10", "20", "30"]);
+        // Before B.6, « 250 » and « 000 »: still so without the languages.
+        let r = Report::new("Costs 250,000 gold.", "Coûte 250 000 pièces d'or.", &set);
+        assert!(r.is_error());
+        // A number really missing stays one.
+        let r = Report::new_in(
+            "250,000 gold and 3 gems",
+            "250 000 pièces d'or",
+            &set,
+            en_fr,
+        );
+        assert_eq!(r.missing_numbers, ["3"]);
+        assert!(r.unknown_numbers.is_empty());
+        // « Rétablir les nombres » leaves the French writing.
+        let f = fix_numbers("250,000 gold, 3 gems", "250 000 or, 4 gemmes", &set, en_fr);
+        assert_eq!(f.text, "250 000 or, 3 gemmes");
+        assert_eq!((f.replaced, f.appended), (1, 0));
     }
 
     #[test]
@@ -506,7 +595,7 @@ mod tests {
         assert_eq!(f.text, "<Alias=A> a <Alias=B> <Alias=C>");
         assert_eq!((f.replaced, f.appended), (1, 2));
         // Nothing to do: unchanged.
-        let f = fix_numbers("10 gold", "10 pièces", &set);
+        let f = fix_numbers("10 gold", "10 pièces", &set, NumPair::default());
         assert_eq!(f.text, "10 pièces");
         assert_eq!((f.replaced, f.appended), (0, 0));
     }

@@ -228,7 +228,8 @@ impl XimodApp {
                 .with_active(true);
         }
         let mut close = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -239,7 +240,7 @@ impl XimodApp {
                 vctx.send_viewport_cmd(egui::ViewportCommand::Focus);
             }
             self.scan_win.needs_place = false;
-            egui::CentralPanel::default().show(vctx, |ui| self.scan_body(ui));
+            egui::CentralPanel::default().show(vui, |ui| self.scan_body(ui));
             if std::mem::take(&mut self.scan_win.closing)
                 || vctx.input_mut(|i| i.consume_key(egui::Modifiers::NONE, egui::Key::Escape))
             {
@@ -396,9 +397,9 @@ impl XimodApp {
         let mut open_sel = false;
         let mut open_todo = false;
         let mut export = false;
-        egui::TopBottomPanel::bottom("ximod-scan-bottom")
+        egui::Panel::bottom("ximod-scan-bottom")
             .show_separator_line(false)
-            .show_inside(ui, |ui| {
+            .show(ui, |ui| {
                 ui.add_space(4.0);
                 ui.horizontal(|ui| {
                     if ui
@@ -509,7 +510,7 @@ impl XimodApp {
                     .collect();
                 table_row(
                     ui,
-                    egui::Id::new("ximod-scan-head"),
+                    egui::Id::unique("ximod-scan-head"),
                     &head,
                     &ws,
                     text_h,
@@ -531,7 +532,7 @@ impl XimodApp {
                                 .collect();
                             let resp = table_row(
                                 ui,
-                                egui::Id::new(("ximod-scan-row", i)),
+                                egui::Id::unique(("ximod-scan-row", i)),
                                 &cells,
                                 &ws,
                                 text_h,

@@ -4,9 +4,10 @@ Outil de traduction de mods pour les jeux Bethesda — Morrowind, Oblivion (et
 Oblivion Remastered), Skyrim (LE et SE/AE), Fallout 3, Fallout: New Vegas,
 Fallout 4, Fallout 76 et Starfield — sous Windows, Linux et macOS. Compagnon de
 **XIMOD Architect**, écrit en **Rust** avec l'interface **egui**, traduit en
-33 langues d'interface.
+33 langues d'interface ; il affiche les textes de droite à gauche (arabe,
+persan, hébreu…) et convertit le chinois simplifié et traditionnel.
 
-Version courante : **0.4.0** (12 novembre 2026). Le détail des versions est dans
+Version courante : **0.5.0** (24 novembre 2026). Le détail des versions est dans
 [`CHANGELOG.md`](CHANGELOG.md) ; la documentation en ligne est le
 [wiki](../../wiki), en anglais ; le manuel complet, en français et en anglais,
 est livré dans `Manuals/` avec chaque paquet (**F1** dans l'application).
@@ -31,6 +32,9 @@ est livré dans `Manuals/` avec chaque paquet (**F1** dans l'application).
   fichier DSD pour SKSE ou un fichier texte traduit ; vérifie le résultat
   (balises, nombres, longueurs, encodages) ; écrit un manifeste ; empaquette le
   tout avec un installateur FOMOD pour Mod Organizer 2 et Vortex.
+- **S'adapte** à chaque jeu (langues, sortie et dossiers propres à un jeu),
+  à chaque clavier (raccourcis modifiables) et vérifie l'orthographe de la
+  source comme de la traduction.
 - **Fait tout cela sans fenêtre** aussi : `ximod-cli` enchaîne chaque étape, par
   lots, pour l'intégration continue.
 
@@ -39,9 +43,12 @@ est livré dans `Manuals/` avec chaque paquet (**F1** dans l'application).
 Chaque [version publiée](../../releases) fournit : un installateur et une
 archive ZIP pour Windows x64, une archive tar.gz pour Linux x64, et pour macOS un `.dmg` universel (Apple
 Silicon et Intel dans le même bundle) ainsi que le bundle seul en `.app.zip` ;
-le bundle n'est pas signé : clic droit ▸ Ouvrir au premier lancement. Chaque paquet contient les deux exécutables
-(`ximod-translator` et `ximod-cli`), les ressources, les manuels et les
-exemples de la ligne de commande (`docs/cli/`).
+le bundle n'est pas signé : clic droit ▸ Ouvrir au premier lancement. Chaque paquet contient l'application
+`ximod-translator` et la ligne de commande `ximod-cli` — sous Linux et macOS un
+lien vers `ximod-translator`, sous Windows un petit lanceur console —, les
+ressources, les manuels et les exemples de la ligne de commande (`docs/cli/`).
+Les polices des livres des jeux ne sont pas livrées : elles se déposent dans
+`assets/fonts/books`.
 
 **Aucune base vanilla n'est livrée** : elle se construit en quelques secondes
 depuis vos propres fichiers de jeu (*Dictionnaires ▸ Créer un dictionnaire à
@@ -88,8 +95,8 @@ cargo clippy --all-targets --workspace -- -D warnings
 
 La fonctionnalité `gog-galaxy` (`--features gog-galaxy`) compile le lecteur
 SQLite des bases de GOG Galaxy et de Lutris ; les binaires livrés l'incluent.
-Les exécutables embarquent les modèles de détection de langue (environ 300 Mo
-chacun) : une version optimisée se compile en plusieurs minutes.
+L'exécutable embarque les 75 modèles de détection de langue (environ 320 Mo) :
+une version optimisée se compile en plusieurs minutes.
 
 `.github/workflows/ci.yml` exécute build, `clippy -D warnings` et tests sur
 Ubuntu, Windows et macOS à chaque push ; `release.yml` se déclenche sur une
@@ -101,7 +108,7 @@ version dont le corps est la section correspondante de `CHANGELOG.md`.
 
 ```
 src/            la bibliothèque (tm, plugin, games, pile de dictionnaires, export, online, i18n, cli…) et ui/
-src/bin/cli/    ximod-cli
+src/bin/cli/    ximod-cli (sous Windows, le lanceur console de ximod-translator.exe)
 ximod-games/ ximod-fomod/ esm-explorer/ bsa-explorer/ swf-explorer/   crates de l'espace de travail
 assets/         locales (33), data, fonts, dictionaries (Hunspell), icons, images ; bases/ reste vide ici
 tests/          tests d'intégration et fixtures

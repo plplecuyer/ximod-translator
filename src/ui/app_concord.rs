@@ -139,17 +139,20 @@ impl XimodApp {
         if in_edit {
             let areas = [
                 (
-                    egui::Id::new(("ximod-edit-src-te", line)),
+                    egui::Id::unique(("ximod-edit-src-te", line)),
                     e.source.as_str(),
                 ),
-                (egui::Id::new(("ximod-edit-trans", line)), e.trans.as_str()),
+                (
+                    egui::Id::unique(("ximod-edit-trans", line)),
+                    e.trans.as_str(),
+                ),
             ];
             let range_of = |id: egui::Id, text: &str| {
                 let n = text.chars().count();
                 egui::TextEdit::load_state(ctx, id)
                     .and_then(|st| st.cursor.char_range())
                     .map(|r| {
-                        let (a, b) = (r.primary.index, r.secondary.index);
+                        let (a, b) = (r.primary.index.0, r.secondary.index.0);
                         (a.min(b).min(n), a.max(b).min(n))
                     })
             };
@@ -214,7 +217,8 @@ impl XimodApp {
         }
         let mut close = false;
         let refocus = self.concord_win.focus_term && !just_opened;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -230,15 +234,15 @@ impl XimodApp {
             if vctx.input_mut(|i| i.consume_key(egui::Modifiers::NONE, egui::Key::Escape)) {
                 close = true;
             }
-            egui::TopBottomPanel::bottom("ximod-concord-hint").show(vctx, |ui| {
-                let key = super::shortcut_text(vctx, &super::MENU_SHORTCUTS.concord, &self.i18n);
+            egui::Panel::bottom("ximod-concord-hint").show(vui, |ui| {
+                let key = super::cmd_text(vctx, crate::shortcuts::Cmd::Concord, &self.i18n);
                 ui.label(
                     egui::RichText::new(self.i18n.t_arg("concord-hint", "key", &key))
                         .weak()
                         .small(),
                 );
             });
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 self.concord_body(ui);
             });
             if !just_opened && let Some((x, y, w, h)) = read_geometry_of(vctx) {
@@ -357,7 +361,7 @@ impl XimodApp {
             ui.label(egui::RichText::new(self.i18n.t("concord-term")).strong());
             let r = ui.add(
                 egui::TextEdit::singleline(&mut self.concord_win.term)
-                    .id(egui::Id::new("ximod-concord-term"))
+                    .id(egui::Id::unique("ximod-concord-term"))
                     .desired_width((ui.available_width() - 8.0).clamp(160.0, 460.0)),
             );
             if std::mem::take(&mut self.concord_win.focus_term) {
@@ -476,25 +480,28 @@ impl XimodApp {
             .zip(self.concord_win.picked)
             .and_then(|(f, i)| f.pairs.get(i).cloned());
         let can_insert = self.edit_win.is_some();
+        // E-08: the source and target languages written from right to left.
+        let (src_rtl, tgt_rtl) = {
+            let s = self.active_settings();
+            (
+                crate::text::bidi::language_is_rtl(&s.source),
+                crate::text::bidi::language_is_rtl(&s.target),
+            )
+        };
         let mut copy: Option<String> = None;
         let mut insert: Option<String> = None;
-        egui::TopBottomPanel::bottom("ximod-concord-pair")
+        egui::Panel::bottom("ximod-concord-pair")
             .resizable(false)
-            .show_inside(ui, |ui| {
+            .show(ui, |ui| {
                 ui.add_space(4.0);
                 ui.label(egui::RichText::new(self.i18n.t("concord-pair")).strong());
                 egui::Frame::group(ui.style()).show(ui, |ui| {
                     ui.set_width(ui.available_width());
                     match &pair {
                         Some(p) => {
-                            ui.add(egui::Label::new(&p.source).wrap());
-                            ui.add(
-                                egui::Label::new(
-                                    egui::RichText::new(&p.trans)
-                                        .color(ui.visuals().hyperlink_color),
-                                )
-                                .wrap(),
-                            );
+                            crate::ui::bidi::doc_label(ui, &p.source, src_rtl);
+                            let link = ui.visuals().hyperlink_color;
+                            crate::ui::bidi::doc_label_colored(ui, &p.trans, tgt_rtl, link);
                         }
                         None => {
                             ui.label(egui::RichText::new("—").weak());
@@ -554,7 +561,7 @@ impl XimodApp {
             let mark = ui.visuals().warn_fg_color.gamma_multiply(0.35);
             let font = egui::TextStyle::Body.resolve(ui.style());
             let color = ui.visuals().text_color();
-            let lit = |text: &str| -> egui::text::LayoutJob {
+            let lit = |text: &str, rtl: bool| -> egui::text::LayoutJob {
                 let ranges = re
                     .as_ref()
                     .map(|r| concord::hits(r, text))
@@ -564,6 +571,10 @@ impl XimodApp {
                     background: mark,
                     ..plain.clone()
                 };
+                // E-08: in visual order, the highlights following.
+                if crate::text::bidi::needed(text, rtl) {
+                    return crate::ui::bidi::line_job(text, rtl, &plain, &ranges, Some(&hit));
+                }
                 let mut job = egui::text::LayoutJob::default();
                 let mut at = 0;
                 for (a, b) in ranges {
@@ -610,11 +621,11 @@ impl XimodApp {
                         let p = &f.pairs[i];
                         row.set_selected(picked == Some(i));
                         row.col(|ui| {
-                            ui.add(egui::Label::new(lit(&p.source)).selectable(false))
+                            ui.add(egui::Label::new(lit(&p.source, src_rtl)).selectable(false))
                                 .on_hover_text(&p.source);
                         });
                         row.col(|ui| {
-                            ui.add(egui::Label::new(lit(&p.trans)).selectable(false))
+                            ui.add(egui::Label::new(lit(&p.trans, tgt_rtl)).selectable(false))
                                 .on_hover_text(&p.trans);
                         });
                         row.col(|ui| {
@@ -683,13 +694,14 @@ impl XimodApp {
             (piece, n)
         } else {
             let chars: Vec<char> = trans.chars().collect();
-            let (a, b) = egui::TextEdit::load_state(ctx, egui::Id::new(("ximod-edit-trans", line)))
-                .and_then(|st| st.cursor.char_range())
-                .map(|r| {
-                    let (a, b) = (r.primary.index, r.secondary.index);
-                    (a.min(b).min(chars.len()), a.max(b).min(chars.len()))
-                })
-                .unwrap_or((chars.len(), chars.len()));
+            let (a, b) =
+                egui::TextEdit::load_state(ctx, egui::Id::unique(("ximod-edit-trans", line)))
+                    .and_then(|st| st.cursor.char_range())
+                    .map(|r| {
+                        let (a, b) = (r.primary.index.0, r.secondary.index.0);
+                        (a.min(b).min(chars.len()), a.max(b).min(chars.len()))
+                    })
+                    .unwrap_or((chars.len(), chars.len()));
             concord::insert(&chars, a, b, &piece)
         };
         self.edit_set_trans(line, new_text, "concord-op", crate::provenance::TYPED);

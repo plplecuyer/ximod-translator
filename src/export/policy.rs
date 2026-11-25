@@ -22,6 +22,10 @@ pub struct ExportPolicy {
     /// Export for debugging in game (A-22, D-113): each text written is
     /// prefixed by its identifier; never remembered.
     pub ids: Option<IdForm>,
+    /// A Chinese translation written in traditional characters (E-08,
+    /// D-100): the output is converted, the document and the mod
+    /// dictionary are not; never remembered.
+    pub zh: Option<crate::text::zh::ZhConv>,
 }
 
 /// The identifier a debugging export puts before each text (R-A22-01).
@@ -168,6 +172,7 @@ impl ExportPolicy {
         // A text document keeps its own line-ending setting (R-T02).
         let eol = tm.meta.source_format != "text";
         let needs_copy = self.ids.is_some()
+            || self.zh.is_some()
             || tm.entries.iter().any(|e| {
                 e.is_translated()
                     && (!self.exportable(e)
@@ -184,6 +189,11 @@ impl ExportPolicy {
             }
             if eol && let Some(t) = source_line_endings(&e.source, &e.trans) {
                 e.trans = t;
+            }
+            if let Some(conv) = self.zh
+                && !e.trans.is_empty()
+            {
+                e.trans = crate::text::zh::convert(conv, &e.trans);
             }
             if let Some(form) = self.ids {
                 Self::prefix_line(e, form, game);
@@ -428,6 +438,26 @@ mod tests {
             .filtered(&before)
             .into_owned();
         assert!(plain.entries.iter().all(|e| !starts_with_id(&e.trans)));
+    }
+
+    /// T-Z: with the option, only the converted translations differ from
+    /// the export without it; the memory keeps the simplified text.
+    #[test]
+    fn acceptance_t_z_export_converts_the_output_only() {
+        let mut tm = mem();
+        tm.entries[0].trans = "软件<Alias=X>".into();
+        let before = tm.clone();
+        let plain = ExportPolicy::validated_only().filtered(&tm).into_owned();
+        let p = ExportPolicy {
+            zh: Some(crate::text::zh::ZhConv::S2tw),
+            ..ExportPolicy::validated_only()
+        };
+        let out = p.filtered(&tm);
+        assert_eq!(out.entries[0].trans, "軟體<Alias=X>");
+        for (a, b) in out.entries.iter().zip(&plain.entries).skip(1) {
+            assert_eq!(a.trans, b.trans);
+        }
+        assert_eq!(tm.entries, before.entries, "the memory is never changed");
     }
 
     #[test]

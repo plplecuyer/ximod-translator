@@ -20,11 +20,13 @@ pub enum Command {
     Trim,
     AffixAdd,
     AffixRemove,
+    /// Chinese simplified ↔ traditional (E-08, D-100), through its dialog.
+    Chinese,
 }
 
 impl Command {
     /// The commands in the order of the menu.
-    pub const ALL: [Command; 7] = [
+    pub const ALL: [Command; 8] = [
         Command::Upper,
         Command::Lower,
         Command::Title,
@@ -32,6 +34,7 @@ impl Command {
         Command::Trim,
         Command::AffixAdd,
         Command::AffixRemove,
+        Command::Chinese,
     ];
 
     /// The message key of the command's name.
@@ -44,12 +47,21 @@ impl Command {
             Command::Trim => "transform-trim",
             Command::AffixAdd => "transform-affix-add",
             Command::AffixRemove => "transform-affix-remove",
+            Command::Chinese => "transform-chinese",
         }
     }
 
     /// The commands that need the prefix / suffix dialog.
     pub fn needs_dialog(self) -> bool {
-        matches!(self, Command::AffixAdd | Command::AffixRemove)
+        matches!(
+            self,
+            Command::AffixAdd | Command::AffixRemove | Command::Chinese
+        )
+    }
+
+    /// A separator stands before it in the menus.
+    pub fn starts_group(self) -> bool {
+        matches!(self, Command::AffixAdd | Command::Chinese)
     }
 }
 
@@ -132,25 +144,70 @@ pub fn lower(text: &str) -> String {
     map_text(text, str::to_lowercase)
 }
 
-/// The first letter of the text in capital, nothing else touched: after a
-/// kept segment or an opening punctuation.
-pub fn sentence(text: &str) -> String {
-    let mut done = false;
-    map_text(text, |t| {
-        if done {
-            return t.to_string();
-        }
-        let mut out = String::with_capacity(t.len());
-        for c in t.chars() {
-            if !done && c.is_alphabetic() {
-                out.extend(c.to_uppercase());
-                done = true;
-            } else {
-                out.push(c);
+/// Sentence case (« Première lettre en majuscule », Windows recette of
+/// 13/11/2026): the text in lower case except the first letter of each
+/// sentence — the first of the text, then after « . ! ? … » or a line
+/// break — and the acronyms of `rules.keep` written in capitals.
+/// « COUP DE LANCE » and « Coup de Lance » give « Coup de lance »; tags,
+/// numbers and placeholders are kept as they are.
+pub fn sentence(text: &str, rules: &TitleRules) -> String {
+    let keep: HashSet<&str> = rules.keep.iter().map(String::as_str).collect();
+    let mut start = true;
+    let mut out = String::with_capacity(text.len());
+    for p in pieces(text) {
+        let t = match p {
+            Piece::Kept(k) => {
+                if k == "\n" || k == "\r" {
+                    start = true;
+                } else if k.starts_with(|c: char| c.is_ascii_digit()) {
+                    // A sentence that begins with a number keeps its next
+                    // word in lower case (« 25 points de dégâts »).
+                    start = false;
+                }
+                out.push_str(k);
+                continue;
             }
+            Piece::Text(t) => t,
+        };
+        let chars: Vec<char> = t.chars().collect();
+        let mut i = 0;
+        while i < chars.len() {
+            let c = chars[i];
+            if !c.is_alphanumeric() {
+                if matches!(c, '.' | '!' | '?' | '…') {
+                    start = true;
+                }
+                out.push(c);
+                i += 1;
+                continue;
+            }
+            let from = i;
+            while i < chars.len() && chars[i].is_alphanumeric() {
+                i += 1;
+            }
+            let word: String = chars[from..i].iter().collect();
+            let acronym = word.chars().count() >= 2
+                && word.chars().all(|c| !c.is_lowercase())
+                && keep.contains(word.as_str());
+            if acronym {
+                out.push_str(&word);
+            } else {
+                let lw = word.to_lowercase();
+                let mut cs = lw.chars();
+                match cs.next() {
+                    Some(f) if start && f.is_alphabetic() => {
+                        out.extend(f.to_uppercase());
+                        out.push_str(cs.as_str());
+                    }
+                    _ => out.push_str(&lw),
+                }
+            }
+            // A sentence that begins with a number keeps its next word in
+            // lower case (« 25 points de dégâts »).
+            start = false;
         }
-        out
-    })
+    }
+    out
 }
 
 /// Spaces, tabulations and non-breaking spaces at both ends removed; line
@@ -242,9 +299,9 @@ pub fn apply(cmd: Command, text: &str, rules: &TitleRules) -> Option<String> {
         Command::Upper => upper(text),
         Command::Lower => lower(text),
         Command::Title => title(text, rules),
-        Command::Sentence => sentence(text),
+        Command::Sentence => sentence(text, rules),
         Command::Trim => trim(text),
-        Command::AffixAdd | Command::AffixRemove => return None,
+        Command::AffixAdd | Command::AffixRemove | Command::Chinese => return None,
     })
 }
 
@@ -454,8 +511,31 @@ mod tests {
 
     #[test]
     fn sentence_trim_and_affixes() {
-        assert_eq!(sentence("« épée liée »"), "« Épée liée »");
-        assert_eq!(sentence("<Alias=Player> arrive"), "<Alias=Player> Arrive");
+        let none = TitleRules::default();
+        assert_eq!(sentence("« épée liée »", &none), "« Épée liée »");
+        assert_eq!(
+            sentence("<Alias=Player> arrive", &none),
+            "<Alias=Player> Arrive"
+        );
+        // Windows recette of 13/11/2026: the rest goes to lower case.
+        assert_eq!(sentence("COUP DE LANCE", &none), "Coup de lance");
+        assert_eq!(sentence("Coup de Lance", &none), "Coup de lance");
+        assert_eq!(sentence("coup de lance", &none), "Coup de lance");
+        // Each sentence, line breaks included; tags and numbers kept.
+        assert_eq!(
+            sentence("INFLIGE <mag> POINTS. DURÉE 10 S !\nSUITE", &none),
+            "Inflige <mag> points. Durée 10 s !\nSuite"
+        );
+        assert_eq!(
+            sentence("25 POINTS DE DÉGÂTS", &none),
+            "25 points de dégâts"
+        );
+        // Acronyms of the language's « keep » list stay in capitals.
+        let keep = TitleRules {
+            lower: vec![],
+            keep: vec!["PNJ".into()],
+        };
+        assert_eq!(sentence("UN PNJ ARRIVE", &keep), "Un PNJ arrive");
         assert_eq!(trim("  Épée\u{a0}\t"), "Épée");
         assert_eq!(trim("Livre \n"), "Livre \n");
         assert_eq!(trim("a  b"), "a  b");

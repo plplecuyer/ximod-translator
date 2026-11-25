@@ -360,6 +360,7 @@ impl Work {
             &checks,
             self.o.settings.game(),
             self.out_page(),
+            self.o.settings.numbers(),
             |_, _| true,
         );
         let errors = report.findings.iter().filter(|f| is_error(f.check)).count();

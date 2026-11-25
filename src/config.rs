@@ -25,6 +25,165 @@ pub struct GameEntry {
     pub locked: bool,
 }
 
+/// A setting a game may have of its own (E-04, R-E04-01): its value in
+/// `[Game.<jeu>]` wins over the common one.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Pref {
+    Source,
+    Target,
+    Output,
+    OpenDir,
+    ExportDir,
+    LocalizeSourceStrings,
+    KeepOriginal,
+}
+
+impl Pref {
+    pub const ALL: [Pref; 7] = [
+        Pref::Source,
+        Pref::Target,
+        Pref::Output,
+        Pref::OpenDir,
+        Pref::ExportDir,
+        Pref::LocalizeSourceStrings,
+        Pref::KeepOriginal,
+    ];
+
+    /// Its key in `[Game.<jeu>]` (the common key where there is one).
+    pub fn key(self) -> &'static str {
+        match self {
+            Pref::Source => "SourceLanguage",
+            Pref::Target => "TargetLanguage",
+            Pref::Output => "OutputMode",
+            Pref::OpenDir => "OpenDir",
+            Pref::ExportDir => "ExportDir",
+            Pref::LocalizeSourceStrings => "LocalizeSourceStrings",
+            Pref::KeepOriginal => "KeepOriginal",
+        }
+    }
+
+    pub fn from_key(k: &str) -> Option<Pref> {
+        Pref::ALL
+            .into_iter()
+            .find(|p| p.key().eq_ignore_ascii_case(k))
+    }
+}
+
+/// The settings of one game of its own (E-04, `[Game.<jeu>]`): `None` = the
+/// common value applies. An entry with nothing set is never written
+/// (R-E04-02: no section until a box is ticked).
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct GamePrefs {
+    pub source: Option<String>,
+    pub target: Option<String>,
+    pub output: Option<OutputMode>,
+    pub open_dir: Option<String>,
+    pub export_dir: Option<String>,
+    pub localize_source_strings: Option<bool>,
+    pub keep_original: Option<bool>,
+}
+
+impl GamePrefs {
+    pub fn is_empty(&self) -> bool {
+        Pref::ALL.iter().all(|p| !self.has(*p))
+    }
+
+    /// Whether `p` is set for the game.
+    pub fn has(&self, p: Pref) -> bool {
+        match p {
+            Pref::Source => self.source.is_some(),
+            Pref::Target => self.target.is_some(),
+            Pref::Output => self.output.is_some(),
+            Pref::OpenDir => self.open_dir.is_some(),
+            Pref::ExportDir => self.export_dir.is_some(),
+            Pref::LocalizeSourceStrings => self.localize_source_strings.is_some(),
+            Pref::KeepOriginal => self.keep_original.is_some(),
+        }
+    }
+
+    /// Back to the common value (the box unticked).
+    pub fn clear(&mut self, p: Pref) {
+        match p {
+            Pref::Source => self.source = None,
+            Pref::Target => self.target = None,
+            Pref::Output => self.output = None,
+            Pref::OpenDir => self.open_dir = None,
+            Pref::ExportDir => self.export_dir = None,
+            Pref::LocalizeSourceStrings => self.localize_source_strings = None,
+            Pref::KeepOriginal => self.keep_original = None,
+        }
+    }
+
+    /// Take `p` from `r` (the box ticked: the game keeps the value shown).
+    pub fn take(&mut self, p: Pref, r: &ResolvedPrefs) {
+        match p {
+            Pref::Source => self.source = Some(r.source.clone()),
+            Pref::Target => self.target = Some(r.target.clone()),
+            Pref::Output => self.output = Some(r.output),
+            Pref::OpenDir => self.open_dir = Some(r.open_dir.clone()),
+            Pref::ExportDir => self.export_dir = Some(r.export_dir.clone()),
+            Pref::LocalizeSourceStrings => {
+                self.localize_source_strings = Some(r.localize_source_strings)
+            }
+            Pref::KeepOriginal => self.keep_original = Some(r.keep_original),
+        }
+    }
+
+    /// One `key=value` line of the section.
+    fn set_key(&mut self, key: &str, v: &str) {
+        let v = v.trim();
+        match Pref::from_key(key) {
+            Some(Pref::Source) => self.source = Some(v.to_string()),
+            Some(Pref::Target) => self.target = Some(v.to_string()),
+            Some(Pref::Output) => self.output = Some(OutputMode::from_label(v)),
+            Some(Pref::OpenDir) => self.open_dir = Some(v.to_string()),
+            Some(Pref::ExportDir) => self.export_dir = Some(v.to_string()),
+            Some(Pref::LocalizeSourceStrings) => self.localize_source_strings = Some(v != "0"),
+            Some(Pref::KeepOriginal) => self.keep_original = Some(v != "0"),
+            None => {}
+        }
+    }
+
+    fn lines(&self) -> Vec<String> {
+        let b = |v: bool| if v { 1 } else { 0 };
+        let mut out = Vec::new();
+        let mut push = |p: Pref, v: Option<String>| {
+            if let Some(v) = v {
+                out.push(format!("{}={v}", p.key()));
+            }
+        };
+        push(Pref::Source, self.source.clone());
+        push(Pref::Target, self.target.clone());
+        push(Pref::Output, self.output.map(|m| m.as_str().to_string()));
+        push(Pref::OpenDir, self.open_dir.clone());
+        push(Pref::ExportDir, self.export_dir.clone());
+        push(
+            Pref::LocalizeSourceStrings,
+            self.localize_source_strings.map(|v| b(v).to_string()),
+        );
+        push(
+            Pref::KeepOriginal,
+            self.keep_original.map(|v| b(v).to_string()),
+        );
+        out
+    }
+}
+
+/// The seven settings as they apply to one game (E-04, R-E04-03): its own
+/// value, else the common one.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ResolvedPrefs {
+    pub source: String,
+    pub target: String,
+    pub output: OutputMode,
+    /// Initial folder of Fichier › Ouvrir (empty: none known yet).
+    pub open_dir: String,
+    /// Initial folder of the export's save window (empty: none known yet).
+    pub export_dir: String,
+    pub localize_source_strings: bool,
+    pub keep_original: bool,
+}
+
 /// UI theme.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum Theme {
@@ -274,6 +433,14 @@ pub struct AppConfig {
     /// Propagate a translation to the open files of the same source
     /// (`[Editing] PropagateAcrossFiles`, B-25).
     pub propagate_files: bool,
+    /// Check for a newer version once a day at start (`[Update]
+    /// CheckUpdates`, E-14).
+    pub check_updates: bool,
+    /// The day of the last check, `YYYY-MM-DD` (`[Update] LastUpdateCheck`).
+    pub last_update_check: String,
+    /// The Nexus page of the application, a second link of the banner
+    /// when set (`[Update] UpdateNexusUrl`).
+    pub update_nexus_url: String,
     /// The filter row under the grid headers (`[Editing] ColumnFilters`,
     /// A-10), hidden by default.
     pub column_filters: bool,
@@ -468,6 +635,20 @@ pub struct AppConfig {
     /// Detected/registered game installations, keyed by the stable game id
     /// ([`crate::games::Game::id`]).
     pub games: BTreeMap<String, GameEntry>,
+    /// The settings of each game of its own (E-04, `[Game.<jeu>]`), keyed
+    /// by game id; only the games with at least one.
+    pub game_prefs: BTreeMap<String, GamePrefs>,
+    /// The last folders of Fichier › Ouvrir and of an export, all games
+    /// together (`[General] LastOpenDir`, `LastExportDir`, R-E04-05).
+    pub last_open_dir: String,
+    pub last_export_dir: String,
+    /// The shortcuts changed (E-15, `[Shortcuts]`): command id → « Ctrl+Alt+U »
+    /// or « none »; a command absent keeps its origin.
+    pub shortcuts: BTreeMap<String, String>,
+    /// The spelling dictionary chosen per language (D-11, `[Spell]
+    /// Dict_<langue>=en_GB`), for the source as for the target; absent =
+    /// automatic.
+    pub spell_dicts: BTreeMap<String, String>,
 }
 
 impl Default for AppConfig {
@@ -510,6 +691,9 @@ impl Default for AppConfig {
             show_special_chars: false,
             propose_propagation: false,
             propagate_files: true,
+            check_updates: true,
+            last_update_check: String::new(),
+            update_nexus_url: String::new(),
             column_filters: false,
             show_comment: false,
             show_provenance: false,
@@ -613,6 +797,11 @@ impl Default for AppConfig {
             status_colors: default_status_colors(),
             auto_detect_games: true,
             games: BTreeMap::new(),
+            game_prefs: BTreeMap::new(),
+            shortcuts: BTreeMap::new(),
+            spell_dicts: BTreeMap::new(),
+            last_open_dir: String::new(),
+            last_export_dir: String::new(),
         }
     }
 }
@@ -766,20 +955,44 @@ impl AppConfig {
         // The keys are global, except those of [Confirmations] (E-03), read
         // in their section only.
         let mut in_confirmations = false;
+        // [Shortcuts] (E-15): read in its section only.
+        let mut in_shortcuts = false;
+        // [Game.<jeu>] (E-04): the settings of one game, read in their
+        // section only (their keys are those of [Translation] and [Export]).
+        let mut in_game: Option<String> = None;
         for line in content.lines() {
             let line = line.trim();
             if line.is_empty() || line.starts_with(';') || line.starts_with('#') {
                 continue;
             }
             if line.starts_with('[') && line.ends_with(']') {
-                in_confirmations = line[1..line.len() - 1]
-                    .trim()
-                    .eq_ignore_ascii_case("Confirmations");
+                let name = line[1..line.len() - 1].trim();
+                in_confirmations = name.eq_ignore_ascii_case("Confirmations");
+                in_shortcuts = name.eq_ignore_ascii_case("Shortcuts");
+                in_game = name
+                    .strip_prefix("Game.")
+                    .map(str::trim)
+                    .filter(|id| !id.is_empty())
+                    .map(str::to_string);
                 continue;
             }
             if let Some(pos) = line.find('=') {
                 let key = line[..pos].trim().to_string();
                 let value = line[pos + 1..].trim().to_string();
+                if in_shortcuts {
+                    if !key.is_empty() && !value.is_empty() {
+                        config.shortcuts.insert(key, value);
+                    }
+                    continue;
+                }
+                if let Some(id) = &in_game {
+                    config
+                        .game_prefs
+                        .entry(id.clone())
+                        .or_default()
+                        .set_key(&key, &value);
+                    continue;
+                }
                 if in_confirmations {
                     if crate::remember::Question::from_key(&key).is_some() && !value.is_empty() {
                         config.confirmations.insert(key, value);
@@ -1200,6 +1413,15 @@ impl AppConfig {
         if let Some(v) = values.get("PropagateAcrossFiles") {
             config.propagate_files = v.trim() != "0";
         }
+        if let Some(v) = values.get("CheckUpdates") {
+            config.check_updates = v.trim() != "0";
+        }
+        if let Some(v) = values.get("LastUpdateCheck") {
+            config.last_update_check = v.trim().to_string();
+        }
+        if let Some(v) = values.get("UpdateNexusUrl") {
+            config.update_nexus_url = v.trim().to_string();
+        }
         if let Some(v) = values.get("ProposePropagation") {
             config.propose_propagation = matches!(v.trim(), "1" | "true" | "yes");
         }
@@ -1430,6 +1652,23 @@ impl AppConfig {
         }
         // Drop entries that ended up with no path (stray keys).
         config.games.retain(|_, e| !e.path.trim().is_empty());
+        config.game_prefs.retain(|_, p| !p.is_empty());
+        for (k, v) in &values {
+            if let Some(lang) = k.strip_prefix("Dict_")
+                && !lang.is_empty()
+                && !v.trim().is_empty()
+            {
+                config
+                    .spell_dicts
+                    .insert(lang.to_string(), v.trim().to_string());
+            }
+        }
+        if let Some(v) = values.get("LastOpenDir") {
+            config.last_open_dir = v.trim().to_string();
+        }
+        if let Some(v) = values.get("LastExportDir") {
+            config.last_export_dir = v.trim().to_string();
+        }
 
         config.recent_files.clear();
         for i in 0..config.max_recent_files {
@@ -1486,6 +1725,8 @@ impl AppConfig {
         ));
         lines.push(format!("Toasts={}", if self.toasts { 1 } else { 0 }));
         lines.push(format!("Translator={}", self.translator));
+        lines.push(format!("LastOpenDir={}", self.last_open_dir));
+        lines.push(format!("LastExportDir={}", self.last_export_dir));
         lines.push(String::new());
 
         lines.push("[Translation]".to_string());
@@ -1807,6 +2048,12 @@ impl AppConfig {
         lines.push(format!("BrowserSite={}", o.browser_site.id()));
         lines.push(String::new());
 
+        lines.push("[Update]".to_string());
+        lines.push(format!("CheckUpdates={}", u8::from(self.check_updates)));
+        lines.push(format!("LastUpdateCheck={}", self.last_update_check));
+        lines.push(format!("UpdateNexusUrl={}", self.update_nexus_url));
+        lines.push(String::new());
+
         lines.push("[Backup]".to_string());
         lines.push(format!(
             "AutosaveEnabled={}",
@@ -1882,6 +2129,34 @@ impl AppConfig {
             }
         }
         lines.push(String::new());
+
+        // D-11: the dictionary chosen per language.
+        if !self.spell_dicts.is_empty() {
+            lines.push("[Spell]".to_string());
+            for (k, v) in &self.spell_dicts {
+                lines.push(format!("Dict_{k}={v}"));
+            }
+            lines.push(String::new());
+        }
+
+        // E-15: only when a shortcut was changed.
+        if !self.shortcuts.is_empty() {
+            lines.push("[Shortcuts]".to_string());
+            for (k, v) in &self.shortcuts {
+                lines.push(format!("{k}={v}"));
+            }
+            lines.push(String::new());
+        }
+
+        // E-04: one section per game with a setting of its own.
+        for (id, p) in &self.game_prefs {
+            if p.is_empty() {
+                continue;
+            }
+            lines.push(format!("[Game.{id}]"));
+            lines.extend(p.lines());
+            lines.push(String::new());
+        }
 
         lines.push("[Statuses]".to_string());
         for s in crate::status::Status::ALL {
@@ -1971,6 +2246,78 @@ impl AppConfig {
         }
     }
 
+    /// The seven settings of E-04 as they apply to `game` (an id; empty or
+    /// unknown: the common values): its own value when its section has the
+    /// key, else the common one (R-E04-03).
+    pub fn prefs_for(&self, game: &str) -> ResolvedPrefs {
+        let own = self.game_prefs.get(game.trim());
+        let pick = |f: fn(&GamePrefs) -> Option<String>, common: &str| {
+            own.and_then(f).unwrap_or_else(|| common.to_string())
+        };
+        ResolvedPrefs {
+            source: pick(|p| p.source.clone(), &self.source_language),
+            target: pick(|p| p.target.clone(), &self.target_language),
+            output: own.and_then(|p| p.output).unwrap_or(self.output_mode),
+            open_dir: pick(|p| p.open_dir.clone(), &self.last_open_dir),
+            export_dir: pick(|p| p.export_dir.clone(), &self.last_export_dir),
+            localize_source_strings: own
+                .and_then(|p| p.localize_source_strings)
+                .unwrap_or(self.localize_source_strings),
+            keep_original: own
+                .and_then(|p| p.keep_original)
+                .unwrap_or(self.keep_original),
+        }
+    }
+
+    /// The values common to all games (`[Translation]`, `[Export]`,
+    /// `[Output]`, the last folders).
+    pub fn common_prefs(&self) -> ResolvedPrefs {
+        self.prefs_for("")
+    }
+
+    /// The settings `game` has of its own (`None`: none).
+    pub fn own_prefs(&self, game: &str) -> Option<&GamePrefs> {
+        self.game_prefs.get(game.trim()).filter(|p| !p.is_empty())
+    }
+
+    /// Whether `game` has `p` of its own.
+    pub fn has_own(&self, game: &str, p: Pref) -> bool {
+        self.own_prefs(game).is_some_and(|g| g.has(p))
+    }
+
+    /// A file of `game` was opened from `dir` (R-E04-05): the last folder
+    /// of all games, and the game's own when it has one.
+    pub fn note_open_dir(&mut self, game: &str, dir: &std::path::Path) {
+        let d = dir.display().to_string();
+        self.last_open_dir = d.clone();
+        if let Some(p) = self.game_prefs.get_mut(game.trim())
+            && p.open_dir.is_some()
+        {
+            p.open_dir = Some(d);
+        }
+    }
+
+    /// An export of a `game` document was written in `dir` (R-E04-05).
+    pub fn note_export_dir(&mut self, game: &str, dir: &std::path::Path) {
+        let d = dir.display().to_string();
+        self.last_export_dir = d.clone();
+        if let Some(p) = self.game_prefs.get_mut(game.trim())
+            && p.export_dir.is_some()
+        {
+            p.export_dir = Some(d);
+        }
+    }
+
+    /// « Écrire aussi les STRINGS de la source » changed for a `game`
+    /// document from the export window: the game's own value when it has
+    /// one, else the common one.
+    pub fn set_localize_source_strings(&mut self, game: &str, v: bool) {
+        match self.game_prefs.get_mut(game.trim()) {
+            Some(p) if p.localize_source_strings.is_some() => p.localize_source_strings = Some(v),
+            _ => self.localize_source_strings = v,
+        }
+    }
+
     /// The game-bases folder (first of [`resolved_base_dirs`]).
     pub fn game_base_dir(&self) -> PathBuf {
         self.resolved_base_dirs().into_iter().next().unwrap()
@@ -2021,6 +2368,119 @@ impl AppConfig {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn game_sections_round_trip_and_resolve() {
+        // T-E04-03/04: a configuration without [Game.*] resolves every game
+        // to the common values, and writes no section.
+        let mut cfg = AppConfig {
+            source_language: "eng".into(),
+            target_language: "fra".into(),
+            output_mode: OutputMode::OverridePatch,
+            last_open_dir: "D:/Mods".into(),
+            ..AppConfig::default()
+        };
+        assert_eq!(cfg.prefs_for("Oblivion"), cfg.common_prefs());
+        assert!(!cfg.to_ini().contains("[Game."));
+
+        // Oblivion: full plugin and its folders; Skyrim SE: nothing of its own.
+        let ob = cfg.game_prefs.entry("Oblivion".into()).or_default();
+        ob.output = Some(OutputMode::FullPlugin);
+        ob.open_dir = Some("D:/Mods/Oblivion".into());
+        ob.keep_original = Some(false);
+        let back = AppConfig::parse_ini(&cfg.to_ini());
+        assert_eq!(back.game_prefs, cfg.game_prefs);
+        let r = back.prefs_for("Oblivion");
+        assert_eq!(r.output, OutputMode::FullPlugin);
+        assert_eq!(r.open_dir, "D:/Mods/Oblivion");
+        assert!(!r.keep_original);
+        assert_eq!(r.target, "fra");
+        // The section's keys never leak into the common values.
+        assert_eq!(back.output_mode, OutputMode::OverridePatch);
+        assert!(back.keep_original);
+        assert_eq!(back.prefs_for("SkyrimSE").output, OutputMode::OverridePatch);
+        assert!(back.has_own("Oblivion", Pref::Output));
+        assert!(!back.has_own("Oblivion", Pref::Target));
+
+        // Unticked one by one: the key goes, then the section.
+        let mut cfg = back;
+        let ob = cfg.game_prefs.get_mut("Oblivion").unwrap();
+        ob.clear(Pref::Output);
+        ob.clear(Pref::KeepOriginal);
+        let ini = cfg.to_ini();
+        assert!(ini.contains("[Game.Oblivion]") && !ini.contains("KeepOriginal=0"));
+        cfg.game_prefs
+            .get_mut("Oblivion")
+            .unwrap()
+            .clear(Pref::OpenDir);
+        assert!(!cfg.to_ini().contains("[Game."));
+        assert!(AppConfig::parse_ini(&cfg.to_ini()).game_prefs.is_empty());
+    }
+
+    #[test]
+    fn the_spelling_dictionary_of_a_language_round_trips() {
+        // T-D11-03: [Spell] Dict_eng=en_GB, kept at the next launch.
+        let mut cfg = AppConfig::default();
+        assert!(!cfg.to_ini().contains("[Spell]"));
+        cfg.spell_dicts.insert("eng".into(), "en_GB".into());
+        let ini = cfg.to_ini();
+        assert!(ini.contains("[Spell]\nDict_eng=en_GB\n"));
+        let back = AppConfig::parse_ini(&ini);
+        assert_eq!(back.spell_dicts, cfg.spell_dicts);
+        // The [Dictionaries] keys are not taken for it.
+        assert!(!back.spell_dicts.keys().any(|k| k.starts_with('s')));
+    }
+
+    #[test]
+    fn shortcuts_round_trip_in_their_section_only() {
+        // T-E15-04: no section without a change.
+        let mut cfg = AppConfig::default();
+        assert!(!cfg.to_ini().contains("[Shortcuts]"));
+        cfg.shortcuts
+            .insert("transform_upper".into(), "Ctrl+Alt+U".into());
+        cfg.shortcuts.insert("journal".into(), "none".into());
+        let ini = cfg.to_ini();
+        assert!(ini.contains("[Shortcuts]\njournal=none\ntransform_upper=Ctrl+Alt+U\n"));
+        let back = AppConfig::parse_ini(&ini);
+        assert_eq!(back.shortcuts, cfg.shortcuts);
+        // A key of another section never lands there.
+        assert!(!back.shortcuts.contains_key("Locale"));
+    }
+
+    #[test]
+    fn the_folders_follow_the_game_that_has_its_own() {
+        // R-E04-05.
+        let mut cfg = AppConfig::default();
+        cfg.game_prefs
+            .entry("Oblivion".into())
+            .or_default()
+            .open_dir = Some("D:/Old".into());
+        cfg.note_open_dir("Oblivion", std::path::Path::new("D:/Mods/Oblivion"));
+        assert_eq!(cfg.prefs_for("Oblivion").open_dir, "D:/Mods/Oblivion");
+        cfg.note_open_dir("SkyrimSE", std::path::Path::new("E:/Skyrim"));
+        assert_eq!(cfg.last_open_dir, "E:/Skyrim");
+        assert_eq!(cfg.prefs_for("SkyrimSE").open_dir, "E:/Skyrim");
+        assert_eq!(cfg.prefs_for("Oblivion").open_dir, "D:/Mods/Oblivion");
+        cfg.note_export_dir("Oblivion", std::path::Path::new("F:/Out"));
+        assert_eq!(cfg.last_export_dir, "F:/Out");
+        assert!(cfg.game_prefs["Oblivion"].export_dir.is_none());
+        let back = AppConfig::parse_ini(&cfg.to_ini());
+        assert_eq!(back.last_open_dir, "E:/Skyrim");
+        assert_eq!(back.last_export_dir, "F:/Out");
+        // The export window's box: the game's value when it has one.
+        cfg.game_prefs
+            .get_mut("Oblivion")
+            .unwrap()
+            .localize_source_strings = Some(true);
+        cfg.set_localize_source_strings("Oblivion", false);
+        assert_eq!(
+            cfg.game_prefs["Oblivion"].localize_source_strings,
+            Some(false)
+        );
+        assert!(cfg.localize_source_strings);
+        cfg.set_localize_source_strings("SkyrimSE", false);
+        assert!(!cfg.localize_source_strings);
+    }
 
     #[test]
     fn the_usual_output_follows_the_document_and_its_game() {
@@ -2160,6 +2620,27 @@ mod tests {
         let d = AppConfig::default();
         assert_eq!(d.edit_win, [-1.0, -1.0, 760.0, 520.0]);
         assert_eq!(d.edit_tab, "record");
+    }
+
+    #[test]
+    fn the_update_check_settings_round_trip() {
+        let d = AppConfig::default();
+        assert!(d.check_updates, "on by default, as in XIMOD Architect");
+        let c = AppConfig {
+            check_updates: false,
+            last_update_check: "2026-11-13".into(),
+            update_nexus_url: "https://www.nexusmods.com/site/mods/1".into(),
+            ..AppConfig::default()
+        };
+        let ini = c.to_ini();
+        assert!(
+            ini.contains("[Update]\nCheckUpdates=0\nLastUpdateCheck=2026-11-13"),
+            "{ini}"
+        );
+        let p = AppConfig::parse_ini(&ini);
+        assert!(!p.check_updates);
+        assert_eq!(p.last_update_check, "2026-11-13");
+        assert_eq!(p.update_nexus_url, "https://www.nexusmods.com/site/mods/1");
     }
 
     #[test]

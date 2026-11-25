@@ -3,7 +3,7 @@
 //! themes, soft rounding and a readable selection. Spacing is left to egui so
 //! the grid keeps its density.
 
-use eframe::egui::{self, Color32, Rounding, Stroke};
+use eframe::egui::{self, Color32, CornerRadius, Stroke};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Palette {
@@ -79,18 +79,18 @@ pub fn visuals_for(dark: bool) -> egui::Visuals {
     visuals.widgets.inactive.bg_stroke = Stroke::new(1.0_f32, outline);
     visuals.widgets.hovered.weak_bg_fill = raised_hover;
 
-    let r = Rounding::same(6.0);
-    visuals.widgets.noninteractive.rounding = r;
-    visuals.widgets.inactive.rounding = r;
-    visuals.widgets.hovered.rounding = r;
-    visuals.widgets.active.rounding = r;
-    visuals.widgets.open.rounding = r;
-    visuals.window_rounding = Rounding::same(8.0);
-    visuals.menu_rounding = Rounding::same(6.0);
+    let r = CornerRadius::same(6);
+    visuals.widgets.noninteractive.corner_radius = r;
+    visuals.widgets.inactive.corner_radius = r;
+    visuals.widgets.hovered.corner_radius = r;
+    visuals.widgets.active.corner_radius = r;
+    visuals.widgets.open.corner_radius = r;
+    visuals.window_corner_radius = CornerRadius::same(8);
+    visuals.menu_corner_radius = CornerRadius::same(6);
     visuals.popup_shadow = egui::epaint::Shadow {
-        offset: egui::vec2(0.0, 4.0),
-        blur: 12.0,
-        spread: 0.0,
+        offset: [0, 4],
+        blur: 12,
+        spread: 0,
         color: Color32::from_black_alpha(if dark { 110 } else { 50 }),
     };
     visuals
@@ -124,7 +124,7 @@ pub trait ComboField {
     ) -> egui::InnerResponse<Option<R>>;
 }
 
-impl ComboField for egui::ComboBox {
+impl ComboField for egui::ComboBox<'_> {
     fn show_field<R>(
         self,
         ui: &mut egui::Ui,

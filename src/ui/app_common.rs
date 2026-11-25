@@ -523,7 +523,14 @@ impl XimodApp {
             if ui
                 .add_enabled(
                     !unused && !current.is_empty(),
-                    egui::Button::new(egui::RichText::new(self.i18n.t("common-apply")).strong()),
+                    egui::Button::new(
+                        egui::RichText::new(super::with_keys(
+                            ui.ctx(),
+                            &self.i18n,
+                            self.i18n.t("common-apply"),
+                        ))
+                        .strong(),
+                    ),
                 )
                 .clicked()
             {

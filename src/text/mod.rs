@@ -2,4 +2,6 @@
 //! Transformer and of the edit window, shared with the Header Processor
 //! (D-12, later).
 
+pub mod bidi;
 pub mod transform;
+pub mod zh;

@@ -461,15 +461,7 @@ pub fn opened_text(
     } else {
         settings.game_label()
     };
-    let secs = format!("{secs:.1}");
-    let secs = if matches!(
-        i18n.current_locale(),
-        "eng" | "gle" | "mlt" | "jpn" | "kor" | "zho" | "roh"
-    ) {
-        secs
-    } else {
-        secs.replace('.', ",")
-    };
+    let secs = secs_text(i18n, secs);
     i18n.t_args(
         "journal-opened",
         &[
@@ -507,6 +499,19 @@ fn now_secs() -> i64 {
         .duration_since(SystemTime::UNIX_EPOCH)
         .map(|d| d.as_secs() as i64)
         .unwrap_or(0)
+}
+
+/// Seconds with one decimal, in the decimal mark of the interface.
+pub fn secs_text(i18n: &crate::i18n::I18n, secs: f32) -> String {
+    let s = format!("{secs:.1}");
+    if matches!(
+        i18n.current_locale(),
+        "eng" | "gle" | "mlt" | "jpn" | "kor" | "zho" | "roh"
+    ) {
+        s
+    } else {
+        s.replace('.', ",")
+    }
 }
 
 #[cfg(test)]

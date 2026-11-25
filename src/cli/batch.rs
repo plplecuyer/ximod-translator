@@ -177,7 +177,11 @@ fn step_of(v: &Value) -> Result<Step, String> {
 }
 
 /// Read and validate a batch; the reason when it is refused.
-pub fn parse(text: &str, base: &Path, defaults: &Pair) -> Result<Vec<Job>, String> {
+pub fn parse(
+    text: &str,
+    base: &Path,
+    defaults: &dyn Fn(Option<&str>) -> Pair,
+) -> Result<Vec<Job>, String> {
     let v: Value = serde_json::from_str(text).map_err(|e| l10n!("cli-batch-json", error = e))?;
     let Value::Object(head) = &v else {
         return Err(l10n!("cli-batch-json", error = "{}"));
@@ -189,11 +193,12 @@ pub fn parse(text: &str, base: &Path, defaults: &Pair) -> Result<Vec<Job>, Strin
     let text_of = |m: &serde_json::Map<String, Value>, k: &str| -> Option<String> {
         m.get(k).and_then(Value::as_str).map(str::to_string)
     };
-    let pair0 = Pair {
-        game: text_of(head, "game").unwrap_or_else(|| defaults.game.clone()),
-        from: text_of(head, "from").unwrap_or_else(|| defaults.from.clone()),
-        to: text_of(head, "to").unwrap_or_else(|| defaults.to.clone()),
-    };
+    // The languages of a game that has its own (E-04), unless the batch or
+    // the options give them.
+    let game0 = text_of(head, "game");
+    let pair0 = defaults(game0.as_deref());
+    let from0 = text_of(head, "from");
+    let to0 = text_of(head, "to");
     let out0 = text_of(head, "out").unwrap_or_else(|| "out".into());
     let stop0 = head
         .get("stopOnError")
@@ -226,10 +231,19 @@ pub fn parse(text: &str, base: &Path, defaults: &Pair) -> Result<Vec<Job>, Strin
         if files.is_empty() {
             return Err(l10n!("cli-err-file", path = base.join(&pattern).display()));
         }
+        let game = text_of(m, "game");
+        let base_pair = match &game {
+            Some(g) => defaults(Some(g)),
+            None => pair0.clone(),
+        };
         let pair = Pair {
-            game: text_of(m, "game").unwrap_or_else(|| pair0.game.clone()),
-            from: text_of(m, "from").unwrap_or_else(|| pair0.from.clone()),
-            to: text_of(m, "to").unwrap_or_else(|| pair0.to.clone()),
+            game: base_pair.game,
+            from: text_of(m, "from")
+                .or_else(|| from0.clone())
+                .unwrap_or(base_pair.from),
+            to: text_of(m, "to")
+                .or_else(|| to0.clone())
+                .unwrap_or(base_pair.to),
         };
         let out_dir = base.join(text_of(m, "out").unwrap_or_else(|| out0.clone()));
         let stop = m
@@ -272,7 +286,8 @@ pub fn run(ctx: &mut super::work::Ctx, g: &Global, file: &str, o: &mut Out) -> i
         .parent()
         .map(Path::to_path_buf)
         .unwrap_or_else(|| PathBuf::from("."));
-    let defaults = commands::pair(ctx, g);
+    let cfg = ctx.cfg.clone();
+    let defaults = |game: Option<&str>| commands::pair_for(&cfg, g, game);
     let jobs = match parse(&text, &base, &defaults) {
         Ok(j) => j,
         Err(reason) => {
@@ -516,7 +531,7 @@ mod tests {
         std::fs::create_dir_all(dir.join("mods")).unwrap();
         std::fs::write(dir.join("mods").join("a.esp"), b"x").unwrap();
         std::fs::write(dir.join("mods").join("b.esp"), b"x").unwrap();
-        let d = Pair::default();
+        let d = |_: Option<&str>| Pair::default();
         let ok = r#"{"format":1,"to":"fra","out":"out","jobs":[{"files":"mods/*.esp",
             "steps":["apply",{"assist":{"derive":true}},"check",
             {"export":{"output":"dsd","statuses":["validated","pending"]}},"manifest"]}]}"#;

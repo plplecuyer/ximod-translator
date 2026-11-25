@@ -1,7 +1,9 @@
 {
   "countries": [
     {
+      "a2": "ZA",
       "a3": "ZAF",
+      "commonEn": "South Africa",
       "flag": "ZAF.svg",
       "languages": [
         {
@@ -53,7 +55,9 @@
       "nameFr": "Afrique du Sud"
     },
     {
+      "a2": "AI",
       "a3": "AIA",
+      "commonEn": "Anguilla",
       "flag": "AIA.svg",
       "languages": [
         {
@@ -65,7 +69,9 @@
       "nameFr": "Anguilla"
     },
     {
+      "a2": "AG",
       "a3": "ATG",
+      "commonEn": "Antigua & Barbuda",
       "flag": "ATG.svg",
       "languages": [
         {
@@ -77,7 +83,9 @@
       "nameFr": "Antigua-et-Barbuda"
     },
     {
+      "a2": "AW",
       "a3": "ABW",
+      "commonEn": "Aruba",
       "flag": "ABW.svg",
       "languages": [
         {
@@ -93,7 +101,9 @@
       "nameFr": "Aruba"
     },
     {
+      "a2": "AT",
       "a3": "AUT",
+      "commonEn": "Austria",
       "flag": "AUT.svg",
       "languages": [
         {
@@ -105,7 +115,9 @@
       "nameFr": "Autriche"
     },
     {
+      "a2": "JE",
       "a3": "JEY",
+      "commonEn": "Jersey",
       "flag": "JEY.svg",
       "languages": [
         {
@@ -117,7 +129,9 @@
       "nameFr": "Bailliage de Jersey"
     },
     {
+      "a2": "BB",
       "a3": "BRB",
+      "commonEn": "Barbados",
       "flag": "BRB.svg",
       "languages": [
         {
@@ -129,7 +143,9 @@
       "nameFr": "Barbade"
     },
     {
+      "a2": "BZ",
       "a3": "BLZ",
+      "commonEn": "Belize",
       "flag": "BLZ.svg",
       "languages": [
         {
@@ -141,7 +157,9 @@
       "nameFr": "Belize"
     },
     {
+      "a2": "BM",
       "a3": "BMU",
+      "commonEn": "Bermuda",
       "flag": "BMU.svg",
       "languages": [
         {
@@ -153,7 +171,9 @@
       "nameFr": "Bermudes"
     },
     {
+      "a2": "BA",
       "a3": "BIH",
+      "commonEn": "Bosnia & Herzegovina",
       "flag": "BIH.svg",
       "languages": [
         {
@@ -165,7 +185,9 @@
       "nameFr": "Bosnie-Herzégovine"
     },
     {
+      "a2": "BW",
       "a3": "BWA",
+      "commonEn": "Botswana",
       "flag": "BWA.svg",
       "languages": [
         {
@@ -177,7 +199,9 @@
       "nameFr": "Botswana"
     },
     {
+      "a2": "BN",
       "a3": "BRN",
+      "commonEn": "Brunei",
       "flag": "BRN.svg",
       "languages": [
         {
@@ -189,7 +213,9 @@
       "nameFr": "Brunei Darussalam"
     },
     {
+      "a2": "BF",
       "a3": "BFA",
+      "commonEn": "Burkina Faso",
       "flag": "BFA.svg",
       "languages": [
         {
@@ -209,7 +235,9 @@
       "nameFr": "Burkina Faso"
     },
     {
+      "a2": "CA",
       "a3": "CAN",
+      "commonEn": "Canada",
       "flag": "CAN.svg",
       "languages": [
         {
@@ -225,7 +253,9 @@
       "nameFr": "Canada"
     },
     {
+      "a2": "AU",
       "a3": "AUS",
+      "commonEn": "Australia",
       "flag": "AUS.svg",
       "languages": [
         {
@@ -237,7 +267,9 @@
       "nameFr": "Commonwealth d'Australie"
     },
     {
+      "a2": "DM",
       "a3": "DMA",
+      "commonEn": "Dominica",
       "flag": "DMA.svg",
       "languages": [
         {
@@ -249,7 +281,9 @@
       "nameFr": "Commonwealth de la Dominique"
     },
     {
+      "a2": "BS",
       "a3": "BHS",
+      "commonEn": "Bahamas",
       "flag": "BHS.svg",
       "languages": [
         {
@@ -261,7 +295,9 @@
       "nameFr": "Commonwealth des Bahamas"
     },
     {
+      "a2": "MP",
       "a3": "MNP",
+      "commonEn": "Northern Mariana Islands",
       "flag": "MNP.svg",
       "languages": [
         {
@@ -273,7 +309,9 @@
       "nameFr": "Commonwealth des Îles Mariannes du Nord"
     },
     {
+      "a2": "CH",
       "a3": "CHE",
+      "commonEn": "Switzerland",
       "flag": "CHE.svg",
       "languages": [
         {
@@ -297,7 +335,9 @@
       "nameFr": "Confédération suisse"
     },
     {
+      "a2": "CW",
       "a3": "CUW",
+      "commonEn": "Curaçao",
       "flag": "CUW.svg",
       "languages": [
         {
@@ -317,7 +357,9 @@
       "nameFr": "Curaçao"
     },
     {
+      "a2": "RU",
       "a3": "RUS",
+      "commonEn": "Russia",
       "flag": "RUS.svg",
       "languages": [
         {
@@ -329,7 +371,9 @@
       "nameFr": "Fédération de Russie"
     },
     {
+      "a2": "KN",
       "a3": "KNA",
+      "commonEn": "St. Kitts & Nevis",
       "flag": "KNA.svg",
       "languages": [
         {
@@ -341,7 +385,9 @@
       "nameFr": "Fédération de Saint-Christophe-et-Niévès"
     },
     {
+      "a2": "GI",
       "a3": "GIB",
+      "commonEn": "Gibraltar",
       "flag": "GIB.svg",
       "languages": [
         {
@@ -353,7 +399,9 @@
       "nameFr": "Gibraltar"
     },
     {
+      "a2": "LU",
       "a3": "LUX",
+      "commonEn": "Luxembourg",
       "flag": "LUX.svg",
       "languages": [
         {
@@ -365,7 +413,9 @@
       "nameFr": "Grand-Duché de Luxembourg"
     },
     {
+      "a2": "GD",
       "a3": "GRD",
+      "commonEn": "Grenada",
       "flag": "GRD.svg",
       "languages": [
         {
@@ -377,7 +427,9 @@
       "nameFr": "Grenade"
     },
     {
+      "a2": "GL",
       "a3": "GRL",
+      "commonEn": "Greenland",
       "flag": "GRL.svg",
       "languages": [
         {
@@ -393,7 +445,9 @@
       "nameFr": "Groenland"
     },
     {
+      "a2": "GR",
       "a3": "GRC",
+      "commonEn": "Greece",
       "flag": "GRC.svg",
       "languages": [
         {
@@ -405,7 +459,9 @@
       "nameFr": "Grèce"
     },
     {
+      "a2": "GP",
       "a3": "GLP",
+      "commonEn": "Guadeloupe",
       "flag": "GLP.svg",
       "languages": [
         {
@@ -421,7 +477,9 @@
       "nameFr": "Guadeloupe"
     },
     {
+      "a2": "GU",
       "a3": "GUM",
+      "commonEn": "Guam",
       "flag": "GUM.svg",
       "languages": [
         {
@@ -437,7 +495,9 @@
       "nameFr": "Guam"
     },
     {
+      "a2": "GG",
       "a3": "GGY",
+      "commonEn": "Guernsey",
       "flag": "GGY.svg",
       "languages": [
         {
@@ -449,7 +509,9 @@
       "nameFr": "Guernesey"
     },
     {
+      "a2": "GQ",
       "a3": "GNQ",
+      "commonEn": "Equatorial Guinea",
       "flag": "GNQ.svg",
       "languages": [
         {
@@ -469,7 +531,9 @@
       "nameFr": "Guinée équatoriale"
     },
     {
+      "a2": "GF",
       "a3": "GUF",
+      "commonEn": "French Guiana",
       "flag": "GUF.svg",
       "languages": [
         {
@@ -485,7 +549,9 @@
       "nameFr": "Guyane"
     },
     {
+      "a2": "GE",
       "a3": "GEO",
+      "commonEn": "Georgia",
       "flag": "GEO.svg",
       "languages": [
         {
@@ -497,7 +563,9 @@
       "nameFr": "Géorgie"
     },
     {
+      "a2": "GS",
       "a3": "SGS",
+      "commonEn": "South Georgia & South Sandwich Islands",
       "flag": "SGS.svg",
       "languages": [
         {
@@ -509,7 +577,9 @@
       "nameFr": "Géorgie du Sud et les Îles Sandwich du Sud"
     },
     {
+      "a2": "HK",
       "a3": "HKG",
+      "commonEn": "Hong Kong SAR China",
       "flag": "HKG.svg",
       "languages": [
         {
@@ -525,7 +595,9 @@
       "nameFr": "Hong Kong"
     },
     {
+      "a2": "HU",
       "a3": "HUN",
+      "commonEn": "Hungary",
       "flag": "HUN.svg",
       "languages": [
         {
@@ -537,7 +609,9 @@
       "nameFr": "Hongrie"
     },
     {
+      "a2": "IE",
       "a3": "IRL",
+      "commonEn": "Ireland",
       "flag": "IRL.svg",
       "languages": [
         {
@@ -553,7 +627,9 @@
       "nameFr": "Irlande"
     },
     {
+      "a2": "IS",
       "a3": "ISL",
+      "commonEn": "Iceland",
       "flag": "ISL.svg",
       "languages": [
         {
@@ -565,7 +641,9 @@
       "nameFr": "Islande"
     },
     {
+      "a2": "JM",
       "a3": "JAM",
+      "commonEn": "Jamaica",
       "flag": "JAM.svg",
       "languages": [
         {
@@ -581,7 +659,9 @@
       "nameFr": "Jamaïque"
     },
     {
+      "a2": "JP",
       "a3": "JPN",
+      "commonEn": "Japan",
       "flag": "JPN.svg",
       "languages": [
         {
@@ -593,7 +673,9 @@
       "nameFr": "Japon"
     },
     {
+      "a2": "RE",
       "a3": "REU",
+      "commonEn": "Réunion",
       "flag": "REU.svg",
       "languages": [
         {
@@ -609,7 +691,9 @@
       "nameFr": "La Réunion"
     },
     {
+      "a2": "MO",
       "a3": "MAC",
+      "commonEn": "Macao SAR China",
       "flag": "MAC.svg",
       "languages": [
         {
@@ -625,7 +709,9 @@
       "nameFr": "Macao"
     },
     {
+      "a2": "MY",
       "a3": "MYS",
+      "commonEn": "Malaysia",
       "flag": "MYS.svg",
       "languages": [
         {
@@ -637,7 +723,9 @@
       "nameFr": "Malaisie"
     },
     {
+      "a2": "MQ",
       "a3": "MTQ",
+      "commonEn": "Martinique",
       "flag": "MTQ.svg",
       "languages": [
         {
@@ -653,7 +741,9 @@
       "nameFr": "Martinique"
     },
     {
+      "a2": "YT",
       "a3": "MYT",
+      "commonEn": "Mayotte",
       "flag": "MYT.svg",
       "languages": [
         {
@@ -665,7 +755,9 @@
       "nameFr": "Mayotte"
     },
     {
+      "a2": "MN",
       "a3": "MNG",
+      "commonEn": "Mongolia",
       "flag": "MNG.svg",
       "languages": [
         {
@@ -677,7 +769,9 @@
       "nameFr": "Mongolie"
     },
     {
+      "a2": "MS",
       "a3": "MSR",
+      "commonEn": "Montserrat",
       "flag": "MSR.svg",
       "languages": [
         {
@@ -689,7 +783,9 @@
       "nameFr": "Montserrat (Antilles)"
     },
     {
+      "a2": "ME",
       "a3": "MNE",
+      "commonEn": "Montenegro",
       "flag": "MNE.svg",
       "languages": [
         {
@@ -701,7 +797,9 @@
       "nameFr": "Monténégro"
     },
     {
+      "a2": "NU",
       "a3": "NIU",
+      "commonEn": "Niue",
       "flag": "NIU.svg",
       "languages": [
         {
@@ -717,7 +815,9 @@
       "nameFr": "Niue"
     },
     {
+      "a2": "NC",
       "a3": "NCL",
+      "commonEn": "New Caledonia",
       "flag": "NCL.svg",
       "languages": [
         {
@@ -729,7 +829,9 @@
       "nameFr": "Nouvelle-Calédonie"
     },
     {
+      "a2": "NZ",
       "a3": "NZL",
+      "commonEn": "New Zealand",
       "flag": "NZL.svg",
       "languages": [
         {
@@ -745,7 +847,9 @@
       "nameFr": "Nouvelle-Zélande"
     },
     {
+      "a2": "BQ",
       "a3": "BES",
+      "commonEn": "Caribbean Netherlands",
       "flag": "BES.svg",
       "languages": [
         {
@@ -765,7 +869,9 @@
       "nameFr": "Pays-Bas caribéens"
     },
     {
+      "a2": "PF",
       "a3": "PYF",
+      "commonEn": "French Polynesia",
       "flag": "PYF.svg",
       "languages": [
         {
@@ -781,7 +887,9 @@
       "nameFr": "Polynésie française"
     },
     {
+      "a2": "AD",
       "a3": "AND",
+      "commonEn": "Andorra",
       "flag": "AND.svg",
       "languages": [
         {
@@ -793,7 +901,9 @@
       "nameFr": "Principauté d'Andorre"
     },
     {
+      "a2": "MC",
       "a3": "MCO",
+      "commonEn": "Monaco",
       "flag": "MCO.svg",
       "languages": [
         {
@@ -809,7 +919,9 @@
       "nameFr": "Principauté de Monaco"
     },
     {
+      "a2": "LI",
       "a3": "LIE",
+      "commonEn": "Liechtenstein",
       "flag": "LIE.svg",
       "languages": [
         {
@@ -821,7 +933,9 @@
       "nameFr": "Principauté du Liechtenstein"
     },
     {
+      "a2": "RO",
       "a3": "ROU",
+      "commonEn": "Romania",
       "flag": "ROU.svg",
       "languages": [
         {
@@ -833,7 +947,9 @@
       "nameFr": "Roumanie"
     },
     {
+      "a2": "SA",
       "a3": "SAU",
+      "commonEn": "Saudi Arabia",
       "flag": "SAU.svg",
       "languages": [
         {
@@ -845,7 +961,9 @@
       "nameFr": "Royaume d'Arabie saoudite"
     },
     {
+      "a2": "ES",
       "a3": "ESP",
+      "commonEn": "Spain",
       "flag": "ESP.svg",
       "languages": [
         {
@@ -857,7 +975,9 @@
       "nameFr": "Royaume d'Espagne"
     },
     {
+      "a2": "BH",
       "a3": "BHR",
+      "commonEn": "Bahrain",
       "flag": "BHR.svg",
       "languages": [
         {
@@ -869,7 +989,9 @@
       "nameFr": "Royaume de Bahreïn"
     },
     {
+      "a2": "BE",
       "a3": "BEL",
+      "commonEn": "Belgium",
       "flag": "BEL.svg",
       "languages": [
         {
@@ -889,7 +1011,9 @@
       "nameFr": "Royaume de Belgique"
     },
     {
+      "a2": "DK",
       "a3": "DNK",
+      "commonEn": "Denmark",
       "flag": "DNK.svg",
       "languages": [
         {
@@ -909,7 +1033,9 @@
       "nameFr": "Royaume de Danemark"
     },
     {
+      "a2": "NO",
       "a3": "NOR",
+      "commonEn": "Norway",
       "flag": "NOR.svg",
       "languages": [
         {
@@ -933,7 +1059,9 @@
       "nameFr": "Royaume de Norvège"
     },
     {
+      "a2": "SE",
       "a3": "SWE",
+      "commonEn": "Sweden",
       "flag": "SWE.svg",
       "languages": [
         {
@@ -945,7 +1073,9 @@
       "nameFr": "Royaume de Suède"
     },
     {
+      "a2": "TH",
       "a3": "THA",
+      "commonEn": "Thailand",
       "flag": "THA.svg",
       "languages": [
         {
@@ -957,7 +1087,9 @@
       "nameFr": "Royaume de Thaïlande"
     },
     {
+      "a2": "NL",
       "a3": "NLD",
+      "commonEn": "Netherlands",
       "flag": "NLD.svg",
       "languages": [
         {
@@ -969,7 +1101,9 @@
       "nameFr": "Royaume des Pays-Bas"
     },
     {
+      "a2": "TO",
       "a3": "TON",
+      "commonEn": "Tonga",
       "flag": "TON.svg",
       "languages": [
         {
@@ -985,7 +1119,9 @@
       "nameFr": "Royaume des Tonga"
     },
     {
+      "a2": "BT",
       "a3": "BTN",
+      "commonEn": "Bhutan",
       "flag": "BTN.svg",
       "languages": [
         {
@@ -997,7 +1133,9 @@
       "nameFr": "Royaume du Bhoutan"
     },
     {
+      "a2": "KH",
       "a3": "KHM",
+      "commonEn": "Cambodia",
       "flag": "KHM.svg",
       "languages": [
         {
@@ -1009,7 +1147,9 @@
       "nameFr": "Royaume du Cambodge"
     },
     {
+      "a2": "LS",
       "a3": "LSO",
+      "commonEn": "Lesotho",
       "flag": "LSO.svg",
       "languages": [
         {
@@ -1025,7 +1165,9 @@
       "nameFr": "Royaume du Lesotho"
     },
     {
+      "a2": "MA",
       "a3": "MAR",
+      "commonEn": "Morocco",
       "flag": "MAR.svg",
       "languages": [
         {
@@ -1041,7 +1183,9 @@
       "nameFr": "Royaume du Maroc"
     },
     {
+      "a2": "SZ",
       "a3": "SWZ",
+      "commonEn": "Eswatini",
       "flag": "SWZ.svg",
       "languages": [
         {
@@ -1057,7 +1201,9 @@
       "nameFr": "Royaume d’Eswatini"
     },
     {
+      "a2": "JO",
       "a3": "JOR",
+      "commonEn": "Jordan",
       "flag": "JOR.svg",
       "languages": [
         {
@@ -1069,7 +1215,9 @@
       "nameFr": "Royaume hachémite de Jordanie"
     },
     {
+      "a2": "GB",
       "a3": "GBR",
+      "commonEn": "United Kingdom",
       "flag": "GBR.svg",
       "languages": [
         {
@@ -1081,7 +1229,9 @@
       "nameFr": "Royaume-Uni de Grande-Bretagne et d'Irlande du Nord"
     },
     {
+      "a2": "AX",
       "a3": "ALA",
+      "commonEn": "Åland Islands",
       "flag": "ALA.svg",
       "languages": [
         {
@@ -1093,15 +1243,17 @@
       "nameFr": "Région d'Åland"
     },
     {
+      "a2": "DZ",
       "a3": "DZA",
+      "commonEn": "Algeria",
       "flag": "DZA.svg",
       "languages": [
         {
-          "countryEndonym": "ⵜⴰⴳⴷⵓⴷⴰ ⵜⴰⵣⵣⴰⵢⵔⵉⵜ ⵜⴰⵎⴰⴳⴷⴰⵢⵜ ⵜⴰⵖⴻⵔⴼⴰⵏⵜ",
+          "countryEndonym": "الجمهورية الجزائرية الديمقراطية الشعبية",
           "iso639_3": "ara"
         },
         {
-          "countryEndonym": "الجمهورية الجزائرية الديمقراطية الشعبية",
+          "countryEndonym": "ⵜⴰⴳⴷⵓⴷⴰ ⵜⴰⵣⵣⴰⵢⵔⵉⵜ ⵜⴰⵎⴰⴳⴷⴰⵢⵜ ⵜⴰⵖⴻⵔⴼⴰⵏⵜ",
           "iso639_3": "tzm"
         }
       ],
@@ -1109,7 +1261,9 @@
       "nameFr": "République algérienne démocratique et populaire"
     },
     {
+      "a2": "EG",
       "a3": "EGY",
+      "commonEn": "Egypt",
       "flag": "EGY.svg",
       "languages": [
         {
@@ -1121,15 +1275,17 @@
       "nameFr": "République arabe d'Égypte"
     },
     {
+      "a2": "EH",
       "a3": "ESH",
+      "commonEn": "Western Sahara",
       "flag": "ESH.svg",
       "languages": [
         {
-          "countryEndonym": "República Árabe Saharaui Democrática",
+          "countryEndonym": "الجمهورية العربية الصحراوية الديمقراطية",
           "iso639_3": "ara"
         },
         {
-          "countryEndonym": "الجمهورية العربية الصحراوية الديمقراطية",
+          "countryEndonym": "República Árabe Saharaui Democrática",
           "iso639_3": "spa"
         }
       ],
@@ -1137,7 +1293,9 @@
       "nameFr": "République arabe sahraouie démocratique"
     },
     {
+      "a2": "SY",
       "a3": "SYR",
+      "commonEn": "Syria",
       "flag": "SYR.svg",
       "languages": [
         {
@@ -1149,7 +1307,9 @@
       "nameFr": "République arabe syrienne"
     },
     {
+      "a2": "AR",
       "a3": "ARG",
+      "commonEn": "Argentina",
       "flag": "ARG.svg",
       "languages": [
         {
@@ -1161,7 +1321,9 @@
       "nameFr": "République argentine"
     },
     {
+      "a2": "VE",
       "a3": "VEN",
+      "commonEn": "Venezuela",
       "flag": "VEN.svg",
       "languages": [
         {
@@ -1173,7 +1335,9 @@
       "nameFr": "République bolivarienne du Venezuela"
     },
     {
+      "a2": "CF",
       "a3": "CAF",
+      "commonEn": "Central African Republic",
       "flag": "CAF.svg",
       "languages": [
         {
@@ -1189,7 +1353,9 @@
       "nameFr": "République Centrafricaine"
     },
     {
+      "a2": "GY",
       "a3": "GUY",
+      "commonEn": "Guyana",
       "flag": "GUY.svg",
       "languages": [
         {
@@ -1201,7 +1367,9 @@
       "nameFr": "République coopérative du Guyana"
     },
     {
+      "a2": "AO",
       "a3": "AGO",
+      "commonEn": "Angola",
       "flag": "AGO.svg",
       "languages": [
         {
@@ -1213,7 +1381,9 @@
       "nameFr": "République d'Angola"
     },
     {
+      "a2": "AM",
       "a3": "ARM",
+      "commonEn": "Armenia",
       "flag": "ARM.svg",
       "languages": [
         {
@@ -1225,7 +1395,9 @@
       "nameFr": "République d'Arménie"
     },
     {
+      "a2": "AZ",
       "a3": "AZE",
+      "commonEn": "Azerbaijan",
       "flag": "AZE.svg",
       "languages": [
         {
@@ -1237,7 +1409,9 @@
       "nameFr": "République d'Azerbaïdjan"
     },
     {
+      "a2": "EE",
       "a3": "EST",
+      "commonEn": "Estonia",
       "flag": "EST.svg",
       "languages": [
         {
@@ -1249,7 +1423,9 @@
       "nameFr": "République d'Estonie"
     },
     {
+      "a2": "HT",
       "a3": "HTI",
+      "commonEn": "Haiti",
       "flag": "HTI.svg",
       "languages": [
         {
@@ -1265,7 +1441,9 @@
       "nameFr": "République d'Haïti"
     },
     {
+      "a2": "ID",
       "a3": "IDN",
+      "commonEn": "Indonesia",
       "flag": "IDN.svg",
       "languages": [
         {
@@ -1277,7 +1455,9 @@
       "nameFr": "République d'Indonésie"
     },
     {
+      "a2": "IQ",
       "a3": "IRQ",
+      "commonEn": "Iraq",
       "flag": "IRQ.svg",
       "languages": [
         {
@@ -1293,7 +1473,9 @@
       "nameFr": "République d'Irak"
     },
     {
+      "a2": "UZ",
       "a3": "UZB",
+      "commonEn": "Uzbekistan",
       "flag": "UZB.svg",
       "languages": [
         {
@@ -1305,7 +1487,9 @@
       "nameFr": "République d'Ouzbékistan"
     },
     {
+      "a2": "BY",
       "a3": "BLR",
+      "commonEn": "Belarus",
       "flag": "BLR.svg",
       "languages": [
         {
@@ -1321,7 +1505,9 @@
       "nameFr": "République de Biélorussie"
     },
     {
+      "a2": "BG",
       "a3": "BGR",
+      "commonEn": "Bulgaria",
       "flag": "BGR.svg",
       "languages": [
         {
@@ -1333,7 +1519,9 @@
       "nameFr": "République de Bulgarie"
     },
     {
+      "a2": "TW",
       "a3": "TWN",
+      "commonEn": "Taiwan",
       "flag": "TWN.svg",
       "languages": [
         {
@@ -1345,7 +1533,9 @@
       "nameFr": "République de Chine"
     },
     {
+      "a2": "CY",
       "a3": "CYP",
+      "commonEn": "Cyprus",
       "flag": "CYP.svg",
       "languages": [
         {
@@ -1361,7 +1551,9 @@
       "nameFr": "République de Chypre"
     },
     {
+      "a2": "CO",
       "a3": "COL",
+      "commonEn": "Colombia",
       "flag": "COL.svg",
       "languages": [
         {
@@ -1373,7 +1565,9 @@
       "nameFr": "République de Colombie"
     },
     {
+      "a2": "KR",
       "a3": "KOR",
+      "commonEn": "South Korea",
       "flag": "KOR.svg",
       "languages": [
         {
@@ -1385,7 +1579,9 @@
       "nameFr": "République de Corée"
     },
     {
+      "a2": "HR",
       "a3": "HRV",
+      "commonEn": "Croatia",
       "flag": "HRV.svg",
       "languages": [
         {
@@ -1397,7 +1593,9 @@
       "nameFr": "République de Croatie"
     },
     {
+      "a2": "CU",
       "a3": "CUB",
+      "commonEn": "Cuba",
       "flag": "CUB.svg",
       "languages": [
         {
@@ -1409,7 +1607,9 @@
       "nameFr": "République de Cuba"
     },
     {
+      "a2": "CI",
       "a3": "CIV",
+      "commonEn": "Côte d’Ivoire",
       "flag": "CIV.svg",
       "languages": [
         {
@@ -1421,7 +1621,9 @@
       "nameFr": "République de Côte d’Ivoire"
     },
     {
+      "a2": "DJ",
       "a3": "DJI",
+      "commonEn": "Djibouti",
       "flag": "DJI.svg",
       "languages": [
         {
@@ -1437,7 +1639,9 @@
       "nameFr": "République de Djibouti"
     },
     {
+      "a2": "FI",
       "a3": "FIN",
+      "commonEn": "Finland",
       "flag": "FIN.svg",
       "languages": [
         {
@@ -1453,7 +1657,9 @@
       "nameFr": "République de Finlande"
     },
     {
+      "a2": "GM",
       "a3": "GMB",
+      "commonEn": "Gambia",
       "flag": "GMB.svg",
       "languages": [
         {
@@ -1465,7 +1671,9 @@
       "nameFr": "République de Gambie"
     },
     {
+      "a2": "GN",
       "a3": "GIN",
+      "commonEn": "Guinea",
       "flag": "GIN.svg",
       "languages": [
         {
@@ -1477,7 +1685,9 @@
       "nameFr": "République de Guinée"
     },
     {
+      "a2": "GW",
       "a3": "GNB",
+      "commonEn": "Guinea-Bissau",
       "flag": "GNB.svg",
       "languages": [
         {
@@ -1489,7 +1699,9 @@
       "nameFr": "République de Guinée-Bissau"
     },
     {
+      "a2": "KI",
       "a3": "KIR",
+      "commonEn": "Kiribati",
       "flag": "KIR.svg",
       "languages": [
         {
@@ -1505,7 +1717,9 @@
       "nameFr": "République de Kiribati"
     },
     {
+      "a2": "IN",
       "a3": "IND",
+      "commonEn": "India",
       "flag": "IND.svg",
       "languages": [
         {
@@ -1521,7 +1735,9 @@
       "nameFr": "République de l'Inde"
     },
     {
+      "a2": "MM",
       "a3": "MMR",
+      "commonEn": "Myanmar (Burma)",
       "flag": "MMR.svg",
       "languages": [
         {
@@ -1533,7 +1749,9 @@
       "nameFr": "République de l'union de Birmanie"
     },
     {
+      "a2": "EC",
       "a3": "ECU",
+      "commonEn": "Ecuador",
       "flag": "ECU.svg",
       "languages": [
         {
@@ -1553,7 +1771,9 @@
       "nameFr": "République de l'Équateur"
     },
     {
+      "a2": "LV",
       "a3": "LVA",
+      "commonEn": "Latvia",
       "flag": "LVA.svg",
       "languages": [
         {
@@ -1565,7 +1785,9 @@
       "nameFr": "République de Lettonie"
     },
     {
+      "a2": "LT",
       "a3": "LTU",
+      "commonEn": "Lithuania",
       "flag": "LTU.svg",
       "languages": [
         {
@@ -1577,7 +1799,9 @@
       "nameFr": "République de Lituanie"
     },
     {
+      "a2": "UG",
       "a3": "UGA",
+      "commonEn": "Uganda",
       "flag": "UGA.svg",
       "languages": [
         {
@@ -1593,7 +1817,9 @@
       "nameFr": "République de l’Ouganda"
     },
     {
+      "a2": "MK",
       "a3": "MKD",
+      "commonEn": "North Macedonia",
       "flag": "MKD.svg",
       "languages": [
         {
@@ -1609,7 +1835,9 @@
       "nameFr": "République de Macédoine du Nord"
     },
     {
+      "a2": "MG",
       "a3": "MDG",
+      "commonEn": "Madagascar",
       "flag": "MDG.svg",
       "languages": [
         {
@@ -1625,7 +1853,9 @@
       "nameFr": "République de Madagascar"
     },
     {
+      "a2": "MT",
       "a3": "MLT",
+      "commonEn": "Malta",
       "flag": "MLT.svg",
       "languages": [
         {
@@ -1641,7 +1871,9 @@
       "nameFr": "République de Malte"
     },
     {
+      "a2": "MU",
       "a3": "MUS",
+      "commonEn": "Mauritius",
       "flag": "MUS.svg",
       "languages": [
         {
@@ -1665,7 +1897,9 @@
       "nameFr": "République de Maurice"
     },
     {
+      "a2": "MD",
       "a3": "MDA",
+      "commonEn": "Moldova",
       "flag": "MDA.svg",
       "languages": [
         {
@@ -1677,7 +1911,9 @@
       "nameFr": "République de Moldavie"
     },
     {
+      "a2": "NA",
       "a3": "NAM",
+      "commonEn": "Namibia",
       "flag": "NAM.svg",
       "languages": [
         {
@@ -1689,7 +1925,9 @@
       "nameFr": "République de Namibie"
     },
     {
+      "a2": "NR",
       "a3": "NRU",
+      "commonEn": "Nauru",
       "flag": "NRU.svg",
       "languages": [
         {
@@ -1705,7 +1943,9 @@
       "nameFr": "République de Nauru"
     },
     {
+      "a2": "PL",
       "a3": "POL",
+      "commonEn": "Poland",
       "flag": "POL.svg",
       "languages": [
         {
@@ -1717,7 +1957,9 @@
       "nameFr": "République de Pologne"
     },
     {
+      "a2": "SM",
       "a3": "SMR",
+      "commonEn": "San Marino",
       "flag": "SMR.svg",
       "languages": [
         {
@@ -1729,7 +1971,9 @@
       "nameFr": "République de Saint-Marin"
     },
     {
+      "a2": "RS",
       "a3": "SRB",
+      "commonEn": "Serbia",
       "flag": "SRB.svg",
       "languages": [
         {
@@ -1741,7 +1985,9 @@
       "nameFr": "République de Serbie"
     },
     {
+      "a2": "SL",
       "a3": "SLE",
+      "commonEn": "Sierra Leone",
       "flag": "SLE.svg",
       "languages": [
         {
@@ -1757,7 +2003,9 @@
       "nameFr": "République de Sierra Leone"
     },
     {
+      "a2": "SI",
       "a3": "SVN",
+      "commonEn": "Slovenia",
       "flag": "SVN.svg",
       "languages": [
         {
@@ -1777,7 +2025,9 @@
       "nameFr": "République de Slovénie"
     },
     {
+      "a2": "TT",
       "a3": "TTO",
+      "commonEn": "Trinidad & Tobago",
       "flag": "TTO.svg",
       "languages": [
         {
@@ -1789,7 +2039,9 @@
       "nameFr": "République de Trinité-et-Tobago"
     },
     {
+      "a2": "TR",
       "a3": "TUR",
+      "commonEn": "Türkiye",
       "flag": "TUR.svg",
       "languages": [
         {
@@ -1801,7 +2053,9 @@
       "nameFr": "République de Turquie"
     },
     {
+      "a2": "ZM",
       "a3": "ZMB",
+      "commonEn": "Zambia",
       "flag": "ZMB.svg",
       "languages": [
         {
@@ -1813,7 +2067,9 @@
       "nameFr": "République de Zambie"
     },
     {
+      "a2": "FJ",
       "a3": "FJI",
+      "commonEn": "Fiji",
       "flag": "FJI.svg",
       "languages": [
         {
@@ -1833,7 +2089,9 @@
       "nameFr": "République des Fidji"
     },
     {
+      "a2": "MV",
       "a3": "MDV",
+      "commonEn": "Maldives",
       "flag": "MDV.svg",
       "languages": [
         {
@@ -1845,7 +2103,9 @@
       "nameFr": "République des Maldives"
     },
     {
+      "a2": "PW",
       "a3": "PLW",
+      "commonEn": "Palau",
       "flag": "PLW.svg",
       "languages": [
         {
@@ -1861,7 +2121,9 @@
       "nameFr": "République des Palaos"
     },
     {
+      "a2": "PH",
       "a3": "PHL",
+      "commonEn": "Philippines",
       "flag": "PHL.svg",
       "languages": [
         {
@@ -1877,7 +2139,9 @@
       "nameFr": "République des Philippines"
     },
     {
+      "a2": "SC",
       "a3": "SYC",
+      "commonEn": "Seychelles",
       "flag": "SYC.svg",
       "languages": [
         {
@@ -1897,7 +2161,9 @@
       "nameFr": "République des Seychelles"
     },
     {
+      "a2": "MH",
       "a3": "MHL",
+      "commonEn": "Marshall Islands",
       "flag": "MHL.svg",
       "languages": [
         {
@@ -1913,7 +2179,9 @@
       "nameFr": "République des Îles Marshall"
     },
     {
+      "a2": "DO",
       "a3": "DOM",
+      "commonEn": "Dominican Republic",
       "flag": "DOM.svg",
       "languages": [
         {
@@ -1925,7 +2193,9 @@
       "nameFr": "République dominicaine"
     },
     {
+      "a2": "BI",
       "a3": "BDI",
+      "commonEn": "Burundi",
       "flag": "BDI.svg",
       "languages": [
         {
@@ -1945,7 +2215,9 @@
       "nameFr": "République du Burundi"
     },
     {
+      "a2": "BJ",
       "a3": "BEN",
+      "commonEn": "Benin",
       "flag": "BEN.svg",
       "languages": [
         {
@@ -1957,7 +2229,9 @@
       "nameFr": "République du Bénin"
     },
     {
+      "a2": "CM",
       "a3": "CMR",
+      "commonEn": "Cameroon",
       "flag": "CMR.svg",
       "languages": [
         {
@@ -1985,7 +2259,9 @@
       "nameFr": "République du Cameroun"
     },
     {
+      "a2": "CV",
       "a3": "CPV",
+      "commonEn": "Cape Verde",
       "flag": "CPV.svg",
       "languages": [
         {
@@ -2001,7 +2277,9 @@
       "nameFr": "République du Cap-Vert"
     },
     {
+      "a2": "CL",
       "a3": "CHL",
+      "commonEn": "Chile",
       "flag": "CHL.svg",
       "languages": [
         {
@@ -2013,7 +2291,9 @@
       "nameFr": "République du Chili"
     },
     {
+      "a2": "CG",
       "a3": "COG",
+      "commonEn": "Congo - Brazzaville",
       "flag": "COG.svg",
       "languages": [
         {
@@ -2033,7 +2313,9 @@
       "nameFr": "République du Congo"
     },
     {
+      "a2": "CR",
       "a3": "CRI",
+      "commonEn": "Costa Rica",
       "flag": "CRI.svg",
       "languages": [
         {
@@ -2045,7 +2327,9 @@
       "nameFr": "République du Costa Rica"
     },
     {
+      "a2": "GH",
       "a3": "GHA",
+      "commonEn": "Ghana",
       "flag": "GHA.svg",
       "languages": [
         {
@@ -2057,7 +2341,9 @@
       "nameFr": "République du Ghana"
     },
     {
+      "a2": "GT",
       "a3": "GTM",
+      "commonEn": "Guatemala",
       "flag": "GTM.svg",
       "languages": [
         {
@@ -2069,7 +2355,9 @@
       "nameFr": "République du Guatemala"
     },
     {
+      "a2": "HN",
       "a3": "HND",
+      "commonEn": "Honduras",
       "flag": "HND.svg",
       "languages": [
         {
@@ -2081,7 +2369,9 @@
       "nameFr": "République du Honduras"
     },
     {
+      "a2": "KZ",
       "a3": "KAZ",
+      "commonEn": "Kazakhstan",
       "flag": "KAZ.svg",
       "languages": [
         {
@@ -2097,7 +2387,9 @@
       "nameFr": "République du Kazakhstan"
     },
     {
+      "a2": "KE",
       "a3": "KEN",
+      "commonEn": "Kenya",
       "flag": "KEN.svg",
       "languages": [
         {
@@ -2113,7 +2405,9 @@
       "nameFr": "République du Kenya"
     },
     {
+      "a2": "LR",
       "a3": "LBR",
+      "commonEn": "Liberia",
       "flag": "LBR.svg",
       "languages": [
         {
@@ -2125,7 +2419,9 @@
       "nameFr": "République du Libéria"
     },
     {
+      "a2": "MW",
       "a3": "MWI",
+      "commonEn": "Malawi",
       "flag": "MWI.svg",
       "languages": [
         {
@@ -2141,7 +2437,9 @@
       "nameFr": "République du Malawi"
     },
     {
+      "a2": "ML",
       "a3": "MLI",
+      "commonEn": "Mali",
       "flag": "MLI.svg",
       "languages": [
         {
@@ -2157,7 +2455,9 @@
       "nameFr": "République du Mali"
     },
     {
+      "a2": "MZ",
       "a3": "MOZ",
+      "commonEn": "Mozambique",
       "flag": "MOZ.svg",
       "languages": [
         {
@@ -2169,7 +2469,9 @@
       "nameFr": "République du Mozambique"
     },
     {
+      "a2": "NI",
       "a3": "NIC",
+      "commonEn": "Nicaragua",
       "flag": "NIC.svg",
       "languages": [
         {
@@ -2181,7 +2483,9 @@
       "nameFr": "République du Nicaragua"
     },
     {
+      "a2": "NE",
       "a3": "NER",
+      "commonEn": "Niger",
       "flag": "NER.svg",
       "languages": [
         {
@@ -2193,7 +2497,9 @@
       "nameFr": "République du Niger"
     },
     {
+      "a2": "PA",
       "a3": "PAN",
+      "commonEn": "Panama",
       "flag": "PAN.svg",
       "languages": [
         {
@@ -2205,7 +2511,9 @@
       "nameFr": "République du Panama"
     },
     {
+      "a2": "PY",
       "a3": "PRY",
+      "commonEn": "Paraguay",
       "flag": "PRY.svg",
       "languages": [
         {
@@ -2221,7 +2529,9 @@
       "nameFr": "République du Paraguay"
     },
     {
+      "a2": "PE",
       "a3": "PER",
+      "commonEn": "Peru",
       "flag": "PER.svg",
       "languages": [
         {
@@ -2241,7 +2551,9 @@
       "nameFr": "République du Pérou"
     },
     {
+      "a2": "RW",
       "a3": "RWA",
+      "commonEn": "Rwanda",
       "flag": "RWA.svg",
       "languages": [
         {
@@ -2265,7 +2577,9 @@
       "nameFr": "République du Rwanda"
     },
     {
+      "a2": "SV",
       "a3": "SLV",
+      "commonEn": "El Salvador",
       "flag": "SLV.svg",
       "languages": [
         {
@@ -2277,15 +2591,17 @@
       "nameFr": "République du Salvador"
     },
     {
+      "a2": "SD",
       "a3": "SDN",
+      "commonEn": "Sudan",
       "flag": "SDN.svg",
       "languages": [
         {
-          "countryEndonym": "Republic of the Sudan",
+          "countryEndonym": "جمهورية السودان",
           "iso639_3": "ara"
         },
         {
-          "countryEndonym": "جمهورية السودان",
+          "countryEndonym": "Republic of the Sudan",
           "iso639_3": "eng"
         }
       ],
@@ -2293,7 +2609,9 @@
       "nameFr": "République du Soudan"
     },
     {
+      "a2": "SS",
       "a3": "SSD",
+      "commonEn": "South Sudan",
       "flag": "SSD.svg",
       "languages": [
         {
@@ -2305,7 +2623,9 @@
       "nameFr": "République du Soudan du Sud"
     },
     {
+      "a2": "SR",
       "a3": "SUR",
+      "commonEn": "Suriname",
       "flag": "SUR.svg",
       "languages": [
         {
@@ -2317,7 +2637,9 @@
       "nameFr": "République du Suriname"
     },
     {
+      "a2": "SN",
       "a3": "SEN",
+      "commonEn": "Senegal",
       "flag": "SEN.svg",
       "languages": [
         {
@@ -2329,7 +2651,9 @@
       "nameFr": "République du Sénégal"
     },
     {
+      "a2": "TJ",
       "a3": "TJK",
+      "commonEn": "Tajikistan",
       "flag": "TJK.svg",
       "languages": [
         {
@@ -2345,7 +2669,9 @@
       "nameFr": "République du Tadjikistan"
     },
     {
+      "a2": "TD",
       "a3": "TCD",
+      "commonEn": "Chad",
       "flag": "TCD.svg",
       "languages": [
         {
@@ -2361,7 +2687,9 @@
       "nameFr": "République du Tchad"
     },
     {
+      "a2": "YE",
       "a3": "YEM",
+      "commonEn": "Yemen",
       "flag": "YEM.svg",
       "languages": [
         {
@@ -2373,7 +2701,9 @@
       "nameFr": "République du Yémen"
     },
     {
+      "a2": "ZW",
       "a3": "ZWE",
+      "commonEn": "Zimbabwe",
       "flag": "ZWE.svg",
       "languages": [
         {
@@ -2393,7 +2723,9 @@
       "nameFr": "République du Zimbabwe"
     },
     {
+      "a2": "CD",
       "a3": "COD",
+      "commonEn": "Congo - Kinshasa",
       "flag": "COD.svg",
       "languages": [
         {
@@ -2421,7 +2753,9 @@
       "nameFr": "République Démocratique du Congo"
     },
     {
+      "a2": "TL",
       "a3": "TLS",
+      "commonEn": "Timor-Leste",
       "flag": "TLS.svg",
       "languages": [
         {
@@ -2437,7 +2771,9 @@
       "nameFr": "République démocratique du Timor-Leste"
     },
     {
+      "a2": "NP",
       "a3": "NPL",
+      "commonEn": "Nepal",
       "flag": "NPL.svg",
       "languages": [
         {
@@ -2449,7 +2785,9 @@
       "nameFr": "République démocratique fédérale du Népal"
     },
     {
+      "a2": "LA",
       "a3": "LAO",
+      "commonEn": "Laos",
       "flag": "LAO.svg",
       "languages": [
         {
@@ -2461,7 +2799,9 @@
       "nameFr": "République démocratique populaire lao"
     },
     {
+      "a2": "AL",
       "a3": "ALB",
+      "commonEn": "Albania",
       "flag": "ALB.svg",
       "languages": [
         {
@@ -2473,7 +2813,9 @@
       "nameFr": "République d’Albanie"
     },
     {
+      "a2": "FR",
       "a3": "FRA",
+      "commonEn": "France",
       "flag": "FRA.svg",
       "languages": [
         {
@@ -2485,7 +2827,9 @@
       "nameFr": "République française"
     },
     {
+      "a2": "DE",
       "a3": "DEU",
+      "commonEn": "Germany",
       "flag": "DEU.svg",
       "languages": [
         {
@@ -2497,7 +2841,9 @@
       "nameFr": "République fédérale d'Allemagne"
     },
     {
+      "a2": "SO",
       "a3": "SOM",
+      "commonEn": "Somalia",
       "flag": "SOM.svg",
       "languages": [
         {
@@ -2513,7 +2859,9 @@
       "nameFr": "République fédérale de Somalie"
     },
     {
+      "a2": "NG",
       "a3": "NGA",
+      "commonEn": "Nigeria",
       "flag": "NGA.svg",
       "languages": [
         {
@@ -2529,7 +2877,9 @@
       "nameFr": "République fédérale du Nigeria"
     },
     {
+      "a2": "ET",
       "a3": "ETH",
+      "commonEn": "Ethiopia",
       "flag": "ETH.svg",
       "languages": [
         {
@@ -2541,7 +2891,9 @@
       "nameFr": "République fédérale démocratique d'Éthiopie"
     },
     {
+      "a2": "BR",
       "a3": "BRA",
+      "commonEn": "Brazil",
       "flag": "BRA.svg",
       "languages": [
         {
@@ -2553,7 +2905,9 @@
       "nameFr": "République fédérative du Brésil"
     },
     {
+      "a2": "GA",
       "a3": "GAB",
+      "commonEn": "Gabon",
       "flag": "GAB.svg",
       "languages": [
         {
@@ -2565,7 +2919,9 @@
       "nameFr": "République gabonaise"
     },
     {
+      "a2": "IR",
       "a3": "IRN",
+      "commonEn": "Iran",
       "flag": "IRN.svg",
       "languages": [
         {
@@ -2577,7 +2933,9 @@
       "nameFr": "République islamique d'Iran"
     },
     {
+      "a2": "MR",
       "a3": "MRT",
+      "commonEn": "Mauritania",
       "flag": "MRT.svg",
       "languages": [
         {
@@ -2589,15 +2947,17 @@
       "nameFr": "République islamique de Mauritanie"
     },
     {
+      "a2": "PK",
       "a3": "PAK",
+      "commonEn": "Pakistan",
       "flag": "PAK.svg",
       "languages": [
         {
-          "countryEndonym": "Islamic Republic of Pakistan",
+          "countryEndonym": "اسلامی جمہوریت پاکستان",
           "iso639_3": "urd"
         },
         {
-          "countryEndonym": "اسلامی جمہوریت پاکستان",
+          "countryEndonym": "Islamic Republic of Pakistan",
           "iso639_3": "eng"
         }
       ],
@@ -2605,7 +2965,9 @@
       "nameFr": "République islamique du Pakistan"
     },
     {
+      "a2": "IT",
       "a3": "ITA",
+      "commonEn": "Italy",
       "flag": "ITA.svg",
       "languages": [
         {
@@ -2617,7 +2979,9 @@
       "nameFr": "République italienne"
     },
     {
+      "a2": "KG",
       "a3": "KGZ",
+      "commonEn": "Kyrgyzstan",
       "flag": "KGZ.svg",
       "languages": [
         {
@@ -2633,7 +2997,9 @@
       "nameFr": "République kirghize"
     },
     {
+      "a2": "LB",
       "a3": "LBN",
+      "commonEn": "Lebanon",
       "flag": "LBN.svg",
       "languages": [
         {
@@ -2645,7 +3011,9 @@
       "nameFr": "République libanaise"
     },
     {
+      "a2": "UY",
       "a3": "URY",
+      "commonEn": "Uruguay",
       "flag": "URY.svg",
       "languages": [
         {
@@ -2657,7 +3025,9 @@
       "nameFr": "République orientale de l'Uruguay"
     },
     {
+      "a2": "CN",
       "a3": "CHN",
+      "commonEn": "China",
       "flag": "CHN.svg",
       "languages": [
         {
@@ -2673,7 +3043,9 @@
       "nameFr": "République populaire de Chine"
     },
     {
+      "a2": "BD",
       "a3": "BGD",
+      "commonEn": "Bangladesh",
       "flag": "BGD.svg",
       "languages": [
         {
@@ -2685,7 +3057,9 @@
       "nameFr": "République populaire du Bangladesh"
     },
     {
+      "a2": "KP",
       "a3": "PRK",
+      "commonEn": "North Korea",
       "flag": "PRK.svg",
       "languages": [
         {
@@ -2697,7 +3071,9 @@
       "nameFr": "République populaire démocratique de Corée"
     },
     {
+      "a2": "PT",
       "a3": "PRT",
+      "commonEn": "Portugal",
       "flag": "PRT.svg",
       "languages": [
         {
@@ -2709,7 +3085,9 @@
       "nameFr": "République portugaise"
     },
     {
+      "a2": "SK",
       "a3": "SVK",
+      "commonEn": "Slovakia",
       "flag": "SVK.svg",
       "languages": [
         {
@@ -2721,7 +3099,9 @@
       "nameFr": "République slovaque"
     },
     {
+      "a2": "VN",
       "a3": "VNM",
+      "commonEn": "Vietnam",
       "flag": "VNM.svg",
       "languages": [
         {
@@ -2733,7 +3113,9 @@
       "nameFr": "République socialiste du Viêt Nam"
     },
     {
+      "a2": "LK",
       "a3": "LKA",
+      "commonEn": "Sri Lanka",
       "flag": "LKA.svg",
       "languages": [
         {
@@ -2749,7 +3131,9 @@
       "nameFr": "République socialiste démocratique du Sri Lanka"
     },
     {
+      "a2": "CZ",
       "a3": "CZE",
+      "commonEn": "Czechia",
       "flag": "CZE.svg",
       "languages": [
         {
@@ -2761,7 +3145,9 @@
       "nameFr": "République tchèque"
     },
     {
+      "a2": "TG",
       "a3": "TGO",
+      "commonEn": "Togo",
       "flag": "TGO.svg",
       "languages": [
         {
@@ -2773,7 +3159,9 @@
       "nameFr": "République togolaise"
     },
     {
+      "a2": "TN",
       "a3": "TUN",
+      "commonEn": "Tunisia",
       "flag": "TUN.svg",
       "languages": [
         {
@@ -2785,7 +3173,9 @@
       "nameFr": "République tunisienne"
     },
     {
+      "a2": "TZ",
       "a3": "TZA",
+      "commonEn": "Tanzania",
       "flag": "TZA.svg",
       "languages": [
         {
@@ -2801,7 +3191,9 @@
       "nameFr": "République unie de Tanzanie"
     },
     {
+      "a2": "BL",
       "a3": "BLM",
+      "commonEn": "St. Barthélemy",
       "flag": "BLM.svg",
       "languages": [
         {
@@ -2813,7 +3205,9 @@
       "nameFr": "Saint-Barthélemy"
     },
     {
+      "a2": "MF",
       "a3": "MAF",
+      "commonEn": "St. Martin",
       "flag": "MAF.svg",
       "languages": [
         {
@@ -2825,7 +3219,9 @@
       "nameFr": "Saint-Martin (Antilles françaises)"
     },
     {
+      "a2": "SX",
       "a3": "SXM",
+      "commonEn": "Sint Maarten",
       "flag": "SXM.svg",
       "languages": [
         {
@@ -2841,7 +3237,9 @@
       "nameFr": "Saint-Martin (Royaume des Pays-Bas)"
     },
     {
+      "a2": "PM",
       "a3": "SPM",
+      "commonEn": "St. Pierre & Miquelon",
       "flag": "SPM.svg",
       "languages": [
         {
@@ -2853,7 +3251,9 @@
       "nameFr": "Saint-Pierre-et-Miquelon"
     },
     {
+      "a2": "VC",
       "a3": "VCT",
+      "commonEn": "St. Vincent & Grenadines",
       "flag": "VCT.svg",
       "languages": [
         {
@@ -2865,7 +3265,9 @@
       "nameFr": "Saint-Vincent et les Grenadines"
     },
     {
+      "a2": "SH",
       "a3": "SHN",
+      "commonEn": "St. Helena",
       "flag": "SHN.svg",
       "languages": [
         {
@@ -2877,7 +3279,9 @@
       "nameFr": "Sainte-Hélène, Ascension et Tristan da Cunha"
     },
     {
+      "a2": "LC",
       "a3": "LCA",
+      "commonEn": "St. Lucia",
       "flag": "LCA.svg",
       "languages": [
         {
@@ -2893,7 +3297,9 @@
       "nameFr": "Sainte-Lucie"
     },
     {
+      "a2": "AS",
       "a3": "ASM",
+      "commonEn": "American Samoa",
       "flag": "ASM.svg",
       "languages": [
         {
@@ -2909,7 +3315,9 @@
       "nameFr": "Samoa américaines"
     },
     {
+      "a2": "ST",
       "a3": "STP",
+      "commonEn": "São Tomé & Príncipe",
       "flag": "STP.svg",
       "languages": [
         {
@@ -2921,7 +3329,9 @@
       "nameFr": "SAO TOMÉ-ET-PRINCIPE"
     },
     {
+      "a2": "SG",
       "a3": "SGP",
+      "commonEn": "Singapore",
       "flag": "SGP.svg",
       "languages": [
         {
@@ -2945,7 +3355,9 @@
       "nameFr": "Singapour"
     },
     {
+      "a2": "OM",
       "a3": "OMN",
+      "commonEn": "Oman",
       "flag": "OMN.svg",
       "languages": [
         {
@@ -2957,7 +3369,9 @@
       "nameFr": "Sultanat d'Oman"
     },
     {
+      "a2": "SJ",
       "a3": "SJM",
+      "commonEn": "Svalbard & Jan Mayen",
       "flag": "SJM.svg",
       "languages": [
         {
@@ -2969,7 +3383,9 @@
       "nameFr": "Svalbard et île Jan Mayen"
     },
     {
+      "a2": "IO",
       "a3": "IOT",
+      "commonEn": "British Indian Ocean Territory",
       "flag": "IOT.svg",
       "languages": [
         {
@@ -2981,7 +3397,9 @@
       "nameFr": "Territoire britannique de l'océan Indien"
     },
     {
+      "a2": "TK",
       "a3": "TKL",
+      "commonEn": "Tokelau",
       "flag": "TKL.svg",
       "languages": [
         {
@@ -2997,7 +3415,9 @@
       "nameFr": "Tokelau"
     },
     {
+      "a2": "TM",
       "a3": "TKM",
+      "commonEn": "Turkmenistan",
       "flag": "TKM.svg",
       "languages": [
         {
@@ -3009,7 +3429,9 @@
       "nameFr": "Turkménistan"
     },
     {
+      "a2": "UA",
       "a3": "UKR",
+      "commonEn": "Ukraine",
       "flag": "UKR.svg",
       "languages": [
         {
@@ -3021,7 +3443,9 @@
       "nameFr": "Ukraine"
     },
     {
+      "a2": "KM",
       "a3": "COM",
+      "commonEn": "Comoros",
       "flag": "COM.svg",
       "languages": [
         {
@@ -3041,7 +3465,9 @@
       "nameFr": "Union des Comores"
     },
     {
+      "a2": "VU",
       "a3": "VUT",
+      "commonEn": "Vanuatu",
       "flag": "VUT.svg",
       "languages": [
         {
@@ -3061,7 +3487,9 @@
       "nameFr": "Vanuatu"
     },
     {
+      "a2": "WF",
       "a3": "WLF",
+      "commonEn": "Wallis & Futuna",
       "flag": "WLF.svg",
       "languages": [
         {
@@ -3073,7 +3501,9 @@
       "nameFr": "Wallis et Futuna"
     },
     {
+      "a2": "AF",
       "a3": "AFG",
+      "commonEn": "Afghanistan",
       "flag": "AFG.svg",
       "languages": [
         {
@@ -3089,7 +3519,9 @@
       "nameFr": "Émirat islamique d'Afghanistan"
     },
     {
+      "a2": "AE",
       "a3": "ARE",
+      "commonEn": "United Arab Emirates",
       "flag": "ARE.svg",
       "languages": [
         {
@@ -3101,7 +3533,9 @@
       "nameFr": "Émirats arabes unis"
     },
     {
+      "a2": "ER",
       "a3": "ERI",
+      "commonEn": "Eritrea",
       "flag": "ERI.svg",
       "languages": [
         {
@@ -3121,7 +3555,9 @@
       "nameFr": "Érythrée"
     },
     {
+      "a2": "IL",
       "a3": "ISR",
+      "commonEn": "Israel",
       "flag": "ISR.svg",
       "languages": [
         {
@@ -3133,7 +3569,9 @@
       "nameFr": "État d'Israël"
     },
     {
+      "a2": "LY",
       "a3": "LBY",
+      "commonEn": "Libya",
       "flag": "LBY.svg",
       "languages": [
         {
@@ -3145,7 +3583,9 @@
       "nameFr": "État de Libye"
     },
     {
+      "a2": "PS",
       "a3": "PSE",
+      "commonEn": "Palestinian Territories",
       "flag": "PSE.svg",
       "languages": [
         {
@@ -3157,7 +3597,9 @@
       "nameFr": "État de Palestine"
     },
     {
+      "a2": "TV",
       "a3": "TUV",
+      "commonEn": "Tuvalu",
       "flag": "TUV.svg",
       "languages": [
         {
@@ -3173,7 +3615,9 @@
       "nameFr": "État des Tuvalu"
     },
     {
+      "a2": "KW",
       "a3": "KWT",
+      "commonEn": "Kuwait",
       "flag": "KWT.svg",
       "languages": [
         {
@@ -3185,7 +3629,9 @@
       "nameFr": "État du Koweït"
     },
     {
+      "a2": "QA",
       "a3": "QAT",
+      "commonEn": "Qatar",
       "flag": "QAT.svg",
       "languages": [
         {
@@ -3197,7 +3643,9 @@
       "nameFr": "État du Qatar"
     },
     {
+      "a2": "PG",
       "a3": "PNG",
+      "commonEn": "Papua New Guinea",
       "flag": "PNG.svg",
       "languages": [
         {
@@ -3217,7 +3665,9 @@
       "nameFr": "État indépendant de Papouasie-Nouvelle-Guinée"
     },
     {
+      "a2": "WS",
       "a3": "WSM",
+      "commonEn": "Samoa",
       "flag": "WSM.svg",
       "languages": [
         {
@@ -3233,7 +3683,9 @@
       "nameFr": "État indépendant des Samoa"
     },
     {
+      "a2": "PR",
       "a3": "PRI",
+      "commonEn": "Puerto Rico",
       "flag": "PRI.svg",
       "languages": [
         {
@@ -3249,7 +3701,9 @@
       "nameFr": "État libre associé de Porto Rico"
     },
     {
+      "a2": "BO",
       "a3": "BOL",
+      "commonEn": "Bolivia",
       "flag": "BOL.svg",
       "languages": [
         {
@@ -3273,7 +3727,9 @@
       "nameFr": "État plurinational de Bolivie"
     },
     {
+      "a2": "FM",
       "a3": "FSM",
+      "commonEn": "Micronesia",
       "flag": "FSM.svg",
       "languages": [
         {
@@ -3285,7 +3741,9 @@
       "nameFr": "États fédérés de Micronésie"
     },
     {
+      "a2": "US",
       "a3": "USA",
+      "commonEn": "United States",
       "flag": "USA.svg",
       "languages": [
         {
@@ -3297,7 +3755,9 @@
       "nameFr": "États-Unis"
     },
     {
+      "a2": "MX",
       "a3": "MEX",
+      "commonEn": "Mexico",
       "flag": "MEX.svg",
       "languages": [
         {
@@ -3309,7 +3769,9 @@
       "nameFr": "États-Unis mexicains"
     },
     {
+      "a2": "CX",
       "a3": "CXR",
+      "commonEn": "Christmas Island",
       "flag": "CXR.svg",
       "languages": [
         {
@@ -3321,7 +3783,9 @@
       "nameFr": "Île Christmas"
     },
     {
+      "a2": "IM",
       "a3": "IMN",
+      "commonEn": "Isle of Man",
       "flag": "IMN.svg",
       "languages": [
         {
@@ -3337,7 +3801,9 @@
       "nameFr": "île de Man"
     },
     {
+      "a2": "NF",
       "a3": "NFK",
+      "commonEn": "Norfolk Island",
       "flag": "NFK.svg",
       "languages": [
         {
@@ -3353,7 +3819,9 @@
       "nameFr": "île Norfolk"
     },
     {
+      "a2": "KY",
       "a3": "CYM",
+      "commonEn": "Cayman Islands",
       "flag": "CYM.svg",
       "languages": [
         {
@@ -3365,7 +3833,9 @@
       "nameFr": "Îles Caïmans"
     },
     {
+      "a2": "CC",
       "a3": "CCK",
+      "commonEn": "Cocos (Keeling) Islands",
       "flag": "CCK.svg",
       "languages": [
         {
@@ -3377,7 +3847,9 @@
       "nameFr": "îles Cocos"
     },
     {
+      "a2": "CK",
       "a3": "COK",
+      "commonEn": "Cook Islands",
       "flag": "COK.svg",
       "languages": [
         {
@@ -3393,7 +3865,9 @@
       "nameFr": "Îles Cook"
     },
     {
+      "a2": "FO",
       "a3": "FRO",
+      "commonEn": "Faroe Islands",
       "flag": "FRO.svg",
       "languages": [
         {
@@ -3409,7 +3883,9 @@
       "nameFr": "Îles Féroé"
     },
     {
+      "a2": "FK",
       "a3": "FLK",
+      "commonEn": "Falkland Islands",
       "flag": "FLK.svg",
       "languages": [
         {
@@ -3421,7 +3897,9 @@
       "nameFr": "Îles Malouines"
     },
     {
+      "a2": "UM",
       "a3": "UMI",
+      "commonEn": "U.S. Outlying Islands",
       "flag": "UMI.svg",
       "languages": [
         {
@@ -3433,7 +3911,9 @@
       "nameFr": "Îles mineures éloignées des États-Unis"
     },
     {
+      "a2": "PN",
       "a3": "PCN",
+      "commonEn": "Pitcairn Islands",
       "flag": "PCN.svg",
       "languages": [
         {
@@ -3449,7 +3929,9 @@
       "nameFr": "Îles Pitcairn"
     },
     {
+      "a2": "SB",
       "a3": "SLB",
+      "commonEn": "Solomon Islands",
       "flag": "SLB.svg",
       "languages": [
         {
@@ -3461,7 +3943,9 @@
       "nameFr": "Îles Salomon"
     },
     {
+      "a2": "TC",
       "a3": "TCA",
+      "commonEn": "Turks & Caicos Islands",
       "flag": "TCA.svg",
       "languages": [
         {
@@ -3473,7 +3957,9 @@
       "nameFr": "îles Turques et Caïques"
     },
     {
+      "a2": "VG",
       "a3": "VGB",
+      "commonEn": "British Virgin Islands",
       "flag": "VGB.svg",
       "languages": [
         {
@@ -3485,7 +3971,9 @@
       "nameFr": "Îles Vierges britanniques"
     },
     {
+      "a2": "VI",
       "a3": "VIR",
+      "commonEn": "U.S. Virgin Islands",
       "flag": "VIR.svg",
       "languages": [
         {

@@ -37,15 +37,12 @@ fn call(
     let mut req = cfg
         .agent_for(&url)
         .post(&url)
-        .set("Ocp-Apim-Subscription-Key", key.trim())
-        .set("Content-Type", "application/json");
+        .header("Ocp-Apim-Subscription-Key", key.trim())
+        .header("Content-Type", "application/json");
     if !cfg.azure_region.trim().is_empty() {
-        req = req.set("Ocp-Apim-Subscription-Region", cfg.azure_region.trim());
+        req = req.header("Ocp-Apim-Subscription-Region", cfg.azure_region.trim());
     }
-    let resp = req
-        .send_json(serde_json::Value::Array(body))
-        .map_err(Error::from_ureq)?;
-    let v: serde_json::Value = resp.into_json().map_err(|e| Error::Format(e.to_string()))?;
+    let v = super::json_answer(req.send_json(serde_json::Value::Array(body)))?;
     parse_answers(&v, texts.len())
 }
 

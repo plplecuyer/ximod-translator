@@ -153,7 +153,8 @@ impl XimodApp {
             }
         };
         let mut close = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -168,7 +169,7 @@ impl XimodApp {
             {
                 close = true;
             }
-            self.journal_body(vctx);
+            self.journal_body(vui);
             if !just_opened && let Some((x, y, w, h)) = read_geometry_of(vctx) {
                 self.config.journal_win = [x, y, w, h];
             }
@@ -183,7 +184,8 @@ impl XimodApp {
         }
     }
 
-    fn journal_body(&mut self, vctx: &egui::Context) {
+    fn journal_body(&mut self, vui: &mut egui::Ui) {
+        let vctx = &vui.ctx().clone();
         let t = |k: &str| self.i18n.t(k);
         let (lbl_level, lbl_all, lbl_warn, lbl_err) = (
             t("journal-level"),
@@ -230,7 +232,7 @@ impl XimodApp {
         let mut save = false;
         let mut clear = false;
         // The buttons at the bottom.
-        egui::TopBottomPanel::bottom("ximod-journal-buttons").show(vctx, |ui| {
+        egui::Panel::bottom("ximod-journal-buttons").show(vui, |ui| {
             ui.add_space(4.0);
             ui.horizontal(|ui| {
                 let any_sel = !self.journal_win.selected.is_empty();
@@ -271,7 +273,7 @@ impl XimodApp {
             });
             ui.add_space(2.0);
         });
-        egui::CentralPanel::default().show(vctx, |ui| {
+        egui::CentralPanel::default().show(vui, |ui| {
             // The filters (1).
             ui.horizontal_wrapped(|ui| {
                 ui.label(&lbl_level);
@@ -603,7 +605,7 @@ impl XimodApp {
         if let Some(c) = color {
             rt = rt.color(c);
         }
-        let key = super::shortcut_text(ui.ctx(), &super::MENU_SHORTCUTS.journal, &self.i18n);
+        let key = super::cmd_text(ui.ctx(), crate::shortcuts::Cmd::Journal, &self.i18n);
         ui.add(egui::Button::new(rt).small())
             .on_hover_text(format!("{label} ({key})"))
             .clicked()

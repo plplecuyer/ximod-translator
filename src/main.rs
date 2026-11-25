@@ -16,6 +16,11 @@ use ximod_translator::{
 };
 
 fn main() -> eframe::Result<()> {
+    // D-104: under Linux and macOS, `ximod-cli` is a link to this
+    // executable, which then runs as the command line.
+    if let Some(code) = ximod_translator::cli::run_if_invoked_as_cli() {
+        std::process::exit(code);
+    }
     // Where everything the user produces is written (E-05): decided once, before
     // the configuration is read — and before the log, which goes to
     // `logs/ximod.log` there (the Windows build has no console).
@@ -84,17 +89,17 @@ fn main() -> eframe::Result<()> {
     // on it, even in a dual-monitor setup.
     let screen = detect_primary_screen();
 
-    // Startup work (detect installed games + (re)build game dictionaries from
-    // their STRINGS) runs on a background thread and is visualized by the splash
-    // progress bar. It runs even when the splash is disabled.
-    let splash_state = std::sync::Arc::new(splash::SplashState::new());
-    let worker_state = splash_state.clone();
-    let worker = std::thread::spawn(move || {
-        ximod_translator::run_startup_generation(&worker_state);
-    });
+    // The game sheets before anything else (a few milliseconds); then the
+    // preparation of the launch — detection of the games and their bases —
+    // in the background, the window not waiting for it (E-13, D-116).
+    // `[Games] AutoDetectGames=0`: neither, the Dictionnaires menu keeps its
+    // commands (R-E13-01).
+    ximod_translator::prepare::init_sheets();
+    let preparation = ximod_translator::prepare::Preparation::launch(&cfg);
 
     // Native transparent splash, shown ALONE (no window) before the main window,
-    // then dissolved. Its progress bar tracks the background work above.
+    // then dissolved, after its own duration: the preparation goes on behind
+    // the window, its progress in the status bar.
     if cfg.splash_screen_seconds > 0
         && let Some(path) = get_splash_path()
     {
@@ -104,17 +109,13 @@ fn main() -> eframe::Result<()> {
             fade_duration: Duration::from_millis(500),
             screen_width: screen.width,
             screen_height: screen.height,
-            progress: Some(splash_state.clone()),
+            progress: None,
         };
         match splash::show_splash(splash_config) {
             Ok(()) => tracing::info!("splash done"),
             Err(e) => tracing::warn!("splash error (continuing): {e}"),
         }
     }
-
-    // Make sure the background work finished before building the UI, so the
-    // freshly generated dictionaries and updated Config.ini are on disk.
-    let _ = worker.join();
 
     // Restore the last position, or center on the primary screen on first launch
     // (a fresh Config.ini has window_x/y = -1).
@@ -146,6 +147,7 @@ fn main() -> eframe::Result<()> {
         Box::new(move |cc| {
             Ok(Box::new(
                 ui::XimodApp::new(cc, screen)
+                    .with_preparation(preparation)
                     .with_startup_game(game)
                     .with_startup_files(files),
             ))

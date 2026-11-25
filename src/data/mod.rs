@@ -131,13 +131,22 @@ pub struct LanguageEntry {
     /// Display name / canonical endonym (e.g. "English", "Deutsch").
     pub name: String,
     /// Font covering this language's script: path relative to `assets/fonts/`
-    /// (e.g. "Noto_Sans_Thai/static/NotoSansThai-Regular.ttf").
+    /// (e.g. "Noto_Sans_Thai/NotoSansThai-Regular.ttf").
     #[serde(default)]
     pub font: String,
     /// Countries where the language is spoken (ISO 3166-1 alpha-3), for reverse
     /// lookup language → countries.
     #[serde(default)]
     pub countries: Vec<String>,
+    /// Decimal separator of its numbers (CLDR), empty when unknown (B.6).
+    #[serde(default)]
+    pub decimal: String,
+    /// Its thousands separators (CLDR), the first the usual one (B.6).
+    #[serde(default)]
+    pub group: String,
+    /// Written from right to left (Arabic, Hebrew, Syriac… scripts; E-08).
+    #[serde(default)]
+    pub rtl: bool,
 }
 
 /// The canonical language table (replacement for `LANGUAGE_MAP`).
@@ -153,6 +162,13 @@ pub struct LanguagesData {
     /// iso639-1 → index (built after load, not part of the JSON).
     #[serde(skip)]
     index_by_iso1: HashMap<String, usize>,
+}
+
+/// The language table read once for the whole process (number writing,
+/// direction): the copy the reading functions share.
+pub fn languages() -> &'static LanguagesData {
+    static TABLE: std::sync::OnceLock<LanguagesData> = std::sync::OnceLock::new();
+    TABLE.get_or_init(LanguagesData::load)
 }
 
 impl LanguagesData {
@@ -219,6 +235,19 @@ impl LanguagesData {
 
     pub fn is_empty(&self) -> bool {
         self.languages.is_empty()
+    }
+
+    /// Whether a language is written from right to left (E-08).
+    pub fn is_rtl(&self, iso3: &str) -> bool {
+        self.get_iso3(iso3).is_some_and(|l| l.rtl)
+    }
+
+    /// The decimal and thousands separators of a language (B.6), when
+    /// the table gives them.
+    pub fn number_separators(&self, iso3: &str) -> Option<(&str, &str)> {
+        self.get_iso3(iso3)
+            .filter(|l| !l.decimal.is_empty())
+            .map(|l| (l.decimal.as_str(), l.group.as_str()))
     }
 
     /// Every distinct font referenced by the language table (paths relative to
@@ -298,9 +327,15 @@ pub struct CountryLanguage {
 pub struct CountryEntry {
     /// ISO 3166-1 alpha-3 (CA3), e.g. "ZAF".
     pub a3: String,
+    /// ISO 3166-1 alpha-2, e.g. "ZA" (B.6).
+    #[serde(default)]
+    pub a2: String,
     /// English name (NAP).
     #[serde(rename = "nameEn", default)]
     pub name_en: String,
+    /// Common English name (CLDR), e.g. "France" (B.6).
+    #[serde(rename = "commonEn", default)]
+    pub common_en: String,
     /// French name (NFP).
     #[serde(rename = "nameFr", default)]
     pub name_fr: String,
@@ -390,6 +425,10 @@ impl CountriesData {
 pub struct CountryNamesData {
     #[serde(default)]
     pub names: HashMap<String, HashMap<String, String>>,
+    /// The common names (CLDR) per country and locale: « France » where
+    /// `names` may hold « République française » (B.6).
+    #[serde(default)]
+    pub common: HashMap<String, HashMap<String, String>>,
 }
 
 impl CountryNamesData {
@@ -401,6 +440,15 @@ impl CountryNamesData {
     /// The name of country `a3` in `locale` (ISO 639-3), if present.
     pub fn name_for(&self, a3: &str, locale: &str) -> Option<&str> {
         self.names
+            .get(&a3.to_uppercase())
+            .and_then(|m| m.get(locale))
+            .map(|s| s.as_str())
+            .filter(|s| !s.is_empty())
+    }
+
+    /// The common name of country `a3` in `locale` (ISO 639-3), if present.
+    pub fn common_for(&self, a3: &str, locale: &str) -> Option<&str> {
+        self.common
             .get(&a3.to_uppercase())
             .and_then(|m| m.get(locale))
             .map(|s| s.as_str())

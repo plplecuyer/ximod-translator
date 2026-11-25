@@ -445,7 +445,7 @@ mod tests {
         assert!(r.comment.starts_with("Ralof (h) · MQ101"), "{}", r.comment);
     }
 
-    /// T-C03-03 / C-13: « voix ✔ / ✘ » from the voice map.
+    /// T-C03-03 / C-13: « voix ✔ / ✖ » from the voice map.
     #[test]
     fn voice_marks_follow_the_map() {
         let i18n = fra();
@@ -469,7 +469,7 @@ mod tests {
         let a = g.generated(find(&tm.entries, "INFO", "NAM1", 0x01000301, 1));
         assert!(a.ends_with(" · voix ✔"), "{a}");
         let b = g.generated(find(&tm.entries, "INFO", "NAM1", 0x01000303, 1));
-        assert!(b.ends_with(" · voix ✘"), "{b}");
+        assert!(b.ends_with(" · voix ✖"), "{b}");
     }
 
     /// The cache fills lazily and follows its key; long texts are cut.

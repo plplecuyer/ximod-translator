@@ -2,7 +2,7 @@
 //! two tabs only: **Couleur de l'index** (the ACI palette grid) and **Couleurs
 //! vraies** (a hue/saturation area + luminance slider + HSL/RGB fields).
 
-use eframe::egui::{self, Color32, Rect, Rounding, Sense, Stroke, pos2, vec2};
+use eframe::egui::{self, Color32, CornerRadius, Rect, Sense, Stroke, pos2, vec2};
 
 use crate::color;
 use crate::i18n::I18n;
@@ -118,11 +118,12 @@ impl ColorPicker {
         ui.horizontal(|ui| {
             let (rect, _) = ui.allocate_exact_size(vec2(64.0, 22.0), Sense::hover());
             ui.painter()
-                .rect_filled(rect, Rounding::same(3.0), self.color32());
+                .rect_filled(rect, CornerRadius::same(3), self.color32());
             ui.painter().rect_stroke(
                 rect,
-                Rounding::same(3.0),
+                CornerRadius::same(3),
                 Stroke::new(1.0_f32, Color32::GRAY),
+                egui::StrokeKind::Middle,
             );
             ui.label(format!("{},{},{}", self.r, self.g, self.b));
             ui.add_space(12.0);
@@ -161,9 +162,18 @@ impl ColorPicker {
                 let rgb = color::aci_rgb(idx);
                 let rect =
                     Rect::from_min_size(origin + vec2(c as f32 * cell.x, r as f32 * cell.y), cell);
-                painter.rect_filled(rect, Rounding::ZERO, Color32::from_rgb(rgb.0, rgb.1, rgb.2));
+                painter.rect_filled(
+                    rect,
+                    CornerRadius::ZERO,
+                    Color32::from_rgb(rgb.0, rgb.1, rgb.2),
+                );
                 if self.index == idx {
-                    painter.rect_stroke(rect, Rounding::ZERO, Stroke::new(2.0_f32, Color32::BLACK));
+                    painter.rect_stroke(
+                        rect,
+                        CornerRadius::ZERO,
+                        Stroke::new(2.0_f32, Color32::BLACK),
+                        egui::StrokeKind::Middle,
+                    );
                 }
             }
         }
@@ -210,10 +220,24 @@ impl ColorPicker {
         for (i, idx) in range.clone().enumerate() {
             let rgb = color::aci_rgb(idx);
             let rect = Rect::from_min_size(origin + vec2(i as f32 * cell.x, 0.0), cell);
-            painter.rect_filled(rect, Rounding::ZERO, Color32::from_rgb(rgb.0, rgb.1, rgb.2));
-            painter.rect_stroke(rect, Rounding::ZERO, Stroke::new(0.5_f32, Color32::GRAY));
+            painter.rect_filled(
+                rect,
+                CornerRadius::ZERO,
+                Color32::from_rgb(rgb.0, rgb.1, rgb.2),
+            );
+            painter.rect_stroke(
+                rect,
+                CornerRadius::ZERO,
+                Stroke::new(0.5_f32, Color32::GRAY),
+                egui::StrokeKind::Middle,
+            );
             if self.index == idx {
-                painter.rect_stroke(rect, Rounding::ZERO, Stroke::new(2.0_f32, Color32::BLACK));
+                painter.rect_stroke(
+                    rect,
+                    CornerRadius::ZERO,
+                    Stroke::new(2.0_f32, Color32::BLACK),
+                    egui::StrokeKind::Middle,
+                );
             }
         }
         if resp.clicked()
@@ -329,7 +353,11 @@ impl ColorPicker {
                     origin + vec2(i as f32 * cw, j as f32 * ch),
                     vec2(cw + 1.0, ch + 1.0),
                 );
-                painter.rect_filled(rect, Rounding::ZERO, Color32::from_rgb(rgb.0, rgb.1, rgb.2));
+                painter.rect_filled(
+                    rect,
+                    CornerRadius::ZERO,
+                    Color32::from_rgb(rgb.0, rgb.1, rgb.2),
+                );
             }
         }
         // Cursor at current (h, s).
@@ -358,13 +386,18 @@ impl ColorPicker {
             let rgb = color::hsl_to_rgb(self.h, self.s, l);
             let rect =
                 Rect::from_min_size(origin + vec2(0.0, j as f32 * sh), vec2(size.x, sh + 1.0));
-            painter.rect_filled(rect, Rounding::ZERO, Color32::from_rgb(rgb.0, rgb.1, rgb.2));
+            painter.rect_filled(
+                rect,
+                CornerRadius::ZERO,
+                Color32::from_rgb(rgb.0, rgb.1, rgb.2),
+            );
         }
         let y = origin.y + (1.0 - self.l / 100.0) as f32 * size.y;
         painter.rect_stroke(
             Rect::from_min_size(pos2(origin.x - 2.0, y - 2.0), vec2(size.x + 4.0, 4.0)),
-            Rounding::ZERO,
+            CornerRadius::ZERO,
             Stroke::new(1.5_f32, Color32::BLACK),
+            egui::StrokeKind::Middle,
         );
         if (resp.dragged() || resp.clicked())
             && let Some(p) = resp.interact_pointer_pos()

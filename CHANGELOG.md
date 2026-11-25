@@ -6,6 +6,377 @@ version étiquetée devient le corps de la page de version (S-02).
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-24
+
+Fin du lot 2 de l'étape 3, « Langues, préférences, correcteur » : egui 0.37
+et les dépendances à jour (D-103), la préparation du lancement en
+arrière-plan (E-13), les préférences par jeu (E-04), les raccourcis
+configurables (E-15), le correcteur de la source (D-11), les nombres
+comparés selon la langue et la recherche des pays (B.6), les langues de
+droite à gauche et le chinois simplifié ↔ traditionnel (E-08), une taille
+livrée réduite (D-104) ; et la vérification des mises à jour (E-14), qui
+part avec cette version (D-125). L'interface en arabe reste retirée : ses
+libellés ne passent pas encore par l'ordre bidirectionnel.
+
+### Ajouté (étape 3, lot 2)
+- Vérification des mises à jour (E-14, demande du 13 novembre 2026), comme
+  dans XIMOD Architect : une fois par jour au démarrage, une requête HTTPS
+  à l'API publique des versions de GitHub lit le numéro de la dernière
+  version publiée ; une version plus récente fait apparaître une bannière
+  discrète sous la barre de menus, avec le lien *Télécharger sur GitHub*
+  (et *Nexus Mods* quand `[Update] UpdateNexusUrl` est renseignée), que le
+  bouton ✕ masque jusqu'au prochain lancement. *Aide › Rechercher les mises
+  à jour…* lance la vérification à la demande et en montre le résultat (à
+  jour, nouvelle version, échec). *Paramètres › Général › Vérifier les
+  mises à jour au démarrage* (`[Update] CheckUpdates`, cochée par défaut).
+  Le proxy des Paramètres › En ligne est suivi ; rien n'est envoyé sur
+  l'utilisateur, rien n'est téléchargé ni installé ; chaque résultat va au
+  journal. Module `release_check` dans la bibliothèque. Manuel § 4.9,
+  16.1, 17.
+
+- Préparation du lancement en arrière-plan (E-13, D-116) : la fenêtre
+  principale s'ouvre sans attendre la détection des jeux ni la
+  construction des bases de jeu ; la barre d'état affiche « Préparation
+  des bases de jeu : Skyrim SE (1 / 2)… » avec un indicateur, et le
+  journal reçoit une entrée par jeu détecté, par base construite et à la fin.
+  Un document ouvert pendant la préparation reçoit la base de son jeu
+  dès qu'elle est prête (journal « … en préparation : appliquée dès
+  qu'elle sera prête » puis « … prête : appliquée au document »), sur les
+  seules lignes encore à traduire, en une opération annulable. Au premier
+  lancement, les Paramètres s'ouvrent pendant la préparation. Case
+  *Paramètres › Général › Détecter les jeux au démarrage*
+  (`[Games] AutoDetectGames`, cochée par défaut).
+- Préférences par jeu (E-04, D-120) : liste *Réglages de : Tous les
+  jeux / <jeu>* en tête des Paramètres ; avec un jeu choisi, l'onglet
+  Général commence par le groupe *Propre à ce jeu* — langue source, langue
+  cible, sortie, dossier d'ouverture, dossier d'export, « Écrire aussi les
+  STRINGS de la source », « Conserver l'original » —, une case par
+  réglage : cochée, la valeur suit le jeu (section `[Game.<jeu>]` de
+  Config.ini) ; décochée, la valeur commune s'applique et reste rappelée.
+  Sans document, choisir un jeu dans la barre d'outils affiche ses langues
+  et sa sortie ; un fichier d'un autre jeu s'ouvre avec les réglages de son
+  jeu ; changer le jeu d'un document lui applique ceux du nouveau jeu,
+  avec une entrée au journal (« Réglages de Skyrim LE appliqués : sortie
+  Module complet »). *Fichier › Ouvrir* et la fenêtre d'enregistrement de
+  l'export s'ouvrent dans le dossier du jeu, sinon dans le dernier dossier
+  utilisé (`[General] LastOpenDir`, `LastExportDir`). `ximod-cli` prend les
+  langues du jeu de `--game`, et `export` sans `--output` la sortie propre
+  au jeu du fichier. Sans section `[Game.*]`, rien ne change par rapport à
+  la 0.4.0. Manuel § 16.1, 17, 18.
+
+- Raccourcis configurables (E-15, D-123) : nouvel onglet *Paramètres ›
+  Raccourcis* — les 38 commandes à raccourci (fenêtre principale, grille,
+  fenêtre d'édition, fenêtre FOMOD) avec leur endroit et leur raccourci,
+  un champ de recherche, la capture au clic (Échap annule, Retour arrière
+  retire le raccourci), le conflit signalé avec *Remplacer*, les
+  combinaisons réservées refusées (Ctrl+C / V / X / A / Z / Y, Entrée,
+  Échap, Tab, flèches ; une touche seule seulement de F1 à F12), le retour
+  à l'origine par ligne et *Rétablir tous les raccourcis*. Les changements
+  vont dans `[Shortcuts]` de Config.ini (« transform_upper=Ctrl+Alt+U »,
+  « journal=none ») ; les menus, les infobulles et les aides qui nomment un
+  raccourci affichent celui en vigueur. Un raccourci répond désormais à sa
+  combinaison exacte : Ctrl+Alt+U ne déclenche plus une commande placée
+  sur Ctrl+U. Manuel § 16.7, 17 et annexe « Raccourcis clavier ».
+
+- Correcteur par colonne (D-11, D-121) : la fenêtre *Options › Correcteur
+  orthographique…* gagne le choix *Colonne : Traduction / Source* et une
+  liste *Dictionnaire* qui suit la langue de la colonne (« automatique »
+  puis les dictionnaires de la langue : en_AU, en_GB, en_US…). Le choix est
+  gardé par langue (`[Spell] Dict_eng=en_GB`) et sert en source comme en
+  cible. En mode Source, la source n'est jamais réécrite : suggestions
+  affichées sans s'appliquer, *Ignorer* pour la session, *＋ Dictionnaire*
+  vers le dictionnaire personnel de la langue source ; les lignes Ignoré
+  ou jamais affichées en jeu ne sont pas vérifiées. La dernière analyse de
+  chaque colonne marque la grille (barre violette, infobulle « Orthographe
+  (source) : Recieve ») ; une ligne validée est revérifiée d'elle-même.
+  Une langue sans dictionnaire : la fenêtre nomme la paire de fichiers à
+  poser (« en_US.aff / en_US.dic ») et le dossier ; sans langue cible
+  choisie, elle le dit. Les suggestions sont calculées à l'affichage de
+  leur ligne, ce qui garde la fenêtre fluide sur des centaines de fautes.
+  Manuel § 14.1, 14.2, 14.4 (nouveau), 17.
+
+- Langues de droite à gauche (E-08, D-99, D-119) :
+  `Languages.json` marque `"rtl": true` les 230 langues écrites en
+  alphabet arabe, hébreu, syriaque, thâna, n'ko, adlam ou mandéen. Le
+  nouveau module `text::bidi` (bibliothèque unicode-bidi) calcule l'ordre
+  d'affichage d'un texte : niveaux du paragraphe, lignes coupées sur les
+  mots, segments de chaque ligne dans l'ordre visuel ; balises, paramètres
+  et nombres sont des isolats, jamais retournés ; parenthèses et guillemets
+  tournés. La mise en forme (lettres arabes liées) reste à egui, qui
+  reçoit chaque mot à part. Dans la grille, les colonnes Source et
+  Traduction d'une langue de droite à gauche sont alignées à droite et
+  affichées dans l'ordre de lecture, de même que les infobulles ; la
+  fenêtre d'édition montre la source dans cet ordre et, au-dessus du champ
+  de la traduction, une ligne *Aperçu* (D-99) : egui 0.37 perdant son
+  curseur dans un texte arabe ou hébreu (ticket n° 8576, corrections
+  n° 8818 / n° 8828 non publiées), le champ en cours de saisie garde
+  l'ordre logique. Les fichiers écrits (dictionnaires, sorties,
+  presse-papiers) gardent l'ordre de saisie. Un texte sans caractère de
+  droite à gauche ne passe pas par le calcul (sur SS2, 62 412 lignes,
+  le test coûte 3,5 µs pour 40 lignes affichées). La concordance (les
+  occurrences surlignées suivent leur mot), l'historique, l'onglet
+  Historique et le détail des vérifications qualité passent aussi par
+  cet ordre. L'interface en arabe reste retirée jusqu'à la relecture
+  d'un arabophone. Manuel § 8.16.
+
+- Chinois simplifié ↔ traditionnel (E-08, D-100) : *Outils › Transformer
+  › Chinois simplifié ↔ traditionnel…* et la même entrée du menu de la
+  ligne ouvrent un dialogue — conversion (simplifié vers traditionnel
+  standard, de Taïwan avec ses expressions, de Hong Kong, et les
+  inverses), portée (sélection, vue, document), exemple sur la première
+  ligne — ; une seule opération annulable, notée au journal ; balises,
+  alias, paramètres et nombres non convertis ; entrée grisée avec une
+  infobulle quand la cible n'est pas le chinois. À l'export, *Convertir
+  en chinois traditionnel* (standard, Taïwan, Hong Kong) convertit la
+  sortie seule ; `ximod-cli export --convert s2t|s2tw|s2hk`. Tables
+  d'OpenCC par la bibliothèque ferrous-opencc (Apache 2.0, tables
+  intégrées). Manuel § 8.17, 11.2, 18.2.
+
+### Modifié
+- Taille livrée (D-104, D-122, décision révisée le 19 novembre 2026) :
+  - sous Linux et macOS, `ximod-cli` est un lien vers `ximod-translator`,
+    qui se conduit en ligne de commande quand il est lancé sous ce nom :
+    un seul exécutable livré ; la chaîne de livraison vérifie que le lien
+    répond ;
+  - sous Windows, `ximod-cli.exe` devient un petit lanceur console : il
+    démarre `ximod-translator.exe --ximod-cli …` dans sa console, l'attend
+    et rend son code de retour (la sortie va à l'écran, dans un fichier
+    ou un tube comme avant ; Ctrl+C arrête le programme lancé). Le gros
+    exécutable n'est plus livré deux fois ; la chaîne de livraison
+    vérifie la sortie et le code de retour par le lanceur ;
+  - `packaging/stage.sh` ne livre de `assets/fonts` que les polices citées
+    par les données et leurs licences ; un test le garde ;
+  - les 16 polices de jeu de `assets/fonts/books` (Futura, Eurostile,
+    Daedric, Dwemer…, droits d'auteur de Bethesda) sont retirées du dépôt
+    et ignorées par git : l'utilisateur dépose celles de sa copie du jeu,
+    avant que l'application ne les extraie elle-même (E-16) ;
+  - les modèles de détection de langue restent tous (75 langues) : un
+    utilisateur peut ajouter n'importe quelle langue à un jeu, pas
+    seulement traduire des mods.
+  - mesuré (Linux, release) : exécutable de 321 Mo (179 Mo compressé),
+    archive de 294 Mo au lieu de 357 ; sous Windows, l'archive ne porte
+    plus qu'une fois l'exécutable, à côté du lanceur.
+- Lancement (E-13) : `[Games] AutoDetectGames=0` est honorée — ni
+  détection ni régénération des bases au démarrage, le journal le dit ; les
+  commandes du menu Dictionnaires restent. Le fil de préparation n'écrit
+  plus Config.ini : il envoie ce qu'il a trouvé à l'interface, qui le
+  fusionne sans écraser un réglage changé entre-temps (un chemin
+  verrouillé ou modifié dans les Paramètres reste). Une base est toujours
+  écrite dans un fichier temporaire puis renommée, et la marque des
+  sources d'un jeu est retirée avant sa reconstruction et réécrite en
+  dernier : une reconstruction interrompue par la fermeture est refaite au
+  lancement suivant. `ximod-cli` est inchangé.
+- Bibliothèques d'interface et dépendances mises à jour (lot 2 de
+  l'étape 3, D-103, D-118) : eframe / egui / egui_extras 0.29 → 0.37,
+  ureq 2 → 3, keyring 3 → 4, zip 2 → 9, rfd 0.15 → 0.18, dirs 5 → 7,
+  rust_xlsxwriter 0.79 → 0.102 (explorateur ESM) ; MSRV inchangée (1.97).
+  Texte plus net (rendu skrifa, mise en forme harfrust), menus d'egui
+  réécrits : les sous-menus et le menu du clic droit gardent le
+  comportement de la recette du 14 novembre (fermeture au survol, côté qui
+  a la place) avec les menus d'egui, `ui/menus.rs` ne gardant que le choix
+  du côté du menu du clic droit. Les icônes Phosphor (police et points de
+  code de egui-phosphor 0.7.3, licence MIT) sont désormais dans le projet,
+  egui-phosphor suivant egui avec une version de retard. Les clés d'API
+  du coffre du système restent lues (mêmes noms de service et de compte
+  sous Windows, macOS et Linux), les dossiers de configuration sont
+  inchangés. quick-xml reste en 0.37 : la 0.42 lit les entités comme des
+  événements à part et passe aux noms en texte, ce qui demande de
+  reprendre le lecteur FOMOD et la mémoire XML ; reporté à un sujet qui
+  touche ces lecteurs.
+- Adresse du dépôt corrigée dans `Cargo.toml` (`repository`),
+  l'installateur Windows (`AppPublisherURL`) et l'exemple d'intégration
+  continue de `docs/cli/` : `github.com/plplecuyer/ximod-translator` au
+  lieu de `github.com/ximod/ximod-translator`, qui n'existe pas. La
+  vérification des mises à jour lit cette adresse.
+- Dépendances mises à jour (`cargo update` du 13/11/2026, compatible
+  Rust 1.97) : rustls-webpki 0.103.16 → 0.103.17. Aucun changement de code.
+- Dépendances mises à jour (`cargo update` du 17/11/2026, compatible
+  Rust 1.97) : bumpalo 3.20.3 → 3.20.4, filetime 0.2.29 → 0.2.30,
+  unicode-width 0.1.14 → 0.2.3, uuid 1.29.2 → 1.29.3, zip 9.6.0 → 9.6.1.
+  Aucun changement de code.
+- Dépendances mises à jour (`cargo update` des 24 et 25/11/2026,
+  compatible Rust 1.97) : ahash 0.8.14, anyhow 1.0.105,
+  apple-native-keyring-store 1.0.3, constant_time_eq 0.6.2, cookie 0.18.3,
+  crc32fast 1.5.6, form_urlencoded 1.2.3, hashbrown 0.17.2, keyring-core
+  1.0.1 → 1.1.0, litrs 1.1.0, pin-project 1.2.0, pin-project-lite 0.2.18,
+  toml_edit 0.25.21, toml_parser 1.1.7, url 2.5.9, walkdir 2.5.1, zerocopy
+  0.8.65, zip 9.7.3 → 9.8.2, zlib-rs 0.6.9 ; getrandom 0.3, r-efi, wasip2
+  et wit-bindgen ne sont plus tirés. Aucun changement de code.
+- Polices : chaque famille Noto ne garde que la police Regular citée par
+  les données, à la racine de son dossier (`Noto_Sans/NotoSans-Regular.ttf`
+  au lieu de `Noto_Sans/static/NotoSans-Regular.ttf`) ; graisses, italiques,
+  polices variables et README des familles retirés (D-104, demande du
+  16 novembre 2026) ; les cinq familles qu'aucune donnée ne cite (Noto
+  Nastaliq Urdu, Sans Mono, Sans SignWriting, Sans Symbols, Serif) et les
+  autres graisses de Noto Sans Myanmar sont retirées aussi : `assets/fonts`
+  passe de 603 à 44 Mo, 68 polices. Le programme
+  `tools/fonts_regular.py` fait le tri et met à jour les chemins de
+  `Languages.json` et des fichiers de langue ; l'application trouve une
+  police citée dans l'une ou l'autre disposition (copie utilisateur de
+  `Languages.json`, fichier de langue écrit par l'éditeur de traduction).
+
+### Corrigé
+- Deux « 中文 » identiques dans la liste *Cible* de la Chine (et de Taïwan,
+  Singapour…) : le chinois au sens large (`zho`) et le mandarin (`cmn`)
+  portaient le même nom dans `Languages.json`. Le mandarin s'appelle
+  désormais « 普通话 » ; le chinois reste « 中文 ».
+- Langues au même nom dans `Languages.json` (demande du 18 novembre
+  2026) : les 32 autres paires de langues qui portaient le même nom sont
+  distinguées de la même façon — la macrolangue garde son nom, la langue
+  précise prend le sien : « Melayu » / « Bahasa Malaysia » (`msa` /
+  `zsm`), « isiNdebele » / « isiNdebele seSewula » (`nde` / `nbl`),
+  « العربية » / « العربية الفصحى » (`ara` / `arb`), « فارسی » /
+  « فارسی (ایران) » (`fas` / `pes`), « Kiswahili » / « Kiswahili sanifu »
+  (`swa` / `swh`), « Filipino » / « Tagalog » (`fil` / `tgl`)… Deux
+  macrolangues changent de nom plutôt que la langue précise : le peul
+  (`ful`, « Fulfulde ») à côté du pulaar (`fuc`, « Pulaar »), le kurde
+  (`kur`, « kurdî ») à côté du kurmandji (`kmr`, « kurmancî »). Plus
+  aucun nom n'est partagé, ce qu'un test vérifie.
+- Noms officiels inversés dans `Countries.json` (signalé le 18 novembre
+  2026) : l'Algérie donnait son nom en tifinagh pour l'arabe et en arabe
+  pour le tamazight ; le même défaut touchait le Sahara occidental
+  (arabe / espagnol), le Soudan (arabe / anglais) et le Pakistan
+  (ourdou / anglais). Chaque nom est revenu à sa langue ; un test vérifie
+  désormais que les noms en arabe, ourdou et persan sont en alphabet
+  arabe, celui en tamazight en tifinagh, ceux en anglais, français,
+  espagnol et portugais en latin.
+- Fenêtre *Choisir un pays* (signalé le 18 novembre 2026) : drapeaux
+  rognés à gauche, et à droite sur la première ligne, plus large que les
+  autres. Comme dans XIMOD Architect, chaque drapeau est dans un cadre de
+  même taille (112 × 76), l'image gardant ses proportions, centrée, le nom
+  dessous coupé à la largeur du cadre ; toutes les lignes ont la même
+  largeur, et la fenêtre a celle de la grille — six cadres et leurs
+  intervalles, la marge avant le premier et après le dernier, la barre de
+  défilement —, seule sa hauteur se règle.
+- Nombres écrits avec séparateurs de milliers (constat B.6 de la recette
+  du lot 1, D-124) : le contrôle des nombres (onglet *Alias et nombres*,
+  vérification *Nombres*, barres de la grille) ne signale plus
+  « 250 000 » comme absent quand la source porte « 250000 » ou
+  « 250,000 ». Chaque nombre est lu à la façon de sa langue — séparateur
+  décimal et séparateurs de milliers tirés du CLDR, ajoutés à
+  `Languages.json` (`decimal`, `group`) pour 334 langues — et deux nombres
+  correspondent s'ils sont écrits pareil ou ont la même valeur
+  (« 250,000 » en anglais = « 250 000 » en français = « 250.000 » en
+  allemand ; « 2.5 » = « 2,5 »). Un séparateur de milliers n'est compris
+  que suivi de trois chiffres et s'il est celui de la langue ; l'espace
+  ordinaire seulement là où elle l'admet : « 10 20 30 » reste trois
+  nombres. Pour une langue sans données, « 250,000 » n'a pas de valeur et
+  « 2,5 » n'est jamais « 25 ». *Rétablir les nombres* laisse un nombre
+  qui a déjà la valeur de sa source. Module `numstyle` dans la
+  bibliothèque.
+- « France » introuvable dans *Choisir un pays* et dans l'onglet Pays
+  d'*Options › Propriétés* (constat B.6) : la recherche porte désormais
+  aussi sur le nom courant du pays dans la langue de l'interface et en
+  anglais (CLDR : « France », « Allemagne », « Germany ») et sur les codes
+  ISO 3166 à deux et trois lettres (« FR », « FRA »), ajoutés à
+  `Countries.json` (`a2`, `commonEn`) et `CountryNames.json` (`common`,
+  33 langues). Une saisie est trouvée au début d'un mot ou en code exact,
+  sans casse ni accents ; les codes exacts puis les noms qui commencent
+  par elle viennent en tête. Le champ rappelle ce qu'on peut taper ; la
+  fiche du pays donne aussi son nom courant et ses deux codes
+  (« France · French Republic — FRA / FR »).
+- Drapeaux absents sous Windows (Options › Propriétés, fenêtre du choix
+  du pays, éditeur de traduction ; signalé le 17 novembre 2026) depuis le
+  passage à egui 0.37 (D-103) : l'adresse `file://F:\…` d'une image y est
+  lue comme un chemin réseau `\\F:\…`. Les images sont désormais données
+  par une adresse `file:///F:/…` construite sur le chemin absolu (aussi
+  pour les chemins réseau et `\\?\`).
+- Journal de la préparation du lancement (E-13) : « Base de jeu prête »
+  s'écrivait pour chaque jeu, y compris ceux trouvés à jour ou sans base
+  (dix entrées à « 0,0 s ») ; seules les bases écrites ont désormais leur
+  entrée, l'entrée finale comptant les autres.
+- *Outils › Transformer › Première lettre en majuscule* ne changeait que
+  la première lettre : « COUP DE LANCE » et « Coup de Lance » restaient
+  tels quels (recette Windows du 13 novembre 2026). La commande met
+  désormais le texte en minuscules sauf la première lettre de chaque
+  phrase — en tête, puis après « . ! ? … » ou un saut de ligne — et les
+  sigles de la liste « conserver » de la langue : « Coup de lance ».
+  Manuel § 8.15.
+- Raccourcis clavier : Ctrl+Maj+U (Majuscules) et Ctrl+Maj+J (Journal)
+  restaient sans effet sous Windows (recette du 13 novembre 2026). Les
+  raccourcis à lettre se reconnaissent désormais aussi à la position de
+  la touche quand le système livre autre chose qu'une lettre (Ctrl+J
+  traduit en Entrée, par exemple), sans jamais confondre deux lettres
+  d'une disposition AZERTY. La variable d'environnement
+  `XIMOD_KEY_LOG=1` écrit chaque touche reçue dans `logs/ximod.log`, pour
+  voir ce qu'un système envoie. Manuel, annexe « Raccourcis clavier ».
+  Ce journal a permis d'établir la cause le 16 novembre 2026 : sur le
+  poste de recette, AMD Software: Adrenalin Edition (AMDRSServ.exe)
+  réserve pour tout le système des raccourcis Ctrl+Maj+lettre (U, J, I…) ;
+  les désactiver dans ce logiciel rend ces combinaisons à l'application,
+  comme à Chrome et à Edge. Le manuel cite ce cas dans l'annexe.
+- Sous-menus : *Outils › Transformer*, *Données*, *Scripts* et, dans le
+  menu du clic droit sur une ligne, *Relecture*, *Historique* et
+  *Transformer* restaient ouverts quand la souris passait sur une autre
+  entrée du menu, et un sous-menu sans place à droite recouvrait le menu
+  principal (recette Windows du 14 novembre 2026). Comme sous Windows, un
+  sous-menu se referme dès qu'une autre entrée est survolée et s'ouvre à
+  gauche du menu quand la place manque à droite ; près du bord droit ou
+  du bas de la fenêtre, un menu contextuel s'ouvre à gauche du pointeur
+  ou au-dessus. egui 0.29 ne sait pas ouvrir un sous-menu à gauche :
+  module `ui/menus.rs`, sous-menus dessinés dans leur propre zone. Manuel
+  § 8.2.
+
+### Corrigé (recette du lot 2)
+- Carrés vides dans l'interface depuis egui 0.37 (D-103) : les polices
+  d'emoji monochromes d'egui (NotoEmoji, emoji-icon-font) ne font plus
+  partie de `default_fonts` ; sans elles, « ✔ », « ✖ », « 📖 »… (voix,
+  journal, livres) étaient dessinés en carrés. Elles sont demandées par la
+  fonctionnalité `monochrome_emoji_fonts` d'egui.
+- Carrés vides déjà présents en 0.4.0 : la police à chasse fixe d'egui
+  (Hack) devient le dernier recours de la famille proportionnelle, pour
+  « ▾ » (*Statuts ▾*), « ↵ » (blancs visibles de l'historique) et « ⟨ ⟩ »
+  (profils) ; le cadre du drapeau sans pays montre l'icône Phosphor
+  *flag* au lieu de « 🏳 », qu'aucune police livrée ne contient ; la voix
+  absente s'écrit « ✖ » au lieu de « ✘ » (33 langues) ; l'espace
+  insécable des blancs visibles de la fenêtre FOMOD s'écrit « ° » (comme
+  Word) au lieu de « ⍽ ». Test `tests/glyphs.rs` : chaque caractère des
+  33 fichiers de langue et chaque symbole écrit dans le code a un glyphe
+  dans les polices chargées (T-D104-02).
+- Test manquant de R-D103-07 : le dossier de configuration par utilisateur
+  est comparé à celui de la 0.4.0 (`$XDG_CONFIG_HOME` ou `~/.config` sous
+  Linux, `~/Library/Application Support` sous macOS, `%APPDATA%` sous
+  Windows) ; dirs 7 et dirs 5 donnent les mêmes dossiers.
+- Ctrl+C sans effet sur `ximod-cli.exe` (recette Windows du 22 novembre
+  2026) : le lanceur ignorait Ctrl+C par `SetConsoleCtrlHandler(NULL,
+  TRUE)`, un réglage hérité par le processus qu'il lance, qui ne pouvait
+  donc plus être arrêté. Le lanceur pose un gestionnaire qui attend la fin
+  de l'application ; l'application rétablit le traitement normal de
+  Ctrl+C en s'attachant à la console.
+- Bouton *Statuts ▾* de la barre d'état (fenêtre étroite) : son
+  info-bulle était lente, pâle et ne se cliquait pas. Un clic ouvre
+  désormais la liste des statuts sous forme de pastilles lisibles, chacune
+  cliquable comme dans la barre (Ctrl+clic en ajoute une et garde la liste
+  ouverte). Manuel § 4.5.
+- Paramètres du premier lancement : leurs champs ne partaient pas de
+  Config.ini ; les enregistrer effaçait les sections `[Game.*]` et
+  remettait `AutoDetectGames=1` d'un Config.ini écrit à la main ou copié
+  avant le premier lancement.
+- `ximod-translator --game <jeu>` : la barre d'outils prend aussi les
+  réglages propres à ce jeu (E-04), comme un choix dans la liste *Jeu* ;
+  la *Sortie* restait vide.
+- Bases de jeu : les textes sont écrits dans l'ordre de leur plugin, de
+  leur liste et de leur identifiant ; les mêmes fichiers du jeu donnent la
+  même base octet pour octet (l'ordre d'une table de hachage changeait
+  d'une construction à l'autre, déjà en 0.4.0 ; contenu identique).
+
+### Modifié (recette du lot 2)
+- Fichier de langue arabe (`assets/locales/ara/main.ftl`) corrigé par le
+  commanditaire le 24 novembre 2026 : 17 messages (rubriques de sortie
+  « رقعة تجاوز », « هجين », « المكون الإضافي الكامل » au lieu des termes
+  anglais, quotas, filtres, propagation). Clés et paramètres inchangés
+  (2 830). L'interface en arabe reste hors de la liste des langues : ses
+  libellés ne passent pas encore par l'ordre bidirectionnel (E-08), et
+  egui les afficherait mot à mot de gauche à droite.
+- *Choisir un pays* : sous chaque drapeau le nom courant du pays dans la
+  langue de l'interface (« France », « Corée du Sud ») au lieu du nom
+  officiel ; l'info-bulle donne le nom courant, le nom officiel et les
+  codes (« FRA · FR ») ; les drapeaux sont rangés par nom courant. Noms
+  courants du CLDR (`CountryNames.json`, table `common`, 33 langues) ;
+  le portugais de l'interface étant celui du Portugal, ses noms courants
+  passent au portugais européen (57 pays : « Ilhas Caimão », « Baamas »…),
+  conformément à la liste fournie par le commanditaire. Manuel § 6.4.
+
 ## [0.4.0] - 2026-11-12
 
 Fin du lot 1 de l'étape 3, « Grille et édition au quotidien » : le journal
@@ -174,6 +545,8 @@ le site choisi (D-117).
   rustls-pki-types 1.16.0, smallvec 1.16.5, syn 3.0.10, toml_datetime
   1.1.3, toml_edit 0.25.19, uuid 1.29.2, webbrowser 1.2.7, webpki-roots
   1.0.12, winnow 1.0.5. Aucun changement de code.
+- Dépendances mises à jour (`cargo update` du 12/11/2026, compatible
+  Rust 1.97) : errno 0.3.14 → 0.3.15. Aucun changement de code.
 
 ### Corrigé
 - Fins de ligne à l'export (B.8, décision D-115) : une traduction saisie ou

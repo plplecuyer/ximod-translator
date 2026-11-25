@@ -17,7 +17,7 @@
 //! instead of showing tofu boxes (□).
 
 use eframe::egui;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 /// Locate the fonts directory (`assets/fonts`), production layout first.
 pub fn fonts_dir() -> Option<PathBuf> {
@@ -35,6 +35,28 @@ pub fn fonts_dir() -> Option<PathBuf> {
     candidates.push(rel);
 
     candidates.into_iter().find(|p| p.is_dir())
+}
+
+/// The file of a font cited by the data (`rel`, relative to `dir`).
+///
+/// Since 0.5.0 each Noto family keeps its Regular font at the root of its
+/// folder (`Noto_Sans/NotoSans-Regular.ttf`, `tools/fonts_regular.py`, D-104);
+/// 0.4 cited it in `static/`. A path of either layout — a user copy of
+/// `Languages.json`, a language file written by the translation editor —
+/// finds the file of the other one.
+pub fn font_file(dir: &Path, rel: &str) -> PathBuf {
+    let rel = rel.replace('\\', "/");
+    let path = dir.join(&rel);
+    if path.is_file() {
+        return path;
+    }
+    let parts: Vec<&str> = rel.split('/').collect();
+    let other = match parts.as_slice() {
+        [family, "static", file] => dir.join(family).join(file),
+        [family, file] => dir.join(family).join("static").join(file),
+        _ => return path,
+    };
+    if other.is_file() { other } else { path }
 }
 
 /// Locate the book-fonts directory (`assets/fonts/books`), production layout
@@ -136,9 +158,10 @@ pub fn load_book_fonts(fonts: &mut egui::FontDefinitions) -> BookFonts {
         };
         let key = format!("book:{stem}");
         let family = format!("book-{stem}");
-        fonts
-            .font_data
-            .insert(key.clone(), egui::FontData::from_owned(bytes));
+        fonts.font_data.insert(
+            key.clone(),
+            std::sync::Arc::new(egui::FontData::from_owned(bytes)),
+        );
         let mut chain = vec![key];
         chain.extend(defaults.iter().cloned());
         fonts
@@ -182,12 +205,13 @@ pub fn build_font_definitions_with_preview(
         if !fonts.font_data.contains_key(&key)
             && let Some(dir) = fonts_dir()
         {
-            let path = dir.join(rel.replace('\\', "/"));
+            let path = font_file(&dir, rel);
             match std::fs::read(&path) {
                 Ok(bytes) => {
-                    fonts
-                        .font_data
-                        .insert(key.clone(), egui::FontData::from_owned(bytes));
+                    fonts.font_data.insert(
+                        key.clone(),
+                        std::sync::Arc::new(egui::FontData::from_owned(bytes)),
+                    );
                 }
                 Err(e) => tracing::warn!("Preview font {:?}: {}", path, e),
             }
@@ -209,9 +233,10 @@ pub fn build_font_definitions_with_preview(
 fn build_defs(rel_paths: &[String]) -> egui::FontDefinitions {
     let mut fonts = egui::FontDefinitions::default();
     // The Phosphor icons (arrows, undo / redo…), as a fallback of every family.
-    egui_phosphor::add_to_fonts(&mut fonts, egui_phosphor::Variant::Regular);
+    crate::icons::add_to_fonts(&mut fonts);
     let Some(dir) = fonts_dir() else {
         tracing::warn!("assets/fonts not found: falling back to built-in fonts");
+        hack_last(&mut fonts);
         return fonts;
     };
 
@@ -219,7 +244,7 @@ fn build_defs(rel_paths: &[String]) -> egui::FontDefinitions {
         if rel.is_empty() {
             continue;
         }
-        let path = dir.join(rel.replace('\\', "/"));
+        let path = font_file(&dir, rel);
         let bytes = match std::fs::read(&path) {
             Ok(b) => b,
             Err(e) => {
@@ -230,17 +255,35 @@ fn build_defs(rel_paths: &[String]) -> egui::FontDefinitions {
 
         // The relative path doubles as a unique key.
         let key = rel.clone();
-        fonts
-            .font_data
-            .insert(key.clone(), egui::FontData::from_owned(bytes));
+        fonts.font_data.insert(
+            key.clone(),
+            std::sync::Arc::new(egui::FontData::from_owned(bytes)),
+        );
 
         // Append as a fallback to both families.
         for family in [egui::FontFamily::Proportional, egui::FontFamily::Monospace] {
             fonts.families.entry(family).or_default().push(key.clone());
         }
     }
-
+    hack_last(&mut fonts);
     fonts
+}
+
+/// egui's monospaced font (Hack) as the last fallback of the proportional
+/// family: it carries the signs no other font of the interface has (« ▾ »,
+/// « ↵ », « ⟨ ⟩ »…), which would otherwise be drawn as empty squares
+/// (recette du lot 2, T-D104-02).
+fn hack_last(fonts: &mut egui::FontDefinitions) {
+    if !fonts.font_data.contains_key("Hack") {
+        return;
+    }
+    let chain = fonts
+        .families
+        .entry(egui::FontFamily::Proportional)
+        .or_default();
+    if !chain.iter().any(|k| k == "Hack") {
+        chain.push("Hack".into());
+    }
 }
 
 /// Open a URL in the user's default browser (Google Translate with the
@@ -278,6 +321,35 @@ pub fn open_path(path: &std::path::Path) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_font_is_found_in_either_layout() {
+        let dir = std::env::temp_dir().join(format!("ximod-fonts-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(dir.join("Noto_Sans/static")).unwrap();
+        std::fs::create_dir_all(dir.join("Noto_Sans_SC")).unwrap();
+        std::fs::write(dir.join("Noto_Sans/static/NotoSans-Regular.ttf"), b"0.4").unwrap();
+        std::fs::write(dir.join("Noto_Sans_SC/NotoSansSC-Regular.ttf"), b"0.5").unwrap();
+        // 0.4 layout cited by a 0.5 path, and the reverse.
+        assert_eq!(
+            font_file(&dir, "Noto_Sans/NotoSans-Regular.ttf"),
+            dir.join("Noto_Sans/static/NotoSans-Regular.ttf")
+        );
+        assert_eq!(
+            font_file(&dir, "Noto_Sans_SC/static/NotoSansSC-Regular.ttf"),
+            dir.join("Noto_Sans_SC/NotoSansSC-Regular.ttf")
+        );
+        // The cited path itself first; a missing font keeps its path (logged).
+        assert_eq!(
+            font_file(&dir, "Noto_Sans\\static\\NotoSans-Regular.ttf"),
+            dir.join("Noto_Sans/static/NotoSans-Regular.ttf")
+        );
+        assert_eq!(
+            font_file(&dir, "Noto_Sans_JP/NotoSansJP-Regular.ttf"),
+            dir.join("Noto_Sans_JP/NotoSansJP-Regular.ttf")
+        );
+        let _ = std::fs::remove_dir_all(&dir);
+    }
 
     #[test]
     fn normalize_face_strips_font_suffix() {

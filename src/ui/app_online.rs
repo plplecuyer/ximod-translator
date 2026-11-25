@@ -883,7 +883,7 @@ impl XimodApp {
         let oui = self.i18n.t("btn-yes");
         let non = self.i18n.t("btn-no");
         egui::Window::new(self.i18n.t("online-title"))
-            .id(egui::Id::new(id))
+            .id(egui::Id::unique(id))
             .collapsible(false)
             .resizable(false)
             .order(egui::Order::Foreground)
@@ -1063,7 +1063,7 @@ impl XimodApp {
             )
         });
         egui::Window::new(title)
-            .id(egui::Id::new("ximod-online-dialog"))
+            .id(egui::Id::unique("ximod-online-dialog"))
             .collapsible(false)
             .resizable(true)
             .order(egui::Order::Foreground)

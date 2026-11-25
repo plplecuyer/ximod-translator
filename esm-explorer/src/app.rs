@@ -345,7 +345,7 @@ impl EsmExplorerApp {
             i.raw
                 .dropped_files
                 .iter()
-                .filter_map(|f| f.path.clone())
+                .map(|f| f.path().to_path_buf())
                 .collect()
         });
         if dropped.is_empty() {
@@ -374,9 +374,9 @@ impl EsmExplorerApp {
         }
         let painter = ctx.layer_painter(egui::LayerId::new(
             egui::Order::Foreground,
-            egui::Id::new("drag_hint"),
+            egui::Id::unique("drag_hint"),
         ));
-        let screen = ctx.screen_rect();
+        let screen = ctx.content_rect();
         painter.rect_filled(screen, 0.0, egui::Color32::from_black_alpha(150));
         painter.text(
             screen.center(),
@@ -608,12 +608,12 @@ impl EsmExplorerApp {
         ui.menu_button("Fichier", |ui| {
             ui.style_mut().wrap_mode = Some(egui::TextWrapMode::Extend);
             if ui.button("Ouvrir…").clicked() {
-                ui.close_menu();
+                ui.close();
                 self.open_dialog();
             }
             ui.separator();
             if ui.button("Fermer").clicked() {
-                ui.close_menu();
+                ui.close();
                 self.loaded = None;
             }
             ui.separator();
@@ -632,7 +632,8 @@ impl EsmExplorerApp {
     }
 
     /// Per-frame UI below the shell's unified menu bar (panels, tables, windows).
-    pub fn body(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+    pub fn body(&mut self, root: &mut egui::Ui, _frame: &mut eframe::Frame) {
+        let ctx = &root.ctx().clone();
         self.handle_dropped_files(ctx);
 
         let mut loaded = self.loaded.take();
@@ -642,7 +643,7 @@ impl EsmExplorerApp {
         }
 
         // ---- Status bar ----
-        egui::TopBottomPanel::bottom("status").show(ctx, |ui| {
+        egui::Panel::bottom("status").show(root, |ui| {
             ui.horizontal(|ui| {
                 if let Some(l) = &loaded {
                     ui.label(format!("📄 {}", l.file_name));
@@ -687,22 +688,22 @@ impl EsmExplorerApp {
 
         // File Explorer (full-height right column), above the bottom Cell View.
         if let Some(l) = &loaded {
-            egui::SidePanel::right("fileexplorer")
+            egui::Panel::right("fileexplorer")
                 .resizable(true)
-                .default_width(300.0)
-                .min_width(210.0)
-                .show(ctx, |ui| self.file_explorer(ui, l));
+                .default_size(300.0)
+                .min_size(210.0)
+                .show(root, |ui| self.file_explorer(ui, l));
         }
 
         if let Some(l) = &mut loaded {
-            egui::TopBottomPanel::bottom("cellview")
+            egui::Panel::bottom("cellview")
                 .resizable(true)
-                .default_height(300.0)
-                .min_height(140.0)
-                .show(ctx, |ui| self.cell_view(ui, l));
+                .default_size(300.0)
+                .min_size(140.0)
+                .show(root, |ui| self.cell_view(ui, l));
         }
 
-        egui::CentralPanel::default().show(ctx, |ui| {
+        egui::CentralPanel::default().show(root, |ui| {
             if let Some(err) = &self.error {
                 ui.colored_label(egui::Color32::from_rgb(0xB0, 0x24, 0x18), err);
                 ui.separator();
@@ -751,7 +752,7 @@ fn close_menu_if_pointer_left(ui: &mut egui::Ui, child: Option<egui::Rect>) {
     let popup = ui.min_rect();
     let pointer = ui.input(|i| i.pointer.hover_pos());
     if menu_should_close(popup, child, pointer) {
-        ui.close_menu();
+        ui.close();
     }
 }
 
@@ -1185,11 +1186,11 @@ impl EsmExplorerApp {
         // panel clips its own region, so a wide EditorID/Name column is truncated
         // at the divider instead of overprinting the references table beside it.
         let refs_w = (ui.available_width() * 0.42).clamp(220.0, 640.0);
-        egui::SidePanel::right("cv_refs")
+        egui::Panel::right("cv_refs")
             .resizable(true)
-            .default_width(refs_w)
-            .min_width(160.0)
-            .show_inside(ui, |ui| {
+            .default_size(refs_w)
+            .min_size(160.0)
+            .show(ui, |ui| {
                 let refs = &self.sel_refs;
                 TableBuilder::new(ui)
                     .striped(true)
@@ -1256,7 +1257,7 @@ impl EsmExplorerApp {
                     });
             });
 
-        egui::CentralPanel::default().show_inside(ui, |ui| {
+        egui::CentralPanel::default().show(ui, |ui| {
             let view = &self.cv_view;
             TableBuilder::new(ui)
                 .striped(true)
@@ -1368,7 +1369,7 @@ impl EsmExplorerApp {
 
     fn file_explorer(&mut self, ui: &mut egui::Ui, loaded: &Loaded) {
         // Header: title, select all/none, filter.
-        egui::TopBottomPanel::top("fe_head").show_inside(ui, |ui| {
+        egui::Panel::top("fe_head").show(ui, |ui| {
             ui.label(egui::RichText::new("FileExplorer").weak());
             ui.horizontal(|ui| {
                 if ui.button("Select All").clicked() {
@@ -1392,12 +1393,12 @@ impl EsmExplorerApp {
         });
 
         // Footer: selection summary + Extract (always visible at the bottom).
-        egui::TopBottomPanel::bottom("fe_foot").show_inside(ui, |ui| {
+        egui::Panel::bottom("fe_foot").show(ui, |ui| {
             self.file_explorer_footer(ui, loaded);
         });
 
         // Middle: the scrolling checkbox list of GRUP types.
-        egui::CentralPanel::default().show_inside(ui, |ui| {
+        egui::CentralPanel::default().show(ui, |ui| {
             let needle = self.fe_filter.trim().to_lowercase();
             egui::ScrollArea::vertical()
                 .id_salt("fe_list")

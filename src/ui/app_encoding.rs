@@ -399,7 +399,7 @@ impl XimodApp {
             )
             .collect();
         let mut action: Option<bool> = None;
-        let error_c = ctx.style().visuals.error_fg_color;
+        let error_c = ctx.global_style().visuals.error_fg_color;
         egui::Window::new(title)
             .collapsible(false)
             .resizable(false)

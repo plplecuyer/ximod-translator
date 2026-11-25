@@ -177,7 +177,12 @@ impl XimodApp {
                 self.i18n.t_arg(what[k], "n", &plan.per_list[k].to_string()),
             ));
         }
-        if self.config.localize_source_strings && src != dst {
+        if self
+            .config
+            .prefs_for(&doc.settings.game)
+            .localize_source_strings
+            && src != dst
+        {
             files.push((
                 format!("Strings/{stem}_{src}.*"),
                 self.i18n.t("localize-source-line"),
@@ -293,7 +298,12 @@ impl XimodApp {
         let dst = crate::lang::strings_suffix_for(game, &settings.target);
         let src_l = crate::lang::strings_suffix_for(game, &settings.source);
         let mut sets: Vec<(&str, &Lists)> = vec![(dst.as_str(), &out.target)];
-        if self.config.localize_source_strings && src_l != dst {
+        if self
+            .config
+            .prefs_for(&settings.game)
+            .localize_source_strings
+            && src_l != dst
+        {
             sets.push((src_l.as_str(), &out.source));
         }
         let mut written = 0usize;

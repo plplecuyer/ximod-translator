@@ -97,7 +97,8 @@ impl XimodApp {
                 .with_active(true);
         }
         let mut close = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -114,7 +115,7 @@ impl XimodApp {
             {
                 close = true;
             }
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 if self.search_body(ui) {
                     close = true;
                 }

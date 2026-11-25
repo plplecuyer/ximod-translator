@@ -24,6 +24,13 @@ Config.ini
 # ---- Archives de travail du commanditaire (outils tiers, mods, ressources) --
 /Archives/
 
+# ---- Livraisons de Claude (correctifs, archives, documents) et sorties de
+# commandes : à garder hors du dépôt (1,1 Go poussé par erreur le 24/11/2026)
+/Claude outputs/
+/*.patch
+/*.7z
+/sortie.txt
+
 # ---- Fichiers temporaires des systèmes et des éditeurs ----------------------
 Thumbs.db
 .DS_Store
@@ -33,3 +40,10 @@ desktop.ini
 /.vs/
 /.vscode/
 /.idea/
+
+# Polices des jeux de Bethesda (droits d'auteur) : jamais dans le dépôt ni
+# dans le paquet ; l'utilisateur dépose celles de sa copie du jeu (D-104).
+assets/fonts/books/*.ttf
+assets/fonts/books/*.TTF
+assets/fonts/books/*.otf
+assets/fonts/books/*.OTF

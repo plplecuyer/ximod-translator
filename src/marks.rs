@@ -94,6 +94,11 @@ pub struct Context<'a> {
     /// The words the spell checker flagged in this line at its last scan of
     /// the document (none when it was not run).
     pub spelling: &'a [String],
+    /// The words flagged in its source at the last scan of the Source
+    /// column (D-11).
+    pub spelling_source: &'a [String],
+    /// How the source and target languages write their numbers (B.6).
+    pub numbers: crate::numstyle::NumPair,
 }
 
 /// The marks of a line, gravest first (stable within a gravity).
@@ -102,7 +107,7 @@ pub fn of(e: &TmEntry, cx: &Context<'_>) -> Vec<Mark> {
     if e.unused {
         return out;
     }
-    let tags = crate::tags::Report::of(e, cx.game);
+    let tags = crate::tags::Report::of(e, cx.game, cx.numbers);
     for t in &tags.missing_tags {
         out.push(Mark::new(Severity::Error, "mark-alias-missing").arg("tag", t));
     }
@@ -165,6 +170,10 @@ pub fn of(e: &TmEntry, cx: &Context<'_>) -> Vec<Mark> {
     for w in cx.spelling {
         out.push(Mark::new(Severity::Spelling, "mark-spelling").arg("word", w));
     }
+    // « Orthographe (source) : Recieve » (R-D11-04).
+    for w in cx.spelling_source {
+        out.push(Mark::new(Severity::Spelling, "mark-spelling-source").arg("word", w));
+    }
     out.sort_by_key(|m| std::cmp::Reverse(m.severity));
     out
 }
@@ -205,6 +214,8 @@ mod tests {
             page: Page::Utf8,
             quality: None,
             spelling: &[],
+            spelling_source: &[],
+            numbers: Default::default(),
         }
     }
 
@@ -270,6 +281,33 @@ mod tests {
             ..cx()
         };
         assert_eq!(worst(&of(&e, &s)), Some(Severity::Spelling));
+        // D-11: a fault of the source, said as such.
+        let src = vec!["Recieve".to_string()];
+        let s = Context {
+            spelling_source: &src,
+            ..cx()
+        };
+        let m = of(&e, &s);
+        assert_eq!(m.len(), 1);
+        assert_eq!(m[0].key, "mark-spelling-source");
+        assert_eq!(worst(&m), Some(Severity::Spelling));
+    }
+
+    /// B.6: « 250 000 » for « 250,000 » marks nothing in English → French.
+    #[test]
+    fn a_grouped_number_is_no_mark() {
+        let e = entry(
+            "MISC",
+            "FULL",
+            "Ring worth 250,000",
+            "Anneau valant 250 000",
+        );
+        assert_eq!(worst(&of(&e, &cx())), Some(Severity::Error));
+        let c = Context {
+            numbers: crate::numstyle::NumPair::of("eng", "fra"),
+            ..cx()
+        };
+        assert!(of(&e, &c).is_empty());
     }
 
     #[test]

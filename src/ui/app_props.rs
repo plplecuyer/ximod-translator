@@ -184,7 +184,7 @@ fn two_columns(ui: &mut egui::Ui) -> (egui::Rect, [egui::Ui; 2]) {
     (rect, cols)
 }
 
-/// The family of a font file (`Noto_Sans/static/NotoSans-Regular.ttf` →
+/// The family of a font file (`Noto_Sans/NotoSans-Regular.ttf` →
 /// `Noto Sans`).
 fn font_family(rel: &str) -> String {
     rel.split(['/', '\\'])
@@ -202,9 +202,7 @@ fn flag(ui: &mut egui::Ui, dir: Option<&std::path::Path>, file: Option<&str>, h:
         .filter(|p| p.is_file())
     {
         Some(p) => {
-            ui.add(
-                egui::Image::from_uri(format!("file://{}", p.display())).fit_to_exact_size(size),
-            );
+            ui.add(egui::Image::from_uri(crate::ui::file_uri(&p)).fit_to_exact_size(size));
         }
         None => {
             let (rect, _) = ui.allocate_exact_size(size, egui::Sense::hover());
@@ -212,6 +210,7 @@ fn flag(ui: &mut egui::Ui, dir: Option<&std::path::Path>, file: Option<&str>, h:
                 rect,
                 1.0,
                 egui::Stroke::new(1.0_f32, ui.visuals().weak_text_color()),
+                egui::StrokeKind::Middle,
             );
         }
     }
@@ -251,7 +250,8 @@ impl XimodApp {
                 .with_active(true);
         }
         let mut close = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -265,7 +265,7 @@ impl XimodApp {
             if vctx.input_mut(|i| i.consume_key(egui::Modifiers::NONE, egui::Key::Escape)) {
                 close = true;
             }
-            egui::TopBottomPanel::bottom("props_bottom").show(vctx, |ui| {
+            egui::Panel::bottom("props_bottom").show(vui, |ui| {
                 ui.horizontal(|ui| {
                     ui.label(RichText::new(self.i18n.t("prop-keys-hint")).weak().small());
                     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
@@ -275,7 +275,7 @@ impl XimodApp {
                     });
                 });
             });
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 ui.horizontal(|ui| {
                     for (tab, key) in [
                         (PropTab::Countries, "prop-tab-countries"),
@@ -314,6 +314,11 @@ impl XimodApp {
     fn props_filter(&mut self, ui: &mut egui::Ui, countries: bool, shown: usize, total: usize) {
         let l_filter = self.i18n.t("prop-filter");
         let l_clear = self.i18n.t("btn-clear");
+        let hint = if countries {
+            self.i18n.t("flags-filter-hint")
+        } else {
+            String::new()
+        };
         let count = self.i18n.t_args(
             "prop-filter-count",
             &[
@@ -335,7 +340,11 @@ impl XimodApp {
         };
         ui.horizontal(|ui| {
             ui.label(&l_filter);
-            let resp = ui.add(egui::TextEdit::singleline(text).desired_width(200.0));
+            let resp = ui.add(
+                egui::TextEdit::singleline(text)
+                    .hint_text(hint)
+                    .desired_width(if countries { 420.0 } else { 200.0 }),
+            );
             if w.focus_filter {
                 w.focus_filter = false;
                 resp.request_focus();
@@ -438,12 +447,24 @@ impl XimodApp {
                         64.0,
                     );
                     ui.add_space(4.0);
-                    ui.label(
-                        RichText::new(props::country_name(&self.country_names, c, &loc))
-                            .strong()
-                            .size(15.0),
-                    );
-                    ui.label(RichText::new(format!("{} — {}", c.name_en, c.a3)).weak());
+                    let shown = props::country_name(&self.country_names, c, &loc);
+                    ui.label(RichText::new(shown).strong().size(15.0));
+                    // The common name when it differs, the English name, the
+                    // two ISO codes (B.6).
+                    let codes = if c.a2.is_empty() {
+                        c.a3.clone()
+                    } else {
+                        format!("{} / {}", c.a3, c.a2)
+                    };
+                    let sub = match self
+                        .country_names
+                        .common_for(&c.a3, &loc)
+                        .filter(|n| *n != shown)
+                    {
+                        Some(n) => format!("{n} · {} — {codes}", c.name_en),
+                        None => format!("{} — {codes}", c.name_en),
+                    };
+                    ui.label(RichText::new(sub).weak());
                     ui.add_space(8.0);
                     ui.label(RichText::new(self.i18n.t("prop-official-langs")).strong());
                     let (yes, no) = (self.i18n.t("glossary-yes"), self.i18n.t("glossary-no"));

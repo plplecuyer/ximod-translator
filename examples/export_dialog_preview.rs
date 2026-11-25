@@ -16,7 +16,8 @@ struct App {
 }
 
 impl eframe::App for App {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+    fn ui(&mut self, root: &mut egui::Ui, _frame: &mut eframe::Frame) {
+        let ctx = &root.ctx().clone();
         ctx.set_visuals(egui::Visuals::light());
         let mut counts = ExportCounts {
             validated: 812,
@@ -29,7 +30,7 @@ impl eframe::App for App {
             counts.total = 1022;
             counts.excluded = 0;
         }
-        egui::CentralPanel::default().show(ctx, |ui| {
+        egui::CentralPanel::default().show(root, |ui| {
             let mode = if std::env::var("XIMOD_OVERRIDE").is_ok() {
                 "Patch override"
             } else {
@@ -66,25 +67,22 @@ impl eframe::App for App {
         self.frames += 1;
         if let Some(path) = &self.shot {
             if self.frames == 6 {
-                ctx.send_viewport_cmd(egui::ViewportCommand::Screenshot);
-            }
-            let image = ctx.input(|i| {
-                i.events.iter().find_map(|e| match e {
-                    egui::Event::Screenshot { image, .. } => Some(image.clone()),
-                    _ => None,
-                })
-            });
-            if let Some(img) = image {
-                let buf: Vec<u8> = img.pixels.iter().flat_map(|c| c.to_array()).collect();
-                image::save_buffer(
-                    path,
-                    &buf,
-                    img.width() as u32,
-                    img.height() as u32,
-                    image::ColorType::Rgba8,
-                )
-                .unwrap();
-                ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                let (path, ctx2) = (path.clone(), ctx.clone());
+                ctx.send_viewport_cmd(egui::ViewportCommand::Screenshot(
+                    egui::ScreenshotCallback::new(move |img| {
+                        let buf: Vec<u8> = img.pixels.iter().flat_map(|c| c.to_array()).collect();
+                        image::save_buffer(
+                            &path,
+                            &buf,
+                            img.width() as u32,
+                            img.height() as u32,
+                            image::ColorType::Rgba8,
+                        )
+                        .unwrap();
+                        ctx2.send_viewport_cmd(egui::ViewportCommand::Close);
+                        ctx2.request_repaint();
+                    }),
+                ));
             }
             ctx.request_repaint();
         }

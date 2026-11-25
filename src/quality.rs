@@ -243,6 +243,7 @@ fn check_line(
     game: Game,
     page: crate::codepage::Page,
     set: &crate::tags::TagSet,
+    nums: crate::numstyle::NumPair,
     out: &mut Vec<Finding>,
 ) {
     let utf8 = page == crate::codepage::Page::Utf8;
@@ -250,7 +251,7 @@ fn check_line(
     let _ = line;
     let want = |c: Check| checks.contains(&c);
     if want(Check::Aliases) || want(Check::Numbers) {
-        let r = crate::tags::Report::new(&e.source, &e.trans, set);
+        let r = crate::tags::Report::new_in(&e.source, &e.trans, set, nums);
         if want(Check::Aliases) {
             for t in &r.missing_tags {
                 out.push(Finding {
@@ -401,17 +402,20 @@ pub fn run(
     } else {
         crate::codepage::Page::Win1252
     };
-    run_with_page(entries, lines, checks, game, page, progress)
+    let nums = crate::numstyle::NumPair::default();
+    run_with_page(entries, lines, checks, game, page, nums, progress)
 }
 
 /// [`run`] with the page of code the document is written in (D-09): the
-/// encoding check looks for what that page cannot hold.
+/// encoding check looks for what that page cannot hold; the numbers read
+/// in the languages of the document (B.6).
 pub fn run_with_page(
     entries: &[TmEntry],
     lines: &[usize],
     checks: &[Check],
     game: Game,
     page: crate::codepage::Page,
+    nums: crate::numstyle::NumPair,
     mut progress: impl FnMut(usize, usize) -> bool,
 ) -> Report {
     let game_set = crate::tags::TagSet::of(game);
@@ -439,7 +443,7 @@ pub fn run_with_page(
         } else {
             &game_set
         };
-        check_line(e, checks, game, page, set, &mut buf);
+        check_line(e, checks, game, page, set, nums, &mut buf);
         for mut f in buf.drain(..) {
             f.line = i;
             report.findings.push(f);

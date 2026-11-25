@@ -395,7 +395,7 @@ impl XimodApp {
                 for m in &file.matrices {
                     if ui.button(&m.name).clicked() {
                         target = Some(m.name.clone());
-                        ui.close_menu();
+                        ui.close();
                     }
                 }
                 if !file.matrices.is_empty() {
@@ -415,7 +415,7 @@ impl XimodApp {
                         .clicked()
                     {
                         target = Some(self.replace.new_matrix.trim().to_string());
-                        ui.close_menu();
+                        ui.close();
                     }
                 });
             });
@@ -706,7 +706,8 @@ impl XimodApp {
                 .with_active(true);
         }
         let mut close = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -719,12 +720,12 @@ impl XimodApp {
             if vctx.input_mut(|i| i.consume_key(egui::Modifiers::NONE, egui::Key::Escape)) {
                 close = true;
             }
-            egui::TopBottomPanel::bottom("matrices_bottom").show(vctx, |ui| {
+            egui::Panel::bottom("matrices_bottom").show(vui, |ui| {
                 if self.matrices_bottom(ui) {
                     close = true;
                 }
             });
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 self.matrices_body(ui);
             });
             if !just_opened && let Some((x, y, w, h)) = read_geometry_of(vctx) {

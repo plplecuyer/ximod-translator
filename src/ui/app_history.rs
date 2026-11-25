@@ -392,7 +392,8 @@ impl XimodApp {
                 .with_active(true);
         }
         let mut close = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -405,7 +406,7 @@ impl XimodApp {
             if vctx.input_mut(|i| i.consume_key(egui::Modifiers::NONE, egui::Key::Escape)) {
                 close = true;
             }
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 if self.history_body(ui) {
                     close = true;
                 }
@@ -605,6 +606,8 @@ impl XimodApp {
         ui.add_space(4.0);
         let row_h = ui.text_style_height(&egui::TextStyle::Body) + 6.0;
         let avail = ui.available_height() - 90.0;
+        // E-08: the translations of a language written from right to left.
+        let tgt_rtl = crate::text::bidi::language_is_rtl(&self.active_settings().target);
         TableBuilder::new(ui)
             .striped(true)
             .sense(egui::Sense::click())
@@ -639,10 +642,12 @@ impl XimodApp {
                         }
                     });
                     row.col(|ui| {
-                        ui.add(egui::Label::new(&r.before).truncate().selectable(false));
+                        let t = crate::ui::bidi::line_text(ui, &r.before, tgt_rtl);
+                        ui.add(egui::Label::new(t).truncate().selectable(false));
                     });
                     row.col(|ui| {
-                        ui.add(egui::Label::new(&r.after).truncate().selectable(false));
+                        let t = crate::ui::bidi::line_text(ui, &r.after, tgt_rtl);
+                        ui.add(egui::Label::new(t).truncate().selectable(false));
                     });
                     row.col(|ui| {
                         ui.add(egui::Label::new(&r.op).truncate().selectable(false));
@@ -786,6 +791,7 @@ impl XimodApp {
             return;
         }
         let restore_l = self.i18n.t("history-restore");
+        let tgt_rtl = crate::text::bidi::language_is_rtl(&self.active_settings().target);
         let empty_l = self.i18n.t("history-empty-value");
         let differs_l = self.i18n.t("history-source-differs");
         let mut pick: Option<Entry> = None;
@@ -808,7 +814,8 @@ impl XimodApp {
                             pick = Some(h.clone());
                         }
                         let after = if h.a.is_empty() { &empty_l } else { &h.a };
-                        ui.add(egui::Label::new(after).truncate())
+                        let shown = crate::ui::bidi::line_text(ui, after, tgt_rtl);
+                        ui.add(egui::Label::new(shown).truncate())
                             .on_hover_text(after);
                     });
                 }

@@ -289,7 +289,10 @@ fn extract_zip(
         let mut entry = zip
             .by_index(i)
             .map_err(|e| ArchiveError::Io(e.to_string()))?;
-        let name = entry.name().to_string();
+        let name = entry
+            .name()
+            .map_err(|e| ArchiveError::Io(e.to_string()))?
+            .to_string();
         let Some(rel) = safe_relative(&name) else {
             if entry.is_dir() && name.trim_matches('/').is_empty() {
                 continue;

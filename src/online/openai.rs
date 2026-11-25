@@ -157,23 +157,13 @@ impl OpenAI {
         body
     }
 
-    fn request(&self, cfg: &OnlineConfig, url: &str, key: &str, post: bool) -> ureq::Request {
-        let agent = cfg.agent_for(url);
-        let mut req = if post {
-            agent.post(url)
-        } else {
-            agent.get(url)
-        };
-        if post {
-            req = req.set("Content-Type", "application/json");
-        }
-        for (k, v) in &self.profile.headers {
-            req = req.set(k, v);
-        }
+    /// The headers of a request: the profile's, and the key.
+    fn headers(&self, key: &str) -> Vec<(String, String)> {
+        let mut h: Vec<(String, String)> = self.profile.headers.clone().into_iter().collect();
         if !key.trim().is_empty() {
-            req = req.set("Authorization", &format!("Bearer {}", key.trim()));
+            h.push(("Authorization".into(), format!("Bearer {}", key.trim())));
         }
-        req
+        h
     }
 }
 
@@ -191,11 +181,14 @@ impl Connector for OpenAI {
         dst: &str,
     ) -> Result<Vec<String>, Error> {
         let url = format!("{}/chat/completions", self.profile.base());
-        let resp = self
-            .request(cfg, &url, key, true)
-            .send_json(self.body(cfg, texts, src, dst))
-            .map_err(Error::from_ureq)?;
-        let v: serde_json::Value = resp.into_json().map_err(|e| Error::Format(e.to_string()))?;
+        let mut req = cfg
+            .agent_for(&url)
+            .post(&url)
+            .header("Content-Type", "application/json");
+        for (k, v) in self.headers(key) {
+            req = req.header(k, v);
+        }
+        let v = super::json_answer(req.send_json(self.body(cfg, texts, src, dst)))?;
         let content = v["choices"][0]["message"]["content"]
             .as_str()
             .ok_or_else(|| Error::Format(crate::l10n!("err-online-format")))?;
@@ -209,11 +202,11 @@ impl Connector for OpenAI {
     /// then the sentence of control with the profile's prompt and form.
     fn test(&self, cfg: &OnlineConfig, key: &str) -> Result<String, Error> {
         let url = format!("{}/models", self.profile.base());
-        let resp = self
-            .request(cfg, &url, key, false)
-            .call()
-            .map_err(Error::from_ureq)?;
-        let v: serde_json::Value = resp.into_json().map_err(|e| Error::Format(e.to_string()))?;
+        let mut req = cfg.agent_for(&url).get(&url);
+        for (k, v) in self.headers(key) {
+            req = req.header(k, v);
+        }
+        let v = super::json_answer(req.call())?;
         let wanted = self.profile.model.trim();
         let known = v["data"]
             .as_array()

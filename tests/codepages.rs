@@ -202,6 +202,7 @@ fn skyrim_le_polish_in_1250() {
         &[quality::Check::Encoding],
         ximod_translator::games::Game::Skyrim,
         Page::Win1252,
+        Default::default(),
         |_, _| true,
     );
     let f = report
@@ -220,6 +221,7 @@ fn skyrim_le_polish_in_1250() {
         &[quality::Check::Encoding],
         ximod_translator::games::Game::Skyrim,
         Page::Win1250,
+        Default::default(),
         |_, _| true,
     );
     assert!(report.findings.is_empty());

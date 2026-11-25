@@ -911,7 +911,7 @@ mod tests {
         let texts = CommentTexts(std::sync::Arc::new(vec![
             "à relire · Ralof (h) · MQ101 · voix ✔".into(),
             "modèle : Weapons\\Iron\\IronWarAxe.nif".into(),
-            "Gerdur (f) · MQ101 · voix ✘".into(),
+            "Gerdur (f) · MQ101 · voix ✖".into(),
         ]));
         let crit = |text: &str, re: bool, texts: Option<CommentTexts>| Criteria {
             text: text.into(),
@@ -921,7 +921,7 @@ mod tests {
             ..Default::default()
         };
         assert_eq!(
-            crit("voix ✘", false, Some(texts.clone())).apply(&entries),
+            crit("voix ✖", false, Some(texts.clone())).apply(&entries),
             vec![2]
         );
         assert_eq!(

@@ -85,6 +85,14 @@ jobs:
         run: |
           "${{ matrix.release_dir }}/ximod-cli" --version
           "${{ matrix.release_dir }}/ximod-cli" --help > /dev/null
+          # La sortie passe par un tube et le code de retour revient (sous
+          # Windows, par le petit lanceur console, D-104).
+          "${{ matrix.release_dir }}/ximod-cli" --version | grep -q "XIMOD Translator"
+          set +e
+          "${{ matrix.release_dir }}/ximod-cli" info fichier-absent.esp > /dev/null 2>&1
+          code=$?
+          set -e
+          test "$code" = 2
 
       # ---- staging commun : exécutable + assets livrés + documents ----
       - name: Staging (Unix)
@@ -95,6 +103,18 @@ jobs:
         if: runner.os == 'Windows'
         shell: bash
         run: bash packaging/stage.sh "${{ matrix.release_dir }}" dist/stage .exe
+      # D-104 : sous Linux et macOS, ximod-cli est un lien qui répond.
+      - name: ximod-cli par le lien (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          test -L dist/stage/ximod-cli
+          dist/stage/ximod-cli --version
+          dist/stage/ximod-cli --help > /dev/null
+      # La taille livrée (D-104, T-D104-01) : notée dans le journal du job.
+      - name: Taille du dossier livré
+        shell: bash
+        run: du -sh dist/stage dist/stage/assets/* || true
 
       # ---- Windows : ZIP + installateur Inno Setup ----
       - name: Archive ZIP (Windows)

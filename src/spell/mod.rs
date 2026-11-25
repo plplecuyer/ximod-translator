@@ -167,6 +167,54 @@ pub fn resolve_for_language<'a>(iso3: &str, dicts: &'a [DictInfo]) -> Option<&'a
     candidates.first().copied()
 }
 
+/// The language keys of an ISO 639-3 code: itself and its genuine 639-1.
+fn language_keys(iso3: &str) -> Vec<String> {
+    let iso3 = iso3.to_lowercase();
+    let iso1 = crate::i18n::iso639_3_to_1(&iso3);
+    let mut k = vec![iso3.clone()];
+    let genuine = iso1 != "en" || matches!(iso3.as_str(), "eng" | "en");
+    if genuine && iso1 != iso3 {
+        k.push(iso1);
+    }
+    k
+}
+
+/// The installed dictionaries of a language (en_AU, en_GB, en_US… for
+/// `"eng"`), sorted by code: the list of the correcteur (D-11, R-D11-01).
+pub fn dictionaries_for_language<'a>(iso3: &str, dicts: &'a [DictInfo]) -> Vec<&'a DictInfo> {
+    let keys = language_keys(iso3);
+    dicts
+        .iter()
+        .filter(|d| keys.contains(&d.code.to_lowercase()) || keys.contains(&d.base()))
+        .collect()
+}
+
+/// The dictionary of a language: the one chosen (`[Spell] Dict_<langue>`,
+/// R-D11-02) when it is installed, else the automatic one
+/// ([`resolve_for_language`]).
+pub fn pick<'a>(iso3: &str, choice: Option<&str>, dicts: &'a [DictInfo]) -> Option<&'a DictInfo> {
+    choice
+        .filter(|c| !c.trim().is_empty())
+        .and_then(|c| {
+            dictionaries_for_language(iso3, dicts)
+                .into_iter()
+                .find(|d| d.code.eq_ignore_ascii_case(c.trim()))
+        })
+        .or_else(|| resolve_for_language(iso3, dicts))
+}
+
+/// The pair of files to install for a language without a dictionary
+/// (`"en_US"` for English, `"fr_FR"` for French, the code alone otherwise).
+pub fn expected_code(iso3: &str) -> String {
+    let keys = language_keys(iso3);
+    let base = keys.last().cloned().unwrap_or_default();
+    match preferred_region(&base) {
+        Some(r) => format!("{base}_{r}"),
+        None if base.len() == 2 => format!("{base}_{}", base.to_uppercase()),
+        None => base,
+    }
+}
+
 /// The regional dictionary to prefer when a language has several
 /// (`en` → `en_US`, `pt` → `pt_BR`, `sv` → `sv_SE`…). Languages whose usual
 /// dictionary repeats the language code (fr_FR, de_DE, it_IT…) need no entry.
@@ -252,8 +300,14 @@ impl SpellChecker {
     /// merge the persistent personal dictionary. Returns `None` when no matching
     /// dictionary is installed.
     pub fn load_for_language(iso3: &str) -> Option<Self> {
+        Self::load(iso3, None)
+    }
+
+    /// [`load_for_language`](Self::load_for_language) with the dictionary
+    /// chosen for the language (D-11), the automatic one otherwise.
+    pub fn load(iso3: &str, choice: Option<&str>) -> Option<Self> {
         let dicts = available_dictionaries();
-        let info = resolve_for_language(iso3, &dicts)?;
+        let info = pick(iso3, choice, &dicts)?;
         let mut checker = Self::from_files(info, iso3).ok()?;
         checker.attach_personal(personal_dict_path(iso3));
         Some(checker)
@@ -413,6 +467,39 @@ mod tests {
         let aff = "SET UTF-8\n";
         let dic = "8\nhello\nsword\népée\nknown\nwell\nil\ncan\nParis\n";
         SpellChecker::from_sources(aff, dic, "test", "und").unwrap()
+    }
+
+    fn info(code: &str) -> DictInfo {
+        DictInfo {
+            code: code.into(),
+            aff: PathBuf::from(format!("{code}.aff")),
+            dic: PathBuf::from(format!("{code}.dic")),
+        }
+    }
+
+    #[test]
+    fn a_dictionary_is_chosen_per_language() {
+        // D-11, R-D11-02: the list of a language, the choice kept, else auto.
+        let dicts: Vec<DictInfo> = ["de_DE", "en_AU", "en_GB", "en_US", "fr", "fr_CA"]
+            .iter()
+            .map(|c| info(c))
+            .collect();
+        let en: Vec<&str> = dictionaries_for_language("eng", &dicts)
+            .iter()
+            .map(|d| d.code.as_str())
+            .collect();
+        assert_eq!(en, ["en_AU", "en_GB", "en_US"]);
+        assert_eq!(pick("eng", None, &dicts).unwrap().code, "en_US");
+        assert_eq!(pick("eng", Some("en_GB"), &dicts).unwrap().code, "en_GB");
+        assert_eq!(pick("eng", Some("EN_gb"), &dicts).unwrap().code, "en_GB");
+        // A choice of another language or no longer installed: automatic.
+        assert_eq!(pick("eng", Some("fr_CA"), &dicts).unwrap().code, "en_US");
+        assert_eq!(pick("eng", Some("en_NZ"), &dicts).unwrap().code, "en_US");
+        assert!(pick("ita", None, &dicts).is_none());
+        // T-D11-04: the pair to install for a language without one.
+        assert_eq!(expected_code("eng"), "en_US");
+        assert_eq!(expected_code("ita"), "it_IT");
+        assert_eq!(expected_code("fra"), "fr_FR");
     }
 
     #[test]

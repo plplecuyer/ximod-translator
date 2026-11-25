@@ -378,7 +378,7 @@ impl XimodApp {
                 }
                 v.push((ex, None));
                 if let Some((unique, dup)) = p.ids {
-                    let pal = crate::ui::theme::Palette::of(&ctx.style().visuals);
+                    let pal = crate::ui::theme::Palette::of(&ctx.global_style().visuals);
                     if dup == 0 {
                         v.push((
                             self.i18n
@@ -388,17 +388,20 @@ impl XimodApp {
                     } else {
                         v.push((
                             self.i18n.t_arg("import-ids-dup", "n", &dup.to_string()),
-                            Some(ctx.style().visuals.warn_fg_color),
+                            Some(ctx.global_style().visuals.warn_fg_color),
                         ));
                     }
                 }
                 v.push((self.i18n.t_arg("import-target", "path", &p.target), None));
                 if p.lines == 0 {
-                    v.push((t("import-none"), Some(ctx.style().visuals.warn_fg_color)));
+                    v.push((
+                        t("import-none"),
+                        Some(ctx.global_style().visuals.warn_fg_color),
+                    ));
                 }
                 v
             }
-            Some(Err(e)) => vec![(e.clone(), Some(ctx.style().visuals.error_fg_color))],
+            Some(Err(e)) => vec![(e.clone(), Some(ctx.global_style().visuals.error_fg_color))],
             None => Vec::new(),
         };
         let n_rows = match &preview {
@@ -412,7 +415,7 @@ impl XimodApp {
         let (mut do_import, mut do_save, mut do_cancel, mut do_edit, mut do_new) =
             (false, false, false, false, false);
         egui::Window::new(title)
-            .id(egui::Id::new("ximod-import-dialog"))
+            .id(egui::Id::unique("ximod-import-dialog"))
             .collapsible(false)
             .resizable(true)
             .order(egui::Order::Foreground)

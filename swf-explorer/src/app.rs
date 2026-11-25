@@ -197,7 +197,7 @@ impl SwfTextApp {
         ui.menu_button("Fichier", |ui| {
             ui.style_mut().wrap_mode = Some(egui::TextWrapMode::Extend);
             if ui.button("Ouvrir SWF…").clicked() {
-                ui.close_menu();
+                ui.close();
                 self.open_dialog();
             }
             ui.separator();
@@ -206,14 +206,14 @@ impl SwfTextApp {
                 .add_enabled(has, egui::Button::new("Exporter les textes…"))
                 .clicked()
             {
-                ui.close_menu();
+                ui.close();
                 self.export_dialog();
             }
             if ui
                 .add_enabled(has, egui::Button::new("Importer des traductions…"))
                 .clicked()
             {
-                ui.close_menu();
+                ui.close();
                 self.import_dialog();
             }
             ui.separator();
@@ -221,7 +221,7 @@ impl SwfTextApp {
                 .add_enabled(has, egui::Button::new("Enregistrer le SWF traduit…"))
                 .clicked()
             {
-                ui.close_menu();
+                ui.close();
                 self.save_dialog();
             }
         });
@@ -234,8 +234,9 @@ impl SwfTextApp {
     }
 
     /// Per-frame UI below the shell's unified menu bar.
-    pub fn body(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        egui::TopBottomPanel::bottom("status").show(ctx, |ui| {
+    pub fn body(&mut self, root: &mut egui::Ui, _frame: &mut eframe::Frame) {
+        let ctx = &root.ctx().clone();
+        egui::Panel::bottom("status").show(root, |ui| {
             if let Some(e) = &self.error {
                 ui.colored_label(egui::Color32::from_rgb(0xB0, 0x24, 0x18), e);
             } else if let Some(s) = &self.status {
@@ -245,7 +246,7 @@ impl SwfTextApp {
             }
         });
 
-        egui::CentralPanel::default().show(ctx, |ui| {
+        egui::CentralPanel::default().show(root, |ui| {
             if self.rows.is_empty() {
                 ui.centered_and_justified(|ui| {
                     ui.label("Glissez un .swf ici ou utilisez « Ouvrir SWF… ».");
@@ -368,7 +369,7 @@ impl SwfTextApp {
             i.raw
                 .dropped_files
                 .iter()
-                .filter_map(|f| f.path.clone())
+                .map(|f| f.path().to_path_buf())
                 .collect()
         });
         if let Some(p) = dropped.into_iter().find(|p| {

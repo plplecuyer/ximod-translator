@@ -70,10 +70,10 @@ pub fn layouter(
     font: FontId,
     color: Color32,
     muted: Color32,
-) -> impl FnMut(&egui::Ui, &str, f32) -> std::sync::Arc<egui::Galley> {
-    move |ui: &egui::Ui, text: &str, wrap_width: f32| {
-        let job = job(text, font.clone(), color, muted, wrap_width, true);
-        ui.fonts(|f| f.layout_job(job))
+) -> impl FnMut(&egui::Ui, &dyn egui::TextBuffer, f32) -> std::sync::Arc<egui::Galley> {
+    move |ui: &egui::Ui, text: &dyn egui::TextBuffer, wrap_width: f32| {
+        let job = job(text.as_str(), font.clone(), color, muted, wrap_width, true);
+        ui.fonts_mut(|f| f.layout_job(job))
     }
 }
 
@@ -89,10 +89,10 @@ pub fn paint_pilcrows(
 ) {
     for row in &galley.rows {
         if row.ends_with_newline {
-            let x = pos.x + row.rect.right() + 1.0;
+            let x = pos.x + row.rect().right() + 1.0;
             if x + 8.0 <= clip_right {
                 ui.painter().text(
-                    egui::pos2(x, pos.y + row.rect.top()),
+                    egui::pos2(x, pos.y + row.rect().top()),
                     egui::Align2::LEFT_TOP,
                     "¶",
                     font.clone(),

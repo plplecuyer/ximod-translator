@@ -24,13 +24,12 @@ fn call(
         "format": "html",
     });
     let url = format!("{URL}?key={}", key.trim());
-    let resp = cfg
-        .agent_for(&url)
-        .post(&url)
-        .set("Content-Type", "application/json")
-        .send_json(body)
-        .map_err(Error::from_ureq)?;
-    let v: serde_json::Value = resp.into_json().map_err(|e| Error::Format(e.to_string()))?;
+    let v = super::json_answer(
+        cfg.agent_for(&url)
+            .post(&url)
+            .header("Content-Type", "application/json")
+            .send_json(body),
+    )?;
     parse_answers(&v, texts.len())
 }
 

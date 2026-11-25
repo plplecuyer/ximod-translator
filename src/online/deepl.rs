@@ -44,13 +44,12 @@ impl Connector for DeepL {
             body["formality"] = serde_json::Value::String(formality.to_string());
         }
         let url = format!("{}/v2/translate", base(cfg));
-        let resp = cfg
-            .agent_for(&url)
-            .post(&url)
-            .set("Authorization", &format!("DeepL-Auth-Key {}", key.trim()))
-            .send_json(body)
-            .map_err(Error::from_ureq)?;
-        let v: serde_json::Value = resp.into_json().map_err(|e| Error::Format(e.to_string()))?;
+        let v = super::json_answer(
+            cfg.agent_for(&url)
+                .post(&url)
+                .header("Authorization", &format!("DeepL-Auth-Key {}", key.trim()))
+                .send_json(body),
+        )?;
         parse_translations(&v, texts.len())
     }
 
@@ -59,13 +58,12 @@ impl Connector for DeepL {
             return Err(Error::NoKey);
         }
         let url = format!("{}/v2/usage", base(cfg));
-        let resp = cfg
-            .agent_for(&url)
-            .get(&url)
-            .set("Authorization", &format!("DeepL-Auth-Key {}", key.trim()))
-            .call()
-            .map_err(Error::from_ureq)?;
-        let v: serde_json::Value = resp.into_json().map_err(|e| Error::Format(e.to_string()))?;
+        let v = super::json_answer(
+            cfg.agent_for(&url)
+                .get(&url)
+                .header("Authorization", &format!("DeepL-Auth-Key {}", key.trim()))
+                .call(),
+        )?;
         let used = v["character_count"].as_u64().unwrap_or(0);
         let limit = v["character_limit"].as_u64().unwrap_or(0);
         Ok(format!("usage:{used}/{limit}"))

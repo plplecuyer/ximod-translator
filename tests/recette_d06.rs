@@ -286,7 +286,7 @@ fn recette() {
     );
     let zip = work.join("out/Apocalypse.zip");
     let z = zip::ZipArchive::new(std::fs::File::open(&zip).unwrap()).unwrap();
-    let names: Vec<String> = z.file_names().map(str::to_string).collect();
+    let names: Vec<String> = z.file_names().map(|n| n.unwrap().to_string()).collect();
     eprintln!("package: {names:?}");
     assert!(names.iter().any(|n| {
         n.starts_with("SKSE/Plugins/DynamicStringDistributor/Apocalypse - Magic of Skyrim.esp/")

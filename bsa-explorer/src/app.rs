@@ -80,7 +80,7 @@ impl Icons {
 /// A small, borderless image button of a fixed square size. Returns the response.
 fn icon_button(ui: &mut egui::Ui, tex: &egui::TextureHandle, side: f32) -> egui::Response {
     ui.add(
-        egui::ImageButton::new(egui::Image::new(tex).fit_to_exact_size(egui::vec2(side, side)))
+        egui::Button::image(egui::Image::new(tex).fit_to_exact_size(egui::vec2(side, side)))
             .frame(false),
     )
 }
@@ -269,7 +269,7 @@ impl BsaExplorerApp {
             i.raw
                 .dropped_files
                 .iter()
-                .filter_map(|f| f.path.clone())
+                .map(|f| f.path().to_path_buf())
                 .collect()
         });
         for p in dropped {
@@ -282,10 +282,10 @@ impl BsaExplorerApp {
         if !hovering {
             return;
         }
-        let screen = ctx.screen_rect();
+        let screen = ctx.content_rect();
         let painter = ctx.layer_painter(egui::LayerId::new(
             egui::Order::Foreground,
-            egui::Id::new("drag_hint"),
+            egui::Id::unique("drag_hint"),
         ));
         painter.rect_filled(screen, 0.0, egui::Color32::from_black_alpha(160));
         painter.text(
@@ -328,7 +328,7 @@ impl BsaExplorerApp {
         ui.menu_button("Fichier", |ui| {
             ui.style_mut().wrap_mode = Some(egui::TextWrapMode::Extend);
             if ui.button("Ouvrir…").clicked() {
-                ui.close_menu();
+                ui.close();
                 self.open_dialog();
             }
             ui.separator();
@@ -339,7 +339,7 @@ impl BsaExplorerApp {
                 )
                 .clicked()
             {
-                ui.close_menu();
+                ui.close();
                 self.open_compare();
             }
             ui.separator();
@@ -351,7 +351,7 @@ impl BsaExplorerApp {
                 )
                 .clicked()
             {
-                ui.close_menu();
+                ui.close();
                 self.export_list(false);
             }
             if ui
@@ -361,7 +361,7 @@ impl BsaExplorerApp {
                 )
                 .clicked()
             {
-                ui.close_menu();
+                ui.close();
                 self.export_list(true);
             }
             ui.separator();
@@ -372,14 +372,14 @@ impl BsaExplorerApp {
                 )
                 .clicked()
             {
-                ui.close_menu();
+                ui.close();
                 self.close(self.active);
             }
             if ui
                 .add_enabled(!self.archives.is_empty(), egui::Button::new("Tout fermer"))
                 .clicked()
             {
-                ui.close_menu();
+                ui.close();
                 self.archives.clear();
                 self.active = 0;
             }
@@ -398,14 +398,14 @@ impl BsaExplorerApp {
         });
     }
 
-    fn tabs_bar(&mut self, ctx: &egui::Context) {
+    fn tabs_bar(&mut self, root: &mut egui::Ui) {
         if self.archives.is_empty() {
             return;
         }
         let mut activate = None;
         let mut close = None;
         let delete = self.icons.as_ref().map(|i| i.delete.clone());
-        egui::TopBottomPanel::top("tabs").show(ctx, |ui| {
+        egui::Panel::top("tabs").show(root, |ui| {
             egui::ScrollArea::horizontal().show(ui, |ui| {
                 ui.horizontal(|ui| {
                     for (i, l) in self.archives.iter().enumerate() {
@@ -1230,7 +1230,8 @@ impl BsaExplorerApp {
         Ok((ok, ko))
     }
     /// Per-frame UI below the shell's unified menu bar (tabs, panels, windows).
-    pub fn body(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+    pub fn body(&mut self, root: &mut egui::Ui, _frame: &mut eframe::Frame) {
+        let ctx = &root.ctx().clone();
         if self.icons.is_none() {
             self.icons = Some(Icons::load(ctx));
         }
@@ -1245,27 +1246,27 @@ impl BsaExplorerApp {
         }
         self.sync_preview(ctx);
 
-        self.tabs_bar(ctx);
+        self.tabs_bar(root);
 
-        egui::TopBottomPanel::bottom("status").show(ctx, |ui| self.status_bar(ui));
+        egui::Panel::bottom("status").show(root, |ui| self.status_bar(ui));
 
         if !self.archives.is_empty() {
-            egui::SidePanel::left("tree")
+            egui::Panel::left("tree")
                 .resizable(true)
-                .default_width(260.0)
-                .min_width(160.0)
-                .show(ctx, |ui| self.tree_panel(ui));
+                .default_size(260.0)
+                .min_size(160.0)
+                .show(root, |ui| self.tree_panel(ui));
 
-            egui::SidePanel::right("preview")
+            egui::Panel::right("preview")
                 .resizable(true)
-                .default_width(340.0)
-                .min_width(180.0)
-                .show(ctx, |ui| self.preview_panel(ui));
+                .default_size(340.0)
+                .min_size(180.0)
+                .show(root, |ui| self.preview_panel(ui));
 
-            egui::TopBottomPanel::bottom("foot").show(ctx, |ui| self.footer(ui));
+            egui::Panel::bottom("foot").show(root, |ui| self.footer(ui));
         }
 
-        egui::CentralPanel::default().show(ctx, |ui| {
+        egui::CentralPanel::default().show(root, |ui| {
             if let Some(err) = &self.error {
                 ui.colored_label(egui::Color32::from_rgb(0xB0, 0x24, 0x18), err);
                 ui.separator();
@@ -1563,7 +1564,7 @@ fn close_menu_if_pointer_left(ui: &mut egui::Ui, child: Option<egui::Rect>) {
     let popup = ui.min_rect();
     let pointer = ui.input(|i| i.pointer.hover_pos());
     if menu_should_close(popup, child, pointer) {
-        ui.close_menu();
+        ui.close();
     }
 }
 

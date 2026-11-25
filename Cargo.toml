@@ -1,12 +1,12 @@
 [package]
 name = "ximod-translator"
-version = "0.4.0"
+version = "0.5.0"
 edition = "2024"
 rust-version = "1.97"
 authors = ["XIMOD Team"]
 description = "Cross-platform mod translation tool for Bethesda games (Skyrim, Fallout, Starfield, Oblivion…)"
 license = "MIT"
-repository = "https://github.com/ximod/ximod-translator"
+repository = "https://github.com/plplecuyer/ximod-translator"
 keywords = ["translation", "modding", "skyrim", "fallout", "starfield"]
 categories = ["gui", "games"]
 build = "build.rs"
@@ -29,8 +29,11 @@ bsa-explorer = { path = "bsa-explorer" }
 swf-explorer = { path = "swf-explorer" }
 
 # GUI framework (glow backend: most stable on Windows)
-eframe = { version = "0.29", default-features = false, features = ["default_fonts", "glow", "wayland", "x11"] }
-egui_extras = { version = "0.29", features = ["image", "file", "svg"] }
+eframe = { version = "0.37", default-features = false, features = ["default_fonts", "glow", "wayland", "x11"] }
+# The monochrome emoji fonts of egui (✔ ✖ ▾ 📖…): no longer part of
+# default_fonts since egui 0.37 (recette du lot 2).
+egui = { version = "0.37", default-features = false, features = ["monochrome_emoji_fonts"] }
+egui_extras = { version = "0.37", features = ["image", "file", "svg"] }
 image = { version = "0.25", default-features = false, features = ["png", "ico"] }
 
 # XML reading (writing is done by hand to control each dialect's exact layout)
@@ -53,10 +56,10 @@ fluent-bundle = "0.15"
 unic-langid = "0.9"
 
 # File dialogs
-rfd = "0.15"
+rfd = "0.18"
 
 # Utilities
-dirs = "5.0"
+dirs = "7"
 thiserror = "2.0"
 anyhow = "1.0"
 tracing = "0.1"
@@ -72,19 +75,22 @@ memmap2 = "0.9"
 
 # Optional: GOG Galaxy SQLite database reader (feature "gog-galaxy").
 rusqlite = { version = "0.32", features = ["bundled"], optional = true }
+# D-104 : tous les modèles de lingua (75 langues) sont gardés — un
+# utilisateur peut ajouter une langue à un jeu (décision du 19/11/2026).
 lingua = "1.8"
-zip = { version = "2", default-features = false, features = ["deflate"] }
+zip = { version = "9", default-features = false, features = ["deflate"] }
 arboard = { version = "3", default-features = false }
 regex = "1"
-egui-phosphor = "0.7"
 
 # Online translation (D-01 / D-02): blocking HTTP client with rustls (as in
 # XIMOD Architect), API keys in the system keyring.
-ureq = { version = "2", default-features = false, features = ["tls", "json"] }
-keyring = { version = "3", features = ["apple-native", "windows-native", "sync-secret-service", "crypto-rust"] }
+ureq = { version = "3", default-features = false, features = ["rustls", "json"] }
+keyring = "4"
 similar = { version = "3", features = ["unicode"] }
 # Normalized matching of the dictionaries (B-19): NFKC.
 unicode-normalization = "0.1"
+unicode-bidi = "0.3"
+ferrous-opencc = "0.4"
 
 # Platform-specific dependencies for the native transparent splash screen.
 [target.'cfg(target_os = "windows")'.dependencies]
@@ -93,6 +99,7 @@ windows-sys = { version = "0.59", features = [
     "Win32_Graphics_Gdi",
     "Win32_UI_WindowsAndMessaging",
     "Win32_System_LibraryLoader",
+    "Win32_System_Console",
 ] }
 # Windows registry access for game detection (Steam / GOG install paths).
 winreg = "0.52"

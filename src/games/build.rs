@@ -282,13 +282,14 @@ fn collect_all_languages(data: &Path, dlc_bases: &[String]) -> LangMaps {
 /// folder and/or the game's interface/localization and DLC BSA/BA2 archives. The
 /// pass is incremental (a game's outputs are skipped when its STRINGS fingerprint
 /// is unchanged). Non-localized games have no STRINGS and are left for the
-/// plugin-pair flow. Calls `on_step(done, total, label)` per game and once at the
-/// end. Returns a [`BuildReport`].
+/// plugin-pair flow. Calls `on_step(done, total, label, written)` per game and
+/// once at the end, `written` counting the dictionaries written so far (a
+/// game wrote some when it grew during its turn). Returns a [`BuildReport`].
 pub fn regenerate(
     cfg: &AppConfig,
     jeux_dir: &Path,
     dlc: &crate::games::dlc::DlcMap,
-    mut on_step: impl FnMut(usize, usize, &str),
+    mut on_step: impl FnMut(usize, usize, &str, usize),
 ) -> BuildReport {
     let mut report = BuildReport::default();
 
@@ -306,7 +307,7 @@ pub fn regenerate(
     let no_dlc: Vec<String> = Vec::new();
     for (i, (id, path)) in entries.iter().enumerate() {
         let game = Game::from_id(id);
-        on_step(i, total, game.display_name());
+        on_step(i, total, game.display_name(), report.built);
 
         if !is_localized(game) {
             report.details.push(format!(
@@ -377,11 +378,14 @@ pub fn regenerate(
         }
 
         let _ = std::fs::create_dir_all(&gdir);
-        // The folder is auto-managed: clear previous auto dictionaries so removed
-        // languages/DLC don't linger.
-        clear_ximdb(&gdir);
+        start_rebuild(&gdir);
 
         let mut built_here: Vec<String> = Vec::new();
+        // The strings in the order of their plugin, list and identifier: the
+        // same game files give the same base, byte for byte (recette du lot
+        // 2 : the order of a hash table changed from one build to the next).
+        let mut eng_sorted: Vec<(&Key, &String)> = eng.iter().collect();
+        eng_sorted.sort_unstable_by(|a, b| a.0.cmp(b.0));
         for tgt in &targets {
             let tmap = &langs[*tgt];
             let up = tgt.to_uppercase();
@@ -389,7 +393,7 @@ pub fn regenerate(
             // Split rows by plugin base: base game vs each DLC → separate files.
             let mut buckets: std::collections::BTreeMap<String, Vec<Row>> =
                 std::collections::BTreeMap::new();
-            for ((base, li, tid), s) in eng {
+            for &((base, li, tid), s) in &eng_sorted {
                 if let Some(t) = tmap.get(&(base.clone(), *li, *tid))
                     && !t.is_empty()
                     && t != s
@@ -439,7 +443,7 @@ pub fn regenerate(
             }
         ));
     }
-    on_step(total, total, "");
+    on_step(total, total, "", report.built);
     report
 }
 
@@ -522,6 +526,17 @@ fn dir_has_ximdb(dir: &Path) -> bool {
 }
 
 /// Delete every `.ximdb` directly in `dir` (auto-managed game folder).
+/// Before the dictionaries of a game are written again: its stamp goes
+/// first, then its previous dictionaries (the folder is auto-managed, so
+/// removed languages and DLC do not linger). The stamp is written back
+/// last; a rebuild cut short (the application closed meanwhile, R-E13-06)
+/// leaves no stamp, and the next launch builds the game again instead of
+/// taking a partial set for up to date.
+fn start_rebuild(gdir: &Path) {
+    let _ = std::fs::remove_file(gdir.join(".sources.stamp"));
+    clear_ximdb(gdir);
+}
+
 fn clear_ximdb(dir: &Path) {
     if let Ok(rd) = std::fs::read_dir(dir) {
         for e in rd.flatten() {
@@ -625,7 +640,16 @@ mod tests {
         let jeux = base.join("bases/jeux");
 
         // First pass builds one dictionary, inside the game's sub-folder.
-        let r1 = regenerate(&cfg, &jeux, &crate::games::dlc::DlcMap::new(), |_, _, _| {});
+        // The progress gives the dictionaries written so far: the game wrote
+        // one during its turn (E-13, journal entry « Base de jeu prête »).
+        let mut steps = Vec::new();
+        let r1 = regenerate(
+            &cfg,
+            &jeux,
+            &crate::games::dlc::DlcMap::new(),
+            |done, total, _, written| steps.push((done, total, written)),
+        );
+        assert_eq!(steps, vec![(0, 1, 0), (1, 1, 1)]);
         assert_eq!(r1.built, 1);
         assert_eq!(r1.skipped, 0);
         let out = jeux.join("SkyrimSE").join("SkyrimSE_ENG-FRA.ximdb");
@@ -641,7 +665,15 @@ mod tests {
         );
 
         // Second pass skips the whole game (unchanged sources).
-        let r2 = regenerate(&cfg, &jeux, &crate::games::dlc::DlcMap::new(), |_, _, _| {});
+        let mut last = usize::MAX;
+        let r2 = regenerate(
+            &cfg,
+            &jeux,
+            &crate::games::dlc::DlcMap::new(),
+            |_, _, _, written| last = written,
+        );
+        // Up to date: nothing written, no « prête » entry.
+        assert_eq!(last, 0);
         assert_eq!(r2.built, 0);
         assert_eq!(r2.skipped, 1);
 
@@ -653,9 +685,65 @@ mod tests {
             "French",
             &[(1, "Grande épée à deux mains"), (2, "Bouclier")],
         );
-        let r3 = regenerate(&cfg, &jeux, &crate::games::dlc::DlcMap::new(), |_, _, _| {});
+        let r3 = regenerate(
+            &cfg,
+            &jeux,
+            &crate::games::dlc::DlcMap::new(),
+            |_, _, _, _| {},
+        );
         assert_eq!(r3.built, 1);
 
+        let _ = std::fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn the_same_files_give_the_same_base() {
+        // Recette du lot 2 : two builds of the same STRINGS, byte for byte.
+        let base = std::env::temp_dir().join("ximod_build_same_bytes");
+        let _ = std::fs::remove_dir_all(&base);
+        let strings = base.join("game/Data/Strings");
+        std::fs::create_dir_all(&strings).unwrap();
+        let en: Vec<(u32, String)> = (1..400).map(|i| (i, format!("Text {i}"))).collect();
+        let fr: Vec<(u32, String)> = (1..400).map(|i| (i, format!("Texte {i}"))).collect();
+        let en: Vec<(u32, &str)> = en.iter().map(|(i, s)| (*i, s.as_str())).collect();
+        let fr: Vec<(u32, &str)> = fr.iter().map(|(i, s)| (*i, s.as_str())).collect();
+        write_strings(&strings, "Skyrim", "English", &en);
+        write_strings(&strings, "Skyrim", "French", &fr);
+        let cfg = cfg_with_game(&base.join("game"));
+        let dlc = crate::games::dlc::DlcMap::new();
+        let mut built = Vec::new();
+        for run in ["a", "b"] {
+            let jeux = base.join(run);
+            assert_eq!(regenerate(&cfg, &jeux, &dlc, |_, _, _, _| {}).built, 1);
+            built.push(std::fs::read(jeux.join("SkyrimSE/SkyrimSE_ENG-FRA.ximdb")).unwrap());
+        }
+        assert_eq!(built[0], built[1]);
+        let _ = std::fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn a_rebuild_cut_short_is_done_again() {
+        // T-E13-05: the application closed while a game's dictionaries were
+        // written: no stamp is left, the next launch builds them again.
+        let base = std::env::temp_dir().join("ximod_build_cut_short");
+        let _ = std::fs::remove_dir_all(&base);
+        let strings = base.join("game/Data/Strings");
+        std::fs::create_dir_all(&strings).unwrap();
+        write_strings(&strings, "Skyrim", "English", &[(1, "Sword")]);
+        write_strings(&strings, "Skyrim", "French", &[(1, "Épée")]);
+        let cfg = cfg_with_game(&base.join("game"));
+        let jeux = base.join("bases/jeux");
+        let dlc = crate::games::dlc::DlcMap::new();
+        assert_eq!(regenerate(&cfg, &jeux, &dlc, |_, _, _, _| {}).built, 1);
+        let gdir = jeux.join("SkyrimSE");
+        // A rebuild starts, writes one dictionary of the set, and stops.
+        start_rebuild(&gdir);
+        assert!(!gdir.join(".sources.stamp").exists());
+        std::fs::write(gdir.join("Dawnguard_ENG-FRA.ximdb"), b"partial").unwrap();
+        let r = regenerate(&cfg, &jeux, &dlc, |_, _, _, _| {});
+        assert_eq!((r.built, r.skipped), (1, 0));
+        assert!(gdir.join("SkyrimSE_ENG-FRA.ximdb").is_file());
+        assert!(!gdir.join("Dawnguard_ENG-FRA.ximdb").exists());
         let _ = std::fs::remove_dir_all(&base);
     }
 
@@ -692,7 +780,7 @@ mod tests {
         let jeux = base.join("bases/jeux");
         let mut dlc = crate::games::dlc::DlcMap::new();
         dlc.insert("SkyrimSE".into(), vec!["Dawnguard".into()]);
-        let r = regenerate(&cfg, &jeux, &dlc, |_, _, _| {});
+        let r = regenerate(&cfg, &jeux, &dlc, |_, _, _, _| {});
 
         // FRA → base + Dawnguard (2 dicts); DEU → base only (1 dict) = 3.
         assert_eq!(r.built, 3);
@@ -741,7 +829,12 @@ mod tests {
         write_strings(&strings, "Skyrim", "English", &[(1, "Sword")]);
         let cfg = cfg_with_game(&base.join("game"));
         let jeux = base.join("bases/jeux");
-        let r = regenerate(&cfg, &jeux, &crate::games::dlc::DlcMap::new(), |_, _, _| {});
+        let r = regenerate(
+            &cfg,
+            &jeux,
+            &crate::games::dlc::DlcMap::new(),
+            |_, _, _, _| {},
+        );
         assert_eq!(r.built, 0);
         assert!(
             !jeux

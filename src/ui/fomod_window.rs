@@ -16,6 +16,7 @@
 //! for the translated preview.
 
 use super::app::{XimodApp, read_geometry};
+use crate::ui::keys::TakeCmd as _;
 use crate::ui::theme::ComboField as _;
 use crate::ui::toasts::ToastLevel;
 use eframe::egui::{self, RichText};
@@ -878,15 +879,15 @@ fn issue_text(i18n: &crate::i18n::I18n, issue: &TIssue) -> String {
 }
 
 /// Make tabs and line breaks visible in the read-only source pane.
-/// Make every blank visible, the way editors do: `·` for a space, `⍽` for a
-/// non-breaking space, `→` for a tab, `␍` for a carriage return and `¶` at
+/// Make every blank visible, the way editors do: `·` for a space, `°` for a
+/// non-breaking space (as Word does), `→` for a tab, `␍` for a carriage return and `¶` at
 /// each line end (the line break itself is kept so the layout is unchanged).
 fn mark_whitespace(s: &str) -> String {
     let mut out = String::with_capacity(s.len() + s.len() / 4);
     for c in s.chars() {
         match c {
             ' ' => out.push('·'),
-            '\u{a0}' => out.push('⍽'),
+            '\u{a0}' => out.push('°'),
             '\t' => {
                 out.push(crate::icons::ARROW_RIGHT_CHAR);
                 out.push_str("   ");
@@ -1120,7 +1121,8 @@ impl XimodApp {
         ctx.show_viewport_immediate(
             egui::ViewportId::from_hash_of(WINDOW_ID),
             vb,
-            |ctx, _class| {
+            |root, _class| {
+                let ctx = &root.ctx().clone();
                 if let Some((pos, size)) = place {
                     ctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                         pos[0], pos[1],
@@ -1132,18 +1134,9 @@ impl XimodApp {
                 // ---- keyboard ----
                 let (save_key, next_key, online_key) = ctx.input_mut(|i| {
                     (
-                        i.consume_shortcut(&egui::KeyboardShortcut::new(
-                            egui::Modifiers::COMMAND,
-                            egui::Key::S,
-                        )),
-                        i.consume_shortcut(&egui::KeyboardShortcut::new(
-                            egui::Modifiers::COMMAND,
-                            egui::Key::Enter,
-                        )),
-                        i.consume_shortcut(&egui::KeyboardShortcut::new(
-                            egui::Modifiers::COMMAND,
-                            egui::Key::G,
-                        )),
+                        i.take_cmd(crate::shortcuts::Cmd::FomodSave),
+                        i.take_cmd(crate::shortcuts::Cmd::FomodNext),
+                        i.take_cmd(crate::shortcuts::Cmd::FomodOnline),
                     )
                 });
                 if save_key && st.doc.is_some() {
@@ -1162,9 +1155,9 @@ impl XimodApp {
                     st.load_root(root, i18n);
                 }
                 st.refresh_visible();
-                render_header(ctx, &mut st, i18n, &locales, job_label.as_deref());
-                render_detail(ctx, &mut st, i18n);
-                render_table(ctx, &mut st, i18n);
+                render_header(root, &mut st, i18n, &locales, job_label.as_deref());
+                render_detail(root, &mut st, i18n);
+                render_table(root, &mut st, i18n);
 
                 if let Some((level, text)) = st.message.take() {
                     toast = Some((level, text));
@@ -1244,13 +1237,13 @@ impl XimodApp {
 
 /// Top panel: source folder, languages, translator, actions, progress.
 fn render_header(
-    ctx: &egui::Context,
+    root: &mut egui::Ui,
     st: &mut FomodTranslationState,
     i18n: &crate::i18n::I18n,
     locales: &[String],
     job: Option<&str>,
 ) {
-    egui::TopBottomPanel::top("ftr_header").show(ctx, |ui| {
+    egui::Panel::top("ftr_header").show(root, |ui| {
         ui.add_space(4.0);
         // Row 1: source + languages.
         ui.horizontal(|ui| {
@@ -1323,11 +1316,10 @@ fn render_header(
             let loaded = st.doc.is_some();
             if ui
                 .add_enabled(loaded, egui::Button::new(i18n.t("ftr-save")))
-                .on_hover_text(crate::ui::app::key_text(
+                .on_hover_text(crate::ui::app::cmd_text(
                     ui.ctx(),
+                    crate::shortcuts::Cmd::FomodSave,
                     i18n,
-                    egui::Modifiers::COMMAND,
-                    egui::Key::S,
                 ))
                 .clicked()
             {
@@ -1487,11 +1479,10 @@ fn render_header(
                     st.doc.is_some(),
                     egui::Button::new(i18n.t("ftr-next-untranslated")),
                 )
-                .on_hover_text(crate::ui::app::key_text(
+                .on_hover_text(crate::ui::app::cmd_text(
                     ui.ctx(),
+                    crate::shortcuts::Cmd::FomodNext,
                     i18n,
-                    egui::Modifiers::COMMAND,
-                    egui::Key::Enter,
                 ))
                 .clicked()
             {
@@ -1734,12 +1725,12 @@ fn render_glossary(ui: &mut egui::Ui, st: &mut FomodTranslationState, i18n: &cra
 }
 
 /// Bottom panel: side-by-side source / target editor for the selected row.
-fn render_detail(ctx: &egui::Context, st: &mut FomodTranslationState, i18n: &crate::i18n::I18n) {
-    egui::TopBottomPanel::bottom("ftr_detail")
+fn render_detail(root: &mut egui::Ui, st: &mut FomodTranslationState, i18n: &crate::i18n::I18n) {
+    egui::Panel::bottom("ftr_detail")
         .resizable(true)
-        .default_height(200.0)
-        .min_height(120.0)
-        .show(ctx, |ui| {
+        .default_size(200.0)
+        .min_size(120.0)
+        .show(root, |ui| {
             ui.add_space(4.0);
             let Some(idx) = st.cursor else {
                 ui.label(RichText::new(i18n.t("ftr-select-row")).weak());
@@ -1775,7 +1766,12 @@ fn render_detail(ctx: &egui::Context, st: &mut FomodTranslationState, i18n: &cra
                     }
                     if ui
                         .button(i18n.t("ftr-online"))
-                        .on_hover_text(i18n.t("ftr-online-hint"))
+                        .on_hover_text(crate::ui::app::with_keys_of(
+                            ui.ctx(),
+                            i18n,
+                            i18n.t("ftr-online-hint"),
+                            true,
+                        ))
                         .clicked()
                     {
                         online = true;
@@ -1896,8 +1892,9 @@ fn render_detail(ctx: &egui::Context, st: &mut FomodTranslationState, i18n: &cra
 }
 
 /// Central panel: the virtualised table of strings.
-fn render_table(ctx: &egui::Context, st: &mut FomodTranslationState, i18n: &crate::i18n::I18n) {
-    egui::CentralPanel::default().show(ctx, |ui| {
+fn render_table(root: &mut egui::Ui, st: &mut FomodTranslationState, i18n: &crate::i18n::I18n) {
+    let ctx = &root.ctx().clone();
+    egui::CentralPanel::default().show(root, |ui| {
         if st.doc.is_none() {
             ui.add_space(24.0);
             ui.vertical_centered(|ui| {
@@ -1941,7 +1938,7 @@ fn render_table(ctx: &egui::Context, st: &mut FomodTranslationState, i18n: &crat
             cur_pos,
             visible.len(),
             page,
-            ctx.wants_keyboard_input(),
+            ctx.egui_wants_keyboard_input(),
         ) {
             st.cursor = Some(visible[p]);
             st.scroll_to = Some(p);

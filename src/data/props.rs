@@ -35,9 +35,13 @@ pub fn local_name<'a>(names: &'a CountryNamesData, c: &'a CountryEntry, iso3: &s
         .unwrap_or("")
 }
 
-/// The countries a filter keeps — on the shown name, the English name, the
-/// endonyms and the code, without case nor accents — as (alpha-3, shown
-/// name), sorted by shown name.
+/// The countries a filter keeps (R-P) — an exact ISO 3166 code, two or
+/// three letters, or the start of a word of a name: the common and the
+/// official name in the interface language, the common and the official
+/// English names, the endonyms; without case nor accents — as (alpha-3,
+/// shown name). An empty filter sorts them by shown name; otherwise the
+/// exact codes come first, then the names that start with the filter, then
+/// the others.
 pub fn country_rows(
     countries: &CountriesData,
     names: &CountryNamesData,
@@ -45,25 +49,113 @@ pub fn country_rows(
     filter: &str,
 ) -> Vec<(String, String)> {
     let needle = fold(filter.trim());
-    let mut rows: Vec<(String, String, String)> = countries
+    let mut rows: Vec<(u8, String, String, String)> = countries
         .countries
         .iter()
-        .filter(|c| {
-            needle.is_empty()
-                || fold(country_name(names, c, loc)).contains(&needle)
-                || fold(&c.name_en).contains(&needle)
-                || fold(&c.a3).contains(&needle)
-                || c.languages
-                    .iter()
-                    .any(|l| fold(&l.country_endonym).contains(&needle))
-        })
-        .map(|c| {
+        .filter_map(|c| {
+            let rank = if needle.is_empty() {
+                Some(0)
+            } else {
+                country_rank(names, c, loc, &needle)
+            }?;
             let n = country_name(names, c, loc).to_string();
-            (fold(&n), c.a3.clone(), n)
+            Some((rank, fold(&n), c.a3.clone(), n))
         })
         .collect();
     rows.sort();
-    rows.into_iter().map(|(_, a3, n)| (a3, n)).collect()
+    rows.into_iter().map(|(_, _, a3, n)| (a3, n)).collect()
+}
+
+/// A tile of « Choisir un pays »: its code, the name under the flag — the
+/// common one in the interface language (« France »), else the official
+/// one — and its tooltip, the official name and the ISO codes.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct FlagRow {
+    pub a3: String,
+    pub label: String,
+    pub tip: String,
+}
+
+/// The tiles of « Choisir un pays »: filtered as [`country_rows`], sorted
+/// by rank then by the name shown under the flag.
+pub fn flag_rows(
+    countries: &CountriesData,
+    names: &CountryNamesData,
+    loc: &str,
+    filter: &str,
+) -> Vec<FlagRow> {
+    let needle = fold(filter.trim());
+    let mut rows: Vec<(u8, String, FlagRow)> = countries
+        .countries
+        .iter()
+        .filter_map(|c| {
+            let rank = if needle.is_empty() {
+                Some(0)
+            } else {
+                country_rank(names, c, loc, &needle)
+            }?;
+            let official = country_name(names, c, loc);
+            let label = names.common_for(&c.a3, loc).unwrap_or(official);
+            let codes = if c.a2.is_empty() {
+                c.a3.clone()
+            } else {
+                format!("{} · {}", c.a3, c.a2)
+            };
+            let tip = if fold(label) == fold(official) {
+                format!("{label}\n{codes}")
+            } else {
+                format!("{label}\n{official}\n{codes}")
+            };
+            let row = FlagRow {
+                a3: c.a3.clone(),
+                label: label.to_string(),
+                tip,
+            };
+            Some((rank, fold(label), row))
+        })
+        .collect();
+    rows.sort_by(|a, b| (a.0, &a.1, &a.2.a3).cmp(&(b.0, &b.1, &b.2.a3)));
+    rows.into_iter().map(|(_, _, r)| r).collect()
+}
+
+/// How well a country answers a folded filter: 0 for an exact code, 1 for
+/// a name that starts with it, 2 for a word of a name; `None` otherwise.
+fn country_rank(names: &CountryNamesData, c: &CountryEntry, loc: &str, needle: &str) -> Option<u8> {
+    if fold(&c.a3) == needle || (!c.a2.is_empty() && fold(&c.a2) == needle) {
+        return Some(0);
+    }
+    let mut texts: Vec<&str> = vec![country_name(names, c, loc), &c.name_en, &c.common_en];
+    texts.extend(names.common_for(&c.a3, loc));
+    texts.extend(c.languages.iter().map(|l| l.country_endonym.as_str()));
+    texts
+        .iter()
+        .filter(|t| !t.is_empty())
+        .filter_map(|t| word_start_rank(&fold(t), needle))
+        .min()
+}
+
+/// 1 when `hay` starts with `needle`, 2 when a word of it does (after a
+/// space, a hyphen, an apostrophe…, or at any ideograph or kana, scripts
+/// without spaces); `None` otherwise.
+pub fn word_start_rank(hay: &str, needle: &str) -> Option<u8> {
+    if needle.is_empty() || hay.starts_with(needle) {
+        return Some(1);
+    }
+    let mut prev: Option<char> = None;
+    for (i, c) in hay.char_indices() {
+        let start = prev.is_some_and(|p| !p.is_alphanumeric()) || is_unspaced(c);
+        if start && hay[i..].starts_with(needle) {
+            return Some(2);
+        }
+        prev = Some(c);
+    }
+    None
+}
+
+/// A letter of a script written without spaces between words.
+fn is_unspaced(c: char) -> bool {
+    matches!(c as u32,
+        0x3040..=0x30FF | 0x3400..=0x4DBF | 0x4E00..=0x9FFF | 0xF900..=0xFAFF)
 }
 
 /// The languages a filter keeps — on the name and the ISO 639-3 / 639-1

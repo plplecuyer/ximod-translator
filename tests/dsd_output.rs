@@ -90,3 +90,41 @@ fn dsd_resolves_owner_plugin_per_record() {
     let base_e = find("00013986");
     assert_eq!(base_e["form_id"], "00013986|Skyrim.esm");
 }
+
+/// T-E08-03: a translation into Arabic leaves in logical order — the bytes
+/// of the output string are those typed, never the display order.
+#[test]
+fn an_arabic_translation_is_written_in_logical_order() {
+    let tes4 = {
+        let mut s = sub_u16("HEDR", &[0u8; 12]);
+        s.extend(sub_u16("MAST", &zstr("Skyrim.esm")));
+        rec24("TES4", 0, &s)
+    };
+    let own = {
+        let mut s = sub_u16("EDID", &zstr("MyBlade"));
+        s.extend(sub_u16("FULL", &zstr("Press <Alias=Player> 25 times")));
+        rec24("WEAP", 0x0100_0801, &s)
+    };
+    let mut src = tes4;
+    src.extend(top_grup("WEAP", &own));
+    let parsed = plugin::parse(&src).unwrap();
+    let mut tm = plugin::extract_strings(&parsed, "MyMod.esp");
+    let typed = "اضغط <Alias=Player> 25 مرة";
+    for e in &mut tm.entries {
+        e.trans = typed.to_string();
+    }
+    let (bytes, _) = dsd::to_json_bytes(&tm);
+    let v: Value = serde_json::from_slice(&bytes).unwrap();
+    let out = v.as_array().unwrap()[0]["string"]
+        .as_str()
+        .unwrap()
+        .to_string();
+    assert_eq!(out.as_bytes(), typed.as_bytes());
+    // The display order is another string, never written.
+    let runs = ximod_translator::text::bidi::visual_line(typed, true);
+    let shown: String = runs
+        .iter()
+        .flat_map(|r| ximod_translator::text::bidi::pieces(typed, r))
+        .collect();
+    assert_ne!(shown, typed);
+}

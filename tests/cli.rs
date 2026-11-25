@@ -275,7 +275,7 @@ fn apply_export_manifest_package() {
     ]);
     assert_eq!(o.status.code(), Some(0), "{}", text(&o.stderr));
     let z = zip::ZipArchive::new(std::fs::File::open(&zip).unwrap()).unwrap();
-    let mut names: Vec<String> = z.file_names().map(str::to_string).collect();
+    let mut names: Vec<String> = z.file_names().map(|n| n.unwrap().to_string()).collect();
     names.sort();
     assert_eq!(
         names,
@@ -848,4 +848,168 @@ fn journal_error_is_written_once() {
     let err = text(&o.stderr);
     assert_eq!(err.lines().count(), 1, "{err}");
     assert_eq!(err.split('\t').nth(1), Some("Error"), "{err}");
+}
+
+#[test]
+fn export_takes_the_output_of_the_game() {
+    // T-E04-05 (E-04, R-E04-07): without --output, the output set for the
+    // game in [Game.<jeu>]; without one, « missing ».
+    let env = Env::new("gameprefs");
+    let p = env.plugin.to_str().unwrap();
+    let dict = env.dict();
+    let o = env.run(&["apply", p, "--dict", dict.to_str().unwrap(), "--write-dict"]);
+    assert_eq!(o.status.code(), Some(0), "{}", text(&o.stderr));
+    let out = env.root.join("out");
+    let o = env.run(&["export", p, "-o", out.to_str().unwrap()]);
+    assert_eq!(o.status.code(), Some(2), "{}", text(&o.stdout));
+    assert!(!out.join("skyrim_dialogue_patch.esp").exists());
+    let ini = env.cfg.join("Config.ini");
+    let mut text_ini = std::fs::read_to_string(&ini).unwrap();
+    text_ini.push_str("\n[Game.Skyrim]\nOutputMode=OverridePatch\n");
+    std::fs::write(&ini, text_ini).unwrap();
+    let o = env.run(&["--game", "Skyrim", "export", p, "-o", out.to_str().unwrap()]);
+    assert_eq!(o.status.code(), Some(0), "{}", text(&o.stderr));
+    assert!(out.join("skyrim_dialogue_patch.esp").is_file());
+}
+
+#[test]
+fn export_converts_to_traditional_chinese() {
+    // E-08 (D-100): --convert s2t|s2tw|s2hk, any other value refused
+    // before anything is written.
+    let env = Env::new("zhconvert");
+    let p = env.plugin.to_str().unwrap();
+    let dict = env.dict();
+    let o = env.run(&["apply", p, "--dict", dict.to_str().unwrap(), "--write-dict"]);
+    assert_eq!(o.status.code(), Some(0), "{}", text(&o.stderr));
+    let out = env.root.join("out");
+    let args = |conv: &'static str| {
+        vec![
+            "--game",
+            "Skyrim",
+            "export",
+            p,
+            "--output",
+            "override",
+            "--convert",
+            conv,
+            "-o",
+        ]
+    };
+    let mut a = args("t2s");
+    a.push(out.to_str().unwrap());
+    let o = env.run(&a);
+    assert_eq!(o.status.code(), Some(2), "{}", text(&o.stdout));
+    assert!(!out.join("skyrim_dialogue_patch.esp").exists());
+    let mut a = args("s2tw");
+    a.push(out.to_str().unwrap());
+    let o = env.run(&a);
+    assert_eq!(o.status.code(), Some(0), "{}", text(&o.stderr));
+    assert!(out.join("skyrim_dialogue_patch.esp").is_file());
+}
+
+/// T-D104-03 (D-104, R-D104-03): under Linux and macOS, `ximod-cli` is a
+/// link to `ximod-translator`; launched by the link, it gives the outputs
+/// of the console executable byte for byte.
+#[cfg(unix)]
+#[test]
+fn the_link_runs_the_command_line() {
+    assert!(ximod_translator::cli::invoked_as_cli(std::ffi::OsStr::new(
+        "/opt/x/ximod-cli"
+    )));
+    assert!(ximod_translator::cli::invoked_as_cli(std::ffi::OsStr::new(
+        "ximod-cli.exe"
+    )));
+    assert!(!ximod_translator::cli::invoked_as_cli(
+        std::ffi::OsStr::new("ximod-translator")
+    ));
+    let env = Env::new("link");
+    let link = env.root.join("ximod-cli");
+    std::os::unix::fs::symlink(env!("CARGO_BIN_EXE_ximod-translator"), &link).unwrap();
+    let p = env.plugin.to_str().unwrap();
+    let dict = env.dict();
+    let run_with = |exe: &std::path::Path, args: &[&str]| {
+        std::process::Command::new(exe)
+            .args(["--config", env.cfg.to_str().unwrap(), "--no-color"])
+            .args(args)
+            .current_dir(env!("CARGO_MANIFEST_DIR"))
+            .output()
+            .unwrap()
+    };
+    let cli = std::path::PathBuf::from(env!("CARGO_BIN_EXE_ximod-cli"));
+    for args in [
+        vec!["--version"],
+        vec!["info", p],
+        vec!["apply", p, "--dict", dict.to_str().unwrap()],
+    ] {
+        let a = run_with(&cli, &args);
+        let b = run_with(&link, &args);
+        assert_eq!(a.status.code(), b.status.code(), "{args:?}");
+        assert_eq!(text(&a.stdout), text(&b.stdout), "{args:?}");
+    }
+    // An export: the same bytes.
+    let (o1, o2) = (env.root.join("o1"), env.root.join("o2"));
+    let exp = |o: &std::path::Path| {
+        vec![
+            "--game".to_string(),
+            "Skyrim".into(),
+            "export".into(),
+            p.to_string(),
+            "--dict".into(),
+            dict.to_str().unwrap().into(),
+            "--output".into(),
+            "override".into(),
+            "-o".into(),
+            o.to_str().unwrap().into(),
+        ]
+    };
+    let a: Vec<String> = exp(&o1);
+    let b: Vec<String> = exp(&o2);
+    let ra = run_with(&cli, &a.iter().map(String::as_str).collect::<Vec<_>>());
+    let rb = run_with(&link, &b.iter().map(String::as_str).collect::<Vec<_>>());
+    assert_eq!(ra.status.code(), Some(0), "{}", text(&ra.stderr));
+    assert_eq!(rb.status.code(), Some(0), "{}", text(&rb.stderr));
+    let f = "skyrim_dialogue_patch.esp";
+    assert_eq!(
+        std::fs::read(o1.join(f)).unwrap(),
+        std::fs::read(o2.join(f)).unwrap()
+    );
+}
+
+/// D-104 (Windows) : `ximod-cli.exe` lance `ximod-translator.exe` avec
+/// `--ximod-cli` en tête ; lancé sous le nom ximod-cli, sans drapeau, aussi.
+#[test]
+fn the_launcher_flag_selects_the_command_line() {
+    use std::ffi::OsString;
+    use ximod_translator::cli::{AS_CLI_FLAG, cli_args};
+    // The launcher writes the flag out (src/bin/cli/main.rs).
+    assert_eq!(AS_CLI_FLAG, "--ximod-cli");
+    let v = |a: &[&str]| a.iter().map(OsString::from).collect::<Vec<_>>();
+    assert_eq!(
+        cli_args(v(&[
+            "C:/x/ximod-translator.exe",
+            AS_CLI_FLAG,
+            "info",
+            "a.esp"
+        ])),
+        Some(vec!["info".to_string(), "a.esp".into()])
+    );
+    assert_eq!(
+        cli_args(v(&["/usr/bin/ximod-cli", "--version"])),
+        Some(vec!["--version".to_string()])
+    );
+    assert_eq!(cli_args(v(&["ximod-translator", "a.esp"])), None);
+    assert_eq!(cli_args(v(&["ximod-translator"])), None);
+    // Launched by its flag, the window executable answers as ximod-cli.
+    let out = std::process::Command::new(env!("CARGO_BIN_EXE_ximod-translator"))
+        .args([AS_CLI_FLAG, "--version"])
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .output()
+        .unwrap();
+    let cli = std::process::Command::new(CLI)
+        .arg("--version")
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .output()
+        .unwrap();
+    assert_eq!(out.status.code(), Some(0));
+    assert_eq!(out.stdout, cli.stdout);
 }

@@ -442,7 +442,8 @@ impl XimodApp {
         let mut actions = Vec::new();
         let mut geometry = None;
         let mut close_requested = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -451,7 +452,7 @@ impl XimodApp {
                     size[0], size[1],
                 )));
             }
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 actions = te::body(ui, &mut ed, &feed);
             });
             if !just_opened {

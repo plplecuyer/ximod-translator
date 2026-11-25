@@ -304,7 +304,7 @@ pub fn body(ui: &mut egui::Ui, st: &mut DialogWindow, feed: &Feed) -> DialogActi
             ),
         ],
     );
-    egui::TopBottomPanel::bottom("ximod-dialog-status").show_inside(ui, |ui| {
+    egui::Panel::bottom("ximod-dialog-status").show(ui, |ui| {
         ui.add_space(2.0);
         ui.horizontal(|ui| {
             // The voices (C-13): rescan, and the list for the mod's author,
@@ -356,7 +356,7 @@ pub fn body(ui: &mut egui::Ui, st: &mut DialogWindow, feed: &Feed) -> DialogActi
         });
         ui.add_space(2.0);
     });
-    egui::TopBottomPanel::top("ximod-dialog-filters").show_inside(ui, |ui| {
+    egui::Panel::top("ximod-dialog-filters").show(ui, |ui| {
         ui.add_space(4.0);
         ui.horizontal(|ui| {
             // Quests.
@@ -463,15 +463,15 @@ pub fn body(ui: &mut egui::Ui, st: &mut DialogWindow, feed: &Feed) -> DialogActi
     // ---- the two panes
     let total_w = ui.available_width();
     let left_w = (total_w * st.split).clamp(220.0, (total_w - 260.0).max(220.0));
-    egui::SidePanel::left("ximod-dialog-tree")
+    egui::Panel::left("ximod-dialog-tree")
         .resizable(true)
-        .default_width(left_w)
-        .min_width(220.0)
-        .show_inside(ui, |ui| {
+        .default_size(left_w)
+        .min_size(220.0)
+        .show(ui, |ui| {
             st.split = (ui.available_width() / total_w).clamp(0.2, 0.8);
             tree(ui, st, feed, &mut action);
         });
-    egui::CentralPanel::default().show_inside(ui, |ui| {
+    egui::CentralPanel::default().show(ui, |ui| {
         detail(ui, st, feed, &mut action);
     });
     action
@@ -585,6 +585,7 @@ fn tree(ui: &mut egui::Ui, st: &mut DialogWindow, feed: &Feed, action: &mut Dial
                         sq,
                         2.0,
                         egui::Stroke::new(1.0_f32, ui.visuals().weak_text_color()),
+                        egui::StrokeKind::Middle,
                     );
                     x += 16.0;
                 }
@@ -641,7 +642,7 @@ fn tree(ui: &mut egui::Ui, st: &mut DialogWindow, feed: &Feed, action: &mut Dial
                 // Clicks.
                 let r = ui.interact(
                     rect,
-                    ui.id().with(("ximod-dialog-row", n)),
+                    ui.scope_id().with(("ximod-dialog-row", n)),
                     egui::Sense::click(),
                 );
                 if r.double_clicked() {
@@ -742,7 +743,7 @@ fn detail(ui: &mut egui::Ui, st: &mut DialogWindow, feed: &Feed, action: &mut Di
         })
         .unwrap_or((0, 0));
     // Bottom buttons.
-    egui::TopBottomPanel::bottom("ximod-dialog-detail-bottom").show_inside(ui, |ui| {
+    egui::Panel::bottom("ximod-dialog-detail-bottom").show(ui, |ui| {
         ui.add_space(4.0);
         ui.label(
             egui::RichText::new(i18n.t("dialog-nav-hint"))

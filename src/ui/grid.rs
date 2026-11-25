@@ -170,20 +170,21 @@ fn review_color(differs: bool) -> Color32 {
 /// A word-wrap on the glyph advances of a font, for the height of a text
 /// at a width without laying it out: the advance of each character is
 /// read once (an array for ASCII, a map for the rest).
-struct Measurer<'a> {
-    fonts: &'a egui::text::Fonts,
+struct Measurer<'a, 'f> {
+    fonts: &'a mut egui::epaint::text::FontsView<'f>,
     font: &'a egui::FontId,
     row: f32,
     ascii: [f32; 128],
     other: std::collections::HashMap<char, f32>,
 }
 
-impl<'a> Measurer<'a> {
-    fn new(fonts: &'a egui::text::Fonts, font: &'a egui::FontId) -> Self {
+impl<'a, 'f> Measurer<'a, 'f> {
+    fn new(fonts: &'a mut egui::epaint::text::FontsView<'f>, font: &'a egui::FontId) -> Self {
+        let row = fonts.row_height(font);
         Measurer {
             fonts,
             font,
-            row: fonts.row_height(font),
+            row,
             ascii: [-1.0; 128],
             other: std::collections::HashMap::new(),
         }
@@ -197,11 +198,12 @@ impl<'a> Measurer<'a> {
             }
             self.ascii[i]
         } else {
-            let (fonts, font) = (self.fonts, self.font);
-            *self
-                .other
-                .entry(c)
-                .or_insert_with(|| fonts.glyph_width(font, c))
+            if let Some(w) = self.other.get(&c) {
+                return *w;
+            }
+            let w = self.fonts.glyph_width(self.font, c);
+            self.other.insert(c, w);
+            w
         }
     }
 
@@ -224,8 +226,13 @@ impl<'a> Measurer<'a> {
             if x + a > width && x > 0.0 {
                 rows += 1;
                 if c.is_whitespace() {
-                    // The row ends on the space: it is not carried over.
-                    x = 0.0;
+                    // With egui 0.37 (D-103) the space after a word must fit on
+                    // its row too: the word moves to the next row with it.
+                    if word > 0.0 && word < x {
+                        x = word + a;
+                    } else {
+                        x = 0.0;
+                    }
                     word = 0.0;
                     continue;
                 } else if word > 0.0 && word < x {
@@ -313,9 +320,9 @@ impl HeightCache {
         // The heights come from a word-wrap on the glyph advances (the
         // measure egui lays the text out with), without building a galley:
         // ten times cheaper than a layout, exact enough for a row height.
-        ui.fonts(|f| {
+        ui.fonts_mut(|f| {
             let mut m = Measurer::new(f, font);
-            let height = |m: &mut Measurer<'_>, e: &TmEntry| {
+            let height = |m: &mut Measurer<'_, '_>, e: &TmEntry| {
                 let hs = m.height(&e.source, w.src);
                 // The editors wrap inside their margin (4 points a side, 2
                 // above and below): their text is measured at that width.
@@ -360,7 +367,7 @@ pub fn wrapped_height(ui: &egui::Ui, text: &str, width: f32, font: &egui::FontId
     if text.is_empty() {
         return font.size + 4.0;
     }
-    let galley = ui.fonts(|f| {
+    let galley = ui.fonts_mut(|f| {
         f.layout(
             text.to_owned(),
             font.clone(),
@@ -428,6 +435,10 @@ pub struct MenuLabels {
     /// [`Command::ALL`]: crate::text::transform::Command::ALL
     pub transform: String,
     pub transform_items: Vec<(String, String)>,
+    /// The target is Chinese: the conversion applies (E-08); otherwise the
+    /// tooltip of the greyed entry.
+    pub zh_ok: bool,
+    pub zh_tip: String,
     /// Concordance… (A-20) and its shortcut (Ctrl+K).
     pub concord: String,
     pub key_concord: String,
@@ -499,8 +510,15 @@ pub struct GridLabels<'a> {
     /// The words the spell checker flagged per line at its last scan of
     /// this document (A-16): the violet margin.
     pub spelling: &'a std::collections::HashMap<usize, Vec<String>>,
+    /// The same for the source (D-11).
+    pub spelling_source: &'a std::collections::HashMap<usize, Vec<String>>,
+    /// How the document's languages write their numbers (B.6).
+    pub numbers: crate::numstyle::NumPair,
     /// Special characters shown as glyphs (A-11, R-A11-07).
     pub show_special: bool,
+    /// The source and the target are written from right to left (E-08):
+    /// their cells in visual order, on the right.
+    pub rtl: (bool, bool),
     /// Lines in anomaly after the last check (D-05): the tooltip per line.
     pub anomalies: &'a std::collections::HashMap<usize, String>,
     /// « Statut — provenance » of a line (B-09), for the status cell.
@@ -585,6 +603,7 @@ pub fn nature_icon(n: crate::marks::Nature) -> &'static str {
 /// The rich tooltip of a Source or Traduction cell (A-16, R-A16-04): the
 /// identity, the whole text (40 lines at most), the marks, the length,
 /// « Statut — provenance ».
+#[allow(clippy::too_many_arguments)]
 pub fn rich_tip(
     ui: &mut egui::Ui,
     e: &TmEntry,
@@ -593,6 +612,7 @@ pub fn rich_tip(
     length: Option<(usize, Option<u32>)>,
     origin: Option<&str>,
     tips: &MarkTexts<'_>,
+    rtl: bool,
 ) {
     ui.set_max_width(480.0);
     ui.label(egui::RichText::new((tips.identity)(e)).monospace().weak());
@@ -604,7 +624,7 @@ pub fn rich_tip(
         } else {
             text.to_string()
         };
-        ui.add(egui::Label::new(shown).wrap());
+        crate::ui::bidi::doc_label(ui, &shown, rtl);
     }
     if !marks.is_empty() {
         ui.separator();
@@ -933,41 +953,43 @@ pub fn row_menu(
         pick = Some(MenuAction::TransEqSource);
     }
     // Relecture (A-17): on the line or the selection.
-    ui.add_enabled_ui(!unused, |ui| {
-        ui.menu_button(&menu.review, |ui| {
-            if key(ui, &menu.review_accept, &menu.key_review, has_review, "") {
-                pick = Some(MenuAction::ReviewAccept);
+    // Sub-menus of their own (menus.rs): closed when another entry is
+    // hovered, on the left of the menu when the right lacks room.
+    crate::ui::menus::submenu(ui, !unused, &menu.review, |ui| {
+        if key(ui, &menu.review_accept, &menu.key_review, has_review, "") {
+            pick = Some(MenuAction::ReviewAccept);
+        }
+        if key(ui, &menu.review_from_trans, "", has_trans, "") {
+            pick = Some(MenuAction::ReviewFromTrans);
+        }
+        if key(ui, &menu.review_clear, "", has_review, "") {
+            pick = Some(MenuAction::ReviewClear);
+        }
+    });
+    // Historique (A-18).
+    crate::ui::menus::submenu(ui, !unused, &menu.history, |ui| {
+        if key(ui, &menu.history_previous, &menu.key_history, true, "") {
+            pick = Some(MenuAction::HistoryPrevious);
+        }
+        if key(ui, &menu.history_show, "", true, "") {
+            pick = Some(MenuAction::HistoryShow);
+        }
+    });
+    // Transformer (A-13): on the translation of the line or the selection.
+    crate::ui::menus::submenu(ui, !unused, &menu.transform, |ui| {
+        for (cmd, (label, k)) in crate::text::transform::Command::ALL
+            .iter()
+            .zip(menu.transform_items.iter())
+        {
+            if cmd.starts_group() {
+                ui.separator();
             }
-            if key(ui, &menu.review_from_trans, "", has_trans, "") {
-                pick = Some(MenuAction::ReviewFromTrans);
+            let zh = *cmd == crate::text::transform::Command::Chinese;
+            let enabled = (has_trans || sel_count > 1) && (!zh || menu.zh_ok);
+            if key(ui, label, k, enabled, if zh { &menu.zh_tip } else { "" }) {
+                pick = Some(MenuAction::Transform(*cmd));
             }
-            if key(ui, &menu.review_clear, "", has_review, "") {
-                pick = Some(MenuAction::ReviewClear);
-            }
-        });
-        // Historique (A-18).
-        ui.menu_button(&menu.history, |ui| {
-            if key(ui, &menu.history_previous, &menu.key_history, true, "") {
-                pick = Some(MenuAction::HistoryPrevious);
-            }
-            if key(ui, &menu.history_show, "", true, "") {
-                pick = Some(MenuAction::HistoryShow);
-            }
-        });
-        // Transformer (A-13): on the translation of the line or the selection.
-        ui.menu_button(&menu.transform, |ui| {
-            for (cmd, (label, k)) in crate::text::transform::Command::ALL
-                .iter()
-                .zip(menu.transform_items.iter())
-            {
-                if cmd.needs_dialog() && *cmd == crate::text::transform::Command::AffixAdd {
-                    ui.separator();
-                }
-                if key(ui, label, k, has_trans || sel_count > 1, "") {
-                    pick = Some(MenuAction::Transform(*cmd));
-                }
-            }
-        });
+        }
     });
     ui.separator();
     // Statut
@@ -1074,7 +1096,7 @@ pub fn row_menu(
         {
             out.undo_requested = true;
             pick = None;
-            ui.close_menu();
+            ui.close();
         }
         if ui
             .add_enabled(can_redo, egui::Button::new(redo_label))
@@ -1082,12 +1104,12 @@ pub fn row_menu(
         {
             out.redo_requested = true;
             pick = None;
-            ui.close_menu();
+            ui.close();
         }
     }
     if let Some(a) = pick {
         out.menu_action = Some((idx, a));
-        ui.close_menu();
+        ui.close();
     }
 }
 
@@ -1112,7 +1134,10 @@ pub fn draw(
         tips,
         rich_tooltips,
         spelling,
+        spelling_source,
+        numbers,
         show_special,
+        rtl,
         anomalies,
         prov_tip,
         prov_short,
@@ -1268,7 +1293,7 @@ pub fn draw(
                                 let has_review_btn = *c == FC::Review;
                                 let btn_w = if has_review_btn { 26.0 } else { 0.0 };
                                 ui.horizontal(|ui| {
-                                    let id = ui.id().with(("ximod-col-filter", c.index()));
+                                    let id = ui.scope_id().with(("ximod-col-filter", c.index()));
                                     let mut edit =
                                         egui::TextEdit::singleline(fr.filters.get_mut(*c))
                                             .id(id)
@@ -1338,7 +1363,7 @@ pub fn draw(
                         egui::Rect::from_min_size(cell.min, egui::vec2(cell.width(), title_h));
                     let resp = ui.interact(
                         title_rect,
-                        ui.id().with(("ximod-grid-header", n)),
+                        ui.scope_id().with(("ximod-grid-header", n)),
                         egui::Sense::click(),
                     );
                     // A left click sorts (A-14, R-A14-02).
@@ -1352,12 +1377,12 @@ pub fn draw(
                         }
                         None => resp,
                     };
-                    resp.context_menu(|ui| {
+                    crate::ui::menus::context_menu(&resp, |ui| {
                         for (i, (label, on)) in col_menu.iter().enumerate() {
                             let mut v = *on;
                             if ui.checkbox(&mut v, label).changed() {
                                 toggled = Some(i);
-                                ui.close_menu();
+                                ui.close();
                             }
                         }
                         ui.separator();
@@ -1366,7 +1391,7 @@ pub fn draw(
                             .clicked()
                         {
                             out.file_order = true;
-                            ui.close_menu();
+                            ui.close();
                         }
                     });
                 });
@@ -1439,6 +1464,7 @@ pub fn draw(
                 // margin bar and the rich tooltips.
                 let quality = anomalies.get(&idx).map(String::as_str);
                 let words = spelling.get(&idx).map(Vec::as_slice).unwrap_or(&[]);
+                let words_src = spelling_source.get(&idx).map(Vec::as_slice).unwrap_or(&[]);
                 let marks = crate::marks::of(
                     &entries[idx],
                     &crate::marks::Context {
@@ -1446,6 +1472,8 @@ pub fn draw(
                         page,
                         quality,
                         spelling: words,
+                        spelling_source: words_src,
+                        numbers,
                     },
                 );
                 let worst = crate::marks::worst(&marks);
@@ -1492,7 +1520,8 @@ pub fn draw(
                             Color32::from_gray(95),
                         );
                     }
-                    let resp = ui.interact(rect, ui.id().with(("st", idx)), egui::Sense::click());
+                    let resp =
+                        ui.interact(rect, ui.scope_id().with(("st", idx)), egui::Sense::click());
                     // The nature, then « Statut — provenance » (B-09, R-B09-04).
                     let origin = prov_tip(&entries[idx]);
                     let resp = if nature.is_some() || origin.is_some() {
@@ -1522,7 +1551,7 @@ pub fn draw(
                     } else {
                         resp
                     };
-                    resp.context_menu(|ui| menu_ui(ui, &mut out));
+                    crate::ui::menus::context_menu(&resp, |ui| menu_ui(ui, &mut out));
                 });
 
                 // --- Status buttons (A-04): four small buttons on their
@@ -1582,7 +1611,7 @@ pub fn draw(
                     if let Some(tip) = field_tip(&entries[idx]) {
                         ui.interact(
                             ui.max_rect(),
-                            ui.id().with(("fld", idx)),
+                            ui.scope_id().with(("fld", idx)),
                             egui::Sense::hover(),
                         )
                         .on_hover_text(tip);
@@ -1603,20 +1632,47 @@ pub fn draw(
                             false,
                         );
                         ui.add(egui::Label::new(job).wrap().selectable(false));
+                    } else if crate::text::bidi::needed(&entries[idx].source, rtl.0) {
+                        // E-08: the source in visual order.
+                        ui.painter().rect_filled(ui.max_rect(), 0.0, color);
+                        let area = ui.available_rect_before_wrap();
+                        let laid = crate::ui::bidi::layout(
+                            ui,
+                            &entries[idx].source,
+                            rtl.0,
+                            &font,
+                            dark,
+                            area.width(),
+                        );
+                        crate::ui::bidi::paint(ui, &laid, area, dark);
                     } else {
                         paint_label(ui, &entries[idx].source, true);
                     }
                     // The rich tooltip (A-16), or the whole text.
                     let hover = ui.interact(
                         ui.max_rect(),
-                        ui.id().with(("src", idx)),
+                        ui.scope_id().with(("src", idx)),
                         egui::Sense::hover(),
                     );
                     let e = &entries[idx];
                     if rich_tooltips {
                         let origin = prov_tip(e);
                         hover.on_hover_ui(|ui| {
-                            rich_tip(ui, e, &e.source, &marks, None, origin.as_deref(), tips)
+                            rich_tip(
+                                ui,
+                                e,
+                                &e.source,
+                                &marks,
+                                None,
+                                origin.as_deref(),
+                                tips,
+                                rtl.0,
+                            )
+                        });
+                    } else if crate::text::bidi::needed(&e.source, rtl.0) {
+                        hover.on_hover_ui(|ui| {
+                            ui.set_max_width(480.0);
+                            crate::ui::bidi::doc_label(ui, &e.source, rtl.0);
                         });
                     } else {
                         hover.on_hover_text(&e.source);
@@ -1649,10 +1705,14 @@ pub fn draw(
                     // row (long source) starts the edit, not only its first line.
                     let cell_h = ui.max_rect().height();
                     let mut edit = egui::TextEdit::multiline(&mut entries[idx].trans)
-                        .frame(false)
+                        .frame(egui::Frame::NONE)
+                        .margin(egui::Margin::symmetric(4, 2))
                         .desired_rows(1)
                         .min_size(egui::vec2(tgt_w, cell_h))
                         .desired_width(tgt_w);
+                    if rtl.1 {
+                        edit = edit.align(egui::Align2::RIGHT_TOP);
+                    }
                     let mut layouter = crate::ui::special::layouter(font.clone(), dark, muted);
                     if show_special {
                         edit = edit.layouter(&mut layouter);
@@ -1669,7 +1729,24 @@ pub fn draw(
                             right,
                         );
                     }
-                    let resp = output.response;
+                    let resp = output.response.response;
+                    // E-08: out of the editor, the translation in visual
+                    // order over the logical one (the editor keeps the
+                    // logical order, egui placing its cursor there).
+                    if !resp.has_focus() && crate::text::bidi::needed(&entries[idx].trans, rtl.1) {
+                        let cell = resp.rect;
+                        ui.painter().rect_filled(cell, 0.0, color);
+                        let area = cell.shrink2(egui::vec2(4.0, 2.0));
+                        let laid = crate::ui::bidi::layout(
+                            ui,
+                            &entries[idx].trans,
+                            rtl.1,
+                            &font,
+                            dark,
+                            area.width(),
+                        );
+                        crate::ui::bidi::paint(ui, &laid, area, dark);
+                    }
                     if focus_request == Some(idx) {
                         resp.request_focus();
                         out.focus_applied = true;
@@ -1720,14 +1797,20 @@ pub fn draw(
                                 Some((n, max)),
                                 origin.as_deref(),
                                 tips,
+                                rtl.1,
                             )
                         })
                     } else if e.trans.is_empty() {
                         resp
+                    } else if crate::text::bidi::needed(&e.trans, rtl.1) {
+                        resp.on_hover_ui(|ui| {
+                            ui.set_max_width(480.0);
+                            crate::ui::bidi::doc_label(ui, &e.trans, rtl.1);
+                        })
                     } else {
                         resp.on_hover_text(&e.trans)
                     };
-                    resp.context_menu(|ui| menu_ui(ui, &mut out));
+                    crate::ui::menus::context_menu(&resp, |ui| menu_ui(ui, &mut out));
                 });
                 // --- Relecture (A-17): editable like the translation, in
                 //     blue when it differs from it, grey when it is the same.
@@ -1741,13 +1824,14 @@ pub fn draw(
                         ui.visuals_mut().override_text_color = Some(review_color(differs));
                         let cell_h = ui.max_rect().height();
                         let output = egui::TextEdit::multiline(&mut entries[idx].review)
-                            .id(ui.id().with(("ximod-review", idx)))
-                            .frame(false)
+                            .id(ui.scope_id().with(("ximod-review", idx)))
+                            .frame(egui::Frame::NONE)
+                            .margin(egui::Margin::symmetric(4, 2))
                             .desired_rows(1)
                             .min_size(egui::vec2(w.review, cell_h))
                             .desired_width(w.review)
                             .show(ui);
-                        let resp = output.response;
+                        let resp = output.response.response;
                         if resp.gained_focus() {
                             out.review_focus_gained = Some(idx);
                         }
@@ -1760,7 +1844,7 @@ pub fn draw(
                         if resp.secondary_clicked() {
                             out.row_right_clicked = Some(idx);
                         }
-                        resp.context_menu(|ui| menu_ui(ui, &mut out));
+                        crate::ui::menus::context_menu(&resp, |ui| menu_ui(ui, &mut out));
                     });
                 }
                 // --- Provenance (B-09): the short label, the whole one on hover.
@@ -1809,7 +1893,7 @@ pub fn draw(
                 if rr.double_clicked() {
                     out.row_double_clicked = Some(idx);
                 }
-                rr.context_menu(|ui| menu_ui(ui, &mut out));
+                crate::ui::menus::context_menu(&rr, |ui| menu_ui(ui, &mut out));
             });
         });
     out.column_toggled = toggled;
@@ -1940,10 +2024,18 @@ mod height_tests {
     /// layout gives, on short, long, broken and unbreakable texts.
     #[test]
     fn measurer_follows_the_layout() {
-        let fonts = egui::text::Fonts::new(1.0, 1024, egui::FontDefinitions::default());
-        fonts.begin_pass(1.0, 1024);
+        let mut owner = egui::text::Fonts::new(
+            egui::epaint::text::TextOptions::default(),
+            egui::FontDefinitions::default(),
+        );
+        let mut fonts = owner.with_pixels_per_point(1.0);
         let font = egui::FontId::proportional(14.0);
-        let mut m = Measurer::new(&fonts, &font);
+        let mut layouts = egui::text::Fonts::new(
+            egui::epaint::text::TextOptions::default(),
+            egui::FontDefinitions::default(),
+        );
+        let mut layout = layouts.with_pixels_per_point(1.0);
+        let mut m = Measurer::new(&mut fonts, &font);
         let texts = [
             "Iron Sword",
             "A long sentence that will certainly wrap on several rows at a narrow width.",
@@ -1955,7 +2047,7 @@ mod height_tests {
         let (mut exact, mut total) = (0, 0);
         for width in [60.0, 120.0, 200.0, 400.0] {
             for t in texts {
-                let galley = fonts.layout(t.to_owned(), font.clone(), Color32::BLACK, width);
+                let galley = layout.layout(t.to_owned(), font.clone(), Color32::BLACK, width);
                 let rows = galley.rows.len();
                 let est = m.rows(t, width);
                 // Never below (a row would be cut), at most one row above.

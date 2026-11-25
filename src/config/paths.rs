@@ -521,6 +521,33 @@ mod tests {
         let _ = std::fs::remove_dir_all(&exe);
     }
 
+    /// R-D103-07: the per-user folder is that of the 0.4.0 (dirs 5), read
+    /// from the environment as the system defines it — `$XDG_CONFIG_HOME`
+    /// or `~/.config` under Linux, `~/Library/Application Support` under
+    /// macOS, `%APPDATA%` under Windows.
+    #[test]
+    fn the_user_folder_is_that_of_0_4_0() {
+        let Some(root) = AppPaths::user_root() else {
+            return;
+        };
+        let env = |k: &str| std::env::var_os(k).map(PathBuf::from);
+        let expected = if cfg!(target_os = "linux") {
+            env("XDG_CONFIG_HOME")
+                .filter(|p| p.is_absolute())
+                .or_else(|| env("HOME").map(|h| h.join(".config")))
+                .map(|b| b.join("ximod-translator"))
+        } else if cfg!(target_os = "macos") {
+            env("HOME").map(|h| h.join("Library/Application Support/XIMOD Translator"))
+        } else if cfg!(windows) {
+            env("APPDATA").map(|a| a.join("XIMOD Translator"))
+        } else {
+            None
+        };
+        if let Some(e) = expected {
+            assert_eq!(root, e);
+        }
+    }
+
     #[test]
     fn exe_dir_env_override() {
         let d = temp_dir("env");

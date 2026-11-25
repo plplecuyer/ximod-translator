@@ -193,7 +193,8 @@ impl XimodApp {
                 .with_active(true);
         }
         let mut close = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -204,7 +205,7 @@ impl XimodApp {
                 vctx.send_viewport_cmd(egui::ViewportCommand::Focus);
             }
             self.compare_win.needs_place = false;
-            egui::CentralPanel::default().show(vctx, |ui| self.compare_body(ui));
+            egui::CentralPanel::default().show(vui, |ui| self.compare_body(ui));
             if std::mem::take(&mut self.compare_win.closing)
                 || vctx.input_mut(|i| i.consume_key(egui::Modifiers::NONE, egui::Key::Escape))
             {
@@ -351,9 +352,9 @@ impl XimodApp {
         );
         let mut export = false;
         let mut merge = false;
-        egui::TopBottomPanel::bottom("ximod-compare-bottom")
+        egui::Panel::bottom("ximod-compare-bottom")
             .show_separator_line(false)
-            .show_inside(ui, |ui| {
+            .show(ui, |ui| {
                 ui.add_space(4.0);
                 ui.horizontal(|ui| {
                     ui.add(
@@ -402,7 +403,7 @@ impl XimodApp {
             .collect();
         super::scan_window::table_row(
             ui,
-            egui::Id::new("ximod-compare-head"),
+            egui::Id::unique("ximod-compare-head"),
             &head,
             &widths,
             text_h,
@@ -425,7 +426,7 @@ impl XimodApp {
                         cells.into_iter().map(egui::RichText::new).collect();
                     let resp = super::scan_window::table_row(
                         ui,
-                        egui::Id::new(("ximod-compare-row", i)),
+                        egui::Id::unique(("ximod-compare-row", i)),
                         &cells,
                         &widths,
                         text_h,

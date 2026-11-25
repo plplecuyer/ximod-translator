@@ -2,11 +2,13 @@
 //! the prefix / suffix dialog, the edit window's in-field transformation,
 //! and the title case lists of Paramètres › Avancé.
 
+use crate::ui::keys::TakeCmd as _;
 use eframe::egui;
 
 use super::{XimodApp, confirm_buttons};
 use crate::journal::{Kind, Level};
 use crate::text::transform::{self, Command, TitleLists};
+use crate::text::zh::{self, ZhConv};
 use crate::undo::{EntryState, OpKind, op_from_before};
 
 /// The prefix / suffix dialog (R-A13-07).
@@ -18,11 +20,22 @@ pub(crate) struct AffixDialog {
     pub no_repeat: bool,
 }
 
+/// The Chinese simplified ↔ traditional dialog (E-08, R-Z): the
+/// conversion and the scope; the selection when it was opened.
+pub(crate) struct ZhDialog {
+    pub selection: Vec<usize>,
+    pub conv: ZhConv,
+    pub scope: crate::replace::Scope,
+}
+
 /// What Transformer remembers in the session: the last prefix and suffix
 /// typed, the exception lists once read.
 #[derive(Default)]
 pub(crate) struct TransformState {
     pub dialog: Option<AffixDialog>,
+    pub zh: Option<ZhDialog>,
+    /// The last conversion chosen.
+    pub zh_last: Option<ZhConv>,
     pub last_prefix: String,
     pub last_suffix: String,
     pub lists: Option<TitleLists>,
@@ -41,6 +54,21 @@ impl XimodApp {
     /// A command of the menus (R-A13-01): the prefix / suffix ones open
     /// their dialog, the others apply at once.
     pub(crate) fn open_transform(&mut self, cmd: Command, lines: Vec<usize>) {
+        if cmd == Command::Chinese {
+            if zh::is_chinese(&self.active_settings().target) {
+                let scope = if lines.len() > 1 {
+                    crate::replace::Scope::Selection
+                } else {
+                    crate::replace::Scope::Document
+                };
+                self.transform.zh = Some(ZhDialog {
+                    selection: lines,
+                    conv: self.transform.zh_last.unwrap_or(ZhConv::S2t),
+                    scope,
+                });
+            }
+            return;
+        }
         if cmd.needs_dialog() {
             self.transform.dialog = Some(AffixDialog {
                 cmd,
@@ -64,9 +92,29 @@ impl XimodApp {
         lines: &[usize],
         affix: Option<(&str, &str, bool)>,
     ) {
-        self.close_edit_session();
         let rules = self.title_rules();
         let name = self.i18n.t(cmd.i18n_key());
+        let f = |t: &str| match (cmd, affix) {
+            (Command::AffixAdd, Some((p, s, no_repeat))) => {
+                transform::affix_add(t, p, s, no_repeat)
+            }
+            (Command::AffixRemove, Some((p, s, _))) => transform::affix_remove(t, p, s),
+            _ => transform::apply(cmd, t, &rules),
+        };
+        self.transform_lines_with(&name, lines, f);
+    }
+
+    /// Change the translation of `lines` by `f` (`None`: left), as
+    /// [`Self::transform_lines`] does; `name` names the change in the
+    /// journal and the history.
+    pub(crate) fn transform_lines_with(
+        &mut self,
+        name: &str,
+        lines: &[usize],
+        f: impl Fn(&str) -> Option<String>,
+    ) {
+        self.close_edit_session();
+        let name = name.to_string();
         let Some(doc) = self.docs.get_mut(self.active) else {
             return;
         };
@@ -85,14 +133,7 @@ impl XimodApp {
                 skipped += 1;
                 continue;
             }
-            let new = match (cmd, affix) {
-                (Command::AffixAdd, Some((p, s, no_repeat))) => {
-                    transform::affix_add(&e.trans, p, s, no_repeat)
-                }
-                (Command::AffixRemove, Some((p, s, _))) => transform::affix_remove(&e.trans, p, s),
-                _ => transform::apply(cmd, &e.trans, &rules),
-            };
-            let Some(new) = new else {
+            let Some(new) = f(&e.trans) else {
                 skipped += 1;
                 continue;
             };
@@ -143,7 +184,7 @@ impl XimodApp {
             return;
         }
         let rules = self.title_rules();
-        let trans_id = egui::Id::new(("ximod-edit-trans", line));
+        let trans_id = egui::Id::unique(("ximod-edit-trans", line));
         let in_session = self
             .edit_session
             .as_ref()
@@ -161,7 +202,7 @@ impl XimodApp {
         let (a, b) = egui::TextEdit::load_state(vctx, trans_id)
             .and_then(|st| st.cursor.char_range())
             .map(|r| {
-                let (a, b) = (r.primary.index, r.secondary.index);
+                let (a, b) = (r.primary.index.0, r.secondary.index.0);
                 (a.min(b).min(chars.len()), a.max(b).min(chars.len()))
             })
             .filter(|(a, b)| a < b)
@@ -294,6 +335,85 @@ impl XimodApp {
         }
     }
 
+    /// The Chinese simplified ↔ traditional dialog (R-Z): the conversion,
+    /// the scope, an example on the first line; one undoable operation.
+    pub(crate) fn zh_window(&mut self, ctx: &egui::Context) {
+        let Some(mut d) = self.transform.zh.take() else {
+            return;
+        };
+        let Some(doc) = self.docs.get(self.active) else {
+            return;
+        };
+        use crate::replace::Scope;
+        let lines_of = |s: Scope| -> Vec<usize> {
+            match s {
+                Scope::Document => (0..doc.tm.entries.len()).collect(),
+                Scope::View => self.visible.clone(),
+                Scope::Selection => d.selection.clone(),
+            }
+        };
+        let lines = lines_of(d.scope);
+        let example = lines
+            .iter()
+            .filter_map(|&i| doc.tm.entries.get(i))
+            .find(|e| !e.trans.is_empty() && !e.unused)
+            .map(|e| (e.trans.clone(), zh::convert(d.conv, &e.trans)));
+        let title = self.i18n.t("zh-title");
+        let (ok_l, cancel_l) = (self.i18n.t("zh-apply"), self.i18n.t("btn-cancel"));
+        let mut choice = None;
+        egui::Window::new(title)
+            .collapsible(false)
+            .resizable(false)
+            .order(egui::Order::Foreground)
+            .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
+            .show(ctx, |ui| {
+                ui.set_max_width(480.0);
+                ui.label(egui::RichText::new(self.i18n.t("zh-conversion")).strong());
+                for c in ZhConv::ALL {
+                    if c == ZhConv::T2s {
+                        ui.add_space(2.0);
+                    }
+                    ui.radio_value(&mut d.conv, c, self.i18n.t(c.i18n_key()));
+                }
+                ui.add_space(6.0);
+                ui.label(egui::RichText::new(self.i18n.t("zh-scope")).strong());
+                ui.horizontal(|ui| {
+                    for s in [Scope::Selection, Scope::View, Scope::Document] {
+                        let n = lines_of(s).len();
+                        let label = format!("{} ({n})", self.i18n.t(s.i18n_key()));
+                        ui.add_enabled_ui(n > 0, |ui| {
+                            ui.radio_value(&mut d.scope, s, label);
+                        });
+                    }
+                });
+                if let Some((before, after)) = &example {
+                    ui.add_space(6.0);
+                    ui.label(egui::RichText::new(self.i18n.t("zh-example")).weak());
+                    ui.add(egui::Label::new(before.as_str()).wrap());
+                    ui.add(egui::Label::new(egui::RichText::new(after.as_str()).strong()).wrap());
+                }
+                ui.add_space(4.0);
+                ui.label(egui::RichText::new(self.i18n.t("zh-kept")).weak().small());
+                ui.add_space(8.0);
+                let (ok, cancel) = confirm_buttons(ui, &ok_l, &cancel_l);
+                if ok {
+                    choice = Some(true);
+                } else if cancel || ui.input(|i| i.key_pressed(egui::Key::Escape)) {
+                    choice = Some(false);
+                }
+            });
+        match choice {
+            Some(true) => {
+                self.transform.zh_last = Some(d.conv);
+                let name = self.i18n.t(d.conv.i18n_key());
+                let conv = d.conv;
+                self.transform_lines_with(&name, &lines, |t| Some(zh::convert(conv, t)));
+            }
+            Some(false) => {}
+            None => self.transform.zh = Some(d),
+        }
+    }
+
     /// The Transformer ▸ entries of a menu; the command chosen.
     pub(crate) fn transform_menu(
         &self,
@@ -301,17 +421,25 @@ impl XimodApp {
         labels: &[(String, String)],
     ) -> Option<Command> {
         let mut pick = None;
+        let zh_ok = zh::is_chinese(&self.active_settings().target);
         for (cmd, (label, k)) in Command::ALL.iter().zip(labels) {
-            if *cmd == Command::AffixAdd {
+            if cmd.starts_group() {
                 ui.separator();
             }
             let mut b = egui::Button::new(label);
             if !k.is_empty() {
                 b = b.shortcut_text(k);
             }
-            if ui.add(b).clicked() {
+            let enabled = *cmd != Command::Chinese || zh_ok;
+            let resp = ui.add_enabled(enabled, b);
+            let resp = if enabled {
+                resp
+            } else {
+                resp.on_disabled_hover_text(self.i18n.t("zh-needs-chinese"))
+            };
+            if resp.clicked() {
                 pick = Some(*cmd);
-                ui.close_menu();
+                ui.close();
             }
         }
         pick
@@ -323,21 +451,15 @@ impl XimodApp {
             .iter()
             .map(|c| {
                 let k = match c {
-                    Command::Upper => super::shortcut_text(
-                        ctx,
-                        &super::MENU_SHORTCUTS.transform_upper,
-                        &self.i18n,
-                    ),
-                    Command::Lower => super::shortcut_text(
-                        ctx,
-                        &super::MENU_SHORTCUTS.transform_lower,
-                        &self.i18n,
-                    ),
-                    Command::Title => super::shortcut_text(
-                        ctx,
-                        &super::MENU_SHORTCUTS.transform_title,
-                        &self.i18n,
-                    ),
+                    Command::Upper => {
+                        super::cmd_text(ctx, crate::shortcuts::Cmd::TransformUpper, &self.i18n)
+                    }
+                    Command::Lower => {
+                        super::cmd_text(ctx, crate::shortcuts::Cmd::TransformLower, &self.i18n)
+                    }
+                    Command::Title => {
+                        super::cmd_text(ctx, crate::shortcuts::Cmd::TransformTitle, &self.i18n)
+                    }
                     _ => String::new(),
                 };
                 (self.i18n.t(c.i18n_key()), k)
@@ -348,11 +470,11 @@ impl XimodApp {
     /// The Ctrl+Maj+U / L / T shortcuts consumed from `ctx`, if any.
     pub(crate) fn transform_shortcut(ctx: &egui::Context) -> Option<Command> {
         ctx.input_mut(|i| {
-            if i.consume_shortcut(&super::MENU_SHORTCUTS.transform_upper) {
+            if i.take_cmd(crate::shortcuts::Cmd::TransformUpper) {
                 Some(Command::Upper)
-            } else if i.consume_shortcut(&super::MENU_SHORTCUTS.transform_lower) {
+            } else if i.take_cmd(crate::shortcuts::Cmd::TransformLower) {
                 Some(Command::Lower)
-            } else if i.consume_shortcut(&super::MENU_SHORTCUTS.transform_title) {
+            } else if i.take_cmd(crate::shortcuts::Cmd::TransformTitle) {
                 Some(Command::Title)
             } else {
                 None

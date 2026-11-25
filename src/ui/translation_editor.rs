@@ -887,7 +887,7 @@ impl TrEditor {
             return;
         }
         let n = self.view.len();
-        let editing = ctx.wants_keyboard_input();
+        let editing = ctx.egui_wants_keyboard_input();
         ctx.input_mut(|i| {
             use egui::{Align, Key, Modifiers};
             if i.consume_key(Modifiers::COMMAND, Key::S) {
@@ -996,21 +996,20 @@ pub fn body(ui: &mut egui::Ui, ed: &mut TrEditor, f: &Feed) -> Vec<TrAction> {
     };
 
     // ---- Identity: flag, languages, endonyms, author, font --------------
-    egui::TopBottomPanel::top("tr_top").show_inside(ui, |ui| {
+    egui::Panel::top("tr_top").show(ui, |ui| {
         ui.add_space(4.0);
         ui.horizontal_top(|ui| {
             let size = egui::vec2(108.0, 72.0);
             let resp = match &f.flag {
                 Some(p) => ui.add_sized(
                     size,
-                    egui::ImageButton::new(
-                        egui::Image::from_uri(format!("file://{}", p.display()))
-                            .fit_to_exact_size(size),
+                    egui::Button::image(
+                        egui::Image::from_uri(crate::ui::file_uri(p)).fit_to_exact_size(size),
                     ),
                 ),
                 None => ui.add_sized(
                     size,
-                    egui::Button::new(egui::RichText::new("\u{1F3F3}").size(26.0)),
+                    egui::Button::new(egui::RichText::new(crate::icons::FLAG).size(26.0)),
                 ),
             };
             if resp.on_hover_text(i18n.t("tr-pick-country")).clicked() {
@@ -1158,7 +1157,7 @@ pub fn body(ui: &mut egui::Ui, ed: &mut TrEditor, f: &Feed) -> Vec<TrAction> {
     });
 
     // ---- Buttons, preview, hints ------------------------------------------
-    egui::TopBottomPanel::bottom("tr_bottom").show_inside(ui, |ui| {
+    egui::Panel::bottom("tr_bottom").show(ui, |ui| {
         ui.add_space(4.0);
         ui.label(egui::RichText::new(i18n.t("tr-token-hint")).small().weak());
         ui.label(egui::RichText::new(i18n.t("tr-keys-hint")).small().weak());
@@ -1256,7 +1255,7 @@ pub fn body(ui: &mut egui::Ui, ed: &mut TrEditor, f: &Feed) -> Vec<TrAction> {
     });
 
     // ---- The table ----------------------------------------------------------
-    egui::CentralPanel::default().show_inside(ui, |ui| {
+    egui::CentralPanel::default().show(ui, |ui| {
         let row_h = ui.spacing().interact_size.y + 2.0;
         let spacing = ui.spacing().item_spacing;
         let page = ((ed.viewport_h / (row_h + spacing.y)).floor() as usize).max(1);
@@ -1337,7 +1336,7 @@ pub fn body(ui: &mut egui::Ui, ed: &mut TrEditor, f: &Feed) -> Vec<TrAction> {
                         None => {
                             let problem = e.problem();
                             let mut edit = egui::TextEdit::singleline(&mut e.input)
-                                .id(egui::Id::new(("tr_input", idx)))
+                                .id(egui::Id::unique(("tr_input", idx)))
                                 .desired_width(col_w)
                                 .font(preview_font.clone());
                             if problem.is_some() {
@@ -1379,7 +1378,7 @@ pub fn body(ui: &mut egui::Ui, ed: &mut TrEditor, f: &Feed) -> Vec<TrAction> {
             }
         }
         ed.trans_focused = trans_focused;
-        ed.offset = out.state.offset.y;
+        ed.offset = out.state.clamped_offset().y;
         ed.viewport_h = out.inner_rect.height();
     });
 
@@ -1534,11 +1533,11 @@ mod tests {
         let meta = Meta {
             language: "deu".into(),
             langname: "Deutsch".into(),
-            font: "Noto_Sans/static/NotoSans-Regular.ttf".into(),
+            font: "Noto_Sans/NotoSans-Regular.ttf".into(),
             author: "Patrice".into(),
         };
         let out = render_file(reference, target, &entries, &meta);
-        let expected = "# XIMOD Translator - translation metadata\n# @language = deu\n# @font = Noto_Sans/static/NotoSans-Regular.ttf\n# @langname = Deutsch\n# @author = Patrice\n\napp-title = XIMOD Übersetzer\n\n# --- Menus\nmenu-file = Datei\nmenu-open = Ouvrir…\nstatus = { $n } Zeilen\nundo-done =\n    { $n ->\n        [one] eins\n       *[other] viele\n    }\n";
+        let expected = "# XIMOD Translator - translation metadata\n# @language = deu\n# @font = Noto_Sans/NotoSans-Regular.ttf\n# @langname = Deutsch\n# @author = Patrice\n\napp-title = XIMOD Übersetzer\n\n# --- Menus\nmenu-file = Datei\nmenu-open = Ouvrir…\nstatus = { $n } Zeilen\nundo-done =\n    { $n ->\n        [one] eins\n       *[other] viele\n    }\n";
         assert_eq!(out, expected);
         // Saved twice: identical (no blank lines piling up).
         let again = render_file(
@@ -1588,7 +1587,7 @@ mod tests {
         build_zip(&lang, "deu", &zip_path).unwrap();
         let mut z = zip::ZipArchive::new(std::fs::File::open(&zip_path).unwrap()).unwrap();
         let names: Vec<String> = (0..z.len())
-            .map(|i| z.by_index(i).unwrap().name().to_string())
+            .map(|i| z.by_index(i).unwrap().name().unwrap().to_string())
             .collect();
         assert_eq!(
             names,

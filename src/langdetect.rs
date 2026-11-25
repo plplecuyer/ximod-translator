@@ -1,6 +1,7 @@
 //! Source-language detection for files that do not name their language
 //! (non-localized plugins, binary bases): a statistical estimate over the
-//! source texts, by the Lingua library (75 languages, n-grams of 1 to 5
+//! source texts, by the Lingua library (75 languages, all kept: a user may
+//! add any language to a game, D-104; n-grams of 1 to 5
 //! characters, built for short texts).
 //!
 //! The detector is built once, lazily, on the first call; its models are

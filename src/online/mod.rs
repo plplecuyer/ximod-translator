@@ -228,16 +228,19 @@ impl OnlineConfig {
     /// The HTTP agent of a request to `url` (R-D01-07): the proxy, except
     /// for a local server (loopback, or a host listed in `NO_PROXY`).
     pub fn agent_for(&self, url: &str) -> ureq::Agent {
-        let mut b = ureq::AgentBuilder::new()
-            .timeout(Duration::from_secs(self.timeout_secs.max(5)))
-            .user_agent("XIMOD-Translator/1.0");
+        let mut b = ureq::Agent::config_builder()
+            .timeout_global(Some(Duration::from_secs(self.timeout_secs.max(5))))
+            .user_agent("XIMOD-Translator/1.0")
+            // A refused request keeps its body: the service's message
+            // (`json_answer`).
+            .http_status_as_error(false);
         if !bypass_proxy(url)
             && let Some(p) = self.effective_proxy()
             && let Ok(proxy) = ureq::Proxy::new(&p)
         {
-            b = b.proxy(proxy);
+            b = b.proxy(Some(proxy));
         }
-        b.build()
+        b.build().into()
     }
 }
 
@@ -323,19 +326,25 @@ impl Error {
             other => other.to_string(),
         }
     }
+}
 
-    /// Map a `ureq` failure, keeping the service's message (its body, cut)
-    /// and never the request.
-    pub fn from_ureq(e: ureq::Error) -> Error {
-        match e {
-            ureq::Error::Status(code, resp) => {
-                let body = resp.into_string().unwrap_or_default();
-                let message = body_message(&body);
-                Error::Http { code, message }
-            }
-            ureq::Error::Transport(t) => Error::Network(t.to_string()),
-        }
+/// The JSON answer of a request; a refused one gives the service's
+/// message (its body, cut), never the request.
+pub fn json_answer(
+    answer: Result<ureq::http::Response<ureq::Body>, ureq::Error>,
+) -> Result<serde_json::Value, Error> {
+    let mut resp = answer.map_err(|e| Error::Network(e.to_string()))?;
+    let code = resp.status().as_u16();
+    if code >= 400 {
+        let body = resp.body_mut().read_to_string().unwrap_or_default();
+        return Err(Error::Http {
+            code,
+            message: body_message(&body),
+        });
     }
+    resp.body_mut()
+        .read_json()
+        .map_err(|e| Error::Format(e.to_string()))
 }
 
 /// A readable message from an error body: the `message` / `error.message`

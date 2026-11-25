@@ -401,7 +401,8 @@ impl XimodApp {
         }
         let mut action = DialogAction::None;
         let mut close = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -411,7 +412,7 @@ impl XimodApp {
                 )));
             }
             self.dialogs.needs_place = false;
-            egui::CentralPanel::default().show(vctx, |ui| match &map {
+            egui::CentralPanel::default().show(vui, |ui| match &map {
                 Some(map) if !map.is_empty() => {
                     let selected = self.dialogs.selected;
                     let conditions = selected

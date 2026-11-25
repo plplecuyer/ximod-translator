@@ -125,9 +125,9 @@ impl Toasts {
             ctx.request_repaint_after(std::time::Duration::from_secs_f64(next_expiry.min(1.0)));
         }
 
-        let dark = ctx.style().visuals.dark_mode;
+        let dark = ctx.global_style().visuals.dark_mode;
         let mut close: Option<u64> = None;
-        egui::Area::new(egui::Id::new("ximod-toasts"))
+        egui::Area::new(egui::Id::unique("ximod-toasts"))
             .order(egui::Order::Foreground)
             .anchor(egui::Align2::RIGHT_TOP, egui::vec2(-12.0, 72.0))
             .interactable(true)
@@ -137,7 +137,7 @@ impl Toasts {
                     let accent = t.level.color(dark);
                     let frame = egui::Frame::popup(ui.style())
                         .stroke(egui::Stroke::new(1.0_f32, accent))
-                        .inner_margin(egui::Margin::symmetric(10.0, 8.0));
+                        .inner_margin(egui::Margin::symmetric(10, 8));
                     frame.show(ui, |ui| {
                         ui.horizontal(|ui| {
                             ui.label(egui::RichText::new(t.level.glyph()).color(accent).strong());

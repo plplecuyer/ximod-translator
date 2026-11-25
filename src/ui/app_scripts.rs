@@ -451,7 +451,8 @@ impl XimodApp {
         };
         let mut close = false;
         let mut action: Option<u8> = None;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -464,7 +465,7 @@ impl XimodApp {
             if vctx.input_mut(|i| i.consume_key(egui::Modifiers::NONE, egui::Key::Escape)) {
                 close = true;
             }
-            egui::TopBottomPanel::bottom("scripts_bottom").show(vctx, |ui| {
+            egui::Panel::bottom("scripts_bottom").show(vui, |ui| {
                 ui.add_space(4.0);
                 ui.horizontal(|ui| {
                     let any = !rows.is_empty();
@@ -507,7 +508,7 @@ impl XimodApp {
                 }
                 ui.add_space(4.0);
             });
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 if let Some(pick) = self.scripts_body(ui, &set, &rows, in_plugin) {
                     self.scripts_win.selected = Some(pick);
                 }
@@ -947,7 +948,7 @@ fn source_lines(
     let normal = ui.visuals().text_color();
     egui::Frame::default()
         .fill(ui.visuals().extreme_bg_color)
-        .inner_margin(egui::Margin::same(4.0))
+        .inner_margin(egui::Margin::same(4))
         .show(ui, |ui| {
             for (k, l) in lines[from..to].iter().enumerate() {
                 let n = from + k + 1;

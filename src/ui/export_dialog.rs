@@ -122,6 +122,9 @@ pub struct Extra<'a> {
     pub vmad_note: Option<&'a str>,
     /// The debugging export (A-22).
     pub ids: Option<IdsInfo<'a>>,
+    /// The target is Chinese: the conversion to traditional is offered
+    /// (E-08, D-100).
+    pub chinese: bool,
 }
 
 /// Draw the dialog's content; `policy` and `esl` are updated in place.
@@ -141,6 +144,7 @@ pub fn body(
         localize,
         vmad_note,
         ids,
+        chinese,
     } = extra;
     let mut outcome = Outcome::Open;
     let labels: Vec<(Status, String)> = ExportPolicy::optional_statuses()
@@ -173,14 +177,14 @@ pub fn body(
         });
         if policy.includes_any() {
             ui.add_space(4.0);
-            egui::Frame::none()
+            egui::Frame::NONE
                 .fill(egui::Color32::from_rgb(255, 244, 214))
                 .stroke(egui::Stroke::new(
                     1.0_f32,
                     egui::Color32::from_rgb(220, 160, 60),
                 ))
                 .inner_margin(6.0)
-                .rounding(4.0)
+                .corner_radius(4)
                 .show(ui, |ui| {
                     ui.set_width(ui.available_width());
                     ui.add(
@@ -344,6 +348,30 @@ pub fn body(
                     }
                 });
             }
+        });
+    }
+    // Chinese in traditional characters (E-08, R-Z): the output only.
+    if chinese {
+        ui.add_space(6.0);
+        ui.group(|ui| {
+            ui.set_width(ui.available_width());
+            let mut on = policy.zh.is_some();
+            if ui.checkbox(&mut on, i18n.t("export-zh")).changed() {
+                policy.zh = on.then_some(crate::text::zh::ZhConv::S2t);
+            }
+            if let Some(conv) = policy.zh {
+                ui.indent("ximod-export-zh", |ui| {
+                    for c in crate::text::zh::ZhConv::TO_TRADITIONAL {
+                        if ui.radio(conv == c, i18n.t(c.i18n_key())).clicked() {
+                            policy.zh = Some(c);
+                        }
+                    }
+                });
+            }
+            ui.add(
+                egui::Label::new(egui::RichText::new(i18n.t("export-zh-note")).weak().small())
+                    .wrap_mode(egui::TextWrapMode::Wrap),
+            );
         });
     }
     ui.add_space(8.0);

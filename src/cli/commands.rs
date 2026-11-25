@@ -14,19 +14,40 @@ use crate::l10n;
 use crate::status::Status;
 
 /// The game and languages of the session: the options, else the
-/// configuration (R-D06-01).
+/// configuration (R-D06-01) — the languages of the game, when it has its
+/// own (E-04, R-E04-07).
 pub fn pair(ctx: &Ctx, g: &Global) -> Pair {
-    let pick = |o: &Option<String>, d: &str| {
-        o.as_deref()
-            .map(str::trim)
+    pair_for(&ctx.cfg, g, None)
+}
+
+/// [`pair`] for the game `game` when one is given (a batch's), else the
+/// option's, else the configuration's.
+pub fn pair_for(cfg: &crate::config::AppConfig, g: &Global, game: Option<&str>) -> Pair {
+    let pick = |o: Option<&str>, d: &str| {
+        o.map(str::trim)
             .filter(|s| !s.is_empty())
             .unwrap_or(d.trim())
             .to_string()
     };
+    let game = pick(game.or(g.game.as_deref()), &cfg.default_game);
+    let r = cfg.prefs_for(&game);
     Pair {
-        game: pick(&g.game, &ctx.cfg.default_game),
-        from: pick(&g.from, &ctx.cfg.source_language),
-        to: pick(&g.to, &ctx.cfg.target_language),
+        from: pick(g.from.as_deref(), &r.source),
+        to: pick(g.to.as_deref(), &r.target),
+        game,
+    }
+}
+
+/// The output a game has of its own (E-04), as the command line names it.
+fn own_output(cfg: &crate::config::AppConfig, game: &str) -> Option<Output> {
+    use crate::config::OutputMode as M;
+    match cfg.own_prefs(game)?.output? {
+        M::Strings => Some(Output::Strings),
+        M::Hybrid => Some(Output::Hybrid),
+        M::OverridePatch => Some(Output::Override),
+        M::FullPlugin => Some(Output::Full),
+        M::Dsd => Some(Output::Dsd),
+        M::Text | M::Scripts => None,
     }
 }
 
@@ -119,16 +140,18 @@ pub fn validate(command: &str, opts: &Values) -> Result<(), Fail> {
     check("overwrite", &|v| parse_overwrite(v).is_some())?;
     check("statuses", &|v| parse_statuses(v).is_some())?;
     check("ids", &|v| crate::export::IdForm::from_id(v).is_some())?;
+    check("convert", &|v| zh_export(v).is_some())?;
     check("fail-on", &|v| matches!(v, "error" | "warning"))?;
     check("scope", &|v| matches!(v, "untranslated" | "document"))?;
     check("max-chars", &|v| v.trim().parse::<usize>().is_ok())?;
     check("prefer", &|v| matches!(v, "a" | "b"))?;
     match command {
+        // Without --output, the output of the document's game (E-04,
+        // R-E04-07), else « missing » when the file is open.
         "export" => {
-            let Some(o) = opts.get("output") else {
-                return Err(missing("output"));
-            };
-            if Output::from_id(o).is_none() {
+            if let Some(o) = opts.get("output")
+                && Output::from_id(o).is_none()
+            {
                 return Err(bad_value("output", o));
             }
         }
@@ -208,7 +231,7 @@ pub fn step(ctx: &mut Ctx, w: &mut Work, command: &str, opts: &Values, dir: Opti
                 .map(PathBuf::from)
                 .or_else(|| dir.map(Path::to_path_buf))
                 .ok_or_else(|| missing("o"))?;
-            export(w, opts, &dir)?
+            export(ctx, w, opts, &dir)?
         }
         "manifest" => {
             let dir = dir
@@ -737,11 +760,17 @@ fn check(ctx: &mut Ctx, w: &mut Work, opts: &Values) -> Res {
 
 // --------------------------------------------------------------- export
 
-fn export(w: &mut Work, opts: &Values, dir: &Path) -> Res {
-    let output = opts
-        .get("output")
-        .and_then(Output::from_id)
-        .ok_or_else(|| missing("output"))?;
+/// The conversion of `--convert`: to traditional only (s2t, s2tw, s2hk).
+fn zh_export(v: &str) -> Option<crate::text::zh::ZhConv> {
+    crate::text::zh::ZhConv::from_key(v)
+        .filter(|c| crate::text::zh::ZhConv::TO_TRADITIONAL.contains(c))
+}
+
+fn export(ctx: &Ctx, w: &mut Work, opts: &Values, dir: &Path) -> Res {
+    let output = match opts.get("output") {
+        Some(o) => Output::from_id(o).ok_or_else(|| bad_value("output", o))?,
+        None => own_output(&ctx.cfg, &w.o.settings.game).ok_or_else(|| missing("output"))?,
+    };
     let mut policy = match opts.get("statuses") {
         Some(s) => parse_statuses(s).ok_or_else(|| bad_value("statuses", s))?,
         None => crate::export::ExportPolicy::validated_only(),
@@ -749,6 +778,11 @@ fn export(w: &mut Work, opts: &Values, dir: &Path) -> Res {
     // A-22: the debugging export, each text prefixed by its identifier.
     if let Some(v) = opts.get("ids") {
         policy.ids = Some(crate::export::IdForm::from_id(v).ok_or_else(|| bad_value("ids", v))?);
+    }
+    // E-08 (D-100): a Chinese translation written in traditional
+    // characters, the document and its dictionary unchanged.
+    if let Some(v) = opts.get("convert") {
+        policy.zh = Some(zh_export(v).ok_or_else(|| bad_value("convert", v))?);
     }
     // The reverse check: translations that already start with one.
     let plain = crate::export::ExportPolicy {
@@ -1168,6 +1202,45 @@ fn package(ctx: &Ctx, pair: &Pair, dir: &Path, opts: &Values, plugin: Option<Str
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn the_game_gives_its_languages_and_output() {
+        // T-E04-05, R-E04-07.
+        use crate::config::{AppConfig, OutputMode};
+        let mut cfg = AppConfig {
+            source_language: "eng".into(),
+            target_language: "fra".into(),
+            default_game: "SkyrimSE".into(),
+            ..AppConfig::default()
+        };
+        let ob = cfg.game_prefs.entry("Oblivion".into()).or_default();
+        ob.target = Some("deu".into());
+        ob.output = Some(OutputMode::FullPlugin);
+        let g = Global {
+            game: Some("Oblivion".into()),
+            ..Global::default()
+        };
+        let p = pair_for(&cfg, &g, None);
+        assert_eq!(
+            (p.game.as_str(), p.from.as_str(), p.to.as_str()),
+            ("Oblivion", "eng", "deu")
+        );
+        // An option given wins; the configuration's game has no section.
+        let g = Global {
+            to: Some("ita".into()),
+            ..Global::default()
+        };
+        let p = pair_for(&cfg, &g, None);
+        assert_eq!((p.game.as_str(), p.to.as_str()), ("SkyrimSE", "ita"));
+        assert_eq!(
+            pair_for(&cfg, &Global::default(), Some("Oblivion")).to,
+            "deu"
+        );
+        assert_eq!(own_output(&cfg, "Oblivion"), Some(Output::Full));
+        assert_eq!(own_output(&cfg, "SkyrimSE"), None);
+        // No --output: accepted, the document's game decides.
+        assert!(validate("export", &Values::default()).is_ok());
+    }
 
     #[test]
     fn values_are_checked() {

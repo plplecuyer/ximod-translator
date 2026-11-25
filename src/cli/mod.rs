@@ -303,6 +303,55 @@ pub fn help(i18n: &crate::i18n::I18n, command: Option<&str>) -> Vec<String> {
     v
 }
 
+/// Whether the executable was launched under the name of the command line
+/// (D-104, R-D104-03): under Linux and macOS, `ximod-cli` is a link to
+/// `ximod-translator`, which takes its mode from the name it is run by.
+pub fn invoked_as_cli(argv0: &std::ffi::OsStr) -> bool {
+    std::path::Path::new(argv0)
+        .file_stem()
+        .and_then(|s| s.to_str())
+        .is_some_and(|s| s.eq_ignore_ascii_case("ximod-cli"))
+}
+
+/// The first argument by which the console launcher `ximod-cli.exe` starts
+/// `ximod-translator.exe` as the command line (D-104, Windows).
+pub const AS_CLI_FLAG: &str = "--ximod-cli";
+
+/// The arguments of the command line when the executable runs as
+/// `ximod-cli` — launched under that name, or with [`AS_CLI_FLAG`] first —
+/// the program name and the flag left out; `None` for the window.
+pub fn cli_args(argv: Vec<std::ffi::OsString>) -> Option<Vec<String>> {
+    let mut args = argv.into_iter();
+    let first = args.next()?;
+    let mut rest: Vec<String> = args.map(|a| a.to_string_lossy().into_owned()).collect();
+    if rest.first().map(String::as_str) == Some(AS_CLI_FLAG) {
+        rest.remove(0);
+        return Some(rest);
+    }
+    invoked_as_cli(&first).then_some(rest)
+}
+
+/// The command line when the executable runs as `ximod-cli`: its return
+/// code; `None` when it runs as the window.
+pub fn run_if_invoked_as_cli() -> Option<i32> {
+    let argv = cli_args(std::env::args_os().collect())?;
+    // Windows: the window executable has no console of its own; it writes
+    // in that of the launcher which started it (its standard handles may
+    // also be a file or a pipe, inherited as they are).
+    #[cfg(target_os = "windows")]
+    unsafe {
+        windows_sys::Win32::System::Console::AttachConsole(
+            windows_sys::Win32::System::Console::ATTACH_PARENT_PROCESS,
+        );
+        // Ctrl+C stops the command line, even if the process that started
+        // it ignored Ctrl+C (an attribute inherited by child processes).
+        windows_sys::Win32::System::Console::SetConsoleCtrlHandler(None, 0);
+    }
+    let stdout = std::io::stdout();
+    let stderr = std::io::stderr();
+    Some(run(argv, &mut stdout.lock(), &mut stderr.lock()))
+}
+
 /// Run a command line (the program name left out); the return code.
 pub fn run(argv: Vec<String>, out: &mut dyn Write, err: &mut dyn Write) -> i32 {
     let parsed = args::parse(&argv);

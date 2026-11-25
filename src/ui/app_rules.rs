@@ -596,7 +596,8 @@ impl XimodApp {
                 .with_active(true);
         }
         let mut close = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -609,7 +610,7 @@ impl XimodApp {
             if vctx.input_mut(|i| i.consume_key(egui::Modifiers::NONE, egui::Key::Escape)) {
                 close = true;
             }
-            egui::TopBottomPanel::top("rules_tabs").show(vctx, |ui| {
+            egui::Panel::top("rules_tabs").show(vui, |ui| {
                 ui.horizontal(|ui| {
                     let n = self.rules_win.suggestions.as_ref().map(Vec::len);
                     for (tab, label) in [
@@ -634,12 +635,12 @@ impl XimodApp {
                     }
                 });
             });
-            egui::TopBottomPanel::bottom("rules_bottom").show(vctx, |ui| {
+            egui::Panel::bottom("rules_bottom").show(vui, |ui| {
                 if self.rules_bottom(ui) {
                     close = true;
                 }
             });
-            egui::CentralPanel::default().show(vctx, |ui| match self.rules_win.tab {
+            egui::CentralPanel::default().show(vui, |ui| match self.rules_win.tab {
                 RulesTab::Active => self.rules_active_tab(ui),
                 RulesTab::Editor => self.rules_editor_tab(ui),
                 RulesTab::Suggest => self.rules_suggest_tab(ui),

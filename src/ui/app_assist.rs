@@ -391,7 +391,8 @@ impl XimodApp {
                 .with_active(true);
         }
         let mut close = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -404,7 +405,7 @@ impl XimodApp {
             if vctx.input_mut(|i| i.consume_key(egui::Modifiers::NONE, egui::Key::Escape)) {
                 close = true;
             }
-            egui::TopBottomPanel::top("assist_tabs").show(vctx, |ui| {
+            egui::Panel::top("assist_tabs").show(vui, |ui| {
                 ui.horizontal(|ui| {
                     let game = crate::games::Game::from_id(&self.assist_win.game);
                     let game = match game {
@@ -428,7 +429,7 @@ impl XimodApp {
                     }
                 });
             });
-            egui::TopBottomPanel::bottom("assist_bottom").show(vctx, |ui| {
+            egui::Panel::bottom("assist_bottom").show(vui, |ui| {
                 let closed = match self.assist_win.tab {
                     AssistTab::Glossary => self.assist_bottom(ui),
                     AssistTab::Patterns => self.patterns_bottom(ui),
@@ -438,7 +439,7 @@ impl XimodApp {
                     close = true;
                 }
             });
-            egui::CentralPanel::default().show(vctx, |ui| match self.assist_win.tab {
+            egui::CentralPanel::default().show(vui, |ui| match self.assist_win.tab {
                 AssistTab::Glossary => self.assist_glossary_tab(ui),
                 AssistTab::Patterns => self.patterns_tab(ui),
                 AssistTab::Derive => self.derive_tab(ui),
@@ -512,7 +513,7 @@ impl XimodApp {
             ui.separator();
             let gf = self.assist_win.game_file;
             if ui
-                .add_enabled(!dirty, egui::SelectableLabel::new(!gf, &l_pair_file))
+                .add_enabled(!dirty, egui::Button::selectable(!gf, &l_pair_file))
                 .clicked()
                 && gf
             {
@@ -520,7 +521,7 @@ impl XimodApp {
                 reload = true;
             }
             if ui
-                .add_enabled(!dirty, egui::SelectableLabel::new(gf, &l_game_file))
+                .add_enabled(!dirty, egui::Button::selectable(gf, &l_game_file))
                 .clicked()
                 && !gf
             {
@@ -995,9 +996,13 @@ impl XimodApp {
                     close = true;
                 }
                 ui.label(
-                    egui::RichText::new(self.i18n.t("glossary-shortcut-hint"))
-                        .weak()
-                        .small(),
+                    egui::RichText::new(super::with_keys(
+                        ui.ctx(),
+                        &self.i18n,
+                        self.i18n.t("glossary-shortcut-hint"),
+                    ))
+                    .weak()
+                    .small(),
                 );
             });
         });
@@ -1099,14 +1104,14 @@ impl XimodApp {
             .take()
             .filter(|(l, _, _)| *l == line)
             .map(|(_, a, b)| (a, b));
-        let src_id = egui::Id::new(("ximod-edit-src-te", line));
+        let src_id = egui::Id::unique(("ximod-edit-src-te", line));
         let pick = |id: egui::Id, text: &str| -> String {
             let chars: Vec<char> = text.chars().collect();
             let kept = if id == src_id { ctx_sel } else { None };
             kept.or_else(|| {
                 egui::TextEdit::load_state(vctx, id)
                     .and_then(|st| st.cursor.char_range())
-                    .map(|r| (r.primary.index, r.secondary.index))
+                    .map(|r| (r.primary.index.0, r.secondary.index.0))
             })
             .map(|(a, b)| (a.min(b).min(chars.len()), a.max(b).min(chars.len())))
             .filter(|(a, b)| a < b)
@@ -1116,7 +1121,7 @@ impl XimodApp {
             .to_string()
         };
         let src = pick(src_id, &e.source);
-        let dst = pick(egui::Id::new(("ximod-edit-trans", line)), &e.trans);
+        let dst = pick(egui::Id::unique(("ximod-edit-trans", line)), &e.trans);
         let (f, _, _) = Dirs::installed().load(&glossary::file_name(&pair, None));
         let groups: Vec<String> = f.groups.iter().map(|g| g.name.clone()).collect();
         let last = self

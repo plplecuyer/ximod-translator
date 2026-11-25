@@ -13,9 +13,9 @@ mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 cp "$stage/ximod-translator" "$app/Contents/MacOS/"
 chmod +x "$app/Contents/MacOS/ximod-translator"
 # La ligne de commande (D-06) : à côté, appelée par son chemin
-# (« XIMOD Translator.app/Contents/MacOS/ximod-cli »).
-cp "$stage/ximod-cli" "$app/Contents/MacOS/"
-chmod +x "$app/Contents/MacOS/ximod-cli"
+# (« XIMOD Translator.app/Contents/MacOS/ximod-cli ») ; un lien vers
+# l'exécutable, qui choisit son mode d'après son nom (D-104).
+ln -s ximod-translator "$app/Contents/MacOS/ximod-cli"
 cp -R "$stage/assets" "$app/Contents/Resources/assets"
 if [ -f "$stage/assets/icons/ximod-translator.icns" ]; then
   cp "$stage/assets/icons/ximod-translator.icns" "$app/Contents/Resources/ximod-translator.icns"

@@ -5,6 +5,7 @@
 //! *independent* windows (Settings, Flags, About) rendered as immediate egui
 //! viewports whose position and size are persisted to `Config.ini`.
 
+use crate::ui::keys::{TakeCmd as _, TakeShortcut as _};
 use crate::ui::theme::ComboField as _;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -43,6 +44,8 @@ mod app_derive;
 mod app_dialog;
 #[path = "app_encoding.rs"]
 mod app_encoding;
+#[path = "app_gameprefs.rs"]
+mod app_gameprefs;
 #[path = "app_history.rs"]
 mod app_history;
 #[path = "app_journal.rs"]
@@ -55,10 +58,14 @@ mod app_matrices;
 mod app_online;
 #[path = "app_patterns.rs"]
 mod app_patterns;
+#[path = "app_prepare.rs"]
+mod app_prepare;
 #[path = "app_profiles.rs"]
 mod app_profiles;
 #[path = "app_props.rs"]
 mod app_props;
+#[path = "app_release.rs"]
+mod app_release;
 #[path = "app_remember.rs"]
 mod app_remember;
 #[path = "app_review.rs"]
@@ -71,8 +78,12 @@ mod app_savepart;
 mod app_scripts;
 #[path = "app_search.rs"]
 mod app_search;
+#[path = "app_shortcuts.rs"]
+mod app_shortcuts;
 #[path = "app_sort.rs"]
 mod app_sort;
+#[path = "app_spell.rs"]
+mod app_spell;
 #[path = "app_text.rs"]
 mod app_text;
 #[path = "app_transform.rs"]
@@ -95,11 +106,65 @@ const ABOUT_SIZE: [f32; 2] = [420.0, 140.0];
 const STATUS_COLORS_SIZE: [f32; 2] = [380.0, 250.0];
 const PICKER_SIZE: [f32; 2] = [560.0, 360.0];
 
-/// Flags grid layout (matches XIMOD Architect).
+/// Flags grid layout (matches XIMOD Architect): every flag in a frame of
+/// the same size, its name under it, the window as wide as the grid.
 const FLAG_COLUMNS: usize = 6;
-const FLAG_CELL_W: f32 = 104.0;
-const FLAG_CELL_H: f32 = 70.0;
-const FLAG_ROW_H: f32 = FLAG_CELL_H + 26.0;
+/// The frame of a flag.
+const FLAG_CELL_W: f32 = 112.0;
+const FLAG_CELL_H: f32 = 76.0;
+/// The space between two frames, and inside a frame around its image.
+const FLAG_GAP: f32 = 8.0;
+const FLAG_PAD: f32 = 4.0;
+/// The height of the name under a frame.
+const FLAG_LABEL_H: f32 = 20.0;
+/// A row: frame, name and the space to the next row.
+const FLAG_ROW_H: f32 = FLAG_CELL_H + FLAG_LABEL_H + FLAG_GAP;
+/// The margin of the window around the grid.
+const FLAG_MARGIN: f32 = 10.0;
+
+/// The width of the « Choisir un pays » window: the frames side by side,
+/// their gaps, the margin left of the first and right of the last, and the
+/// scroll bar.
+pub(crate) fn flags_window_width(scroll_bar: f32) -> f32 {
+    FLAG_MARGIN
+        + FLAG_COLUMNS as f32 * FLAG_CELL_W
+        + (FLAG_COLUMNS - 1) as f32 * FLAG_GAP
+        + FLAG_MARGIN
+        + scroll_bar
+}
+
+/// A status pill of the status bar (R-A15-04): its glyph, count (and name
+/// in the menu of a narrow bar) on the colour of the status, clickable.
+fn status_pill(
+    ui: &mut egui::Ui,
+    id: egui::Id,
+    text: String,
+    (fill, ink, stroke): (egui::Color32, egui::Color32, egui::Stroke),
+) -> egui::Response {
+    let inner = egui::Frame::default()
+        .fill(fill)
+        .stroke(stroke)
+        .corner_radius(egui::CornerRadius::same(4))
+        .inner_margin(egui::Margin::symmetric(6, 1))
+        .show(ui, |ui| {
+            ui.add(
+                egui::Label::new(egui::RichText::new(text).color(ink).strong()).selectable(false),
+            );
+        });
+    ui.interact(inner.response.rect, id, egui::Sense::click())
+}
+
+#[cfg(test)]
+mod flags_grid_tests {
+    /// The window is exactly as wide as the grid: six frames, five gaps,
+    /// the margins and the scroll bar.
+    #[test]
+    fn the_flags_window_is_as_wide_as_its_grid() {
+        let w = super::flags_window_width(20.0);
+        assert_eq!(w, 10.0 + 6.0 * 112.0 + 5.0 * 8.0 + 10.0 + 20.0);
+        assert_eq!(super::FLAG_ROW_H, 76.0 + 20.0 + 8.0);
+    }
+}
 
 /// Why the flags window is open.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -308,80 +373,70 @@ enum SettingsTab {
     Online,
     /// Configuration location (E-05); backups will join it (B-11).
     Advanced,
+    /// The configurable shortcuts (E-15).
+    Shortcuts,
 }
 
 /// Undo / redo shortcuts (COMMAND = Ctrl on Windows / Linux, ⌘ on macOS).
-/// Keyboard shortcuts of the main menu (F-01), defined once so the menu
-/// display and the global handler stay in sync. COMMAND is Ctrl on Windows
-/// and Linux, ⌘ on macOS.
-struct MenuShortcuts {
-    open: egui::KeyboardShortcut,
-    save_as: egui::KeyboardShortcut,
-    export: egui::KeyboardShortcut,
-    close_doc: egui::KeyboardShortcut,
-    settings: egui::KeyboardShortcut,
-    manual: egui::KeyboardShortcut,
-    quit: egui::KeyboardShortcut,
-    replace: egui::KeyboardShortcut,
-    quality: egui::KeyboardShortcut,
-    personal: egui::KeyboardShortcut,
-    dialogues: egui::KeyboardShortcut,
-    /// Ctrl+G: the line online; Ctrl+Maj+G: the batch dialog (D-01).
-    online_line: egui::KeyboardShortcut,
-    online_batch: egui::KeyboardShortcut,
-    /// Ctrl+Maj+R: Traduction = Relecture (A-17).
-    review_accept: egui::KeyboardShortcut,
-    /// Ctrl+Alt+F: Recherche avancée (A-19).
-    search: egui::KeyboardShortcut,
-    /// Ctrl+K: Concordance (A-20).
-    concord: egui::KeyboardShortcut,
-    /// Ctrl+Shift+J: the journal of the session (E-01).
-    journal: egui::KeyboardShortcut,
-    /// Ctrl+Shift+U / L / T: Transformer ▸ Majuscules, Minuscules, Casse
-    /// de titre (A-13).
-    transform_upper: egui::KeyboardShortcut,
-    transform_lower: egui::KeyboardShortcut,
-    transform_title: egui::KeyboardShortcut,
+/// A message that names shortcuts (« Valider — F5 », « Ctrl+Entrée :
+/// valider puis suivante »): each shortcut of origin that was changed is
+/// replaced by the one in force (E-15). Without a change, the text as is.
+pub(crate) fn with_keys(ctx: &egui::Context, i18n: &crate::i18n::I18n, text: String) -> String {
+    with_keys_of(ctx, i18n, text, false)
 }
 
-impl MenuShortcuts {
-    const fn new() -> MenuShortcuts {
-        use egui::{Key, KeyboardShortcut, Modifiers};
-        MenuShortcuts {
-            open: KeyboardShortcut::new(Modifiers::COMMAND, Key::O),
-            save_as: KeyboardShortcut::new(Modifiers::COMMAND, Key::S),
-            export: KeyboardShortcut::new(Modifiers::COMMAND.plus(Modifiers::SHIFT), Key::E),
-            close_doc: KeyboardShortcut::new(Modifiers::COMMAND, Key::W),
-            settings: KeyboardShortcut::new(Modifiers::COMMAND, Key::Comma),
-            manual: KeyboardShortcut::new(Modifiers::NONE, Key::F1),
-            quit: KeyboardShortcut::new(Modifiers::COMMAND, Key::Q),
-            replace: KeyboardShortcut::new(Modifiers::COMMAND, Key::H),
-            quality: KeyboardShortcut::new(Modifiers::NONE, Key::F12),
-            personal: KeyboardShortcut::new(Modifiers::COMMAND, Key::M),
-            dialogues: KeyboardShortcut::new(Modifiers::NONE, Key::F10),
-            online_line: KeyboardShortcut::new(Modifiers::COMMAND, Key::G),
-            online_batch: KeyboardShortcut::new(Modifiers::COMMAND.plus(Modifiers::SHIFT), Key::G),
-            review_accept: KeyboardShortcut::new(Modifiers::COMMAND.plus(Modifiers::SHIFT), Key::R),
-            search: KeyboardShortcut::new(Modifiers::COMMAND.plus(Modifiers::ALT), Key::F),
-            concord: KeyboardShortcut::new(Modifiers::COMMAND, Key::K),
-            journal: KeyboardShortcut::new(Modifiers::COMMAND.plus(Modifiers::SHIFT), Key::J),
-            transform_upper: KeyboardShortcut::new(
-                Modifiers::COMMAND.plus(Modifiers::SHIFT),
-                Key::U,
-            ),
-            transform_lower: KeyboardShortcut::new(
-                Modifiers::COMMAND.plus(Modifiers::SHIFT),
-                Key::L,
-            ),
-            transform_title: KeyboardShortcut::new(
-                Modifiers::COMMAND.plus(Modifiers::SHIFT),
-                Key::T,
-            ),
+/// [`with_keys`] for the FOMOD window (`fomod`) or the main one.
+pub(crate) fn with_keys_of(
+    ctx: &egui::Context,
+    i18n: &crate::i18n::I18n,
+    text: String,
+    fomod: bool,
+) -> String {
+    let mut out = text;
+    for c in crate::shortcuts::Cmd::ALL {
+        if (c.place() == crate::shortcuts::Place::Fomod) != fomod {
+            continue;
         }
+        let (Some(origin), Some(now)) = (c.origin(), crate::shortcuts::get(*c)) else {
+            continue;
+        };
+        if origin == now {
+            continue;
+        }
+        let from = shortcut_text(ctx, &origin, i18n);
+        if out.contains(&from) {
+            out = out.replace(&from, &shortcut_text(ctx, &now, i18n));
+        }
+    }
+    out
+}
+
+/// The label of a command's shortcut: the message `origin_key` while it
+/// has its origin (« Ctrl+Bas »), else the shortcut in force.
+pub(crate) fn cmd_label(
+    ctx: &egui::Context,
+    c: crate::shortcuts::Cmd,
+    i18n: &crate::i18n::I18n,
+    origin_key: &str,
+) -> String {
+    if crate::shortcuts::get(c) == c.origin() {
+        i18n.t(origin_key)
+    } else {
+        cmd_text(ctx, c, i18n)
     }
 }
 
-const MENU_SHORTCUTS: MenuShortcuts = MenuShortcuts::new();
+/// The text of the shortcut in force of command `c` (E-15), empty when it
+/// has none.
+pub(crate) fn cmd_text(
+    ctx: &egui::Context,
+    c: crate::shortcuts::Cmd,
+    i18n: &crate::i18n::I18n,
+) -> String {
+    crate::shortcuts::get(c)
+        .map(|sc| shortcut_text(ctx, &sc, i18n))
+        .unwrap_or_default()
+}
 
 /// The text of a shortcut for a menu entry or a tooltip, platform-aware
 /// (« Ctrl+O », « ⌘O »), with the modifier names of the interface language
@@ -459,26 +514,14 @@ fn menu_item(
     };
     let clicked = resp.clicked();
     if clicked {
-        ui.close_menu();
+        ui.close();
     }
     clicked
 }
 
-/// Ctrl+Alt+Z: « Revenir à la traduction précédente » (A-18), consumed
-/// before Ctrl+Z (which it would match).
-const SHORTCUT_HISTORY_PREV: egui::KeyboardShortcut = egui::KeyboardShortcut::new(
-    egui::Modifiers::COMMAND.plus(egui::Modifiers::ALT),
-    egui::Key::Z,
-);
-/// Ctrl+Alt+G: « Ajouter au glossaire » in the edit window (B-15),
-/// consumed before Ctrl+G (En ligne).
-const SHORTCUT_GLOSSARY_ADD: egui::KeyboardShortcut = egui::KeyboardShortcut::new(
-    egui::Modifiers::COMMAND.plus(egui::Modifiers::ALT),
-    egui::Key::G,
-);
 /// Extra top and bottom margin of the toolbar and of the filter bar, in
 /// points, over egui's default panel.
-const TOOLBAR_EXTRA: f32 = 4.0;
+const TOOLBAR_EXTRA: i8 = 4;
 
 /// A vertical separator of the height of a widget, for a wrapping row:
 /// egui's own takes all the height left in the panel, so one that wrapped
@@ -490,7 +533,7 @@ const TOOLBAR_EXTRA: f32 = 4.0;
 /// kept apart from its list reads badly.
 fn keep_together(ui: &mut egui::Ui, label: &str, w: f32) {
     let font = egui::TextStyle::Body.resolve(ui.style());
-    let lw = ui.fonts(|f| {
+    let lw = ui.fonts_mut(|f| {
         f.layout_no_wrap(label.to_string(), font, egui::Color32::WHITE)
             .size()
             .x
@@ -509,7 +552,7 @@ fn keep_together(ui: &mut egui::Ui, label: &str, w: f32) {
 /// showing `text`: it grows with its text.
 fn combo_w(ui: &egui::Ui, width: Option<f32>, text: &str) -> f32 {
     let font = egui::TextStyle::Button.resolve(ui.style());
-    let tw = ui.fonts(|f| {
+    let tw = ui.fonts_mut(|f| {
         f.layout_no_wrap(text.to_string(), font, egui::Color32::WHITE)
             .size()
             .x
@@ -557,12 +600,13 @@ struct EditSession {
     review: bool,
 }
 
-/// One misspelling found by the spell checker: which entry it is in, the word,
-/// and precomputed suggestions (computed once per scan, not per frame).
+/// One misspelling found by the spell checker: which entry it is in and the
+/// word. Its suggestions are computed when its row is shown (a scan of
+/// thousands of words would otherwise block the window, D-11), once per word
+/// ([`XimodApp::spell_sugg`]).
 struct SpellIssue {
     entry: usize,
     word: String,
-    suggestions: Vec<String>,
 }
 
 /// An action requested from a row of the spell-check window, applied after the
@@ -1073,6 +1117,7 @@ enum Focus {
     TabRecent,
     TabOnline,
     TabAdvanced,
+    TabShortcuts,
     Flag,
     Language,
     Theme,
@@ -1093,6 +1138,7 @@ const ORDER_GENERAL: &[Focus] = &[
     Focus::TabRecent,
     Focus::TabOnline,
     Focus::TabAdvanced,
+    Focus::TabShortcuts,
     Focus::Flag,
     Focus::Language,
     Focus::Theme,
@@ -1252,9 +1298,15 @@ pub struct XimodApp {
     /// The policy of the debugging export under way (A-22), journaled when
     /// its first file is written.
     debug_export: Option<crate::export::ExportPolicy>,
+    /// The check for a newer version (E-14).
+    release: app_release::ReleaseState,
+    /// Paramètres › Général › Vérifier les mises à jour au démarrage.
+    temp_check_updates: bool,
     /// A text for the clipboard, put there at the next frame (Ctrl+G
     /// without a service, R-T03).
     copy_out: Option<String>,
+    /// `XIMOD_KEY_LOG`: the key events go to the log (diagnostic).
+    key_log: bool,
     /// Paramètres › Avancé › Casse de titre (A-13): language, words left
     /// in lower case, words kept.
     temp_title_case: (String, String, String),
@@ -1443,15 +1495,24 @@ pub struct XimodApp {
     // Spell checker (Hunspell-compatible, CDC §8.3).
     show_spell: bool,
     spell_needs_center: bool,
-    /// The loaded checker for `spell_lang` (None when no dictionary is installed).
+    /// The checker of the Traduction column (the target language) and of
+    /// the Source column (D-11), each with the `langue|dictionnaire` it was
+    /// loaded for (None when no dictionary is installed).
     spell: Option<crate::spell::SpellChecker>,
-    /// The target language the current checker was loaded for (to detect changes).
     spell_lang: String,
-    /// Misspellings found in the active document's translations.
+    spell_src: Option<crate::spell::SpellChecker>,
+    spell_src_lang: String,
+    /// The column the window checks (D-11, R-D11-01).
+    spell_col: app_spell::SpellCol,
+    /// Misspellings found in the active document's column.
     spell_issues: Vec<SpellIssue>,
-    /// The words of the last scan per line, with the document scanned
-    /// (A-16): the violet margin of the grid.
+    /// The words of the last scan per line of each column, with the
+    /// document scanned (A-16, R-D11-04): the violet margin of the grid.
     spell_marks: Option<(u64, SpellWords)>,
+    spell_marks_src: Option<(u64, SpellWords)>,
+    /// The suggestions of the words shown, per word, for the checker of the
+    /// window's column; emptied at each scan.
+    spell_sugg: std::cell::RefCell<std::collections::HashMap<String, Vec<String>>>,
     /// Human-readable outcome of the last scan.
     spell_status: String,
 
@@ -1484,6 +1545,19 @@ pub struct XimodApp {
     /// pair (E-12, CDC §6).
     /// One index per dictionary file (B-02).
     file_dbs: crate::basedb::FileDbCache,
+    /// The preparation of the launch while it runs (E-13, D-116).
+    prep: Option<crate::prepare::Preparation>,
+    /// Documents whose game base was not ready when their stack was
+    /// applied (their serials, R-E13-04).
+    base_pending: Vec<u64>,
+    /// « Détecter les jeux au démarrage » being edited (R-E13-01).
+    temp_auto_detect: bool,
+    /// The settings of each game being edited (E-04), and the game of the
+    /// « Réglages de » list (empty: Tous les jeux).
+    temp_game_prefs: std::collections::BTreeMap<String, crate::config::GamePrefs>,
+    temp_prefs_game: String,
+    /// Paramètres › Raccourcis (E-15).
+    sc_tab: app_shortcuts::ShortcutsTab,
 
     // Book preview (CDC §8 — aperçus).
     show_book: bool,
@@ -1629,6 +1703,8 @@ impl Tool {
 impl XimodApp {
     pub fn new(cc: &eframe::CreationContext<'_>, screen: ScreenInfo) -> Self {
         let config = AppConfig::load().unwrap_or_default();
+        // The shortcuts in force (E-15).
+        crate::shortcuts::install(crate::shortcuts::Table::with_overrides(&config.shortcuts));
         // The endpoint and model of the first version serve the « openai »
         // profile until it has a user copy (D-03, R-D03-05).
         crate::online::profile::set_legacy(
@@ -1755,7 +1831,7 @@ impl XimodApp {
             );
         }
 
-        Self {
+        let mut app = Self {
             temp_locale,
             temp_country,
             temp_theme: config.theme,
@@ -1841,7 +1917,10 @@ impl XimodApp {
             transform: Default::default(),
             export_ids_cache: None,
             debug_export: None,
+            release: Default::default(),
+            temp_check_updates: true,
             copy_out: None,
+            key_log: crate::ui::keys::key_log_enabled(),
             temp_title_case: Default::default(),
             propagate_dlg: None,
             dialogs: Default::default(),
@@ -1948,8 +2027,13 @@ impl XimodApp {
             spell_needs_center: false,
             spell: None,
             spell_lang: String::new(),
+            spell_src: None,
+            spell_src_lang: String::new(),
+            spell_col: Default::default(),
             spell_issues: Vec::new(),
             spell_marks: None,
+            spell_marks_src: None,
+            spell_sugg: Default::default(),
             spell_status: String::new(),
             show_archive: false,
             archive_needs_center: false,
@@ -1967,6 +2051,12 @@ impl XimodApp {
             lc_tgt_path: String::new(),
             lc_to_game: true,
             file_dbs: crate::basedb::FileDbCache::default(),
+            prep: None,
+            base_pending: Vec::new(),
+            temp_auto_detect: true,
+            temp_game_prefs: Default::default(),
+            temp_prefs_game: String::new(),
+            sc_tab: Default::default(),
             show_book: false,
             book_needs_center: false,
             book_idx: None,
@@ -2024,23 +2114,31 @@ impl XimodApp {
             game_detect: None,
             game_detect_rx: None,
             detect_progress: None,
+        };
+        // The first launch opens the Settings: their fields start from the
+        // configuration, as when opened from the menu (recette du lot 2 :
+        // saving them dropped the [Game.*] sections and AutoDetectGames=0
+        // of a Config.ini written beforehand).
+        if app.show_settings {
+            app.open_settings();
         }
+        app
     }
 
     /// The « Outils » menu: open the explorers, each in its own independent
     /// window. Several can be open at once; the marker shows which are open and
     /// clicking a tool toggles its window.
     fn tools_menu(&mut self, ui: &mut egui::Ui) {
-        ui.menu_button(self.i18n.t("menu-tools"), |ui| {
+        crate::ui::menus::bar_menu(ui, self.i18n.t("menu-tools"), |ui| {
             fit_menu(ui);
             // Rechercher et remplacer… (A-11), Ctrl+H.
             let has_doc = !self.docs.is_empty();
             if menu_item(
                 ui,
                 &self.i18n.t("menu-replace"),
-                Some(&shortcut_text(
+                Some(&cmd_text(
                     ui.ctx(),
-                    &MENU_SHORTCUTS.replace,
+                    crate::shortcuts::Cmd::Replace,
                     &self.i18n,
                 )),
                 has_doc,
@@ -2052,7 +2150,11 @@ impl XimodApp {
             if menu_item(
                 ui,
                 &self.i18n.t("menu-search-advanced"),
-                Some(&shortcut_text(ui.ctx(), &MENU_SHORTCUTS.search, &self.i18n)),
+                Some(&cmd_text(
+                    ui.ctx(),
+                    crate::shortcuts::Cmd::Search,
+                    &self.i18n,
+                )),
                 has_doc,
                 "",
             ) {
@@ -2061,24 +2163,28 @@ impl XimodApp {
             // Transformer ▸ (A-13): the selection or the line of the cursor.
             let labels = self.transform_labels(ui.ctx());
             let mut transform_pick = None;
-            ui.add_enabled_ui(has_doc && !self.selection.targets().is_empty(), |ui| {
-                ui.menu_button(self.i18n.t("menu-transform"), |ui| {
-                    fit_menu(ui);
+            // A sub-menu of its own (menus.rs): closed when another entry
+            // is hovered, on the left when the right lacks room.
+            crate::ui::menus::submenu(
+                ui,
+                has_doc && !self.selection.targets().is_empty(),
+                self.i18n.t("menu-transform"),
+                |ui| {
                     transform_pick = self.transform_menu(ui, &labels);
-                });
-            });
+                },
+            );
             if let Some(cmd) = transform_pick {
                 let lines = self.selection.targets();
                 self.open_transform(cmd, lines);
-                ui.close_menu();
+                ui.close();
             }
             // Concordance… (A-20), Ctrl+K.
             if menu_item(
                 ui,
                 &self.i18n.t("menu-concordance"),
-                Some(&shortcut_text(
+                Some(&cmd_text(
                     ui.ctx(),
-                    &MENU_SHORTCUTS.concord,
+                    crate::shortcuts::Cmd::Concord,
                     &self.i18n,
                 )),
                 has_doc,
@@ -2089,9 +2195,9 @@ impl XimodApp {
             if menu_item(
                 ui,
                 &self.i18n.t("menu-quality"),
-                Some(&shortcut_text(
+                Some(&cmd_text(
                     ui.ctx(),
-                    &MENU_SHORTCUTS.quality,
+                    crate::shortcuts::Cmd::Quality,
                     &self.i18n,
                 )),
                 has_doc,
@@ -2102,9 +2208,9 @@ impl XimodApp {
             if menu_item(
                 ui,
                 &self.i18n.t("menu-dialogues"),
-                Some(&shortcut_text(
+                Some(&cmd_text(
                     ui.ctx(),
-                    &MENU_SHORTCUTS.dialogues,
+                    crate::shortcuts::Cmd::Dialogues,
                     &self.i18n,
                 )),
                 has_doc,
@@ -2116,9 +2222,9 @@ impl XimodApp {
             if menu_item(
                 ui,
                 &self.i18n.t("menu-online-batch"),
-                Some(&shortcut_text(
+                Some(&cmd_text(
                     ui.ctx(),
-                    &MENU_SHORTCUTS.online_batch,
+                    crate::shortcuts::Cmd::OnlineBatch,
                     &self.i18n,
                 )),
                 has_doc,
@@ -2144,7 +2250,7 @@ impl XimodApp {
                         self.tool_open[tool.idx()] = true;
                         self.tool_needs_center[tool.idx()] = true; // place on open
                     }
-                    ui.close_menu();
+                    ui.close();
                 }
             }
             ui.separator();
@@ -2165,7 +2271,7 @@ impl XimodApp {
                     // about unsaved edits).
                     self.open_fomod_translation();
                     self.fomod_needs_center = !open && self.fomod_needs_center;
-                    ui.close_menu();
+                    ui.close();
                 }
                 let open = self.pack_win.is_some();
                 let mark = if open {
@@ -2183,7 +2289,7 @@ impl XimodApp {
                     } else {
                         self.open_pack_window();
                     }
-                    ui.close_menu();
+                    ui.close();
                 }
             }
             // Historique… (A-18): a window like the others, marked when open.
@@ -2206,12 +2312,12 @@ impl XimodApp {
                     } else {
                         self.open_history_window(None);
                     }
-                    ui.close_menu();
+                    ui.close();
                 }
             }
             ui.separator();
             // Outils ▸ Données: the editors of the data files (D-03).
-            ui.menu_button(self.i18n.t("menu-tools-data"), |ui| {
+            crate::ui::menus::submenu(ui, true, self.i18n.t("menu-tools-data"), |ui| {
                 fit_menu(ui);
                 let open = self.fields_editor.is_some();
                 let mark = if open {
@@ -2228,7 +2334,7 @@ impl XimodApp {
                     } else {
                         self.open_fields_editor();
                     }
-                    ui.close_menu();
+                    crate::ui::menus::close(ui);
                 }
                 // Formats texte… (C-05).
                 let open = self.formats_editor.is_some();
@@ -2247,7 +2353,7 @@ impl XimodApp {
                         self.formats_editor = Some(crate::ui::formats_editor::FormatsEditor::new());
                         self.formats_needs_center = true;
                     }
-                    ui.close_menu();
+                    crate::ui::menus::close(ui);
                 }
                 // Matrices de remplacement… (B-17).
                 let mark = if self.matrices_win.open {
@@ -2260,7 +2366,7 @@ impl XimodApp {
                     .clicked()
                 {
                     self.open_matrices_window();
-                    ui.close_menu();
+                    crate::ui::menus::close(ui);
                 }
                 // Glossaire, motifs et dérivations… (B-15).
                 let mark = if self.assist_win.open {
@@ -2273,7 +2379,7 @@ impl XimodApp {
                     .clicked()
                 {
                     self.open_assist_window();
-                    ui.close_menu();
+                    crate::ui::menus::close(ui);
                 }
             });
             // Outils ▸ Règles d'exclusion… (B-18).
@@ -2287,10 +2393,10 @@ impl XimodApp {
                 .clicked()
             {
                 self.open_rules_window(app_rules::RulesTab::Active);
-                ui.close_menu();
+                ui.close();
             }
             // Outils ▸ Scripts (C-08): the VMAD switch of the active file.
-            ui.menu_button(self.i18n.t("menu-scripts"), |ui| {
+            crate::ui::menus::submenu(ui, true, self.i18n.t("menu-scripts"), |ui| {
                 fit_menu(ui);
                 // Scripts du mod… (C-06).
                 if ui
@@ -2301,7 +2407,7 @@ impl XimodApp {
                     .clicked()
                 {
                     self.open_scripts_window();
-                    ui.close_menu();
+                    crate::ui::menus::close(ui);
                 }
                 ui.separator();
                 let state = self.vmad_active_state();
@@ -2315,12 +2421,12 @@ impl XimodApp {
                     .on_disabled_hover_text(self.i18n.t("menu-vmad-none"));
                 if resp.changed() {
                     self.vmad_switch(on);
-                    ui.close_menu();
+                    crate::ui::menus::close(ui);
                 }
                 ui.separator();
                 if ui.button(self.i18n.t("menu-scripts-rules")).clicked() {
                     self.open_rules_window(app_rules::RulesTab::Editor);
-                    ui.close_menu();
+                    crate::ui::menus::close(ui);
                 }
             });
             ui.separator();
@@ -2338,7 +2444,7 @@ impl XimodApp {
                     .clicked()
                 {
                     self.open_translation_editor();
-                    ui.close_menu();
+                    ui.close();
                 }
             }
         });
@@ -2403,7 +2509,8 @@ impl XimodApp {
             ctx.show_viewport_immediate(
                 egui::ViewportId::from_hash_of(id),
                 builder,
-                |vctx, _class| {
+                |vui, _class| {
+                    let vctx = &vui.ctx().clone();
                     if let Some((pos, size)) = place {
                         vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                             pos[0], pos[1],
@@ -2417,7 +2524,7 @@ impl XimodApp {
                     } else {
                         self.pack_needs_center = false;
                     }
-                    egui::CentralPanel::default().show(vctx, |ui| {
+                    egui::CentralPanel::default().show(vui, |ui| {
                         if let Some(w) = self.pack_win.as_mut() {
                             close = w.body(ui, &self.i18n, Some(frame))
                                 == crate::ui::package_window::Outcome::Close;
@@ -2492,7 +2599,8 @@ impl XimodApp {
                 .with_active(true);
         }
         let mut close = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -2502,7 +2610,7 @@ impl XimodApp {
                 )));
             }
             self.fields_needs_center = false;
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 if let Some(ed) = self.fields_editor.as_mut() {
                     close = ed.body(ui, &self.i18n);
                 }
@@ -2558,7 +2666,8 @@ impl XimodApp {
                 .with_active(true);
         }
         let mut close = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -2568,7 +2677,7 @@ impl XimodApp {
                 )));
             }
             self.formats_needs_center = false;
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 if let Some(ed) = self.formats_editor.as_mut() {
                     close = ed.body(ui, &self.i18n);
                 }
@@ -2656,7 +2765,8 @@ impl XimodApp {
         }
 
         let mut close = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             // Force the placement via explicit commands too — for child viewports
             // this is more reliable than the builder alone.
             if let Some((pos, size)) = place {
@@ -2669,8 +2779,8 @@ impl XimodApp {
             }
             self.tool_needs_center[i] = false;
 
-            egui::TopBottomPanel::top(panel_id).show(vctx, |ui| {
-                egui::menu::bar(ui, |ui| {
+            egui::Panel::top(panel_id).show(vui, |ui| {
+                egui::MenuBar::new().ui(ui, |ui| {
                     match tool {
                         Tool::Esm => self.esm_tool.menu_contents(ui, vctx),
                         Tool::Bsa => self.bsa_tool.menu_contents(ui, vctx),
@@ -2682,9 +2792,9 @@ impl XimodApp {
                 });
             });
             match tool {
-                Tool::Esm => self.esm_tool.body(vctx, frame),
-                Tool::Bsa => self.bsa_tool.body(vctx, frame),
-                Tool::Swf => self.swf_tool.body(vctx, frame),
+                Tool::Esm => self.esm_tool.body(vui, frame),
+                Tool::Bsa => self.bsa_tool.body(vui, frame),
+                Tool::Swf => self.swf_tool.body(vui, frame),
             }
 
             // Persist geometry — but not on the placement frame, where the window
@@ -2755,8 +2865,8 @@ impl XimodApp {
         if let Some(path) = crate::data::image_icon(file) {
             ui.add_sized(
                 egui::vec2(size, size),
-                egui::ImageButton::new(
-                    egui::Image::from_uri(format!("file://{}", path.display()))
+                egui::Button::image(
+                    egui::Image::from_uri(crate::ui::file_uri(&path))
                         .fit_to_exact_size(egui::vec2(size - 4.0, size - 4.0)),
                 ),
             )
@@ -2772,8 +2882,15 @@ impl XimodApp {
     // --------------------------- file actions ------------------------------
 
     fn open_file(&mut self, parent: &eframe::Frame) {
-        let picked = rfd::FileDialog::new()
-            .set_parent(parent)
+        // The folder of the game's files (E-04, R-E04-05): its own, else the
+        // last one of all games.
+        let game = self.active_settings().game;
+        let mut fd = rfd::FileDialog::new().set_parent(parent);
+        let start = self.config.prefs_for(&game).open_dir;
+        if !start.is_empty() && std::path::Path::new(&start).is_dir() {
+            fd = fd.set_directory(&start);
+        }
+        let picked = fd
             .add_filter(
                 self.i18n.t("dialog-translations-plugins"),
                 &{
@@ -2802,7 +2919,15 @@ impl XimodApp {
             .pick_files();
         if let Some(paths) = picked {
             for p in paths {
+                let dir = p.parent().map(std::path::Path::to_path_buf);
                 self.load_path(p);
+                // The folder remembered for the game of the file opened (or
+                // the toolbar's while the opening waits for an answer).
+                if let Some(dir) = dir {
+                    let game = self.active_settings().game;
+                    self.config.note_open_dir(&game, &dir);
+                    let _ = self.config.save();
+                }
             }
         }
     }
@@ -3062,6 +3187,9 @@ impl XimodApp {
             let at = self.all_index().unwrap_or(self.docs.len());
             self.docs.insert(at, doc);
             self.active = at;
+            if opened_report.is_some() {
+                self.prep_note_stack(at);
+            }
             self.config.add_recent_file(path);
             // The journal: the opening, then the stack level by level (R-E01-02).
             let secs = self
@@ -3284,6 +3412,7 @@ impl XimodApp {
         });
         let mut line = stack.status_line(&self.i18n, &report);
         self.journal_stack(idx, &report);
+        self.prep_note_stack(idx);
         // Lines whose text changed since the mod's dictionary (B-07).
         let (path, settings, entries) = {
             let doc = &self.docs[idx];
@@ -3345,6 +3474,25 @@ impl XimodApp {
         let target = Game::from_id(game.trim());
         let mut settings = doc.settings.clone();
         settings.game = game.trim().to_string();
+        // The settings the new game has of its own (E-04, R-E04-04); a
+        // source only when the file provides it.
+        let langs = doc.source_langs.clone();
+        let old_game = doc.settings.game.clone();
+        let mut source = settings.source.clone();
+        let mut changed = crate::doc_settings::follow_game(
+            (&mut source, &mut settings.target, &mut settings.output),
+            &old_game,
+            &game,
+            &self.config,
+        );
+        if langs.is_empty() || langs.contains(&source) {
+            settings.source = source;
+        } else {
+            changed.retain(|p| *p != crate::config::Pref::Source);
+        }
+        let name = doc.file_name();
+        let codec = doc.enc.codec();
+        self.journal_game_prefs(idx, &settings, &changed);
         if !is_plugin || target == Game::Unknown {
             // A base or an unknown game id: nothing to re-extract, the setting
             // alone changes (bases and exports follow it).
@@ -3352,8 +3500,6 @@ impl XimodApp {
             self.restack_doc(idx);
             return;
         }
-        let name = doc.file_name();
-        let codec = doc.enc.codec();
         match crate::plugin::read_file_with(&path, Some(target), codec) {
             Ok(mut tm) => {
                 let mut strings = None;
@@ -4069,6 +4215,7 @@ impl XimodApp {
             return;
         };
         let counts = policy.counts(&doc.tm);
+        let chinese = crate::text::zh::is_chinese(&doc.settings.target);
         let Some(mode) = self.active_settings().output else {
             self.pending_export = None;
             return;
@@ -4166,7 +4313,8 @@ impl XimodApp {
                     .t_arg("export-vmad-not-written", "n", &n.to_string())
             })
         };
-        let mut source_too = self.config.localize_source_strings;
+        let doc_game = self.active_settings().game;
+        let mut source_too = self.config.prefs_for(&doc_game).localize_source_strings;
         // Débogage en jeu (A-22): the preview on the first line written, the
         // lines that already start with an identifier.
         let ids_preview = policy.ids.and_then(|form| {
@@ -4248,6 +4396,7 @@ impl XimodApp {
                         overwrite_note: overwrite_note.as_deref(),
                         encoding_bad: encoding_bad.as_deref(),
                         vmad_note: vmad_note.as_deref(),
+                        chinese,
                         ids: Some(crate::ui::export_dialog::IdsInfo {
                             preview: ids_preview.as_deref(),
                             count: ids_count.as_deref(),
@@ -4272,8 +4421,10 @@ impl XimodApp {
             self.config.export_untranslated_copy = copy;
             let _ = self.config.save();
         }
-        if source_too != self.config.localize_source_strings {
-            self.config.localize_source_strings = source_too;
+        if source_too != self.config.prefs_for(&doc_game).localize_source_strings {
+            // The game's own value when it has one (E-04).
+            self.config
+                .set_localize_source_strings(&doc_game, source_too);
             let _ = self.config.save();
             // The list of files changes.
             self.localize_cache = Default::default();
@@ -4330,10 +4481,11 @@ impl XimodApp {
         // The script blocks read for the Script tab are those of the file
         // as it was (C-07).
         self.sctx_cache.replace(None);
+        let game = self.active_settings().game;
         let res = crate::backup::write_export(
             path,
             bytes,
-            self.config.keep_original,
+            self.config.prefs_for(&game).keep_original,
             forced,
             self.config.original_copies,
         );
@@ -4342,6 +4494,11 @@ impl XimodApp {
         }
         match res {
             Ok(kept) => {
+                // The folder of the game's exports (E-04, R-E04-05).
+                if let Some(dir) = path.parent() {
+                    self.config.note_export_dir(&game, dir);
+                    let _ = self.config.save();
+                }
                 if let Some(k) = &kept {
                     tracing::info!("export: original kept as {}", k.display());
                 }
@@ -4380,7 +4537,11 @@ impl XimodApp {
         if let Some(dir) = path.parent() {
             self.last_export_dir = Some(dir.to_path_buf());
         }
-        crate::backup::keep_before_export(path, self.config.keep_original, forced).map_err(|e| {
+        let keep = self
+            .config
+            .prefs_for(&self.active_settings().game)
+            .keep_original;
+        crate::backup::keep_before_export(path, keep, forced).map_err(|e| {
             self.i18n
                 .t_arg("export-keep-failed", "error", &e.to_string())
         })
@@ -4534,7 +4695,7 @@ impl XimodApp {
                 let plugin_exts = crate::games::registry().all_plugin_extensions();
                 // A full plugin is proposed in place of the open one (E-06:
                 // its original is kept in backups/).
-                let mut fd = rfd::FileDialog::new().set_parent(parent);
+                let mut fd = self.export_dialog(parent);
                 if mode == OutputMode::FullPlugin
                     && let Some(dir) = doc.path.parent()
                 {
@@ -4597,7 +4758,7 @@ impl XimodApp {
                 // File names follow the game's convention (R-S01-04):
                 // `_French` for Skyrim / Fallout 4, `_fr` for Starfield.
                 let lang = crate::lang::strings_suffix_for(game, &self.active_settings().target);
-                if let Some(dir) = rfd::FileDialog::new().set_parent(parent).pick_folder() {
+                if let Some(dir) = self.export_dialog(parent).pick_folder() {
                     let mut written = 0usize;
                     let mut kept_all: Vec<PathBuf> = Vec::new();
                     let mut failed: Option<String> = None;
@@ -4649,8 +4810,8 @@ impl XimodApp {
                     self.status = self.i18n.t("status-export-no-strings");
                     return;
                 }
-                if let Some(path) = rfd::FileDialog::new()
-                    .set_parent(parent)
+                if let Some(path) = self
+                    .export_dialog(parent)
                     .set_file_name(format!("{stem}.json"))
                     .add_filter(self.i18n.t("dialog-dsd-json"), &["json"])
                     .save_file()
@@ -4753,7 +4914,8 @@ impl XimodApp {
 
     // ------------------------------ panels --------------------------------
 
-    fn menu_bar(&mut self, ctx: &egui::Context, frame: &eframe::Frame) {
+    fn menu_bar(&mut self, root: &mut egui::Ui, frame: &eframe::Frame) {
+        let ctx = &root.ctx().clone();
         let mut do_open = false;
         let mut do_save = false;
         let mut do_save_part = false;
@@ -4774,8 +4936,8 @@ impl XimodApp {
         let mut do_scan = false;
         let has_doc = !self.docs.is_empty();
 
-        egui::TopBottomPanel::top("menu_bar").show(ctx, |ui| {
-            egui::menu::bar(ui, |ui| {
+        egui::Panel::top("menu_bar").show(root, |ui| {
+            egui::MenuBar::new().ui(ui, |ui| {
                 ui.menu_button(self.i18n.t("menu-file"), |ui| {
                     fit_menu(ui);
                     // Opening, saving and the recent list need a game in the
@@ -4789,14 +4951,13 @@ impl XimodApp {
                     let all = self.all_active();
                     let ro_tip = self.i18n.t("all-mods-readonly");
                     let file_tip = if all { &ro_tip } else { &needs_game };
-                    let sc = &MENU_SHORTCUTS;
                     // Opening needs no game chosen beforehand (D-95): the
                     // header of a plugin says its game; only a file whose
                     // game stays unknown asks for it.
                     if menu_item(
                         ui,
                         &self.i18n.t("menu-open"),
-                        Some(&shortcut_text(ctx, &sc.open, &self.i18n)),
+                        Some(&cmd_text(ctx, crate::shortcuts::Cmd::Open, &self.i18n)),
                         true,
                         "",
                     ) {
@@ -4826,7 +4987,7 @@ impl XimodApp {
                     if menu_item(
                         ui,
                         &self.i18n.t("menu-save"),
-                        Some(&shortcut_text(ctx, &sc.save_as, &self.i18n)),
+                        Some(&cmd_text(ctx, crate::shortcuts::Cmd::SaveAs, &self.i18n)),
                         game_ok && has_doc && !all,
                         file_tip,
                     ) {
@@ -4870,7 +5031,7 @@ impl XimodApp {
                     if menu_item(
                         ui,
                         &self.i18n.t("menu-export"),
-                        Some(&shortcut_text(ctx, &sc.export, &self.i18n)),
+                        Some(&cmd_text(ctx, crate::shortcuts::Cmd::Export, &self.i18n)),
                         has_doc && !all,
                         &ro_tip,
                     ) {
@@ -4892,7 +5053,7 @@ impl XimodApp {
                     if menu_item(
                         ui,
                         &self.i18n.t("menu-close-doc"),
-                        Some(&shortcut_text(ctx, &sc.close_doc, &self.i18n)),
+                        Some(&cmd_text(ctx, crate::shortcuts::Cmd::CloseDoc, &self.i18n)),
                         has_doc && !all,
                         &ro_tip,
                     ) {
@@ -4911,7 +5072,7 @@ impl XimodApp {
                                     .to_string();
                                 if ui.button(label).clicked() {
                                     recent_to_open = Some(path.clone());
-                                    ui.close_menu();
+                                    ui.close();
                                 }
                             }
                             ui.min_rect()
@@ -4922,7 +5083,7 @@ impl XimodApp {
                     if menu_item(
                         ui,
                         &self.i18n.t("menu-exit"),
-                        Some(&shortcut_text(ctx, &sc.quit, &self.i18n)),
+                        Some(&cmd_text(ctx, crate::shortcuts::Cmd::Quit, &self.i18n)),
                         true,
                         "",
                     ) {
@@ -4935,22 +5096,22 @@ impl XimodApp {
                     if menu_item(
                         ui,
                         &self.i18n.t("menu-settings"),
-                        Some(&shortcut_text(ctx, &MENU_SHORTCUTS.settings, &self.i18n)),
+                        Some(&cmd_text(ctx, crate::shortcuts::Cmd::Settings, &self.i18n)),
                         true,
                         "",
                     ) {
                         self.open_settings();
-                        ui.close_menu();
+                        ui.close();
                     }
                     // Base pays / langues (E-11, D-84).
                     if ui.button(self.i18n.t("menu-properties")).clicked() {
                         self.open_props();
-                        ui.close_menu();
+                        ui.close();
                     }
                     if ui.button(self.i18n.t("menu-status-colors")).clicked() {
                         self.show_status_colors = true;
                         self.status_colors_needs_center = true;
-                        ui.close_menu();
+                        ui.close();
                     }
                     if ui.button(self.i18n.t("menu-dictview-stripe")).clicked() {
                         // Seed the picker with the current effective stripe color:
@@ -4963,7 +5124,7 @@ impl XimodApp {
                         };
                         self.color_picker
                             .open_for(super::color_picker::PickerTarget::DictStripe, seed);
-                        ui.close_menu();
+                        ui.close();
                     }
                     ui.separator();
                     if ui
@@ -4999,7 +5160,7 @@ impl XimodApp {
                                 .clicked()
                             {
                                 self.sort_file_order();
-                                ui.close_menu();
+                                ui.close();
                             }
                             ui.min_rect()
                         })
@@ -5017,23 +5178,23 @@ impl XimodApp {
                     ui.separator();
                     if ui.button(self.i18n.t("menu-spell")).clicked() {
                         self.open_spell();
-                        ui.close_menu();
+                        ui.close();
                     }
                     ui.separator();
                     if ui.button(self.i18n.t("menu-reload-bases")).clicked() {
                         do_reload_bases = true;
-                        ui.close_menu();
+                        ui.close();
                     }
                     if ui.button(self.i18n.t("menu-compile-bases")).clicked() {
                         do_compile_bases = true;
-                        ui.close_menu();
+                        ui.close();
                     }
                     if ui
                         .add_enabled(has_doc, egui::Button::new(self.i18n.t("menu-apply-dicts")))
                         .clicked()
                     {
                         do_apply_dicts = true;
-                        ui.close_menu();
+                        ui.close();
                     }
                     close_menu_if_pointer_left(ui, columns_rect);
                 });
@@ -5068,11 +5229,11 @@ impl XimodApp {
                                             fit_menu(ui);
                                             if ui.button(self.i18n.t("dict-unit")).clicked() {
                                                 dict_action = Some(DictAction::ConvUnit(kind));
-                                                ui.close_menu();
+                                                ui.close();
                                             }
                                             if ui.button(self.i18n.t("dict-batch")).clicked() {
                                                 dict_action = Some(DictAction::ConvBatch(kind));
-                                                ui.close_menu();
+                                                ui.close();
                                             }
                                             ui.min_rect()
                                         })
@@ -5087,23 +5248,23 @@ impl XimodApp {
                             ui.separator();
                             if ui.button(self.i18n.t("dict-from-game")).clicked() {
                                 dict_action = Some(DictAction::FromGame);
-                                ui.close_menu();
+                                ui.close();
                             }
                             if ui.button(self.i18n.t("dict-from-mod")).clicked() {
                                 dict_action = Some(DictAction::FromMod);
-                                ui.close_menu();
+                                ui.close();
                             }
                             if ui.button(self.i18n.t("dict-from-strings")).clicked() {
                                 dict_action = Some(DictAction::FromStrings);
-                                ui.close_menu();
+                                ui.close();
                             }
                             if ui.button(self.i18n.t("dict-from-plugins")).clicked() {
                                 dict_action = Some(DictAction::FromPlugins);
-                                ui.close_menu();
+                                ui.close();
                             }
                             if ui.button(self.i18n.t("dict-from-locres")).clicked() {
                                 dict_action = Some(DictAction::FromLocresCsv);
-                                ui.close_menu();
+                                ui.close();
                             }
                             if ui
                                 .button(self.i18n.t("dict-from-text-pairs"))
@@ -5111,21 +5272,21 @@ impl XimodApp {
                                 .clicked()
                             {
                                 dict_action = Some(DictAction::FromTextPairs);
-                                ui.close_menu();
+                                ui.close();
                             }
                             ui.separator();
                             if ui.button(self.i18n.t("dict-export-game-strings")).clicked() {
                                 dict_action = Some(DictAction::ExportGameStrings);
-                                ui.close_menu();
+                                ui.close();
                             }
                             ui.separator();
                             if ui.button(self.i18n.t("games-detect")).clicked() {
                                 dict_action = Some(DictAction::DetectGames);
-                                ui.close_menu();
+                                ui.close();
                             }
                             if ui.button(self.i18n.t("games-add-manual")).clicked() {
                                 dict_action = Some(DictAction::AddGameManual);
-                                ui.close_menu();
+                                ui.close();
                             }
                             child_rect
                         })
@@ -5135,36 +5296,36 @@ impl XimodApp {
                     ui.separator();
                     if ui.button(self.i18n.t("dict-view")).clicked() {
                         dict_action = Some(DictAction::ViewDict);
-                        ui.close_menu();
+                        ui.close();
                     }
                     if ui
                         .add_enabled(has_doc, egui::Button::new(self.i18n.t("dicts-menu")))
                         .clicked()
                     {
                         dict_action = Some(DictAction::ManageDicts);
-                        ui.close_menu();
+                        ui.close();
                     }
                     if ui
                         .button(self.i18n.t("dict-editor-menu-personal"))
                         .clicked()
                     {
                         dict_action = Some(DictAction::EditPersonal);
-                        ui.close_menu();
+                        ui.close();
                     }
                     if ui.button(self.i18n.t("dict-editor-menu-file")).clicked() {
                         dict_action = Some(DictAction::EditDict);
-                        ui.close_menu();
+                        ui.close();
                     }
                     if ui
                         .add_enabled(has_doc, egui::Button::new(self.i18n.t("update-menu")))
                         .clicked()
                     {
                         dict_action = Some(DictAction::ModUpdate);
-                        ui.close_menu();
+                        ui.close();
                     }
                     if ui.button(self.i18n.t("menu-compare")).clicked() {
                         dict_action = Some(DictAction::Compare);
-                        ui.close_menu();
+                        ui.close();
                     }
                     if ui
                         .add_enabled(has_doc, egui::Button::new(self.i18n.t("dict-save-mod")))
@@ -5172,7 +5333,7 @@ impl XimodApp {
                         .clicked()
                     {
                         dict_action = Some(DictAction::SaveModDict);
-                        ui.close_menu();
+                        ui.close();
                     }
                     // Appliquer les assistants… (B-15, D-80).
                     ui.separator();
@@ -5181,7 +5342,7 @@ impl XimodApp {
                         .clicked()
                     {
                         do_apply_assist = true;
-                        ui.close_menu();
+                        ui.close();
                     }
                     close_menu_if_pointer_left(ui, child_rect);
                 });
@@ -5191,7 +5352,7 @@ impl XimodApp {
                     if menu_item(
                         ui,
                         &self.i18n.t("menu-manual"),
-                        Some(&shortcut_text(ctx, &MENU_SHORTCUTS.manual, &self.i18n)),
+                        Some(&cmd_text(ctx, crate::shortcuts::Cmd::Manual, &self.i18n)),
                         true,
                         "",
                     ) {
@@ -5200,17 +5361,21 @@ impl XimodApp {
                     if menu_item(
                         ui,
                         &self.i18n.t("menu-journal"),
-                        Some(&shortcut_text(ctx, &MENU_SHORTCUTS.journal, &self.i18n)),
+                        Some(&cmd_text(ctx, crate::shortcuts::Cmd::Journal, &self.i18n)),
                         true,
                         "",
                     ) {
                         self.open_journal_window();
                     }
                     ui.separator();
+                    if ui.button(self.i18n.t("menu-check-updates")).clicked() {
+                        self.release_check_now(ctx, true);
+                        ui.close();
+                    }
                     if ui.button(self.i18n.t("menu-about")).clicked() {
                         self.show_about = true;
                         self.about_needs_center = true;
-                        ui.close_menu();
+                        ui.close();
                     }
                     close_menu_if_pointer_left(ui, None);
                 });
@@ -5279,7 +5444,6 @@ impl XimodApp {
         if self.modal_open() || self.show_settings || self.pending_save.is_some() {
             return;
         }
-        let sc = &MENU_SHORTCUTS;
         let game_ok = self.game_selected();
         let has_doc = !self.docs.is_empty();
         // Ctrl+Tab / Ctrl+Maj+Tab: the tabs, « Tous les mods » included
@@ -5289,52 +5453,52 @@ impl XimodApp {
             egui::Key::Tab,
         );
         let tab_next = egui::KeyboardShortcut::new(egui::Modifiers::COMMAND, egui::Key::Tab);
-        if ctx.input_mut(|i| i.consume_shortcut(&tab_back)) {
+        if ctx.input_mut(|i| i.take_shortcut(&tab_back)) {
             self.cycle_tab(true);
             return;
         }
-        if ctx.input_mut(|i| i.consume_shortcut(&tab_next)) {
+        if ctx.input_mut(|i| i.take_shortcut(&tab_next)) {
             self.cycle_tab(false);
             return;
         }
         // The synthesis saves, exports and closes nothing (R-B25-04).
         let file_doc = has_doc && !self.all_active();
         // The more specific combination first (Ctrl+Maj+E before Ctrl+…).
-        if ctx.input_mut(|i| i.consume_shortcut(&sc.export)) {
+        if ctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::Export)) {
             if file_doc {
                 self.open_export_dialog();
             }
-        } else if ctx.input_mut(|i| i.consume_shortcut(&sc.open)) {
+        } else if ctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::Open)) {
             self.open_file(frame);
-        } else if ctx.input_mut(|i| i.consume_shortcut(&sc.save_as)) {
+        } else if ctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::SaveAs)) {
             if game_ok && file_doc {
                 self.save_as(frame);
             }
-        } else if ctx.input_mut(|i| i.consume_shortcut(&sc.close_doc)) {
+        } else if ctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::CloseDoc)) {
             if file_doc {
                 self.request_close_doc(self.active);
             }
-        } else if ctx.input_mut(|i| i.consume_shortcut(&sc.settings)) {
+        } else if ctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::Settings)) {
             self.open_settings();
-        } else if ctx.input_mut(|i| i.consume_shortcut(&sc.manual)) {
+        } else if ctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::Manual)) {
             self.open_manual();
-        } else if ctx.input_mut(|i| i.consume_shortcut(&sc.quit)) {
+        } else if ctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::Quit)) {
             ctx.send_viewport_cmd(egui::ViewportCommand::Close);
-        } else if ctx.input_mut(|i| i.consume_shortcut(&sc.replace)) {
+        } else if ctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::Replace)) {
             self.open_replace_window(ctx);
-        } else if ctx.input_mut(|i| i.consume_shortcut(&sc.quality)) {
+        } else if ctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::Quality)) {
             self.open_quality_window(true);
-        } else if ctx.input_mut(|i| i.consume_shortcut(&sc.dialogues)) {
+        } else if ctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::Dialogues)) {
             self.open_dialog_window();
-        } else if ctx.input_mut(|i| i.consume_shortcut(&sc.online_batch)) {
+        } else if ctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::OnlineBatch)) {
             self.open_online_dialog();
-        } else if has_doc && ctx.input_mut(|i| i.consume_shortcut(&sc.review_accept)) {
+        } else if has_doc && ctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::ReviewAccept)) {
             let targets = self.selection.targets();
             self.review_command(app_review::ReviewCmd::Accept, &targets);
-        } else if has_doc && ctx.input_mut(|i| i.consume_shortcut(&sc.online_line)) {
+        } else if has_doc && ctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::OnlineLine)) {
             let targets = self.selection.targets();
             self.online_line(targets);
-        } else if ctx.input_mut(|i| i.consume_shortcut(&sc.personal)) {
+        } else if ctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::Personal)) {
             let targets = self.selection.targets();
             if !targets.is_empty() {
                 self.add_to_personal(&targets);
@@ -5532,6 +5696,11 @@ impl XimodApp {
         self.temp_propose_generalization = self.config.propose_generalization;
         self.temp_propose_propagation = self.config.propose_propagation;
         self.temp_propagate_files = self.config.propagate_files;
+        self.temp_check_updates = self.config.check_updates;
+        self.temp_auto_detect = self.config.auto_detect_games;
+        self.temp_game_prefs = self.config.game_prefs.clone();
+        self.shortcuts_tab_load();
+        self.temp_prefs_game.clear();
         self.temp_title_case = self.title_case_texts();
         self.temp_online = self.config.online.clone();
         self.online_load_keys();
@@ -5548,7 +5717,8 @@ impl XimodApp {
     /// document's settings, or the session defaults when nothing is open; the
     /// right-hand label says which (R-E12-02). Each change is applied to that
     /// document only.
-    fn toolbar(&mut self, ctx: &egui::Context) {
+    fn toolbar(&mut self, root: &mut egui::Ui) {
+        let ctx = &root.ctx().clone();
         self.output_fit_game();
         let has_doc = self.active_doc().is_some();
         let old = self.active_settings();
@@ -5628,170 +5798,161 @@ impl XimodApp {
         // The row is 8 px taller than egui's default panel (the undo / redo
         // buttons were clipped by the bottom separator; 2 px less since
         // 25/10/2026, the filter bar's rows being brought to the same height).
-        let mut frame = egui::Frame::side_top_panel(&ctx.style());
+        let mut frame = egui::Frame::side_top_panel(&ctx.global_style());
         frame.inner_margin.top += TOOLBAR_EXTRA;
         frame.inner_margin.bottom += TOOLBAR_EXTRA;
         // A wrapped row is as tall as the first: the gap is twice the margin.
-        let row_gap = frame.inner_margin.top + frame.inner_margin.bottom;
-        egui::TopBottomPanel::top("toolbar")
-            .frame(frame)
-            .show(ctx, |ui| {
-                ui.spacing_mut().item_spacing.y = row_gap;
-                ui.horizontal_wrapped(|ui| {
-                    // Labels never flow: a label at the end of a row would start its
-                    // text there and continue on the next one, and that row would be
-                    // placed without the row gap, over the first (reported 25/10/2026).
-                    ui.style_mut().wrap_mode = Some(egui::TextWrapMode::Extend);
-                    keep_together(ui, lbl_game.as_str(), combo_w(ui, None, &sel_game_label));
-                    ui.label(lbl_game.as_str());
-                    ui.add_enabled_ui(!readonly, |ui| {
-                        egui::ComboBox::from_id_salt("game_sel")
-                            .selected_text(sel_game_label.as_str())
-                            .show_field(ui, |ui| {
-                                // Empty position (no game selected).
-                                ui.selectable_value(&mut cur.game, String::new(), " ");
-                                for (id, label) in &game_opts {
-                                    ui.selectable_value(&mut cur.game, id.clone(), label.as_str());
-                                }
-                            });
-                    })
-                    .response
-                    .on_disabled_hover_text(&ro_tip);
-                    vsep(ui);
-                    let src_l = self.i18n.t("toolbar-source");
-                    keep_together(
+        let row_gap = f32::from(frame.inner_margin.top + frame.inner_margin.bottom);
+        egui::Panel::top("toolbar").frame(frame).show(root, |ui| {
+            ui.spacing_mut().item_spacing.y = row_gap;
+            ui.horizontal_wrapped(|ui| {
+                // Labels never flow: a label at the end of a row would start its
+                // text there and continue on the next one, and that row would be
+                // placed without the row gap, over the first (reported 25/10/2026).
+                ui.style_mut().wrap_mode = Some(egui::TextWrapMode::Extend);
+                keep_together(ui, lbl_game.as_str(), combo_w(ui, None, &sel_game_label));
+                ui.label(lbl_game.as_str());
+                ui.add_enabled_ui(!readonly, |ui| {
+                    egui::ComboBox::from_id_salt("game_sel")
+                        .selected_text(sel_game_label.as_str())
+                        .show_field(ui, |ui| {
+                            // Empty position (no game selected).
+                            ui.selectable_value(&mut cur.game, String::new(), " ");
+                            for (id, label) in &game_opts {
+                                ui.selectable_value(&mut cur.game, id.clone(), label.as_str());
+                            }
+                        });
+                })
+                .response
+                .on_disabled_hover_text(&ro_tip);
+                vsep(ui);
+                let src_l = self.i18n.t("toolbar-source");
+                keep_together(
+                    ui,
+                    &src_l,
+                    combo_w(ui, None, &self.i18n.display_name(&cur.source)),
+                );
+                ui.label(src_l);
+                ui.add_enabled_ui(has_doc && !readonly && !source_opts.is_empty(), |ui| {
+                    lang_combo(
                         ui,
-                        &src_l,
-                        combo_w(ui, None, &self.i18n.display_name(&cur.source)),
+                        &self.i18n,
+                        "src_lang",
+                        &mut cur.source,
+                        &source_opts,
+                        false,
                     );
-                    ui.label(src_l);
-                    ui.add_enabled_ui(has_doc && !readonly && !source_opts.is_empty(), |ui| {
-                        lang_combo(
-                            ui,
-                            &self.i18n,
-                            "src_lang",
-                            &mut cur.source,
-                            &source_opts,
-                            false,
-                        );
-                    });
-                    vsep(ui);
-                    // « Cible » is a button: it opens the flags window, whose
-                    // country fills the list with its official languages.
-                    let cible_l = self.i18n.t("toolbar-target-btn");
-                    keep_together(
-                        ui,
-                        &cible_l,
-                        combo_w(ui, None, &self.i18n.display_name(&cur.target)) + 16.0,
-                    );
-                    if ui
-                        .add_enabled(!readonly, egui::Button::new(cible_l))
-                        .on_hover_text(self.i18n.t("toolbar-target-tip"))
-                        .on_disabled_hover_text(&ro_tip)
-                        .clicked()
-                    {
-                        target_clicked = true;
-                    }
-                    ui.add_enabled_ui(!readonly, |ui| {
-                        lang_combo(
-                            ui,
-                            &self.i18n,
-                            "dst_lang",
-                            &mut cur.target,
-                            &target_opts,
-                            true,
-                        );
-                    });
-                    vsep(ui);
-                    let out_l = self.i18n.t("toolbar-output");
-                    keep_together(ui, &out_l, combo_w(ui, None, &sel_output_label));
-                    ui.label(out_l);
-                    ui.add_enabled_ui(!readonly, |ui| {
-                        egui::ComboBox::from_id_salt("output_mode")
-                            .selected_text(sel_output_label)
-                            .show_field(ui, |ui| {
-                                // Empty position (no output chosen), like the game list.
-                                ui.selectable_value(&mut cur.output, None, " ");
-                                let is_text = self.active_doc().is_some_and(Doc::is_text);
-                                let is_scripts =
-                                    self.active_doc().is_some_and(|d| d.scripts.is_some());
-                                // The outputs the game cannot receive are
-                                // shown greyed, not selectable.
-                                let game = Game::from_id(cur.game.trim());
-                                // The output that usually suits the active
-                                // document is marked, never chosen (D-114).
-                                let usual = self.usual_output(game);
-                                for m in OutputMode::variants_for(is_text, is_scripts) {
-                                    let label = if usual == Some(*m) {
-                                        self.i18n.t_arg(
-                                            "output-usual",
-                                            "mode",
-                                            &self.output_label(*m),
-                                        )
-                                    } else {
-                                        self.output_label(*m)
-                                    };
-                                    if m.fits(game) {
-                                        ui.selectable_value(&mut cur.output, Some(*m), label)
-                                            .on_hover_text(self.i18n.t(m.desc_key()));
-                                    } else {
-                                        ui.add_enabled(
-                                            false,
-                                            egui::SelectableLabel::new(
-                                                false,
-                                                self.output_label(*m),
-                                            ),
-                                        )
-                                        .on_disabled_hover_text(self.i18n.t_arg(
-                                            "output-not-for-game",
-                                            "game",
-                                            game.display_name(),
-                                        ));
-                                    }
-                                }
-                            });
-                    });
-                    // ↶ Annuler / ↷ Rétablir (A-01), greyed when their stack is empty.
-                    vsep(ui);
-                    let (can_undo, can_redo, undo_tip, redo_tip) = match self.active_doc() {
-                        // The synthesis undoes through its files (R-B25-05).
-                        Some(d) if d.all.is_some() => (
-                            self.all_mods_peek(false).is_some(),
-                            self.all_mods_peek(true).is_some(),
-                            self.undo_tip("undo-tip", self.all_mods_peek(false)),
-                            self.undo_tip("redo-tip", self.all_mods_peek(true)),
-                        ),
-                        Some(d) => (
-                            d.undo.can_undo(),
-                            d.undo.can_redo(),
-                            self.undo_tip("undo-tip", d.undo.peek_undo()),
-                            self.undo_tip("redo-tip", d.undo.peek_redo()),
-                        ),
-                        None => (
-                            false,
-                            false,
-                            self.i18n.t("undo-none"),
-                            self.i18n.t("redo-none"),
-                        ),
-                    };
-                    if ui
-                        .add_enabled(can_undo, egui::Button::new(crate::icons::UNDO))
-                        .on_hover_text(undo_tip)
-                        .clicked()
-                    {
-                        undo_clicked = true;
-                    }
-                    if ui
-                        .add_enabled(can_redo, egui::Button::new(crate::icons::REDO))
-                        .on_hover_text(redo_tip)
-                        .clicked()
-                    {
-                        redo_clicked = true;
-                    }
-                    vsep(ui);
-                    ui.add(egui::Label::new(egui::RichText::new(&scope).weak()).truncate());
                 });
+                vsep(ui);
+                // « Cible » is a button: it opens the flags window, whose
+                // country fills the list with its official languages.
+                let cible_l = self.i18n.t("toolbar-target-btn");
+                keep_together(
+                    ui,
+                    &cible_l,
+                    combo_w(ui, None, &self.i18n.display_name(&cur.target)) + 16.0,
+                );
+                if ui
+                    .add_enabled(!readonly, egui::Button::new(cible_l))
+                    .on_hover_text(self.i18n.t("toolbar-target-tip"))
+                    .on_disabled_hover_text(&ro_tip)
+                    .clicked()
+                {
+                    target_clicked = true;
+                }
+                ui.add_enabled_ui(!readonly, |ui| {
+                    lang_combo(
+                        ui,
+                        &self.i18n,
+                        "dst_lang",
+                        &mut cur.target,
+                        &target_opts,
+                        true,
+                    );
+                });
+                vsep(ui);
+                let out_l = self.i18n.t("toolbar-output");
+                keep_together(ui, &out_l, combo_w(ui, None, &sel_output_label));
+                ui.label(out_l);
+                ui.add_enabled_ui(!readonly, |ui| {
+                    egui::ComboBox::from_id_salt("output_mode")
+                        .selected_text(sel_output_label)
+                        .show_field(ui, |ui| {
+                            // Empty position (no output chosen), like the game list.
+                            ui.selectable_value(&mut cur.output, None, " ");
+                            let is_text = self.active_doc().is_some_and(Doc::is_text);
+                            let is_scripts = self.active_doc().is_some_and(|d| d.scripts.is_some());
+                            // The outputs the game cannot receive are
+                            // shown greyed, not selectable.
+                            let game = Game::from_id(cur.game.trim());
+                            // The output that usually suits the active
+                            // document is marked, never chosen (D-114).
+                            let usual = self.usual_output(game);
+                            for m in OutputMode::variants_for(is_text, is_scripts) {
+                                let label = if usual == Some(*m) {
+                                    self.i18n
+                                        .t_arg("output-usual", "mode", &self.output_label(*m))
+                                } else {
+                                    self.output_label(*m)
+                                };
+                                if m.fits(game) {
+                                    ui.selectable_value(&mut cur.output, Some(*m), label)
+                                        .on_hover_text(self.i18n.t(m.desc_key()));
+                                } else {
+                                    ui.add_enabled(
+                                        false,
+                                        egui::Button::selectable(false, self.output_label(*m)),
+                                    )
+                                    .on_disabled_hover_text(self.i18n.t_arg(
+                                        "output-not-for-game",
+                                        "game",
+                                        game.display_name(),
+                                    ));
+                                }
+                            }
+                        });
+                });
+                // ↶ Annuler / ↷ Rétablir (A-01), greyed when their stack is empty.
+                vsep(ui);
+                let (can_undo, can_redo, undo_tip, redo_tip) = match self.active_doc() {
+                    // The synthesis undoes through its files (R-B25-05).
+                    Some(d) if d.all.is_some() => (
+                        self.all_mods_peek(false).is_some(),
+                        self.all_mods_peek(true).is_some(),
+                        self.undo_tip("undo-tip", self.all_mods_peek(false)),
+                        self.undo_tip("redo-tip", self.all_mods_peek(true)),
+                    ),
+                    Some(d) => (
+                        d.undo.can_undo(),
+                        d.undo.can_redo(),
+                        self.undo_tip("undo-tip", d.undo.peek_undo()),
+                        self.undo_tip("redo-tip", d.undo.peek_redo()),
+                    ),
+                    None => (
+                        false,
+                        false,
+                        self.i18n.t("undo-none"),
+                        self.i18n.t("redo-none"),
+                    ),
+                };
+                if ui
+                    .add_enabled(can_undo, egui::Button::new(crate::icons::UNDO))
+                    .on_hover_text(undo_tip)
+                    .clicked()
+                {
+                    undo_clicked = true;
+                }
+                if ui
+                    .add_enabled(can_redo, egui::Button::new(crate::icons::REDO))
+                    .on_hover_text(redo_tip)
+                    .clicked()
+                {
+                    redo_clicked = true;
+                }
+                vsep(ui);
+                ui.add(egui::Label::new(egui::RichText::new(&scope).weak()).truncate());
             });
+        });
 
         if undo_clicked {
             self.do_undo();
@@ -5808,7 +5969,20 @@ impl XimodApp {
         }
         if !has_doc {
             // No document: the lists are the settings of the next file; the
-            // filled ones are also remembered as the session defaults.
+            // filled ones are also remembered as the session defaults. A
+            // game picked brings its own settings (E-04, T-E04-01).
+            if cur.game != old_idle.game {
+                let to = cur.game.clone();
+                crate::doc_settings::follow_game(
+                    (&mut cur.source, &mut cur.target, &mut cur.output),
+                    &old_idle.game,
+                    &to,
+                    &self.config,
+                );
+                if !cur.target.is_empty() && !self.target_langs.contains(&cur.target) {
+                    self.target_langs.insert(0, cur.target.clone());
+                }
+            }
             cur.store_defaults(&mut self.config);
             self.idle = cur;
             return;
@@ -5877,7 +6051,8 @@ impl XimodApp {
     /// **Annuler** keeps the current game and files. In-app modal (portable).
     /// The combinable filter bar (text / status / record / char count) plus a
     /// reset button. Shown whenever a document is open.
-    fn filter_bar(&mut self, ctx: &egui::Context) {
+    fn filter_bar(&mut self, root: &mut egui::Ui) {
+        let ctx = &root.ctx().clone();
         if self.docs.is_empty() {
             return;
         }
@@ -5943,7 +6118,7 @@ impl XimodApp {
             self.i18n.t("filter-same-tip"),
         );
         let lbl_columns = self.i18n.t("filter-columns");
-        let lbl_columns_tip = self.i18n.t("filter-columns-tip");
+        let lbl_columns_tip = with_keys(ctx, &self.i18n, self.i18n.t("filter-columns-tip"));
         let prov_labels: Vec<String> = crate::provenance::ProvFilter::ALL
             .iter()
             .map(|p| self.i18n.t(p.i18n_key()))
@@ -5972,21 +6147,21 @@ impl XimodApp {
         };
         // Ctrl+Alt+F: Recherche avancée (A-19), before Ctrl+Maj+F and Ctrl+F
         // (which would match it).
-        if !self.modal_open() && ctx.input_mut(|i| i.consume_shortcut(&MENU_SHORTCUTS.search)) {
+        if !self.modal_open() && ctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::Search)) {
             self.open_search_window();
         }
         // Ctrl+K: Concordance (A-20).
-        if !self.modal_open() && ctx.input_mut(|i| i.consume_shortcut(&MENU_SHORTCUTS.concord)) {
+        if !self.modal_open() && ctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::Concord)) {
             self.open_concord_window(ctx, None);
         }
         // Ctrl+Shift+J: the journal of the session (E-01).
-        if ctx.input_mut(|i| i.consume_shortcut(&MENU_SHORTCUTS.journal)) {
+        if ctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::Journal)) {
             self.open_journal_window();
         }
         // Ctrl+Shift+U / L / T (A-13): the selection or the line of the
         // cursor, when no text field has the keyboard.
         if !self.modal_open()
-            && !ctx.wants_keyboard_input()
+            && !ctx.egui_wants_keyboard_input()
             && !self.docs.is_empty()
             && let Some(cmd) = Self::transform_shortcut(ctx)
         {
@@ -5994,26 +6169,15 @@ impl XimodApp {
             self.open_transform(cmd, lines);
         }
         // Ctrl+Maj+F: the filter row (A-10), before Ctrl+F.
-        if !self.modal_open()
-            && ctx.input_mut(|i| {
-                i.consume_shortcut(&egui::KeyboardShortcut::new(
-                    egui::Modifiers::COMMAND.plus(egui::Modifiers::SHIFT),
-                    egui::Key::F,
-                ))
-            })
+        if !self.modal_open() && ctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::ColumnFilters))
         {
             self.toggle_column_filters();
         }
         // Ctrl+F: the field (R-A09-04); consumed here so the grid never sees it.
-        if ctx.input_mut(|i| {
-            i.consume_shortcut(&egui::KeyboardShortcut::new(
-                egui::Modifiers::COMMAND,
-                egui::Key::F,
-            ))
-        }) {
+        if ctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::FilterFocus)) {
             self.filter_focus_request = true;
         }
-        let filter_id = egui::Id::new("ximod-filter-field");
+        let filter_id = egui::Id::unique("ximod-filter-field");
         let field_focused = ctx.memory(|m| m.has_focus(filter_id));
         // Entrée applies at once (while the field has the focus); Échap
         // empties it — egui drops the focus on Échap before the frame, so
@@ -6029,13 +6193,13 @@ impl XimodApp {
         // widgets are 2 px taller (the status buttons), so 1 px less of
         // margin on each side, and the gap between the two rows twice the
         // margin.
-        let mut frame = egui::Frame::side_top_panel(&ctx.style());
-        frame.inner_margin.top += TOOLBAR_EXTRA - 1.0;
-        frame.inner_margin.bottom += TOOLBAR_EXTRA - 1.0;
-        let row_gap = frame.inner_margin.top + frame.inner_margin.bottom;
-        egui::TopBottomPanel::top("filter_bar")
+        let mut frame = egui::Frame::side_top_panel(&ctx.global_style());
+        frame.inner_margin.top += TOOLBAR_EXTRA - 1;
+        frame.inner_margin.bottom += TOOLBAR_EXTRA - 1;
+        let row_gap = f32::from(frame.inner_margin.top + frame.inner_margin.bottom);
+        egui::Panel::top("filter_bar")
             .frame(frame)
-            .show(ctx, |ui| {
+            .show(root, |ui| {
                 ui.spacing_mut().item_spacing.y = row_gap;
                 ui.horizontal_wrapped(|ui| {
                     // Labels never flow: a label at the end of a row would start its
@@ -6635,7 +6799,7 @@ impl XimodApp {
     /// The row menu's texts (M-01), from the i18n bundle; the clipboard is
     /// read only when a menu is open.
     fn menu_labels(&mut self, ctx: &egui::Context) -> grid::MenuLabels {
-        let popup_open = ctx.memory(|m| m.any_popup_open());
+        let popup_open = egui::Popup::is_any_open(ctx);
         let clipboard = self.clipboard.current(popup_open);
         let t = |k: &str| self.i18n.t(k);
         grid::MenuLabels {
@@ -6657,30 +6821,58 @@ impl XimodApp {
             add_personal: t("ctx-add-personal"),
             apply_dicts: t("ctx-apply-dicts"),
             propagate: t("ctx-propagate"),
-            key_propagate: t("key-ctrl-f6"),
+            key_propagate: cmd_label(
+                ctx,
+                crate::shortcuts::Cmd::ApplySame,
+                &self.i18n,
+                "key-ctrl-f6",
+            ),
             online: t("menu-online-line"),
-            key_online: t("key-ctrl-g"),
+            key_online: cmd_label(
+                ctx,
+                crate::shortcuts::Cmd::OnlineLine,
+                &self.i18n,
+                "key-ctrl-g",
+            ),
             review: t("ctx-review"),
             review_accept: t("review-accept"),
             review_from_trans: t("review-from-trans"),
             review_clear: t("review-clear"),
-            key_review: shortcut_text(ctx, &MENU_SHORTCUTS.review_accept, &self.i18n),
+            key_review: cmd_text(ctx, crate::shortcuts::Cmd::ReviewAccept, &self.i18n),
             history: t("ctx-history"),
             history_previous: t("history-restore-previous"),
             history_show: t("history-show-line"),
-            key_history: shortcut_text(ctx, &SHORTCUT_HISTORY_PREV, &self.i18n),
+            key_history: cmd_text(ctx, crate::shortcuts::Cmd::HistoryPrev, &self.i18n),
             propagate_files: (self.file_count() >= 2).then(|| t("ctx-propagate-files")),
             concord: t("ctx-concordance"),
-            key_concord: shortcut_text(ctx, &MENU_SHORTCUTS.concord, &self.i18n),
+            key_concord: cmd_text(ctx, crate::shortcuts::Cmd::Concord, &self.i18n),
             transform: t("menu-transform"),
             transform_items: self.transform_labels(ctx),
-            key_personal: t("key-ctrl-m"),
+            zh_ok: crate::text::zh::is_chinese(&self.active_settings().target),
+            zh_tip: self.i18n.t("zh-needs-chinese"),
+            key_personal: cmd_label(
+                ctx,
+                crate::shortcuts::Cmd::Personal,
+                &self.i18n,
+                "key-ctrl-m",
+            ),
             key_edit: t("key-enter"),
             key_copy: key_text(ctx, &self.i18n, egui::Modifiers::COMMAND, egui::Key::C),
             key_paste: key_text(ctx, &self.i18n, egui::Modifiers::COMMAND, egui::Key::V),
-            key_eq: key_text(ctx, &self.i18n, egui::Modifiers::COMMAND, egui::Key::F8),
-            key_status: ["F5".into(), "F6".into(), "F7".into(), "F8".into()],
-            key_validate_next: t("key-ctrl-down"),
+            key_eq: cmd_text(ctx, crate::shortcuts::Cmd::SameAsSource, &self.i18n),
+            key_status: [
+                crate::shortcuts::Cmd::Validate,
+                crate::shortcuts::Cmd::Pending,
+                crate::shortcuts::Cmd::Custom,
+                crate::shortcuts::Cmd::Ignored,
+            ]
+            .map(|c| cmd_text(ctx, c, &self.i18n)),
+            key_validate_next: cmd_label(
+                ctx,
+                crate::shortcuts::Cmd::ValidateNext,
+                &self.i18n,
+                "key-ctrl-down",
+            ),
             clipboard,
         }
     }
@@ -6949,13 +7141,13 @@ impl XimodApp {
         self.visible = visible;
     }
 
-    fn tabs_bar(&mut self, ctx: &egui::Context) {
+    fn tabs_bar(&mut self, root: &mut egui::Ui) {
         if self.docs.is_empty() {
             return;
         }
         let mut to_close: Option<usize> = None;
         let mut restack: Option<usize> = None;
-        egui::TopBottomPanel::top("tabs").show(ctx, |ui| {
+        egui::Panel::top("tabs").show(root, |ui| {
             egui::ScrollArea::horizontal().show(ui, |ui| {
                 ui.horizontal(|ui| {
                     for i in 0..self.docs.len() {
@@ -7044,7 +7236,7 @@ impl XimodApp {
                         // Tab menu: the personal-dictionary choice, until the
                         // dictionary tree (B-02) takes it over.
                         let mut toggled = false;
-                        resp.context_menu(|ui| {
+                        crate::ui::menus::context_menu(&resp, |ui| {
                             fit_menu(ui);
                             let mut on = self.docs[i].settings.use_personal;
                             if ui
@@ -7053,7 +7245,7 @@ impl XimodApp {
                             {
                                 self.docs[i].settings.use_personal = on;
                                 toggled = true;
-                                ui.close_menu();
+                                ui.close();
                             }
                         });
                         if toggled {
@@ -7081,7 +7273,7 @@ impl XimodApp {
     /// of the window: it is truncated instead (full text on hover). The
     /// file's name and folder are not repeated here — the tab and the window
     /// title already carry them.
-    fn status_bar(&mut self, ctx: &egui::Context) {
+    fn status_bar(&mut self, root: &mut egui::Ui) {
         let has_doc = !self.docs.is_empty();
         let modified = self.active_doc().is_some_and(|d| d.is_dirty());
         let sort_text = self.sort_status_text();
@@ -7136,7 +7328,7 @@ impl XimodApp {
         let offer = self.rules_offer_label();
         let mut open_offer = false;
         let mut open_journal = false;
-        egui::TopBottomPanel::bottom("status_bar").show(ctx, |ui| {
+        egui::Panel::bottom("status_bar").show(root, |ui| {
             ui.horizontal(|ui| {
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                     if has_doc {
@@ -7151,68 +7343,80 @@ impl XimodApp {
                         let full_w: f32 = ui.available_width();
                         let compact = full_w < 760.0;
                         let folded = full_w < 520.0;
+                        // The colours of a pill: its status, dimmed without
+                        // a line; pressed when the filter keeps this status
+                        // (and not every status).
+                        let look = |i: usize, ui: &egui::Ui, dim: (f32, f32)| {
+                            let (r, g, b) = colors[crate::status::Status::ALL[i].index()];
+                            let mut fill = egui::Color32::from_rgb(r, g, b);
+                            let mut ink = egui::Color32::from_rgb(35, 35, 35);
+                            if per_status[i] == 0 {
+                                fill = fill.gamma_multiply(dim.0);
+                                ink = ink.gamma_multiply(dim.1);
+                            }
+                            let on =
+                                self.filter_statuses[i] && self.filter_statuses.iter().any(|b| !b);
+                            let stroke = if on {
+                                egui::Stroke::new(1.5_f32, ui.visuals().strong_text_color())
+                            } else {
+                                egui::Stroke::NONE
+                            };
+                            (fill, ink, stroke)
+                        };
                         if folded {
+                            // Too narrow for the pills: one button, whose menu
+                            // shows them with their names (recette du lot 2 :
+                            // a tooltip, slow and pale, could not be clicked).
                             let resp = ui.selectable_label(
                                 self.filter_statuses.iter().any(|b| !b),
                                 &statuses_l,
                             );
-                            resp.on_hover_ui(|ui| {
-                                for (i, st) in crate::status::Status::ALL.iter().enumerate() {
-                                    let (r, g, b) = colors[st.index()];
-                                    ui.colored_label(
-                                        egui::Color32::from_rgb(r, g, b),
-                                        format!(
+                            egui::Popup::menu(&resp)
+                                .align(egui::RectAlign::TOP_END)
+                                .close_behavior(egui::PopupCloseBehavior::CloseOnClickOutside)
+                                .show(|ui| {
+                                    for (i, st) in crate::status::Status::ALL.iter().enumerate() {
+                                        // Less dimmed than in the bar: the names
+                                        // must stay readable.
+                                        let (fill, ink, stroke) = look(i, ui, (0.6, 0.8));
+                                        let text = format!(
                                             "{} {}  {}",
                                             st.glyph(),
                                             fmt(per_status[i]),
                                             legends[i]
-                                        ),
-                                    );
-                                }
-                            });
+                                        );
+                                        let r = status_pill(
+                                            ui,
+                                            ui.scope_id().with(("ximod-counter-menu", i)),
+                                            text,
+                                            (fill, ink, stroke),
+                                        )
+                                        .on_hover_text(&tips[i]);
+                                        if r.clicked() {
+                                            let add = ui.input(|inp| inp.modifiers.command);
+                                            clicked = Some((*st, add));
+                                            // Ctrl+click adds a status and keeps
+                                            // the menu open.
+                                            if !add {
+                                                ui.close();
+                                            }
+                                        }
+                                    }
+                                });
                         } else {
                             for (i, st) in crate::status::Status::ALL.iter().enumerate().rev() {
-                                let (r, g, b) = colors[st.index()];
-                                let mut fill = egui::Color32::from_rgb(r, g, b);
-                                let mut ink = egui::Color32::from_rgb(35, 35, 35);
-                                if per_status[i] == 0 {
-                                    fill = fill.gamma_multiply(0.35);
-                                    ink = ink.gamma_multiply(0.45);
-                                }
                                 let text = if compact {
                                     fmt(per_status[i])
                                 } else {
                                     format!("{} {}", st.glyph(), fmt(per_status[i]))
                                 };
-                                // Pressed look when the filter keeps this status
-                                // (and not every status).
-                                let on = self.filter_statuses[i]
-                                    && self.filter_statuses.iter().any(|b| !b);
-                                let stroke = if on {
-                                    egui::Stroke::new(1.5_f32, ui.visuals().strong_text_color())
-                                } else {
-                                    egui::Stroke::NONE
-                                };
-                                let inner = egui::Frame::default()
-                                    .fill(fill)
-                                    .stroke(stroke)
-                                    .rounding(egui::Rounding::same(4.0))
-                                    .inner_margin(egui::Margin::symmetric(6.0, 1.0))
-                                    .show(ui, |ui| {
-                                        ui.add(
-                                            egui::Label::new(
-                                                egui::RichText::new(text).color(ink).strong(),
-                                            )
-                                            .selectable(false),
-                                        );
-                                    });
-                                let resp = ui
-                                    .interact(
-                                        inner.response.rect,
-                                        ui.id().with(("ximod-counter", i)),
-                                        egui::Sense::click(),
-                                    )
-                                    .on_hover_text(&tips[i]);
+                                let resp = status_pill(
+                                    ui,
+                                    ui.scope_id().with(("ximod-counter", i)),
+                                    text,
+                                    look(i, ui, (0.35, 0.45)),
+                                )
+                                .on_hover_text(&tips[i]);
                                 if resp.clicked() {
                                     let add = ui.input(|inp| inp.modifiers.command);
                                     clicked = Some((*st, add));
@@ -7229,9 +7433,11 @@ impl XimodApp {
                         }
                     }
                     // The journal (R-E01-06): before the counters, after the message.
-                    if self.journal_status_button(ui, ui.ctx().screen_rect().width() < 760.0) {
+                    if self.journal_status_button(ui, ui.ctx().content_rect().width() < 760.0) {
                         open_journal = true;
                     }
+                    // The preparation of the launch (R-E13-02).
+                    self.prep_status(ui);
                     if modified {
                         // « ● Modifié », warning colour readable on both themes (F-05).
                         ui.label(self.i18n.t("statusbar-modified"));
@@ -7278,7 +7484,8 @@ impl XimodApp {
         crate::filter::click_status(&mut self.filter_statuses, st, add);
     }
 
-    fn central(&mut self, ctx: &egui::Context) {
+    fn central(&mut self, root: &mut egui::Ui) {
+        let ctx = &root.ctx().clone();
         // Status palette and localized legends, computed before borrowing docs.
         let colors = self.config.status_colors;
         let legends: [String; crate::status::COUNT] =
@@ -7309,7 +7516,7 @@ impl XimodApp {
                 "status-btn-ignore",
             ];
             grid::StatusButtonLabels {
-                tips: std::array::from_fn(|k| self.i18n.t(keys[k])),
+                tips: std::array::from_fn(|k| with_keys(ctx, &self.i18n, self.i18n.t(keys[k]))),
                 needs_trans: std::array::from_fn(|k| {
                     let st = grid::STATUS_BUTTONS[k];
                     self.i18n.t_arg(
@@ -7344,6 +7551,10 @@ impl XimodApp {
         let bytes_unit = self.i18n.t("len-bytes-unit");
         // The spell checker's last scan, when it was of this document (A-16).
         let spelling = match (&self.spell_marks, self.docs.get(self.active)) {
+            (Some((serial, map)), Some(d)) if *serial == d.serial => map.clone(),
+            _ => Default::default(),
+        };
+        let spelling_source = match (&self.spell_marks_src, self.docs.get(self.active)) {
             (Some((serial, map)), Some(d)) if *serial == d.serial => map.clone(),
             _ => Default::default(),
         };
@@ -7436,7 +7647,7 @@ impl XimodApp {
             .get(self.active)
             .map(|d| self.out_page(d))
             .unwrap_or(crate::codepage::Page::Utf8);
-        egui::CentralPanel::default().show(ctx, |ui| {
+        egui::CentralPanel::default().show(root, |ui| {
             let active = self.active;
             let row_h = ui.text_style_height(&egui::TextStyle::Body) + 8.0;
             self.grid_page_rows = ((ui.available_height() - row_h * 2.0) / row_h.max(1.0))
@@ -7451,7 +7662,13 @@ impl XimodApp {
                     tips: &mark_texts,
                     rich_tooltips: self.config.rich_tooltips,
                     spelling: &spelling,
+                    spelling_source: &spelling_source,
+                    numbers: doc.settings.numbers(),
                     show_special: self.config.show_special_chars,
+                    rtl: (
+                        crate::text::bidi::language_is_rtl(&doc.settings.source),
+                        crate::text::bidi::language_is_rtl(&doc.settings.target),
+                    ),
                     anomalies: &anomalies,
                     prov_tip: &prov_tip,
                     prov_short: if show_prov { Some(&prov_short) } else { None },
@@ -7602,6 +7819,9 @@ impl XimodApp {
                 op.label_arg = Some(name);
                 doc.undo.push(op);
             }
+            if st == crate::status::Status::Validated {
+                self.spell_recheck_lines(&[idx]);
+            }
         }
         // Focus moves: close the previous cell's session, open the new one.
         if let Some(idx) = out.focus_lost
@@ -7701,20 +7921,23 @@ impl XimodApp {
         if self.active_doc().is_none() || self.modal_open() {
             return;
         }
-        let ctrl_f6 = ctx.input_mut(|i| i.consume_key(egui::Modifiers::COMMAND, egui::Key::F6));
+        let ctrl_f6 = ctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::ApplySame));
         if ctrl_f6 {
             let targets = self.selection.targets();
             self.open_propagate(&targets, false);
             return;
         }
+        // Ctrl+F8 (Traduction = source) before F8 (Ignoré): a shortcut is
+        // matched on its exact modifiers (E-15).
         let (f5, f6, f7, f8, down, up) = ctx.input_mut(|i| {
+            use crate::shortcuts::Cmd as K;
             (
-                i.consume_key(egui::Modifiers::NONE, egui::Key::F5),
-                i.consume_key(egui::Modifiers::NONE, egui::Key::F6),
-                i.consume_key(egui::Modifiers::NONE, egui::Key::F7),
-                i.consume_key(egui::Modifiers::NONE, egui::Key::F8),
-                i.consume_key(egui::Modifiers::COMMAND, egui::Key::ArrowDown),
-                i.consume_key(egui::Modifiers::COMMAND, egui::Key::ArrowUp),
+                i.take_cmd(K::Validate),
+                i.take_cmd(K::Pending),
+                i.take_cmd(K::Custom),
+                i.take_cmd(K::Ignored),
+                i.take_cmd(K::ValidateNext),
+                i.take_cmd(K::ValidatePrev),
             )
         });
         if f5 {
@@ -7741,7 +7964,7 @@ impl XimodApp {
             (
                 i.consume_key(egui::Modifiers::COMMAND, egui::Key::C),
                 i.consume_key(egui::Modifiers::COMMAND, egui::Key::V),
-                i.consume_key(egui::Modifiers::COMMAND, egui::Key::F8),
+                i.take_cmd(crate::shortcuts::Cmd::SameAsSource),
                 i.consume_key(egui::Modifiers::NONE, egui::Key::Enter),
             )
         });
@@ -7843,6 +8066,10 @@ impl XimodApp {
         self.status = msg;
         if let Some(i) = ignored_one {
             self.rules_after_ignore(i);
+        }
+        // A line validated is checked again (R-D11-04).
+        if st == crate::status::Status::Validated {
+            self.spell_recheck_lines(&targets);
         }
         (changed, skipped)
     }
@@ -8160,7 +8387,8 @@ impl XimodApp {
                 .with_active(true);
         }
         let mut close = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -8173,7 +8401,7 @@ impl XimodApp {
                 vctx.send_viewport_cmd(egui::ViewportCommand::Focus);
             }
             win.needs_place = false;
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 self.edit_win_active_frame = true;
                 close = self.edit_body(ui, vctx, &mut win);
                 self.edit_win_active_frame = false;
@@ -8258,12 +8486,12 @@ impl XimodApp {
         let legends: [String; crate::status::COUNT] =
             std::array::from_fn(|i| self.i18n.t(crate::status::Status::ALL[i].legend_key()));
         let trans_focused =
-            vctx.memory(|m| m.has_focus(egui::Id::new(("ximod-edit-trans", win.line))));
+            vctx.memory(|m| m.has_focus(egui::Id::unique(("ximod-edit-trans", win.line))));
         // The text area typed or selected in last (A-20: the word under its
         // cursor), kept when a menu takes the focus.
         for id in [
-            egui::Id::new(("ximod-edit-src-te", win.line)),
-            egui::Id::new(("ximod-edit-trans", win.line)),
+            egui::Id::unique(("ximod-edit-src-te", win.line)),
+            egui::Id::unique(("ximod-edit-trans", win.line)),
         ] {
             if vctx.memory(|m| m.has_focus(id)) {
                 self.edit_last_text = Some(id);
@@ -8293,17 +8521,19 @@ impl XimodApp {
 
         // ---- Keyboard (R-A02-04): consumed before the widgets see them. ----
         // Ctrl+Alt+G: Ajouter au glossaire (B-15), before Ctrl+G.
-        if vctx.input_mut(|i| i.consume_shortcut(&SHORTCUT_GLOSSARY_ADD)) && self.add_term.is_none()
+        if vctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::GlossaryAdd))
+            && self.add_term.is_none()
         {
             let line = win.line;
             self.open_add_term(vctx, line);
         }
         let (f9, ctrl_f9, ctrl_f6, ctrl_g) = vctx.input_mut(|i| {
+            use crate::shortcuts::Cmd as K;
             (
-                i.consume_key(egui::Modifiers::NONE, egui::Key::F9),
-                i.consume_key(egui::Modifiers::COMMAND, egui::Key::F9),
-                i.consume_key(egui::Modifiers::COMMAND, egui::Key::F6),
-                i.consume_key(egui::Modifiers::COMMAND, egui::Key::G),
+                i.take_cmd(K::InstantTranslate),
+                i.take_cmd(K::InstantCursor),
+                i.take_cmd(K::ApplySame),
+                i.take_cmd(K::OnlineLine),
             )
         });
         if ctrl_f6 && !unused_now && self.propagate_dlg.is_none() {
@@ -8322,7 +8552,7 @@ impl XimodApp {
             win.message = Some(msg);
         }
         // Ctrl+Alt+Z on the line of the window (A-18), before Ctrl+Z.
-        if vctx.input_mut(|i| i.consume_shortcut(&SHORTCUT_HISTORY_PREV)) {
+        if vctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::HistoryPrev)) {
             let line = win.line;
             self.history_revert_previous(&[line]);
             win.message = Some(self.status.clone());
@@ -8331,15 +8561,15 @@ impl XimodApp {
             vctx.input_mut(|i| {
                 (
                     i.consume_key(egui::Modifiers::NONE, egui::Key::Escape),
-                    i.consume_key(egui::Modifiers::COMMAND, egui::Key::Enter),
+                    i.take_cmd(crate::shortcuts::Cmd::EditValidateNext),
                     i.consume_key(egui::Modifiers::ALT, egui::Key::ArrowRight),
                     i.consume_key(egui::Modifiers::ALT, egui::Key::ArrowLeft),
-                    i.consume_key(egui::Modifiers::NONE, egui::Key::F5),
-                    i.consume_key(egui::Modifiers::NONE, egui::Key::F6),
-                    i.consume_key(egui::Modifiers::NONE, egui::Key::F7),
-                    i.consume_key(egui::Modifiers::NONE, egui::Key::F8),
-                    i.consume_shortcut(&SHORTCUT_UNDO),
-                    i.consume_shortcut(&SHORTCUT_REDO) || i.consume_shortcut(&SHORTCUT_REDO_ALT),
+                    i.take_cmd(crate::shortcuts::Cmd::Validate),
+                    i.take_cmd(crate::shortcuts::Cmd::Pending),
+                    i.take_cmd(crate::shortcuts::Cmd::Custom),
+                    i.take_cmd(crate::shortcuts::Cmd::Ignored),
+                    i.take_shortcut(&SHORTCUT_UNDO),
+                    i.take_shortcut(&SHORTCUT_REDO) || i.take_shortcut(&SHORTCUT_REDO_ALT),
                     !newline_ok
                         && trans_focused
                         && i.consume_key(egui::Modifiers::NONE, egui::Key::Enter),
@@ -8358,7 +8588,7 @@ impl XimodApp {
         }
         // Ctrl+K: Concordance (A-20), with the selection or the word of the
         // area that has the focus.
-        if vctx.input_mut(|i| i.consume_shortcut(&MENU_SHORTCUTS.concord)) {
+        if vctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::Concord)) {
             self.open_concord_window(vctx, None);
         }
         // Ctrl+Maj+U / L / T: the field's selection transformed (A-13).
@@ -8366,7 +8596,7 @@ impl XimodApp {
             self.edit_transform_field(vctx, win.line, cmd);
         }
         // Ctrl+M: the line's pair to the personal dictionary (B-04).
-        if vctx.input_mut(|i| i.consume_shortcut(&MENU_SHORTCUTS.personal)) {
+        if vctx.input_mut(|i| i.take_cmd(crate::shortcuts::Cmd::Personal)) {
             self.close_edit_session();
             let line = win.line;
             self.add_to_personal(&[line]);
@@ -8402,8 +8632,8 @@ impl XimodApp {
 
         // Facts about the (possibly new) line.
         let line = win.line;
-        let trans_id = egui::Id::new(("ximod-edit-trans", line));
-        let src_id = egui::Id::new(("ximod-edit-src-te", line));
+        let trans_id = egui::Id::unique(("ximod-edit-trans", line));
+        let src_id = egui::Id::unique(("ximod-edit-src-te", line));
         self.edit_instant_confirm(vctx, win);
         let (
             rec,
@@ -8442,17 +8672,17 @@ impl XimodApp {
         let hint = win
             .message
             .clone()
-            .unwrap_or_else(|| self.i18n.t("edit-hint"));
+            .unwrap_or_else(|| with_keys(vctx, &self.i18n, self.i18n.t("edit-hint")));
         let is_msg = win.message.is_some();
         let prev_l = format!("{} {}", crate::icons::CARET_LEFT, self.i18n.t("edit-prev"));
         let next_l = format!("{} {}", self.i18n.t("edit-next"), crate::icons::CARET_RIGHT);
         let online_l = format!(
             "{}  {}",
             self.i18n.t("edit-online"),
-            shortcut_text(ui.ctx(), &MENU_SHORTCUTS.online_line, &self.i18n)
+            cmd_text(ui.ctx(), crate::shortcuts::Cmd::OnlineLine, &self.i18n)
         );
         let mut online_click = false;
-        egui::TopBottomPanel::bottom("ximod-edit-bottom").show_inside(ui, |ui| {
+        egui::Panel::bottom("ximod-edit-bottom").show(ui, |ui| {
             ui.add_space(4.0);
             ui.horizontal(|ui| {
                 if ui.button(&prev_l).clicked() {
@@ -8585,11 +8815,14 @@ impl XimodApp {
             }
         };
         ui.strong(lang_label("edit-source", &src_lang));
+        // E-08: the columns written from right to left.
+        let src_rtl = crate::text::bidi::language_is_rtl(&src_lang);
+        let dst_rtl = crate::text::bidi::language_is_rtl(&dst_lang);
         let concord_label = self.i18n.t("ctx-concordance");
-        let concord_key = shortcut_text(vctx, &MENU_SHORTCUTS.concord, &self.i18n);
+        let concord_key = cmd_text(vctx, crate::shortcuts::Cmd::Concord, &self.i18n);
         let mut src_concord = false;
         let glossary_label = self.i18n.t("glossary-add-menu");
-        let glossary_key = shortcut_text(vctx, &SHORTCUT_GLOSSARY_ADD, &self.i18n);
+        let glossary_key = cmd_text(vctx, crate::shortcuts::Cmd::GlossaryAdd, &self.i18n);
         let mut src_glossary = false;
         let mut src_ctx_sel: Option<(usize, usize)> = None;
         egui::Frame::group(ui.style()).show(ui, |ui| {
@@ -8607,9 +8840,13 @@ impl XimodApp {
                     let mut layouter = crate::ui::special::layouter(font.clone(), color, muted);
                     let mut edit = egui::TextEdit::multiline(&mut src)
                         .id(src_id)
-                        .frame(false)
+                        .frame(egui::Frame::NONE)
+                        .margin(egui::Margin::symmetric(4, 2))
                         .desired_width(f32::INFINITY)
                         .desired_rows(src_rows);
+                    if src_rtl {
+                        edit = edit.align(egui::Align2::RIGHT_TOP);
+                    }
                     if show_special {
                         edit = edit.layouter(&mut layouter);
                     }
@@ -8617,9 +8854,13 @@ impl XimodApp {
                     // cursor), for Ajouter au glossaire (B-15).
                     let sel_before = egui::TextEdit::load_state(ui.ctx(), src_id)
                         .and_then(|st| st.cursor.char_range())
-                        .map(|r| (r.primary.index, r.secondary.index))
+                        .map(|r| (r.primary.index.0, r.secondary.index.0))
                         .filter(|(a, b)| a != b);
                     let output = edit.show(ui);
+                    // E-08: out of a selection, the source in visual order.
+                    if !output.response.has_focus() && crate::text::bidi::needed(src, src_rtl) {
+                        paint_visual_over(ui, &output.response.rect, src, src_rtl, &font, color);
+                    }
                     if output.response.secondary_clicked() {
                         src_ctx_sel = sel_before;
                     }
@@ -8636,26 +8877,52 @@ impl XimodApp {
                     }
                     // Concordance… (A-20) and Ajouter au glossaire (B-15) on
                     // the Source area.
-                    output.response.context_menu(|ui| {
+                    crate::ui::menus::context_menu(&output.response, |ui| {
                         if ui
                             .add(egui::Button::new(&concord_label).shortcut_text(&concord_key))
                             .clicked()
                         {
                             src_concord = true;
-                            ui.close_menu();
+                            ui.close();
                         }
                         if ui
                             .add(egui::Button::new(&glossary_label).shortcut_text(&glossary_key))
                             .clicked()
                         {
                             src_glossary = true;
-                            ui.close_menu();
+                            ui.close();
                         }
                     });
                 });
         });
         ui.add_space(4.0);
         ui.strong(lang_label("edit-trans", &dst_lang));
+        // E-08 (D-119): egui does not yet place its cursor in an Arabic or
+        // Hebrew text; the field keeps the logical order and the Aperçu
+        // line above it shows the text as it will be read.
+        {
+            let trans = &self.docs[active].tm.entries[line].trans;
+            if !unused && crate::text::bidi::needed(trans, dst_rtl) {
+                let row_h = ui.text_style_height(&egui::TextStyle::Body);
+                egui::Frame::group(ui.style())
+                    .fill(ui.visuals().faint_bg_color)
+                    .show(ui, |ui| {
+                        ui.set_width(ui.available_width());
+                        ui.label(
+                            egui::RichText::new(self.i18n.t("edit-preview"))
+                                .weak()
+                                .small(),
+                        )
+                        .on_hover_text(self.i18n.t("edit-preview-tip"));
+                        egui::ScrollArea::vertical()
+                            .id_salt(("ximod-edit-preview", line))
+                            .max_height(row_h * 3.0 + 4.0)
+                            .show(ui, |ui| {
+                                crate::ui::bidi::doc_label(ui, trans, dst_rtl);
+                            });
+                    });
+            }
+        }
         if src_concord {
             self.open_concord_window(vctx, None);
         }
@@ -8702,10 +8969,14 @@ impl XimodApp {
                         let mut layouter = crate::ui::special::layouter(font.clone(), color, muted);
                         let mut edit = egui::TextEdit::multiline(&mut e.trans)
                             .id(trans_id)
-                            .frame(false)
+                            .frame(egui::Frame::NONE)
+                            .margin(egui::Margin::symmetric(4, 2))
                             .desired_width(f32::INFINITY)
                             .desired_rows(tr_rows)
                             .lock_focus(false);
+                        if dst_rtl {
+                            edit = edit.align(egui::Align2::RIGHT_TOP);
+                        }
                         if show_special {
                             edit = edit.layouter(&mut layouter);
                         }
@@ -8722,6 +8993,9 @@ impl XimodApp {
                             );
                         }
                         let resp = output.response;
+                        if !resp.has_focus() && crate::text::bidi::needed(&e.trans, dst_rtl) {
+                            paint_visual_over(ui, &resp.rect, &e.trans, dst_rtl, &font, color);
+                        }
                         if focus_now {
                             // Focus, cursor at the end of the text (R-A02-01)
                             // — or where an instant translation left it.
@@ -8744,7 +9018,7 @@ impl XimodApp {
                         if resp.changed() {
                             out.edited = Some(line);
                         }
-                        resp.context_menu(|ui| {
+                        crate::ui::menus::context_menu(&resp, |ui| {
                             grid::row_menu(
                                 ui,
                                 &mut out,
@@ -8799,7 +9073,7 @@ impl XimodApp {
         // The Relecture field (A-17), when the column shows.
         if self.config.show_review && !unused {
             ui.label(egui::RichText::new(self.i18n.t("col-review")).strong());
-            let review_id = egui::Id::new(("ximod-edit-review", line));
+            let review_id = egui::Id::unique(("ximod-edit-review", line));
             let doc = &mut self.docs[active];
             let e = &mut doc.tm.entries[line];
             let differs = crate::review::differs(e);
@@ -8927,7 +9201,8 @@ impl XimodApp {
                 EditTab::Aliases => {
                     // A-07: the comparison and its repairs.
                     let e = &self.docs[active].tm.entries[line];
-                    let report = crate::tags::Report::of(e, game);
+                    let nums = self.docs[active].settings.numbers();
+                    let report = crate::tags::Report::of(e, game, nums);
                     let (ok_c, warn_c, err_c) = (
                         crate::ui::theme::Palette::of(ui.visuals()).success,
                         ui.visuals().warn_fg_color,
@@ -9131,6 +9406,7 @@ impl XimodApp {
             return String::new();
         };
         let game = doc.settings.game();
+        let nums = doc.settings.numbers();
         let mut before = Vec::new();
         let (mut replaced, mut appended) = (0usize, 0usize);
         for &i in lines {
@@ -9144,7 +9420,7 @@ impl XimodApp {
             let fixed = if tags {
                 crate::tags::fix_tags(&e.source, &e.trans, &set)
             } else {
-                crate::tags::fix_numbers(&e.source, &e.trans, &set)
+                crate::tags::fix_numbers(&e.source, &e.trans, &set, nums)
             };
             if fixed.text == e.trans {
                 continue;
@@ -9200,8 +9476,8 @@ impl XimodApp {
             && let Some(range) = state.cursor.char_range()
         {
             let (a, b) = (
-                range.primary.index.min(range.secondary.index),
-                range.primary.index.max(range.secondary.index),
+                range.primary.index.0.min(range.secondary.index.0),
+                range.primary.index.0.max(range.secondary.index.0),
             );
             if a < b
                 && let Some(e) = self
@@ -9452,7 +9728,8 @@ impl XimodApp {
                 .with_active(true);
         }
         let mut close = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -9484,7 +9761,7 @@ impl XimodApp {
             } else if f3 {
                 self.replace_step(1);
             }
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 if self.replace_body(ui) {
                     close = true;
                 }
@@ -9519,9 +9796,9 @@ impl XimodApp {
         for which in 0..2 {
             ui.horizontal(|ui| {
                 let (label, id) = if which == 0 {
-                    (t("replace-find"), egui::Id::new("ximod-replace-find"))
+                    (t("replace-find"), egui::Id::unique("ximod-replace-find"))
                 } else {
-                    (t("replace-with"), egui::Id::new("ximod-replace-with"))
+                    (t("replace-with"), egui::Id::unique("ximod-replace-with"))
                 };
                 ui.add_sized(
                     [lw, ui.spacing().interact_size.y],
@@ -9564,7 +9841,7 @@ impl XimodApp {
                         for h in history.iter() {
                             if ui.button(h).clicked() {
                                 pick = Some(h.clone());
-                                ui.close_menu();
+                                ui.close();
                             }
                         }
                     });
@@ -9833,6 +10110,7 @@ impl XimodApp {
         let checks = self.quality_checks();
         let game = doc.settings.game();
         let page = self.out_page(doc);
+        let nums = doc.settings.numbers();
         let serial = doc.serial;
         let (tx, rx) = std::sync::mpsc::channel();
         std::thread::spawn(move || {
@@ -9843,6 +10121,7 @@ impl XimodApp {
                 &checks,
                 game,
                 page,
+                nums,
                 |done, total| {
                     tx2.send(crate::ui::quality_window::Msg::Progress(done, total))
                         .is_ok()
@@ -9925,10 +10204,12 @@ impl XimodApp {
             return;
         };
         let page = self.out_page(doc);
-        let spell = match &self.spell_marks {
+        let ptr = |m: &Option<(u64, SpellWords)>| match m {
             Some((serial, map)) if *serial == doc.serial => std::sync::Arc::as_ptr(map) as usize,
             _ => 0,
         };
+        // Both columns' scans (D-11) in one number of the key.
+        let spell = ptr(&self.spell_marks).wrapping_mul(31) ^ ptr(&self.spell_marks_src);
         let key = (
             doc.serial,
             doc.undo.revision,
@@ -9940,7 +10221,12 @@ impl XimodApp {
             return;
         }
         let game = doc.settings.game();
+        let numbers = doc.settings.numbers();
         let words = match &self.spell_marks {
+            Some((serial, map)) if *serial == doc.serial => Some(map.clone()),
+            _ => None,
+        };
+        let words_src = match &self.spell_marks_src {
             Some((serial, map)) if *serial == doc.serial => Some(map.clone()),
             _ => None,
         };
@@ -9962,6 +10248,12 @@ impl XimodApp {
                                 .and_then(|m| m.get(i))
                                 .map(Vec::as_slice)
                                 .unwrap_or(&[]),
+                            spelling_source: words_src
+                                .as_ref()
+                                .and_then(|m| m.get(i))
+                                .map(Vec::as_slice)
+                                .unwrap_or(&[]),
+                            numbers,
                         },
                     )
                     .is_empty()
@@ -10004,6 +10296,7 @@ impl XimodApp {
             &checks,
             doc.settings.game(),
             self.out_page(doc),
+            doc.settings.numbers(),
             |_, _| true,
         );
         let by_line = report.by_line();
@@ -10164,7 +10457,8 @@ impl XimodApp {
                 .with_active(true);
         }
         let mut close = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -10190,7 +10484,7 @@ impl XimodApp {
             if enter && let Some(&row) = self.quality.selected.iter().next() {
                 self.quality_open_line(row);
             }
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 if self.quality_body(ui) {
                     close = true;
                 }
@@ -10289,11 +10583,10 @@ impl XimodApp {
                     .add_enabled(
                         !running,
                         egui::Button::new(egui::RichText::new(t("quality-run")).strong())
-                            .shortcut_text(key_text(
+                            .shortcut_text(cmd_text(
                                 ui.ctx(),
+                                crate::shortcuts::Cmd::Quality,
                                 &self.i18n,
-                                egui::Modifiers::NONE,
-                                egui::Key::F12,
                             )),
                     )
                     .clicked()
@@ -10330,9 +10623,9 @@ impl XimodApp {
             v
         };
         let mut fix: Option<bool> = None;
-        egui::TopBottomPanel::bottom("ximod-quality-buttons")
+        egui::Panel::bottom("ximod-quality-buttons")
             .show_separator_line(false)
-            .show_inside(ui, |ui| {
+            .show(ui, |ui| {
                 ui.add_space(4.0);
                 ui.label(egui::RichText::new(t("quality-table-hint")).weak().small());
                 ui.horizontal(|ui| {
@@ -10463,11 +10756,13 @@ impl XimodApp {
                                 ui.label(line);
                             });
                             row.col(|ui| {
-                                ui.add(
-                                    egui::Label::new(egui::RichText::new(edid).monospace())
-                                        .truncate()
-                                        .selectable(false),
-                                );
+                                // E-08: a source quoted in visual order.
+                                let t = if crate::text::bidi::has_rtl(edid) {
+                                    crate::ui::bidi::ui_line_text(ui, edid)
+                                } else {
+                                    egui::RichText::new(edid).monospace().into()
+                                };
+                                ui.add(egui::Label::new(t).truncate().selectable(false));
                             });
                             row.col(|ui| {
                                 ui.add(egui::Label::new(check).truncate().selectable(false));
@@ -10476,7 +10771,8 @@ impl XimodApp {
                                 if *is_group && ui.small_button(&unify_l).clicked() {
                                     unify = Some(r);
                                 }
-                                ui.add(egui::Label::new(detail).truncate().selectable(false))
+                                let t = crate::ui::bidi::ui_line_text(ui, detail);
+                                ui.add(egui::Label::new(t).truncate().selectable(false))
                                     .on_hover_text(detail);
                             });
                             let resp = row.response();
@@ -10801,7 +11097,8 @@ impl XimodApp {
                 .with_active(true);
         }
         let mut close = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -10812,7 +11109,7 @@ impl XimodApp {
             }
             self.dicts.needs_place = false;
             let esc = vctx.input_mut(|i| i.consume_key(egui::Modifiers::NONE, egui::Key::Escape));
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 if self.dicts_body(ui) {
                     close = true;
                 }
@@ -11795,7 +12092,8 @@ impl XimodApp {
                 .with_active(true);
         }
         let mut close = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -11806,7 +12104,7 @@ impl XimodApp {
             }
             self.dict_editor.needs_place = false;
             let esc = vctx.input_mut(|i| i.consume_key(egui::Modifiers::NONE, egui::Key::Escape));
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 if self.dict_editor_body(ui) {
                     close = true;
                 }
@@ -12018,9 +12316,9 @@ impl XimodApp {
         // Edit zone and buttons at the bottom (drawn first: the table takes the rest).
         let mut enter = false;
         let mut action: Option<&'static str> = None;
-        egui::TopBottomPanel::bottom("ximod-dict-editor-bottom")
+        egui::Panel::bottom("ximod-dict-editor-bottom")
             .show_separator_line(false)
-            .show_inside(ui, |ui| {
+            .show(ui, |ui| {
                 ui.add_space(4.0);
                 egui::Frame::group(ui.style()).show(ui, |ui| {
                     ui.set_width(ui.available_width());
@@ -13103,7 +13401,8 @@ impl XimodApp {
                 .with_active(true);
         }
         let mut close = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             if let Some((pos, size)) = place {
                 vctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(egui::pos2(
                     pos[0], pos[1],
@@ -13114,7 +13413,7 @@ impl XimodApp {
             }
             self.update.needs_place = false;
             let esc = vctx.input_mut(|i| i.consume_key(egui::Modifiers::NONE, egui::Key::Escape));
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 if self.update_body(ui) {
                     close = true;
                 }
@@ -13220,9 +13519,9 @@ impl XimodApp {
             .iter()
             .filter(|ch| !ch.old_trans.is_empty())
             .count();
-        egui::TopBottomPanel::bottom("ximod-update-bottom")
+        egui::Panel::bottom("ximod-update-bottom")
             .show_separator_line(false)
-            .show_inside(ui, |ui| {
+            .show(ui, |ui| {
                 ui.add_space(4.0);
                 ui.label(egui::RichText::new(t(self, "update-hint")).weak().small());
                 if let Some(m) = &self.update.message {
@@ -13733,6 +14032,7 @@ impl XimodApp {
             rect.expand(1.0),
             2.0,
             egui::Stroke::new(1.0_f32, ui.visuals().selection.stroke.color),
+            egui::StrokeKind::Middle,
         );
     }
 
@@ -13879,13 +14179,13 @@ impl XimodApp {
         let source = e.source.clone();
         let trans = e.trans.clone();
         let src_chars: Vec<char> = source.chars().collect();
-        let src_id = egui::Id::new(("ximod-edit-src-te", line));
-        let trans_id = egui::Id::new(("ximod-edit-trans", line));
+        let src_id = egui::Id::unique(("ximod-edit-src-te", line));
+        let trans_id = egui::Id::unique(("ximod-edit-trans", line));
         // The source selection and cursor, kept while the focus is elsewhere.
         let src_range = egui::TextEdit::load_state(vctx, src_id)
             .and_then(|st| st.cursor.char_range())
             .map(|r| {
-                let (a, b) = (r.primary.index, r.secondary.index);
+                let (a, b) = (r.primary.index.0, r.secondary.index.0);
                 (a.min(b).min(src_chars.len()), a.max(b).min(src_chars.len()))
             });
         // The whole source covered by the glossary: its translation,
@@ -13974,7 +14274,7 @@ impl XimodApp {
             let (a, b) = egui::TextEdit::load_state(vctx, trans_id)
                 .and_then(|st| st.cursor.char_range())
                 .map(|r| {
-                    let (a, b) = (r.primary.index, r.secondary.index);
+                    let (a, b) = (r.primary.index.0, r.secondary.index.0);
                     (a.min(b).min(tr_chars.len()), a.max(b).min(tr_chars.len()))
                 })
                 .unwrap_or((tr_chars.len(), tr_chars.len()));
@@ -14414,9 +14714,13 @@ impl XimodApp {
                     .join("\n"),
             );
         ui.label(
-            egui::RichText::new(self.i18n.t("vocab-shortcuts"))
-                .weak()
-                .small(),
+            egui::RichText::new(with_keys(
+                ui.ctx(),
+                &self.i18n,
+                self.i18n.t("vocab-shortcuts"),
+            ))
+            .weak()
+            .small(),
         );
         use_text
     }
@@ -14619,8 +14923,8 @@ impl XimodApp {
         let apply_l = self
             .i18n
             .t_arg("propagate-apply", "n", &checked.to_string());
-        let row_h = ctx.style().text_styles[&egui::TextStyle::Body].size + 8.0;
-        let screen = ctx.screen_rect();
+        let row_h = ctx.global_style().text_styles[&egui::TextStyle::Body].size + 8.0;
+        let screen = ctx.content_rect();
         let (max_w, max_h) = (
             (screen.width() - 24.0).max(320.0),
             (screen.height() - 40.0).max(200.0),
@@ -14639,7 +14943,7 @@ impl XimodApp {
                         i.consume_key(egui::Modifiers::NONE, egui::Key::Escape),
                     )
                 });
-                egui::TopBottomPanel::bottom("ximod-propagate-bottom").show_inside(ui, |ui| {
+                egui::Panel::bottom("ximod-propagate-bottom").show(ui, |ui| {
                     ui.add_space(6.0);
                     if dlg.proposed {
                         app_remember::remember_box(
@@ -14957,7 +15261,7 @@ impl XimodApp {
     /// given with it open at once (opening requires a game).
     pub fn with_startup_game(mut self, game: Option<String>) -> Self {
         if let Some(g) = game {
-            self.idle.game = g.trim().to_string();
+            self.idle.preset_game(&g, &self.config);
         }
         self
     }
@@ -14967,7 +15271,7 @@ impl XimodApp {
             i.raw
                 .dropped_files
                 .iter()
-                .filter_map(|f| f.path.clone())
+                .map(|f| f.path().to_path_buf())
                 .collect()
         });
         dropped.append(&mut self.startup_files);
@@ -15034,7 +15338,8 @@ impl XimodApp {
             self.settings_fit = true;
         }
 
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             self.settings_needs_center = false;
             if just_opened || self.settings_focus_frames > 0 {
                 // Bring it to the front (it would otherwise appear behind the
@@ -15043,11 +15348,17 @@ impl XimodApp {
                 vctx.send_viewport_cmd(egui::ViewportCommand::Focus);
                 self.settings_focus_frames = self.settings_focus_frames.saturating_sub(1);
             }
-            let (mut do_save, mut do_close) = self.settings_keyboard(vctx);
+            // A capture of Paramètres › Raccourcis takes the keys first (E-15).
+            let (mut do_save, mut do_close) = if self.shortcuts_capturing() {
+                self.shortcuts_capture_keys(vctx);
+                (false, false)
+            } else {
+                self.settings_keyboard(vctx)
+            };
             // Enregistrer / Annuler live in a bottom panel, never pushed out
             // of view by a long tab (F-02).
             let mut bottom_h = 0.0_f32;
-            egui::TopBottomPanel::bottom("ximod-settings-buttons").show(vctx, |ui| {
+            egui::Panel::bottom("ximod-settings-buttons").show(vui, |ui| {
                 ui.add_space(6.0);
                 ui.horizontal(|ui| {
                     let s = ui.button(self.i18n.t("btn-save"));
@@ -15072,7 +15383,7 @@ impl XimodApp {
             // to the monitor, everything stays reachable. Its natural content
             // size drives the auto-fit below.
             let mut content = egui::Vec2::ZERO;
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 let inner = egui::ScrollArea::both()
                     .auto_shrink([true, true])
                     .show(ui, |ui| {
@@ -15087,15 +15398,16 @@ impl XimodApp {
             if let Some(fid) = vctx.memory(|m| m.focused())
                 && let Some(resp) = vctx.read_response(fid)
             {
-                let accent = vctx.style().visuals.selection.stroke.color;
+                let accent = vctx.global_style().visuals.selection.stroke.color;
                 vctx.layer_painter(egui::LayerId::new(
                     egui::Order::Foreground,
-                    egui::Id::new("ximod-settings-focus"),
+                    egui::Id::unique("ximod-settings-focus"),
                 ))
                 .rect_stroke(
                     resp.rect.expand(2.0),
                     4.0,
                     egui::Stroke::new(2.0_f32, accent),
+                    egui::StrokeKind::Middle,
                 );
             }
             // Re-fit when the tab changes (their contents differ in size).
@@ -15157,8 +15469,10 @@ impl XimodApp {
             Focus::TabRecent,
             Focus::TabOnline,
             Focus::TabAdvanced,
+            Focus::TabShortcuts,
         ];
         let order: Vec<Focus> = match self.settings_tab {
+            SettingsTab::Shortcuts => [&tabs[..], &[Focus::Save, Focus::Cancel]].concat(),
             SettingsTab::General => ORDER_GENERAL.to_vec(),
             SettingsTab::Online => [&tabs[..], &[Focus::Save, Focus::Cancel]].concat(),
             SettingsTab::RecentFiles if has_recent => {
@@ -15276,6 +15590,10 @@ impl XimodApp {
     }
 
     fn settings_body(&mut self, ui: &mut egui::Ui) {
+        // « Réglages de » (E-04); the shortcuts are common to all games.
+        if self.settings_tab != SettingsTab::Shortcuts {
+            self.settings_prefs_scope(ui);
+        }
         ui.horizontal(|ui| {
             let g = ui.selectable_label(
                 self.settings_tab == SettingsTab::General,
@@ -15321,6 +15639,17 @@ impl XimodApp {
                 self.settings_tab = SettingsTab::Advanced;
                 self.settings_focus = Focus::TabAdvanced;
             }
+            let k = ui.selectable_label(
+                self.settings_tab == SettingsTab::Shortcuts,
+                self.i18n.t("settings-tab-shortcuts"),
+            );
+            if self.settings_focus_dirty && self.settings_focus == Focus::TabShortcuts {
+                k.request_focus();
+            }
+            if k.clicked() {
+                self.settings_tab = SettingsTab::Shortcuts;
+                self.settings_focus = Focus::TabShortcuts;
+            }
         });
         ui.separator();
         ui.add_space(6.0);
@@ -15330,6 +15659,7 @@ impl XimodApp {
             SettingsTab::RecentFiles => self.settings_recent(ui),
             SettingsTab::Online => self.settings_online(ui),
             SettingsTab::Advanced => self.settings_advanced(ui),
+            SettingsTab::Shortcuts => self.settings_shortcuts(ui),
         }
         ui.add_space(8.0);
     }
@@ -15349,6 +15679,8 @@ impl XimodApp {
     fn settings_general(&mut self, ui: &mut egui::Ui) {
         // One fixed label column width → all controls align vertically.
         let lw = 170.0_f32;
+        // The settings of the game of « Réglages de » first (E-04).
+        self.settings_game_prefs(ui);
         ui.horizontal_top(|ui| {
             // Flag button (opens the Flags window).
             let flag_size = egui::vec2(132.0, 88.0);
@@ -15360,14 +15692,13 @@ impl XimodApp {
             let flag_resp = match &flag_path {
                 Some(p) => ui.add_sized(
                     flag_size,
-                    egui::ImageButton::new(
-                        egui::Image::from_uri(format!("file://{}", p.display()))
-                            .fit_to_exact_size(flag_size),
+                    egui::Button::image(
+                        egui::Image::from_uri(crate::ui::file_uri(p)).fit_to_exact_size(flag_size),
                     ),
                 ),
                 None => ui.add_sized(
                     flag_size,
-                    egui::Button::new(egui::RichText::new("\u{1F3F3}").size(28.0)),
+                    egui::Button::new(egui::RichText::new(crate::icons::FLAG).size(28.0)),
                 ),
             };
             if self.settings_focus_dirty && self.settings_focus == Focus::Flag {
@@ -15513,6 +15844,18 @@ impl XimodApp {
             self.i18n.t("settings-propagate-files"),
         )
         .on_hover_text(self.i18n.t("settings-propagate-files-tip"));
+        // E-14, as in XIMOD Architect.
+        ui.checkbox(
+            &mut self.temp_check_updates,
+            self.i18n.t("settings-check-updates"),
+        )
+        .on_hover_text(self.i18n.t("settings-check-updates-hint"));
+        // E-13: the preparation of the launch.
+        ui.checkbox(
+            &mut self.temp_auto_detect,
+            self.i18n.t("settings-auto-detect"),
+        )
+        .on_hover_text(self.i18n.t("settings-auto-detect-tip"));
         ui.add_space(4.0);
         ui.horizontal(|ui| {
             self.settings_label(ui, lw, "settings-max-recent");
@@ -16000,6 +16343,8 @@ impl XimodApp {
     }
 
     fn save_settings(&mut self) {
+        // The shortcuts (E-15): [Shortcuts] and the table in force.
+        self.shortcuts_tab_save();
         // Online (D-01 / D-02): the settings, then the keys to the keyring.
         self.config.online = self.temp_online.clone();
         self.online_save_keys();
@@ -16029,6 +16374,12 @@ impl XimodApp {
         self.config.toasts = self.temp_toasts;
         self.config.propose_propagation = self.temp_propose_propagation;
         self.config.propagate_files = self.temp_propagate_files;
+        self.config.check_updates = self.temp_check_updates;
+        self.config.auto_detect_games = self.temp_auto_detect;
+        // E-04: the sections of the games; an emptied one goes.
+        let mut gp = self.temp_game_prefs.clone();
+        gp.retain(|_, p| !p.is_empty());
+        self.config.game_prefs = gp;
         // Casse de titre (A-13): the user's copy of the lists.
         let (lang, lower, keep) = self.temp_title_case.clone();
         self.save_title_case(&lang, &lower, &keep);
@@ -16114,8 +16465,13 @@ impl XimodApp {
             return;
         }
         let id = egui::ViewportId::from_hash_of("ximod-flags");
-        let (w, h) = (self.config.flags_w, self.config.flags_h);
-        let mut builder = egui::ViewportBuilder::default().with_title(self.i18n.t("flags-title"));
+        // The width follows the grid (Architect), only the height is free.
+        let w = flags_window_width(ctx.global_style().spacing.scroll.allocated_width());
+        let h = self.config.flags_h.max(FLAG_ROW_H * 2.0 + 80.0);
+        let mut builder = egui::ViewportBuilder::default()
+            .with_title(self.i18n.t("flags-title"))
+            .with_min_inner_size([w, FLAG_ROW_H * 2.0 + 80.0])
+            .with_max_inner_size([w, 4096.0]);
         let just_opened = self.flags_needs_center;
         if just_opened {
             let pos = self.open_pos(self.config.flags_x, self.config.flags_y, w, h);
@@ -16125,13 +16481,16 @@ impl XimodApp {
                 .with_active(true);
         }
 
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             self.flags_needs_center = false;
             if just_opened {
                 vctx.send_viewport_cmd(egui::ViewportCommand::Focus);
             }
             let mut close = false;
-            egui::CentralPanel::default().show(vctx, |ui| {
+            let frame = egui::Frame::central_panel(&vctx.global_style())
+                .inner_margin(egui::Margin::same(FLAG_MARGIN as i8));
+            egui::CentralPanel::default().frame(frame).show(vui, |ui| {
                 close = self.flags_body(ui, vctx);
             });
             if let Some((x, y, w, h)) = read_geometry(vctx) {
@@ -16152,19 +16511,21 @@ impl XimodApp {
         // The names in the interface language, sorted by them; the filter
         // also takes the English name, the endonyms and the code (E-11).
         let loc = self.i18n.current_locale().to_string();
-        let entries: Vec<(String, String, std::path::PathBuf)> = match &dir {
-            Some(d) => crate::data::props::country_rows(
+        // Under each flag its common name, its official name and its codes
+        // in the tooltip (recette du lot 2).
+        let entries: Vec<(String, String, String, std::path::PathBuf)> = match &dir {
+            Some(d) => crate::data::props::flag_rows(
                 &self.countries,
                 &self.country_names,
                 &loc,
                 &self.flag_filter,
             )
             .into_iter()
-            .filter_map(|(a3, label)| {
-                let c = self.countries.countries.iter().find(|c| c.a3 == a3)?;
-                (!c.flag.is_empty()).then(|| (a3, label, d.join(&c.flag)))
+            .filter_map(|r| {
+                let c = self.countries.countries.iter().find(|c| c.a3 == r.a3)?;
+                (!c.flag.is_empty()).then(|| (r.a3, r.label, r.tip, d.join(&c.flag)))
             })
-            .filter(|(_, _, p)| p.is_file())
+            .filter(|(_, _, _, p)| p.is_file())
             .collect(),
             None => Vec::new(),
         };
@@ -16238,8 +16599,11 @@ impl XimodApp {
 
         ui.horizontal(|ui| {
             ui.label(self.i18n.t("flags-filter"));
-            let resp =
-                ui.add(egui::TextEdit::singleline(&mut self.flag_filter).desired_width(220.0));
+            let resp = ui.add(
+                egui::TextEdit::singleline(&mut self.flag_filter)
+                    .hint_text(self.i18n.t("flags-filter-hint"))
+                    .desired_width(420.0),
+            );
             // The cursor is in the field as the window opens: type the
             // country, Entrée chooses the first match.
             if self.flag_filter_focus {
@@ -16260,43 +16624,24 @@ impl XimodApp {
         let mut chosen: Option<String> = None;
         let rows = entries.len().div_ceil(FLAG_COLUMNS);
         let focus = self.flag_focus;
-        let mut area = egui::ScrollArea::both().auto_shrink([false, false]);
+        let mut area = egui::ScrollArea::vertical().auto_shrink([false, false]);
         if let Some(off) = scroll_to {
             area = area.vertical_scroll_offset(off);
         }
         area.show_rows(ui, FLAG_ROW_H, rows, |ui, range| {
+            ui.spacing_mut().item_spacing = egui::vec2(FLAG_GAP, 0.0);
             for row in range {
                 ui.horizontal(|ui| {
                     for col in 0..FLAG_COLUMNS {
                         let idx = row * FLAG_COLUMNS + col;
-                        let Some((a3, label, path)) = entries.get(idx) else {
+                        let Some((a3, label, tip, path)) = entries.get(idx) else {
                             break;
                         };
-                        ui.vertical(|ui| {
-                            // Single indicator: only the flag under the
-                            // keyboard cursor is highlighted.
-                            let selected = idx == focus;
-                            let img = egui::Image::from_uri(format!("file://{}", path.display()))
-                                .fit_to_exact_size(egui::vec2(FLAG_CELL_W, FLAG_CELL_H));
-                            let resp = ui.add_sized(
-                                egui::vec2(FLAG_CELL_W, FLAG_CELL_H),
-                                egui::ImageButton::new(img).selected(selected),
-                            );
-                            // Never let a flag button keep egui's native focus
-                            // ring — it would linger on the initially-focused
-                            // one while our own cursor moves. Keyboard nav is
-                            // handled entirely by `flag_focus` above.
-                            resp.surrender_focus();
-                            if resp.on_hover_text(label).clicked() {
-                                chosen = Some(a3.clone());
-                            }
-                            ui.allocate_ui(egui::vec2(FLAG_CELL_W, 18.0), |ui| {
-                                ui.add(
-                                    egui::Label::new(egui::RichText::new(label).small())
-                                        .wrap_mode(egui::TextWrapMode::Truncate),
-                                );
-                            });
-                        });
+                        // Single indicator: only the flag under the keyboard
+                        // cursor is highlighted.
+                        if flag_cell(ui, label, tip, path, idx == focus).clicked() {
+                            chosen = Some(a3.clone());
+                        }
                     }
                 });
             }
@@ -16394,7 +16739,8 @@ impl XimodApp {
                 .with_position(pos)
                 .with_active(true);
         }
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             self.about_needs_center = false;
             if just_opened {
                 vctx.send_viewport_cmd(egui::ViewportCommand::Focus);
@@ -16405,7 +16751,7 @@ impl XimodApp {
                 self.config.about_y = y;
             }
             let mut close = false;
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 ui.vertical_centered(|ui| {
                     ui.add_space(8.0);
                     ui.heading(crate::APP_NAME);
@@ -16457,7 +16803,8 @@ impl XimodApp {
         if just_opened {
             self.status_colors_fitted = false;
         }
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             self.status_colors_needs_center = false;
             if just_opened {
                 vctx.send_viewport_cmd(egui::ViewportCommand::Focus);
@@ -16469,7 +16816,7 @@ impl XimodApp {
             }
             let mut reset = false;
             let mut content_h = 0.0_f32;
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 ui.label(self.i18n.t("status-colors-hint"));
                 ui.add_space(6.0);
                 // Four aligned columns: swatch · glyph · legend · RGB. Keeping the
@@ -16485,13 +16832,14 @@ impl XimodApp {
                                 .allocate_exact_size(egui::vec2(48.0, 20.0), egui::Sense::click());
                             ui.painter().rect_filled(
                                 rect,
-                                egui::Rounding::same(3.0),
+                                egui::CornerRadius::same(3),
                                 egui::Color32::from_rgb(r, g, b),
                             );
                             ui.painter().rect_stroke(
                                 rect,
-                                egui::Rounding::same(3.0),
+                                egui::CornerRadius::same(3),
                                 egui::Stroke::new(1.0_f32, egui::Color32::GRAY),
+                                egui::StrokeKind::Middle,
                             );
                             if resp
                                 .on_hover_text(self.i18n.t("status-colors-click"))
@@ -16552,7 +16900,8 @@ impl XimodApp {
                 .with_position(pos)
                 .with_active(true);
         }
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             self.color_picker.needs_center = false;
             if just_opened {
                 vctx.send_viewport_cmd(egui::ViewportCommand::Focus);
@@ -16563,7 +16912,7 @@ impl XimodApp {
             }
             let mut committed = None;
             let mut content_h = 0.0_f32;
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 committed = self.color_picker.ui(ui, &self.i18n);
                 content_h = ui.min_rect().height();
             });
@@ -16598,265 +16947,6 @@ impl XimodApp {
                 self.color_picker.close();
             }
         });
-    }
-
-    // --------------------------- spell checker -----------------------------
-
-    /// Open the spell-check window: (re)load the dictionary for the target
-    /// language if needed, then scan the active document.
-    fn open_spell(&mut self) {
-        self.show_spell = true;
-        self.spell_needs_center = true;
-        self.ensure_spell_loaded();
-        self.run_spell_scan();
-    }
-
-    /// Load the checker for the current target language when it changed (or was
-    /// never loaded). A missing dictionary leaves `self.spell` as `None`.
-    fn ensure_spell_loaded(&mut self) {
-        if self.spell_lang != self.active_settings().target {
-            self.spell_lang = self.active_settings().target.clone();
-            self.spell = crate::spell::SpellChecker::load_for_language(&self.spell_lang);
-        }
-    }
-
-    /// Force a fresh reload attempt (e.g. after the user dropped new dictionary
-    /// files), then rescan.
-    fn reload_spell(&mut self) {
-        self.spell_lang.clear();
-        self.ensure_spell_loaded();
-        self.run_spell_scan();
-    }
-
-    /// Scan the active document's translations, filling `spell_issues` with one
-    /// entry per distinct misspelled word per line (with cached suggestions).
-    fn run_spell_scan(&mut self) {
-        self.spell_issues.clear();
-        if self.spell.is_none() {
-            self.spell_status = self.i18n.t("spell-no-dict");
-            return;
-        }
-        if self.docs.get(self.active).is_none() {
-            self.spell_status = self.i18n.t("status-no-doc");
-            return;
-        }
-        let checker = self.spell.as_ref().unwrap();
-        let mut count = 0usize;
-        if let Some(doc) = self.docs.get(self.active) {
-            for (i, e) in doc.tm.entries.iter().enumerate() {
-                if e.trans.is_empty() {
-                    continue;
-                }
-                let mut seen = std::collections::HashSet::new();
-                for m in checker.check_text(&e.trans) {
-                    if seen.insert(m.word.to_lowercase()) {
-                        let suggestions = checker.suggest(&m.word);
-                        self.spell_issues.push(SpellIssue {
-                            entry: i,
-                            word: m.word,
-                            suggestions,
-                        });
-                        count += 1;
-                    }
-                }
-            }
-        }
-        // The grid's violet margins follow this scan (A-16).
-        let mut map: std::collections::HashMap<usize, Vec<String>> = Default::default();
-        for i in &self.spell_issues {
-            map.entry(i.entry).or_default().push(i.word.clone());
-        }
-        self.spell_marks = self
-            .docs
-            .get(self.active)
-            .map(|d| (d.serial, std::sync::Arc::new(map)));
-        self.spell_status = if count == 0 {
-            self.i18n.t("spell-clean")
-        } else {
-            self.i18n.t_arg("spell-issues", "n", &count.to_string())
-        };
-    }
-
-    /// Apply a spell action requested from a window row, then rescan.
-    fn apply_spell_action(&mut self, act: SpellAction) {
-        match act {
-            SpellAction::Fix(idx, to) => {
-                if let Some(issue) = self.spell_issues.get(idx) {
-                    let (entry, from) = (issue.entry, issue.word.clone());
-                    if let Some(doc) = self.docs.get_mut(self.active)
-                        && entry < doc.tm.entries.len()
-                    {
-                        let before = vec![(entry, EntryState::capture(&doc.tm.entries[entry]))];
-                        replace_word(&mut doc.tm.entries[entry].trans, &from, &to);
-                        if doc.tm.entries[entry].trans != before[0].1.trans {
-                            doc.tm.entries[entry].prov = crate::provenance::REPLACE.to_string();
-                        }
-                        doc.undo
-                            .push(op_from_before(OpKind::Edit, &before, &mut doc.tm.entries));
-                    }
-                }
-            }
-            SpellAction::Ignore(idx) => {
-                if let Some(w) = self.spell_issues.get(idx).map(|i| i.word.clone())
-                    && let Some(c) = self.spell.as_mut()
-                {
-                    c.ignore(&w);
-                }
-            }
-            SpellAction::Add(idx) => {
-                if let Some(w) = self.spell_issues.get(idx).map(|i| i.word.clone())
-                    && let Some(c) = self.spell.as_mut()
-                {
-                    c.add_word(&w);
-                }
-            }
-        }
-        self.run_spell_scan();
-    }
-
-    /// The spell-check window (independent, resizable viewport; geometry saved).
-    fn spell_window(&mut self, ctx: &egui::Context) {
-        if !self.show_spell {
-            return;
-        }
-        let id = egui::ViewportId::from_hash_of("ximod-spell");
-        let (w, h) = (self.config.spell_w, self.config.spell_h);
-        let mut builder = egui::ViewportBuilder::default().with_title(self.i18n.t("spell-title"));
-        let just_opened = self.spell_needs_center;
-        if just_opened {
-            let pos = self.open_pos(self.config.spell_x, self.config.spell_y, w, h);
-            builder = builder
-                .with_inner_size([w, h])
-                .with_position(pos)
-                .with_active(true);
-        }
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
-            self.spell_needs_center = false;
-            if just_opened {
-                vctx.send_viewport_cmd(egui::ViewportCommand::Focus);
-            }
-            let mut action: Option<SpellAction> = None;
-            let mut do_recheck = false;
-            let mut do_reload = false;
-            egui::CentralPanel::default().show(vctx, |ui| {
-                self.spell_body(ui, &mut action, &mut do_recheck, &mut do_reload);
-            });
-            if let Some((x, y, w, h)) = read_geometry(vctx) {
-                self.config.spell_x = x;
-                self.config.spell_y = y;
-                self.config.spell_w = w;
-                self.config.spell_h = h;
-            }
-            if let Some(act) = action {
-                self.apply_spell_action(act);
-            } else if do_recheck {
-                self.ensure_spell_loaded();
-                self.run_spell_scan();
-            } else if do_reload {
-                self.reload_spell();
-            }
-            if vctx.input(|i| i.viewport().close_requested() || i.key_pressed(egui::Key::Escape)) {
-                self.show_spell = false;
-            }
-        });
-    }
-
-    /// Render the spell window's contents. Only reads `self`; requested actions
-    /// are returned through the out-parameters and applied by the caller.
-    fn spell_body(
-        &self,
-        ui: &mut egui::Ui,
-        action: &mut Option<SpellAction>,
-        do_recheck: &mut bool,
-        do_reload: &mut bool,
-    ) {
-        ui.horizontal(|ui| match &self.spell {
-            Some(c) => {
-                ui.label(self.i18n.t("spell-dict"));
-                ui.strong(c.code());
-                if ui.button(self.i18n.t("spell-recheck")).clicked() {
-                    *do_recheck = true;
-                }
-            }
-            None => {
-                ui.colored_label(
-                    egui::Color32::from_rgb(200, 150, 60),
-                    self.i18n.t("spell-none"),
-                );
-                if ui.button(self.i18n.t("spell-reload")).clicked() {
-                    *do_reload = true;
-                }
-            }
-        });
-
-        // No dictionary → explain where to drop the .aff/.dic files and stop.
-        if self.spell.is_none() {
-            ui.add_space(6.0);
-            let dir = crate::spell::dictionaries_dir()
-                .map(|d| d.display().to_string())
-                .unwrap_or_else(|| "assets/dictionaries".to_string());
-            ui.label(self.i18n.t_arg("spell-none-hint", "dir", &dir));
-            return;
-        }
-
-        ui.separator();
-        ui.label(&self.spell_status);
-        ui.add_space(4.0);
-        if self.spell_issues.is_empty() {
-            return;
-        }
-
-        let entries = self.docs.get(self.active).map(|d| &d.tm.entries);
-        let ignore_lbl = self.i18n.t("spell-ignore");
-        let add_lbl = self.i18n.t("spell-add");
-        let row_h = 26.0;
-        let n = self.spell_issues.len();
-        egui::ScrollArea::vertical()
-            .auto_shrink([false, false])
-            .show_rows(ui, row_h, n, |ui, range| {
-                for idx in range {
-                    let issue = &self.spell_issues[idx];
-                    ui.horizontal(|ui| {
-                        // Locator: entry number + source snippet (fixed width).
-                        let loc = entries
-                            .and_then(|e| e.get(issue.entry))
-                            .map(|e| {
-                                let s = e.source.replace('\n', " ");
-                                let s: String = if s.chars().count() > 26 {
-                                    s.chars().take(26).collect::<String>() + "…"
-                                } else {
-                                    s
-                                };
-                                format!("#{}  {s}", issue.entry + 1)
-                            })
-                            .unwrap_or_else(|| format!("#{}", issue.entry + 1));
-                        ui.allocate_ui_with_layout(
-                            egui::vec2(190.0, row_h),
-                            egui::Layout::left_to_right(egui::Align::Center),
-                            |ui| {
-                                ui.add(
-                                    egui::Label::new(egui::RichText::new(loc).weak())
-                                        .wrap_mode(egui::TextWrapMode::Truncate),
-                                );
-                            },
-                        );
-                        ui.colored_label(egui::Color32::from_rgb(210, 90, 90), &issue.word);
-                        ui.separator();
-                        // Suggestions (cached), then Ignore / Add.
-                        for s in &issue.suggestions {
-                            if ui.small_button(s).clicked() {
-                                *action = Some(SpellAction::Fix(idx, s.clone()));
-                            }
-                        }
-                        if ui.button(&ignore_lbl).clicked() {
-                            *action = Some(SpellAction::Ignore(idx));
-                        }
-                        if ui.button(&add_lbl).clicked() {
-                            *action = Some(SpellAction::Add(idx));
-                        }
-                    });
-                }
-            });
     }
 
     // --------------------------- auto-translation --------------------------
@@ -17212,12 +17302,13 @@ impl XimodApp {
         let mut do_close_file = false;
         let mut dropped: Option<PathBuf> = None;
 
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             self.dict_view_needs_center = false;
             if just_opened {
                 vctx.send_viewport_cmd(egui::ViewportCommand::Focus);
             }
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 use egui_extras::{Column, TableBuilder};
 
                 // --- Header: filter · counter · Open… · Close ---
@@ -17353,7 +17444,7 @@ impl XimodApp {
 
             // Accept a dropped file (first one with a path).
             let files = vctx.input(|i| i.raw.dropped_files.clone());
-            if let Some(p) = files.into_iter().find_map(|f| f.path) {
+            if let Some(p) = files.into_iter().map(|f| f.path().to_path_buf()).next() {
                 dropped = Some(p);
             }
 
@@ -19050,12 +19141,13 @@ impl XimodApp {
         let lbl_src = self.i18n.t("book-source");
         let lbl_trans = self.i18n.t("book-translation");
         let lbl_gamefonts = self.i18n.t("book-game-fonts");
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             self.book_needs_center = false;
             if just_opened {
                 vctx.send_viewport_cmd(egui::ViewportCommand::Focus);
             }
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 ui.horizontal(|ui| {
                     if !self.book_title.is_empty() {
                         ui.heading(&self.book_title);
@@ -19170,12 +19262,13 @@ impl XimodApp {
         let mut open_idx: Option<usize> = None;
         let mut extract_idx: Option<usize> = None;
         let mut open_plugin = false;
-        ctx.show_viewport_immediate(id, builder, |vctx, _class| {
+        ctx.show_viewport_immediate(id, builder, |vui, _class| {
+            let vctx = &vui.ctx().clone();
             self.archive_needs_center = false;
             if just_opened {
                 vctx.send_viewport_cmd(egui::ViewportCommand::Focus);
             }
-            egui::CentralPanel::default().show(vctx, |ui| {
+            egui::CentralPanel::default().show(vui, |ui| {
                 self.archive_body(ui, &mut open_idx, &mut extract_idx, &mut open_plugin);
             });
             if let Some((x, y, w, h)) = read_geometry(vctx) {
@@ -19364,7 +19457,10 @@ impl XimodApp {
         }
     }
 
-    fn update_inner(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+    fn update_inner(&mut self, root: &mut egui::Ui, frame: &mut eframe::Frame) {
+        let ctx = &root.ctx().clone();
+        // The preparation of the launch running behind (E-13, D-116).
+        self.prep_poll(ctx);
         // Apply the theme EVERY frame so it wins over eframe's system-theme
         // following (which otherwise makes a Dark setting render Light/System).
         // The Settings window previews the theme being chosen, like the font
@@ -19457,9 +19553,9 @@ impl XimodApp {
         // Ctrl+Alt+Z, then Ctrl+Z / Ctrl+Y (⌘ on macOS), consumed before the
         // grid so the TextEdit's own undo never sees them (A-01, R-A01-01).
         let (hist_prev, undo, redo) = ctx.input_mut(|i| {
-            let prev = i.consume_shortcut(&SHORTCUT_HISTORY_PREV);
-            let undo = i.consume_shortcut(&SHORTCUT_UNDO);
-            let redo = i.consume_shortcut(&SHORTCUT_REDO) || i.consume_shortcut(&SHORTCUT_REDO_ALT);
+            let prev = i.take_cmd(crate::shortcuts::Cmd::HistoryPrev);
+            let undo = i.take_shortcut(&SHORTCUT_UNDO);
+            let redo = i.take_shortcut(&SHORTCUT_REDO) || i.take_shortcut(&SHORTCUT_REDO_ALT);
             (prev, undo, redo)
         });
         if hist_prev && !self.docs.is_empty() && !self.modal_open() {
@@ -19485,10 +19581,14 @@ impl XimodApp {
             self.close_edit_session();
         }
 
-        self.timed(ctx, "menu_bar", |a| a.menu_bar(ctx, frame));
-        self.timed(ctx, "toolbar", |a| a.toolbar(ctx));
-        self.timed(ctx, "filter_bar", |a| a.filter_bar(ctx));
-        self.timed(ctx, "tabs_bar", |a| a.tabs_bar(ctx));
+        self.timed(ctx, "menu_bar", |a| a.menu_bar(root, frame));
+        // The newer version (E-14): the daily check, its answer, the banner.
+        self.release_check_at_start(ctx);
+        self.release_poll();
+        self.release_banner(root);
+        self.timed(ctx, "toolbar", |a| a.toolbar(root));
+        self.timed(ctx, "filter_bar", |a| a.filter_bar(root));
+        self.timed(ctx, "tabs_bar", |a| a.tabs_bar(root));
         // The anomalies belong to one document (D-05): another active
         // document drops them (and the « Anomalies » filter with them).
         if self.anomaly_serial.is_some()
@@ -19506,8 +19606,8 @@ impl XimodApp {
         // Recompute the filtered view after the filter bar, before it is used by
         // the status bar and the grid.
         self.timed(ctx, "refresh_view", |a| a.refresh_view(ctx));
-        self.timed(ctx, "status_bar", |a| a.status_bar(ctx));
-        self.timed(ctx, "central", |a| a.central(ctx));
+        self.timed(ctx, "status_bar", |a| a.status_bar(root));
+        self.timed(ctx, "central", |a| a.central(root));
         self.timed(ctx, "edit_window", |a| a.edit_window(ctx));
         self.timed(ctx, "replace_window", |a| a.replace_window(ctx));
         self.timed(ctx, "quality_window", |a| a.quality_window(ctx));
@@ -19539,6 +19639,7 @@ impl XimodApp {
         self.timed(ctx, "settings_window", |a| a.settings_window(ctx));
         self.timed(ctx, "flags_window", |a| a.flags_window(ctx));
         self.timed(ctx, "about_window", |a| a.about_window(ctx));
+        self.release_window(ctx);
         self.timed(ctx, "status_colors_window", |a| a.status_colors_window(ctx));
         self.timed(ctx, "color_picker_window", |a| a.color_picker_window(ctx));
         self.timed(ctx, "spell_window", |a| a.spell_window(ctx));
@@ -19572,6 +19673,7 @@ impl XimodApp {
         self.timed(ctx, "concord_window", |a| a.concord_window(ctx));
         self.timed(ctx, "journal_window", |a| a.journal_window(ctx));
         self.timed(ctx, "affix_window", |a| a.affix_window(ctx));
+        self.timed(ctx, "zh_window", |a| a.zh_window(ctx));
         self.timed(ctx, "online_windows", |a| a.online_windows(ctx));
         self.timed(ctx, "close_prompt_window", |a| {
             a.close_prompt_window(ctx, frame)
@@ -19589,11 +19691,15 @@ impl XimodApp {
 }
 
 impl eframe::App for XimodApp {
-    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+    fn ui(&mut self, root: &mut egui::Ui, frame: &mut eframe::Frame) {
+        let ctx = &root.ctx().clone();
         // Slow frames are logged when XIMOD_FRAME_LOG is set (a diagnostic,
         // English like the rest of the log).
         let started = std::time::Instant::now();
-        self.update_inner(ctx, frame);
+        if self.key_log {
+            crate::ui::keys::log_keys(ctx);
+        }
+        self.update_inner(root, frame);
         if let Some(text) = self.copy_out.take() {
             ctx.copy_text(text);
         }
@@ -19737,7 +19843,7 @@ fn close_menu_if_pointer_left(ui: &mut egui::Ui, child: Option<egui::Rect>) {
     let popup = ui.min_rect();
     let pointer = ui.input(|i| i.pointer.hover_pos());
     if menu_should_close(popup, child, pointer) {
-        ui.close_menu();
+        ui.close();
     }
 }
 
@@ -19790,6 +19896,86 @@ fn replace_word(text: &mut String, from: &str, to: &str) {
 }
 
 /// Read the current viewport's outer position and inner size.
+/// A text field out of focus shown in visual order (E-08): its logical
+/// text covered with the background, the visual one painted over it.
+fn paint_visual_over(
+    ui: &egui::Ui,
+    rect: &egui::Rect,
+    text: &str,
+    rtl: bool,
+    font: &egui::FontId,
+    color: egui::Color32,
+) {
+    let area = rect.shrink2(egui::vec2(4.0, 2.0));
+    ui.painter()
+        .rect_filled(*rect, 0.0, ui.visuals().panel_fill);
+    let laid = crate::ui::bidi::layout(ui, text, rtl, font, color, area.width());
+    crate::ui::bidi::paint(ui, &laid, area, color);
+}
+
+/// One cell of the flags grid: a frame of fixed size with the flag inside,
+/// its proportions kept and centred, the name under it cut to the frame's
+/// width; the whole cell is the button.
+fn flag_cell(
+    ui: &mut egui::Ui,
+    label: &str,
+    tip: &str,
+    path: &std::path::Path,
+    selected: bool,
+) -> egui::Response {
+    let (rect, resp) = ui.allocate_exact_size(
+        egui::vec2(FLAG_CELL_W, FLAG_CELL_H + FLAG_LABEL_H + FLAG_GAP),
+        egui::Sense::click(),
+    );
+    let frame = egui::Rect::from_min_size(rect.min, egui::vec2(FLAG_CELL_W, FLAG_CELL_H));
+    if ui.is_rect_visible(rect) {
+        let v = ui.visuals();
+        let w = if selected {
+            &v.widgets.active
+        } else if resp.hovered() {
+            &v.widgets.hovered
+        } else {
+            &v.widgets.inactive
+        };
+        let (fill, stroke) = if selected {
+            (v.selection.bg_fill, v.selection.stroke)
+        } else {
+            (w.weak_bg_fill, w.bg_stroke)
+        };
+        let radius = egui::CornerRadius::same(4);
+        ui.painter().rect_filled(frame, radius, fill);
+        ui.painter()
+            .rect_stroke(frame, radius, stroke, egui::StrokeKind::Inside);
+        let inner = frame.shrink(FLAG_PAD);
+        ui.put(
+            inner,
+            egui::Image::from_uri(crate::ui::file_uri(path))
+                .max_size(inner.size())
+                .maintain_aspect_ratio(true),
+        );
+        let mut job = egui::text::LayoutJob::single_section(
+            label.to_string(),
+            egui::TextFormat::simple(
+                egui::TextStyle::Small.resolve(ui.style()),
+                ui.visuals().text_color(),
+            ),
+        );
+        job.wrap = egui::text::TextWrapping {
+            max_width: FLAG_CELL_W,
+            max_rows: 1,
+            break_anywhere: true,
+            overflow_character: Some('…'),
+        };
+        let galley = ui.painter().layout_job(job);
+        let pos = egui::pos2(
+            frame.center().x - galley.size().x / 2.0,
+            frame.bottom() + (FLAG_LABEL_H - galley.size().y) / 2.0,
+        );
+        ui.painter().galley(pos, galley, ui.visuals().text_color());
+    }
+    resp.on_hover_text(tip)
+}
+
 pub(crate) fn read_geometry(ctx: &egui::Context) -> Option<(f32, f32, f32, f32)> {
     ctx.input(|i| {
         let vp = i.viewport();
